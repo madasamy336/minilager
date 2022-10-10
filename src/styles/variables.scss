@@ -1,0 +1,40 @@
+$primaryColor: #2ebe1c;
+$secondaryColor: #393b39;
+$textLightColor: #ffffff;
+$textDarkColor: #000000;
+$textDisabledColor: #9B9B9B;
+$layoutBackground: #f3f7f3;
+$placeholder: #484848;
+$rentNowCard: #E8F3E7;
+$rentNowCard-boxShadow: 0px 20px 10px #0000000D;
+
+$primary-scheme-Light: $primaryColor, $textLightColor;
+$primary-scheme-Dark: $primaryColor, $textDarkColor;
+$secondary-scheme-Light: $secondaryColor, $textLightColor;
+$secondary-scheme-Dark: $secondaryColor, $textDarkColor;
+
+$secondary-scheme-active: $secondaryColor, $primaryColor;
+$secondary-scheme-inActive: $secondaryColor, $textLightColor;
+
+$sidebar-boxShadow: 0px 20px 40px #0000000d;
+
+$border-radius: 16px;
+
+$grid-columns: 12;
+
+$grid-breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+  xxl: 1400px,
+);
+
+$container-max-widths: (
+  sm: 540px,
+  md: 720px,
+  lg: 960px,
+  xl: 1140px,
+  xxl: 1320px,
+);
