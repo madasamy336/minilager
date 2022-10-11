@@ -1,5 +1,4 @@
-import RentNow from './components/pages/RentNow/RentNow';
-import './styles/base.scss';
+import RentNow from './app/pages/RentNow'
 
 function App() {
   return (
