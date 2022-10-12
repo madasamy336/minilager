@@ -1,0 +1,90 @@
+.justify-content-between{
+    justify-content: space-between !important;
+}
+
+.units-wrapper{
+    .units-banner{
+        img{
+            height: 14rem;
+        }
+    }
+    .units-row{
+        .filters-div{
+            padding-right: 0.2rem;
+        }
+        .units-container-div{
+            .dropdown-div{
+                width: 65%;
+                background-color: $UnitsDropdownBg;
+                padding: 2.5rem;
+                border-radius: 10px;
+                h2{
+                    color: $textLightColor;
+                    font-weight: 400;
+                    font-size: 1.5rem;
+                    padding: 0 0 1.4rem;
+                }
+                .ui.fluid.dropdown{
+                    width: 85% !important;
+                    margin: 0 auto;
+                    color: $secondaryColor;
+                    .divider.text{
+                        color: $secondaryColor;
+                    }
+                }
+            }
+            .units-div{
+                .card{
+                    box-shadow: $UnitsCardBoxshadow;
+                    border-radius: 10px;
+                    .card-img{
+                        background-color: $UnitsCardBg;
+                        border-radius: 10px 10px 0 0;
+                        img{
+                            height: 10rem;
+                            width: 10rem;
+                        }
+                        p{
+                            background-color: $textDarkColor;
+                            color: $textLightColor;
+                            font-size: 0.7rem;
+                            padding: 0.2rem 1rem;
+                        }
+                    }
+                    .card-body{
+                        .card-title{
+                            padding: 1rem 1rem 0.5rem;
+                            h2{
+                                font-size: 1.5rem;
+                                small{
+                                    font-size: 0.7rem;
+                                }
+                            }
+                            span{
+                                font-size: 0.8rem;
+                                line-height: 1.3;
+                            }
+                            .units-left{
+                                p{
+                                    font-size: 0.7rem;
+                                    color: $UnitsCardsLeft;
+                                }
+                            }
+                        }
+                        .card-desc{
+                            padding: 0.5rem 1rem;
+                            background-color: $UnitsCardsDesc;
+                            span{
+                                font-size: 0.6rem;
+                                margin-left: 0.3rem;
+                            }
+                        }
+                        .card-charges{}
+                        .card-text{}
+                        .card-actions{}
+                    }
+                }
+            }
+        }
+    }
+}
