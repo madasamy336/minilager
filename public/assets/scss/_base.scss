@@ -4,9 +4,13 @@ html{
 body{
     font-family: 'poppins'  !important;
     font-size: 14px !important;
+    height: 100vh;
 }
 p{
     line-height: 1.5 !important;
+}
+.pusher-desktop{
+    transform: translate3d(170px,0,0) !important;
 }
 .bg-white{
     background-color: $textLightColor !important;
@@ -165,6 +169,31 @@ p{
 .fs-7{
     font-size: 0.9rem;
 }
+// for overflow
+.overflow-auto{
+    overflow: auto !important;
+}
+.overflow-x-auto{
+    overflow-x: auto !important;
+}
+.overflow-y-auto{
+    overflow-y: auto !important;
+}
+.overflow-hidden{
+    overflow: hidden !important;
+}
+
+.overflow-x-hidden{
+    overflow-x: hidden !important;
+}
+
+.overflow-y-hidden{
+    overflow-y: hidden !important;
+}
+// for disbaling before
+.disablBefore::before{
+    content: none !important;
+}
 // for spacing 
 @for $i from 0 through 6 {
     // for padding
@@ -240,4 +269,14 @@ p{
     }
 }
 
+// for removing counter in input
+input.noCounterNumber::-webkit-outer-spin-button,
+input.noCounterNumber::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 
+/* Firefox */
+input.noCounterNumber[type=number] {
+  -moz-appearance: textfield;
+}

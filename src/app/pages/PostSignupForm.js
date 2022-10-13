@@ -1,11 +1,14 @@
-import {  Link, useNavigate } from "react-router-dom";
-const PostLoginForm = () => {
+import { useNavigate } from "react-router-dom";
+
+
+export default function PostSignupForm() {
     const navigate=useNavigate();
     const ValidateSignin=(e)=>{
       e.preventDefault();
-      navigate('/postBooking/Profile')
+      navigate('/login')
     }
-    return(
+  return (
+    <>
         <div className="postloginform my-5 mx-auto">
             <div className="row">
                 <div className="col-lg-5 col-md-5 col-sm-12">
@@ -336,8 +339,8 @@ const PostLoginForm = () => {
                 <div className="col-lg-7 col-md-7 col-sm-12">
                     <div className="postloginform-inputs">
                         <div className="form-title">
-                            <h2 className="text-success fw-600">WELCOME</h2>
-                            <p>Don't have an account? <Link to={'/signup'} className="fw-500" href="javascript:void(0);">Signup Now</Link></p>
+                            <h2 className="text-success fw-600">CREATE YOUR ACCOUNT</h2>
+                            <p>Already a User?  <a className="fw-500" href="javascript:void(0);">Sign in</a></p>
                         </div>
                         <form>
                             <div className="form-control">
@@ -354,6 +357,39 @@ const PostLoginForm = () => {
                                 </div>
                             </div>
                             <div className="form-control">
+                                <label className="d-block">Last Name</label>
+                                <div className="ui input w-100 position-relative">
+                                    <input type="text" placeholder="Enter Last Name"/>
+                                    <svg className="position-absolute l-1 t-1" id="user-svgrepo-com" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 30.667 30.667">
+                                        <g id="Group_6355" data-name="Group 6355">
+                                            <path id="Path_18913" data-name="Path 18913" d="M26.176,4.49A15.334,15.334,0,0,0,4.49,26.176,15.334,15.334,0,0,0,26.176,4.49ZM15.333,28.973a13.64,13.64,0,1,1,13.64-13.64A13.658,13.658,0,0,1,15.333,28.973Z" fill="#b5b3b3"/>
+                                            <path id="Path_18914" data-name="Path 18914" d="M184.889,83.883a3.992,3.992,0,1,0-3.989-3.995A3.995,3.995,0,0,0,184.889,83.883Zm0-6.29a2.3,2.3,0,1,1-2.3,2.3A2.3,2.3,0,0,1,184.889,77.593Z" transform="translate(-169.555 -71.14)" fill="#b5b3b3"/>
+                                            <path id="Path_18915" data-name="Path 18915" d="M130.687,234.1a7.439,7.439,0,0,0-12.091,0,13.409,13.409,0,0,0-1.969,6.19.845.845,0,0,0,1.681.176c.533-5.161,2.665-7.776,6.334-7.776s5.8,2.615,6.334,7.776a.848.848,0,0,0,.84.759.413.413,0,0,0,.088-.006.845.845,0,0,0,.753-.928A13.385,13.385,0,0,0,130.687,234.1Z" transform="translate(-109.308 -216.513)" fill="#b5b3b3"/>
+                                        </g>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div className="form-control">
+                                <label className="d-block">Email Address</label>
+                                <div className="ui input w-100 position-relative">
+                                    <input type="text" placeholder="Enter Email Address"/>
+                                    <svg className="position-absolute l-1 t-1" id="user-svgrepo-com" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 30.667 30.667">
+                                        <g id="Group_6355" data-name="Group 6355">
+                                            <path id="Path_18913" data-name="Path 18913" d="M26.176,4.49A15.334,15.334,0,0,0,4.49,26.176,15.334,15.334,0,0,0,26.176,4.49ZM15.333,28.973a13.64,13.64,0,1,1,13.64-13.64A13.658,13.658,0,0,1,15.333,28.973Z" fill="#b5b3b3"/>
+                                            <path id="Path_18914" data-name="Path 18914" d="M184.889,83.883a3.992,3.992,0,1,0-3.989-3.995A3.995,3.995,0,0,0,184.889,83.883Zm0-6.29a2.3,2.3,0,1,1-2.3,2.3A2.3,2.3,0,0,1,184.889,77.593Z" transform="translate(-169.555 -71.14)" fill="#b5b3b3"/>
+                                            <path id="Path_18915" data-name="Path 18915" d="M130.687,234.1a7.439,7.439,0,0,0-12.091,0,13.409,13.409,0,0,0-1.969,6.19.845.845,0,0,0,1.681.176c.533-5.161,2.665-7.776,6.334-7.776s5.8,2.615,6.334,7.776a.848.848,0,0,0,.84.759.413.413,0,0,0,.088-.006.845.845,0,0,0,.753-.928A13.385,13.385,0,0,0,130.687,234.1Z" transform="translate(-109.308 -216.513)" fill="#b5b3b3"/>
+                                        </g>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div className="form-control">
+                                <label className="d-block">Mobile Number</label>
+                                <div className="ui input w-100 ">
+                                    <input type="number" className="noCounterNumber" placeholder="Enter Mobile Number"/>
+                                
+                                </div>
+                            </div>
+                            <div className="form-control">
                                 <label className="d-block">Password</label>
                                 <div className="ui input w-100 position-relative">
                                     <input type="text" placeholder="Enter Password"/>
@@ -365,20 +401,16 @@ const PostLoginForm = () => {
                                     </svg>
                                 </div>
                             </div>
-                            <div className="remember-div d-flex justify-content-between">
-                                <p className="d-inline-flex"><input type="checkbox" /><span>Remember me</span></p>
-                                <p><a href="javascript:void(0)">Forget your password?</a></p>
-                            </div>
-                            <button className="ui button w-100 fw-100" onClick={e=>ValidateSignin(e)}>Sign In</button>
+                    
+                            <button className="ui button w-100 fw-100" onClick={e=>ValidateSignin(e)}>Create an account</button>
                         </form>
                         <div className="signup-div text-center">
-                            <p>Don't have an account? <Link to={'/signup'} href="javascript:void(0)">Signup Now</Link></p>
+                            <p>Already a User? <a href="javascript:void(0)">Sign in</a></p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    )
+    </>
+  )
 }
-
-export default PostLoginForm
