@@ -1,6 +1,12 @@
 import React from "react"
+import { useNavigate } from "react-router-dom";
 
 const Card = () => {
+    const navigate=useNavigate()
+    const navigateUnits=(e)=>{
+        e.preventDefault();
+        navigate('/preBooking/units')
+    }
     return(
         <div className='rentNow-container'>
         <div className='rentNow-card bg-white'>
@@ -59,7 +65,7 @@ const Card = () => {
             </div>
             <div className='col-lg-2 col-md-2 col-sm-12'>
             <div className='rentNow-card-action d-flex justify-content-center align-items-center h-100'>
-                <button className="ui button btn-success">View Units</button>
+                <button className="ui button btn-success" onClick={e=>navigateUnits(e)}>View Units</button>
             </div>
             </div>
         </div>
