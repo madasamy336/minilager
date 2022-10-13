@@ -10,6 +10,11 @@ import Payment from './app/components/postbooking/payment/Payment';
 import Updatepassword from './app/components/postbooking/update password/Updatepassword';
 import { useEffect, useState } from 'react';
 import PostSignupForm from './app/pages/PostSignupForm';
+import Units from './app/pages/Units';
+import RentingDetails from './app/pages/RentingDetails';
+import AddOn from './app/pages/AddOn';
+import TenantDetails from './app/pages/TenantDetails';
+import EsignPayment from './app/pages/EsignPayment';
 
 
 function App() {
@@ -23,16 +28,21 @@ function App() {
         <>
 
             <Header />
-            <div className='ui fluid container h-100 '>
-                <div className='ui segment pushable overflow-y-auto'>
+            <div className='ui fluid container h-100' id='Maincontent'>
+                <div className={location.pathname.startsWith('/postBooking') &&'ui segment pushable '}>
                     {location.pathname.startsWith('/postBooking') && <SidebarPostBooking />}
 
                     <Routes>
                         <Route exact path='/home' element={<RentNow />} />
                         <Route path='/login' element={<PostLoginForm />} />
                         <Route path='/signup' element={<PostSignupForm />} />
+                        <Route path='/preBooking/units' element={<Units/>} />
+                        <Route path='/preBooking/rentingDetails' element={<RentingDetails/>} />
+                        <Route path='/preBooking/addOns' element={<AddOn/>} />
+                        <Route path='/preBooking/TenantDetails' element={<TenantDetails/>}/>
+                        <Route path='/preBooking/esignPayment' element={<EsignPayment/>} />
                     </Routes>
-                    <div className="pusher pusher-desktop">
+                    <div className={location.pathname.startsWith('/postBooking') && 'pusher pusher-desktop'}>
                         {/* for postBooking */}
                         <Routes>
                             <Route path='/postBooking/Profile' element={<Profile />} />

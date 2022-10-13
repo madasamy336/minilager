@@ -4,10 +4,12 @@ html{
 body{
     font-family: 'poppins'  !important;
     font-size: 14px !important;
-    height: 100vh;
 }
 p{
     line-height: 1.5 !important;
+}
+#mainContent{
+    background-color: $layoutBackground !important;
 }
 .pusher-desktop{
     transform: translate3d(170px,0,0) !important;

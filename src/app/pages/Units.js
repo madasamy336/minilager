@@ -1,7 +1,9 @@
 import AccordionExampleStyled from '../components/unitsfilter/UnitsFilter'
 import DropdownExampleSelection from '../components/dropdown/Dropdown'
+import { useNavigate } from 'react-router-dom'
 
 const Units = () => {
+    const navigate=useNavigate()
     const tenantTypeOptions = [
         {
           key: 1,
@@ -27,12 +29,16 @@ const Units = () => {
             value: 2,
           },
         ]
+        const rentNow=(e)=>{
+            e.preventDefault();
+            navigate('/preBooking/rentingDetails')
+        }
 
     return (
         <div className="units-wrapper">
             <div className="container">
                 <div className="units-banner">
-                    <img className='w-100' src='./assets/images/rentnow-img.png' alt="Storage Units"/>
+                    <img className='w-100' src='/assets/images/rentnow-img.png' alt="Storage Units"/>
                 </div>
                 <div className="units-row">
                     <div className="row">
@@ -59,7 +65,7 @@ const Units = () => {
                                         <div className='col-lg-4 px-2'>
                                             <div className='card'>
                                                 <div className='card-img text-center position-relative'>
-                                                    <img src='./assets/images/units.png' alt='Units' />
+                                                    <img src='/assets/images/units.png' alt='Units' />
                                                     <p className='position-absolute t-2 r-0'>1 MONTH FREE</p>
                                                 </div>
                                                 <div className='card-body'>
@@ -113,7 +119,7 @@ const Units = () => {
                                                     <div className='card-actions'>
                                                         <div className='d-flex justify-content-between'>
                                                             <h2>$47.00</h2>
-                                                            <button className='ui button btn-success'>Rent Now</button>
+                                                            <button className='ui button btn-success'onClick={e=>rentNow(e)}>Rent Now</button>
                                                         </div>
                                                     </div>
                                                 </div>
