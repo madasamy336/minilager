@@ -14,12 +14,12 @@ export default function Header() {
    <a  href="https://123minilager.no"className="item fs-7 fw-700 mx-4 navtext py-3">
     HOME
   </a>
-  <NavLink to={'/'} className="item fs-7 fw-700 mx-4 navtext py-3">
+  <NavLink to={'/home'}  className="item fs-7 fw-700 mx-4 navtext py-3">
   ORDER MINI STOCK
   </NavLink>
-  <a className="item fs-7 fw-700 mx-4 navtext py-3">
+  <NavLink to={'/login'} className="item fs-7 fw-700 mx-4 navtext py-3">
   MY SIDE
-  </a>
+  </NavLink>
    </div>
     </div>
     </div>
