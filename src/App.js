@@ -28,7 +28,7 @@ function App() {
         <>
 
             <Header />
-            <div className='ui fluid container h-100' id='Maincontent'>
+            <div className={`ui fluid container ${location.pathname.startsWith('/postBooking') && 'h-100'} `} id='mainContent'>
                 <div className={location.pathname.startsWith('/postBooking') &&'ui segment pushable '}>
                     {location.pathname.startsWith('/postBooking') && <SidebarPostBooking />}
 
