@@ -1,8 +1,9 @@
 export default function PreBookingBreadcrumb(props) {
   return (
-    <div className="text-center my-5">
+  <div className="pt-1">
+      <div className="text-center my-6">
           <div className="ui small breadcrumb">
-              <div className={props.activeStep.startsWith(1)?'section text-success':'section' }>
+              <div className={`section mb-1  ${props.activeStep.startsWith(1)&&' text-success'}` }>
               {/* <svg
       xmlns="http://www.w3.org/2000/svg"
       width="39.333"
@@ -30,7 +31,7 @@ export default function PreBookingBreadcrumb(props) {
      RENTING DETAILS
               </div>
               <i className="right chevron icon divider"></i>
-              <div className={props.activeStep.startsWith(12)?'section text-success':'section'}>
+              <div className={`section mb-1  ${props.activeStep.startsWith(12)&&' text-success'}` }>
               {/* <svg
       xmlns="http://www.w3.org/2000/svg"
       width="23.939"
@@ -54,10 +55,11 @@ export default function PreBookingBreadcrumb(props) {
     ADD ON
               </div>
               <i className="right chevron icon divider"></i>
-              <div className={props.activeStep.startsWith(123)?'section text-success':'section'}>TENANT DEATILS</div>
+              <div className={`section mb-1  ${props.activeStep.startsWith(123)&&' text-success'}` }>TENANT DEATILS</div>
               <i className="right chevron icon divider"></i>
-              <div className={props.activeStep.startsWith(1234)?'section text-success':'section'}>E-SIGN &PAY NOW</div>
+              <div className={`section mb-1  ${props.activeStep.startsWith(1234)&&' text-success'}` }>E-SIGN &PAY NOW</div>
           </div>
     </div>
+  </div>
   )
 }
