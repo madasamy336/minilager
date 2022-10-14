@@ -337,7 +337,7 @@ const PostLoginForm = () => {
                     <div className="postloginform-inputs">
                         <div className="form-title">
                             <h2 className="text-success fw-600">WELCOME</h2>
-                            <p>Don't have an account? <Link to={'/signup'} className="fw-500" href="javascript:void(0);">Signup Now</Link></p>
+                            <p>Don't have an account? <Link to={'/signup'} className="fw-500">Signup Now</Link></p>
                         </div>
                         <form>
                             <div className="form-control">
@@ -356,7 +356,7 @@ const PostLoginForm = () => {
                             <div className="form-control">
                                 <label className="d-block">Password</label>
                                 <div className="ui input w-100 position-relative">
-                                    <input type="text" placeholder="Enter Password"/>
+                                    <input type="password" placeholder="Enter Password"/>
                                     <svg className="position-absolute l-1 t-1" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 22.036 32">
                                         <g id="password-svgrepo-com" transform="translate(-31.62)" opacity="0.21">
                                             <path id="Path_18916" data-name="Path 18916" d="M50.9,11.539h-.521v-3.8a7.739,7.739,0,0,0-15.479,0v3.8h-.522A2.761,2.761,0,0,0,31.62,14.3V29.243A2.761,2.761,0,0,0,34.377,32H50.9a2.761,2.761,0,0,0,2.757-2.757V14.3A2.76,2.76,0,0,0,50.9,11.539Zm-13.636-3.8a5.376,5.376,0,0,1,10.752,0v3.8H37.262Zm14.03,21.5a.4.4,0,0,1-.394.394H34.377a.4.4,0,0,1-.394-.394V14.3a.4.4,0,0,1,.394-.394H50.9a.4.4,0,0,1,.394.394Z"/>
@@ -367,12 +367,12 @@ const PostLoginForm = () => {
                             </div>
                             <div className="remember-div d-flex justify-content-between">
                                 <p className="d-inline-flex"><input type="checkbox" /><span>Remember me</span></p>
-                                <p><a href="javascript:void(0)">Forget your password?</a></p>
+                                <p><a>Forget your password?</a></p>
                             </div>
                             <button className="ui button w-100 fw-100" onClick={e=>ValidateSignin(e)}>Sign In</button>
                         </form>
                         <div className="signup-div text-center">
-                            <p>Don't have an account? <Link to={'/signup'} href="javascript:void(0)">Signup Now</Link></p>
+                            <p>Don't have an account? <Link to={'/signup'}>Signup Now</Link></p>
                         </div>
                     </div>
                 </div>

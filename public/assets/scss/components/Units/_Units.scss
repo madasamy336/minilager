@@ -8,7 +8,7 @@
             background-color: $UnitsDropdownBg;
             padding: 2.5rem;
             border-radius: 10px;
-            left: 10rem;
+            left: 18rem;
             right: 0;
             bottom: -4rem;
             @include for-tablet{
@@ -50,7 +50,10 @@
     }
     .units-row{
         .filters-div{
+            height: 100%;
+            border-right: 2px solid #eee;
             @include for-mobile{
+                border-right: 0;
                 padding-top: 5rem;
             }
             .accordion{
@@ -79,12 +82,31 @@
             }
         }
         .units-container-div{
-
-            .units-div{
-                padding-top: 5rem;
-                @include for-mobile{
-                    padding-top: 0rem;
+            padding-top: 5rem;
+            @include for-mobile{
+                padding-top: 0rem;
+            }
+            .error{
+                color: $Error;
+            }
+            .sort-div{
+                padding: 0 1rem;
+                h4{
+                    .dropdown{
+                        .divider{
+                            font-size: 1rem;
+                            font-weight: 400 !important;
+                            padding-left: 0.4rem;
+                        }
+                        .menu{
+                            left: auto;
+                            right: 0;
+                            border-radius: 0 !important;
+                        }
+                    }
                 }
+            }
+            .units-div{
                 .card{    
                     box-shadow: $UnitsCardBoxshadow;
                     border-radius: 10px;
@@ -181,6 +203,24 @@
                                 }
                             }
                         }
+                    }
+                }
+            }
+            .pagination-div{
+                .ui.menu{
+                    background-color: transparent !important;
+                    border: 0 !important;
+                    box-shadow: none !important;
+                    .item{
+                        min-width: 0em;
+                        padding: 0.7rem !important;
+                        &::before{
+                            display: none;
+                        }
+                    }
+                    .item.active{
+                        background-color: transparent !important;
+                        color: $primaryColor;
                     }
                 }
             }

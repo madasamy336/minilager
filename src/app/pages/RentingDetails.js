@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import PreBookingBreadcrumb from '../components/prebooking breadcrumb/PreBookingBreadcrumb'
 import SemanticDatepicker from 'react-semantic-ui-datepickers';
-import { Button, Dropdown, Modal } from 'semantic-ui-react';
+import { Dropdown, Modal } from 'semantic-ui-react';
 import { useNavigate } from 'react-router-dom';
 export default function RentingDetails() {
   const navigate=useNavigate()
