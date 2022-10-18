@@ -1,0 +1,411 @@
+html{
+    overflow-x: hidden !important;
+}
+body{
+    font-family: 'poppins'  !important;
+    font-size: 14px !important;
+}
+p{
+    line-height: 1.5 !important;
+}
+#mainContent{
+    background: $layoutBackground !important;
+}
+.pusher-desktop{
+    transform: translate3d(170px,0,0) !important;
+}
+.bg-white{
+    background-color: $textLightColor !important;
+}
+.bg-transparent{
+    background:transparent !important;
+}
+.text-dark{
+    color: $textDarkColor !important;
+}
+.text-white{
+    color: $textLightColor !important;
+}
+.text-success{
+    color: $primaryColor !important;
+}
+.text-success-dark{
+    color: $LoginFormTextColor !important;
+}
+.w-100{
+    width: 100% !important;
+}
+.h-100{
+    height: 100% !important;
+}
+.mx-auto{
+    margin: 0 auto !important;
+}
+.text-center{
+    text-align: center !important;
+}
+.text-left{
+    text-align: left !important;
+}
+.text-right{
+    text-align: right !important;
+}
+.border-0{
+    border: 0 !important ;
+}
+// for display properties
+.d-flex{
+    display: flex !important;
+}
+.d-inline-flex{
+    display: inline-flex !important;
+}
+.d-none{
+    display: none !important;
+}
+.d-inline-block{
+    display: inline-block !important;
+}
+.d-block{
+    display: block !important;
+}
+
+// for flex properties
+
+.justify-content-center{
+    justify-content: center !important;
+}
+.justify-content-between{
+    justify-content: space-between !important;
+}
+.justify-content-start{
+    justify-content: start !important;
+}
+.justify-content-end{
+    justify-content: end !important;
+}
+.align-items-start{
+    align-items: flex-start !important;
+}
+.align-items-center{
+    align-items: center !important;
+}
+.align-items-end{
+    align-items: flex-end !important;
+}
+.flex-wrap{
+    flex-wrap: wrap !important;
+}
+.float-right{
+    float: right !important;
+}
+.bg-success {
+    background-color: $primaryColor !important;
+}
+.bg-success-dark{
+    background-color: $LoginFormTextColor !important;
+}
+.border-success-dark-1{
+    border:1px solid $LoginFormTextColor !important;
+}
+.border-success-1{
+    border:1px solid $primaryColor !important;
+}
+.border-top-success-4{
+    border-top: 4px solid $LoginFormTextColor;
+}
+.box-shadow-none{
+    box-shadow: none !important;
+}
+.border-bottom-only{
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+}
+// pointer events
+.cursor-pointer{
+    cursor: pointer !important;
+}
+// for font weight
+.fw-100{
+    font-weight: 100 !important;
+}
+.fw-200{
+    font-weight: 200 !important;
+}
+.fw-300{
+    font-weight: 300 !important;
+}
+.fw-400{
+    font-weight: 400 !important;
+}
+.fw-500{
+    font-weight: 500 !important;
+}
+.fw-600{
+    font-weight: 600 !important;
+}
+.fw-700{
+    font-weight: 700 !important;
+}
+.btn-success{
+    font-size: 0.7rem !important ;
+    padding: 0.8rem 1.5rem !important ;
+    background-color: $primaryColor !important ;
+    color: $textLightColor !important ;
+    border-radius: 4px !important ;
+    border: none !important;
+}
+
+// for veritcal alignment
+.veritical-align-top{
+    vertical-align: top !important;
+}
+.veritical-align-text-top{
+    vertical-align: text-top !important;
+}
+.veritical-align-bottom{
+    vertical-align: bottom !important;
+}
+.veritical-align-text-bottom{
+    vertical-align: text-bottom !important;
+}
+.veritical-align-center{
+    vertical-align: center !important;
+}
+.veritical-align-sub{
+    vertical-align: sub !important;
+}
+// for positons
+.position-relative{
+    position: relative !important;
+}
+.position-absolute{
+    position: absolute !important;
+}
+.position-fixed{
+    position: fixed !important;
+}
+.position-sticky{
+    position: sticky !important;
+}
+.position-unset{
+    position: unset !important;
+}
+.mh-400{
+    max-height: 400px !important;
+}
+// for font-size
+.fs-1{
+    font-size: 2.5rem !important;
+}
+.fs-2{
+    font-size: 2rem !important;
+}
+.fs-3{
+    font-size: 1.75rem !important;
+}
+.fs-4{
+    font-size: 1.5rem !important;
+}
+.fs-5{
+    font-size: 1.25rem !important;
+}
+.fs-6{
+    font-size: 1rem !important;
+}
+.fs-7{
+    font-size: 0.9rem !important;
+}
+// for overflow
+.overflow-auto{
+    overflow: auto !important;
+}
+.overflow-x-auto{
+    overflow-x: auto !important;
+}
+.overflow-y-auto{
+    overflow-y: auto !important;
+}
+.overflow-hidden{
+    overflow: hidden !important;
+}
+
+.overflow-x-hidden{
+    overflow-x: hidden !important;
+}
+
+.overflow-y-hidden{
+    overflow-y: hidden !important;
+}
+// for disbaling before
+.disablBefore::before{
+    content: none !important;
+}
+// for spacing 
+@for $i from 0 through 6 {
+      // spacing for mobile screen
+
+        // spacing
+    .p-#{$i * 1} {
+        padding: 0.5rem * $i !important;
+    }
+    .pt-#{$i * 1} {
+        padding-top: 0.5rem * $i !important;
+    }
+    .pb-#{$i * 1} {
+        padding-bottom: 0.5rem * $i !important;
+    }
+    .pr-#{$i * 1} {
+        padding-right: 0.5rem * $i !important;
+    }
+    .pl-#{$i * 1} {
+        padding-left: 0.5rem * $i !important;
+    }
+    .px-#{$i * 1} {
+        padding-left: 0.5rem * $i !important;
+        padding-right: 0.5rem * $i !important;
+    }
+    .py-#{$i * 1} {
+        padding-top: 0.5rem * $i !important;
+        padding-bottom: 0.5rem * $i !important;
+    }
+
+    // for margin
+    .m-#{$i * 1} {
+        margin: 0.5rem * $i !important;
+    }
+    .mt-#{$i * 1} {
+        margin-top: 0.5rem * $i !important;
+    }
+    .mb-#{$i * 1} {
+        margin-bottom: 0.5rem * $i !important;
+    }
+    .mr-#{$i * 1} {
+        margin-right: 0.5rem * $i !important;
+    }
+    .ml-#{$i * 1} {
+        margin-left: 0.5rem * $i !important;
+    }
+    .mx-#{$i * 1} {
+        margin-left: 0.5rem * $i !important;
+        margin-right: 0.5rem * $i !important;
+    }
+    .my-#{$i * 1} {
+        margin-top: 0.5rem * $i !important;
+        margin-bottom: 0.5rem * $i !important;
+    }
+  
+
+    // for border-radius
+    .border-radius-#{$i*5}{
+        border-radius: 5px  * $i !important;
+    }
+
+}
+@for $i from 0 through 20{
+    .t-#{$i * 1}{
+        top: 0.5rem * $i !important;
+    }
+    .b-#{$i * 1}{
+        bottom: 0.5rem * $i !important;
+    }
+    .l-#{$i * 1}{
+        left: 0.5rem * $i !important;
+    }
+    .r-#{$i * 1}{
+        right: 0.5rem * $i !important;
+    }
+ 
+}
+@for $i from 1 through 4{
+    .h-#{$i*25}{
+        height: 25% * $i !important;
+    }
+    .w-#{$i*25}{
+        width: 25% * $i !important;
+    }
+
+}
+
+// for removing counter in input
+input.noCounterNumber::-webkit-outer-spin-button,
+input.noCounterNumber::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input.noCounterNumber[type=number] {
+  -moz-appearance: textfield;
+}
+
+// for semantic date picker
+.datePicker .field{
+display: block !important;
+}
+
+// for cards shadow
+.card-border-secondary{
+    border: 1px solid $rentNowCard;
+}
+.card-border-secondary-dashed{
+    border: 1px dashed $UnitsCardsDesc;
+}
+@for $i from 0 through 6{
+    @include for-mobile{
+        .p-sm-#{$i * 1} {
+            padding: 0.5rem * $i !important;
+        }
+        .pt-sm-#{$i * 1} {
+            padding-top: 0.5rem * $i !important;
+        }
+        .pb-sm-#{$i * 1} {
+            padding-bottom: 0.5rem * $i !important;
+        }
+        .pr-sm-#{$i * 1} {
+            padding-right: 0.5rem * $i !important;
+        }
+        .pl-sm-#{$i * 1} {
+            padding-left: 0.5rem * $i !important;
+        }
+        .px-sm-#{$i * 1} {
+            padding-left: 0.5rem * $i !important;
+            padding-right: 0.5rem * $i !important;
+        }
+        .py-sm-#{$i * 1} {
+            padding-top: 0.5rem * $i !important;
+            padding-bottom: 0.5rem * $i !important;
+        }
+        // for margin
+        .m-sm-#{$i * 1} {
+            margin: 0.5rem * $i !important;
+        }
+        .mt-sm-#{$i * 1} {
+            margin-top: 0.5rem * $i !important;
+        }
+        .mb-sm-#{$i * 1} {
+            margin-bottom: 0.5rem * $i !important;
+        }
+        .mr-sm-#{$i * 1} {
+            margin-right: 0.5rem * $i !important;
+        }
+        .ml-sm-#{$i * 1} {
+            margin-left: 0.5rem * $i !important;
+        }
+        .mx-sm-#{$i * 1} {
+            margin-left: 0.5rem * $i !important;
+            margin-right: 0.5rem * $i !important;
+        }
+        .my-sm-#{$i * 1} {
+            margin-top: 0.5rem * $i !important;
+            margin-bottom: 0.5rem * $i !important;
+        }
+    }
+}
+@include for-mobile{
+    .ui.container.responsive{
+       margin-left: 0.2em !important;
+       margin-right: 0.2em !important;
+    }
+}

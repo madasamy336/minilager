@@ -1,0 +1,108 @@
+.rentnow{
+    .rentNow-banner{
+        img{
+            height: 14rem;
+        }
+        h2{
+            font-size: 1.7rem;
+            top: 6rem;
+        }
+    }
+    .rentNow-units{
+        .ui.input{
+            padding: 0rem 0.5rem;
+            width: 50%;
+            box-shadow: 0px 3px 6px #00000029;
+            border-radius: 10px;
+            bottom: 2rem;
+            @include for-desktop{
+                width: 75%;
+            }
+            @include for-sm-mobile{
+                width: 100%;
+            }
+            input{
+                height: 3.7rem;
+                border-left: 1px solid #b5b5b5de!important;
+                padding-left: 4rem!important;
+                @include for-tablet {
+                    padding-left: 2rem!important;
+                }
+                @include for-sm-mobile{
+                    font-size: 0.7rem;
+                }
+                &::placeholder{
+                    color: $placeholder;
+                }
+            }
+            i{
+                left: 5.9rem !important;
+                @include for-tablet {
+                    left: 4rem !important;
+                }
+            }
+            button{
+                font-size: 0.7rem;
+                padding: 0.8rem 1.5rem;
+                background-color: $primaryColor !important;
+                color: $textLightColor !important;
+                border-radius: 4px !important;
+            }
+        }
+        .rentNow-container{
+            padding: 2rem;
+            border-radius: 20px;
+            background-color: $rentNowCard;
+            margin: 0rem auto 2rem;
+            width: 60%;
+            @include for-desktop {
+                width: 90%;
+            }
+            @include for-mobile{
+                padding: 1rem;
+            }
+            .rentNow-card{
+                border-radius: 10px;
+                box-shadow: $rentNowCard-boxShadow;
+                margin-bottom: 1.5rem;
+                &:last-child{
+                    margin-bottom: 0rem;
+                }
+                .rentNow-card-img{
+                    img{
+                        border-radius: 10px 0 0 10px;
+                        @include for-mobile{
+                            border-radius: 10px 10px 0 0;
+                        }
+                    }
+                }
+               .rentNow-card-desc{
+                padding: 1rem;
+                h2{
+                    font-size: 1.3rem;
+                    margin-bottom: 0.8rem;
+                    svg{
+                        margin-right: 0.5rem;
+                    }
+                }
+                p{
+                    font-size: 0.8rem;
+                    margin-bottom: 0.5rem;
+                }
+                .unit-amenities-col{
+                    .unit-amenity{
+                        margin: 0.5rem 0.5rem 0 0;
+                        span{
+                            font-size: 0.8rem;
+                            color: $textDisabledColor;
+                        }
+                    }
+                }
+               }
+               .rentNow-card-action{
+                padding: 1rem 0;
+               }
+            }
+        }
+    }
+}

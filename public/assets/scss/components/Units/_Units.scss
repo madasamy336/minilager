@@ -1,0 +1,229 @@
+.units-wrapper{
+    .units-banner{
+        img{
+            height: 14rem;
+        }
+        .dropdown-div{
+            width: 45%;
+            background-color: $UnitsDropdownBg;
+            padding: 2.5rem;
+            border-radius: 10px;
+            left: 18rem;
+            right: 0;
+            bottom: -4rem;
+            @include for-tablet{
+                width: 60%;
+                padding: 2rem;
+                left: 12rem;
+            }
+            @include for-mobile{
+                width: 95% !important;
+                padding: 1rem;
+                left: 0rem;
+            }
+            h2{
+                color: $textLightColor;
+                font-weight: 400;
+                font-size: 1.5rem;
+                padding: 0 0 1.4rem;
+                @include for-mobile{
+                    font-size: 1.2rem;
+                }
+            }
+            .ui.fluid.dropdown{
+                width: 85% !important;
+                margin: 0 auto;
+                color: $secondaryColor;
+                &:first-child{
+                    @include for-mobile{
+                        margin-bottom: 1rem;
+                    }
+                }
+                @include for-tablet{
+                    width: 95%;
+                }
+                .divider.text{
+                    color: $secondaryColor;
+                }
+            }
+        }
+    }
+    .units-row{
+        .filters-div{
+            height: 100%;
+            border-right: 2px solid #eee;
+            @include for-mobile{
+                border-right: 0;
+                padding-top: 5rem;
+            }
+            .accordion{
+                border-radius: 0 !important;
+                .title{
+                    padding: 1.5rem 1rem !important;
+                    color: $textDarkColor;
+                    border-bottom: 1px solid #eee;
+                    img{
+                        height: 1rem;
+                        width: 1rem;
+                        object-fit: contain;
+                        margin-right: 0.5rem;
+                    }
+                    
+                }
+                .content{
+                    padding: 1rem 1.5rem !important;
+                    div{
+                        a{
+                            font-size: 0.7rem;
+                            cursor: pointer;
+                        }
+                    }
+                }
+            }
+        }
+        .units-container-div{
+            padding-top: 5rem;
+            @include for-mobile{
+                padding-top: 0rem;
+            }
+            .error{
+                color: $Error;
+            }
+            .sort-div{
+                padding: 0 1rem;
+                h4{
+                    .dropdown{
+                        .divider{
+                            font-size: 1rem;
+                            font-weight: 400 !important;
+                            padding-left: 0.4rem;
+                        }
+                        .menu{
+                            left: auto;
+                            right: 0;
+                            border-radius: 0 !important;
+                        }
+                    }
+                }
+            }
+            .units-div{
+                .card{    
+                    box-shadow: $UnitsCardBoxshadow;
+                    border-radius: 10px;
+                    border: 1px solid #E6E6E6;
+                    .card-img{
+                        background-color: $UnitsCardBg;
+                        border-radius: 10px 10px 0 0;
+                        img{
+                            height: 10rem;
+                            width: 10rem;
+                        }
+                        p{
+                            background-color: $textDarkColor;
+                            color: $textLightColor;
+                            font-size: 0.7rem;
+                            padding: 0.2rem 1rem;
+                        }
+                    }
+                    .card-body{
+                        .card-title{
+                            padding: 1rem 0.7rem 0.5rem;
+                            h2{
+                                font-size: 1.5rem;
+                                small{
+                                    font-size: 0.7rem;
+                                }
+                            }
+                            span{
+                                font-size: 0.8rem;
+                                line-height: 1.3;
+                            }
+                            .units-left{
+                                p{
+                                    font-size: 0.7rem;
+                                    color: $UnitsCardsLeft;
+                                }
+                            }
+                        }
+                        .card-desc{
+                            background-color: $UnitsCardBg;
+                            .units-amenitiy{
+                            div{
+                                margin-left: 0.7rem;
+                                span{
+                                    font-size: 0.6rem;
+                                    margin-left: 0.3rem;
+                                }
+                            }
+                        }
+                        }
+                        .card-charges{
+                            padding: 0.5rem 0.7rem;
+                            border-bottom: 1px dotted #eee;
+                            p{
+                                img{
+                                    width: 16px;
+                                    height: 16px;
+                                }
+                                span{
+                                    font-size: 0.6rem;
+                                    margin-left: 0.3rem;
+                                }
+                            }
+                        }
+                        .card-text{
+                            padding: 0.5rem 0.7rem;
+                            border-bottom: 1px dotted #eee;
+                            p{
+                                font-size: 0.6rem;
+                            }
+                        }
+                        .card-actions{
+                            padding: 0.7rem;
+                            div{
+                                h2{
+                                    font-size: 1.2rem;
+                                    img{
+                                        cursor: pointer;
+                                        height: 0.6rem;
+                                        width: 0.6rem;
+                                        object-fit: contain;
+                                    }
+                                }
+                                button{
+                                    padding: 0.5rem 1rem !important;
+                                    img{
+                                        height: 1rem;
+                                        width: 1rem;
+                                    }
+                                    span{
+                                        font-size: 0.8rem !important;
+                                        margin-left: 0.4rem;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            .pagination-div{
+                .ui.menu{
+                    background-color: transparent !important;
+                    border: 0 !important;
+                    box-shadow: none !important;
+                    .item{
+                        min-width: 0em;
+                        padding: 0.7rem !important;
+                        &::before{
+                            display: none;
+                        }
+                    }
+                    .item.active{
+                        background-color: transparent !important;
+                        color: $primaryColor;
+                    }
+                }
+            }
+        }
+    }
+}

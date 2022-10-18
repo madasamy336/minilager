@@ -1,0 +1,23 @@
+@mixin color-scheme($bg,$text) {
+    background-color: $bg;
+    color: $text;
+}
+
+@mixin card-scheme($bg,$border-radius,) {
+    border-radius: $border-radius;
+    background-color: $bg;
+}
+
+@mixin grid-system($device) {
+    .row{
+        .col-#{$device}{
+             flex:1;
+         }
+     
+         @for $size from 1 through $grid-columns {
+             .col-#{$device}-#{$size}{
+                 width: calc($size / $grid-columns * 100%);
+             }
+         }
+     }
+}

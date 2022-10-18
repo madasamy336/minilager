@@ -1,0 +1,40 @@
+@import "./mixins";
+@import "./variables";
+
+//Bootstarp Grid reference 
+
+.container {
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.row {
+  display: flex;
+  flex-wrap: wrap;
+
+  .col {
+    flex: 1;
+  }
+
+  @for $size from 1 through $grid-columns {
+    .col-#{$size} {
+      width: calc($size / $grid-columns * 100%);
+    }
+  }
+}
+
+@media (min-width: 0px) {
+  @include grid-system(xs);
+}
+
+@media (min-width: 320px) {
+  @include grid-system(sm);
+}
+
+@media (min-width: 780px) {
+  @include grid-system(md);
+}
+
+@media (min-width: 992px) {
+  @include grid-system(lg);
+}
