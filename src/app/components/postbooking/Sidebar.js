@@ -126,7 +126,7 @@ export default function SidebarPostBooking() {
           </svg>
             Update Password
             </NavLink>
-            <a  className='item disablBefore fs-7 my-1'>
+            <a href="/" className='item disablBefore fs-7 my-1'>
           <svg className='mr-1' height='12' width='12'
             xmlns="http://www.w3.org/2000/svg"
             data-name="log-out (1)"

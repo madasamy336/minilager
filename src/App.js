@@ -15,7 +15,7 @@ import RentingDetails from './app/pages/RentingDetails';
 import AddOn from './app/pages/AddOn';
 import TenantDetails from './app/pages/TenantDetails';
 import EsignPayment from './app/pages/EsignPayment';
-
+import ForgotPassword from './app/pages/ForgotPassword';
 
 function App() {
     const windowWidth = window.innerWidth
@@ -29,12 +29,13 @@ function App() {
 
             <Header />
             <div className={`ui fluid container ${location.pathname.startsWith('/postBooking') && 'h-100'} `} id='mainContent'>
-                <div className={location.pathname.startsWith('/postBooking') &&'ui segment pushable '}>
+                <div className={`p-1 ${location.pathname.startsWith('/postBooking') &&'ui segment pushable '}`}>
                     {location.pathname.startsWith('/postBooking') && <SidebarPostBooking />}
 
                     <Routes>
                         <Route exact path='/home' element={<RentNow />} />
                         <Route path='/login' element={<PostLoginForm />} />
+                        <Route path='/forgotpassword' element={<ForgotPassword />} />
                         <Route path='/signup' element={<PostSignupForm />} />
                         <Route path='/preBooking/units' element={<Units/>} />
                         <Route path='/preBooking/rentingDetails' element={<RentingDetails/>} />

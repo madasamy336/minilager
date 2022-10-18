@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Accordion, Icon } from 'semantic-ui-react'
+import { Accordion } from 'semantic-ui-react'
 
 export default class AccordionExampleStyled extends Component {
   
@@ -49,7 +49,7 @@ export default class AccordionExampleStyled extends Component {
               <li><input className='mr-1 mb-1' type="checkbox" />10x8x8</li>
               <li><input className='mr-1 mb-1' type="checkbox" />10x9x9</li>
             </ul>
-            <a className='text-success text-right d-block'>MORE</a>
+            <a href="/" className='text-success text-right d-block'>MORE</a>
             </div>
         </Accordion.Content>
 
@@ -69,12 +69,12 @@ export default class AccordionExampleStyled extends Component {
         <div>
               <h6 className='fw-600 mb-1'>LARGE</h6>
               <div className='text-success text-right'>
-                <a>Select All</a> | <a>Clear All</a>
+                <a href="/">Select All</a> | <a href="/">Clear All</a>
               </div>
                 <ul>
                   <li><input className='mr-1 mb-1' type="checkbox" />Small</li>
                   <li><input className='mr-1 mb-1' type="checkbox" />Medium</li>
-                  <li><input className='mr-1 mb-1' type="checkbox" />Large</li>
+                  <li><input className='mr-1 mb-1' type="checkbox" onClick={this.props.modal} />Large</li>
                 </ul>
             </div>
         </Accordion.Content>
@@ -102,7 +102,7 @@ export default class AccordionExampleStyled extends Component {
               <li><input className='mr-1 mb-1' type="checkbox" />10x8x8</li>
               <li><input className='mr-1 mb-1' type="checkbox" />10x9x9</li>
             </ul>
-            <a className='text-success text-right d-block'>MORE</a>
+            <a href="/" className='text-success text-right d-block'>MORE</a>
             </div>
             <div>
               <h6 className='fw-600 mt-2 mb-1'>LARGE</h6>
@@ -114,7 +114,7 @@ export default class AccordionExampleStyled extends Component {
                 <li><input className='mr-1 mb-1' type="checkbox" />10x8x8</li>
                 <li><input className='mr-1 mb-1' type="checkbox" />10x9x9</li>
               </ul>
-              <a className='text-success text-right d-block'>MORE</a>
+              <a href="/" className='text-success text-right d-block'>MORE</a>
             </div>
         </Accordion.Content>
 
@@ -132,7 +132,7 @@ export default class AccordionExampleStyled extends Component {
         </Accordion.Title>
         <Accordion.Content active={activeIndex === 4}>
         <div>
-          <input className='w-100' type="range" />
+        <input className='w-100' type="range" />
         </div>
         </Accordion.Content>
 
@@ -159,7 +159,7 @@ export default class AccordionExampleStyled extends Component {
               <li><input className='mr-1 mb-1' type="checkbox" />10x8x8</li>
               <li><input className='mr-1 mb-1' type="checkbox" />10x9x9</li>
             </ul>
-            <a className='text-success text-right d-block'>MORE</a>
+            <a href="/" className='text-success text-right d-block'>MORE</a>
             </div>
         </Accordion.Content>
       </Accordion>

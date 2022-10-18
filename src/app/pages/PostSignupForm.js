@@ -19,7 +19,7 @@ export default function PostSignupForm() {
                         <div className="createAccountform-inputs">
                             <div className="form-title">
                                 <h2 className="text-success fw-600">CREATE YOUR ACCOUNT</h2>
-                                <p>Already a User? <a>Sign in </a></p>
+                                <p>Already a User? <a href="/" onClick={e => ValidateSignin(e)}>Sign in </a></p>
                             </div>
                             <form>
                                 <div className="form-control">
@@ -79,7 +79,7 @@ export default function PostSignupForm() {
                                 <button className="ui button w-100 fw-100" onClick={e => ValidateSignin(e)}>Create an account</button>
                             </form>
                             <div className="signup-div text-center">
-                                <p>Already have an Account? <a>Sign in</a></p>
+                                <p>Already have an Account? <a href="/" onClick={e => ValidateSignin(e)}>Sign in</a></p>
                             </div>
                         </div>
                     </div>
