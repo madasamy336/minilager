@@ -1,13 +1,15 @@
 import React from "react";
 import Card from "../components/rentnow/Cards";
-
+import { useTranslation } from "react-i18next";
 const RentNow = () => {
+    const { t } = useTranslation();
+    
     return (
         <div className="rentnow py-5">
             <div className="container">
                 <div className="rentNow-banner position-relative">
                     <img className='w-100' src='./assets/images/rentnow-img.png' alt="RENT NOW"/>
-                    <h2 className="text-white position-absolute w-100 text-center">RENT NOW</h2>    
+                    <h2 className="text-white position-absolute w-100 text-center"> {t('RENT NOW')}</h2>    
                 </div>    
                 <div>
                     <div className='rentNow-units text-center'>
@@ -18,7 +20,7 @@ const RentNow = () => {
                                 <path id="Path_4" data-name="Path 4" d="M133.208,79.849a6.729,6.729,0,1,1-6.75-6.719,6.751,6.751,0,0,1,6.75,6.719Zm-2.694,0a4.035,4.035,0,1,0-4.017,4.042A4.073,4.073,0,0,0,130.514,79.852Z" transform="translate(-106.292 -64.907)" fill="#67be5c"/>
                             </g>
                         </svg>
-                        <input className='border-0 border-radius-0' placeholder="Zip, City or Address" type="text" /><i aria-hidden="true" className="search icon"></i><button className="ui button">Search</button>
+                        <input className='border-0 border-radius-0' placeholder={t('Zip,City or Address')} type="text" /><i aria-hidden="true" className="search icon"></i><button className="ui button">Search</button>
                         </div>
                         <Card />
                     </div>

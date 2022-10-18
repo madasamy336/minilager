@@ -16,7 +16,7 @@ import AddOn from './app/pages/AddOn';
 import TenantDetails from './app/pages/TenantDetails';
 import EsignPayment from './app/pages/EsignPayment';
 import { useSelector, useDispatch } from 'react-redux';
-
+import { useTranslation } from "react-i18next";
 import { fetchAppConfig } from '../src/app/redux/actions/appConfig/appConfigAction';
 
 function App() {
@@ -31,8 +31,8 @@ function App() {
     useEffect(() => {
         dispatch(fetchAppConfig())
     }, [])
-
-    const windowWidth = window.innerWidth
+    const { t, i18n } = useTranslation();
+    const windowWidth = window.innerWidth;
     const [mobileWidth, SetmobileWidth] = useState();
     const location = useLocation()
     useEffect(() => {
