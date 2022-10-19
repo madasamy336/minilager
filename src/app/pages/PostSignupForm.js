@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { Dropdown, Flag, Input } from "semantic-ui-react";
 
 export default function PostSignupForm() {
     const navigate = useNavigate();
@@ -6,6 +7,32 @@ export default function PostSignupForm() {
         e.preventDefault();
         navigate('/login')
     }
+    const options = [
+        { key: 'af', value: '+91', flag: 'af', text: '+91' },
+        { key: 'ax', value: 'ax', flag: 'ax', text: 'Aland Islands' },
+        { key: 'al', value: 'al', flag: 'al', text: 'Albania' },
+        { key: 'dz', value: 'dz', flag: 'dz', text: 'Algeria' },
+        { key: 'as', value: 'as', flag: 'as', text: 'American Samoa' },
+        { key: 'ad', value: 'ad', flag: 'ad', text: 'Andorra' },
+        { key: 'ao', value: 'ao', flag: 'ao', text: 'Angola' },
+        { key: 'ai', value: 'ai', flag: 'ai', text: 'Anguilla' },
+        { key: 'ag', value: 'ag', flag: 'ag', text: 'Antigua' },
+        { key: 'ar', value: 'ar', flag: 'ar', text: 'Argentina' },
+        { key: 'am', value: 'am', flag: 'am', text: 'Armenia' },
+        { key: 'aw', value: 'aw', flag: 'aw', text: 'Aruba' },
+        { key: 'au', value: 'au', flag: 'au', text: 'Australia' },
+        { key: 'at', value: 'at', flag: 'at', text: 'Austria' },
+        { key: 'az', value: 'az', flag: 'az', text: 'Azerbaijan' },
+        { key: 'bs', value: 'bs', flag: 'bs', text: 'Bahamas' },
+        { key: 'bh', value: 'bh', flag: 'bh', text: 'Bahrain' },
+        { key: 'bd', value: 'bd', flag: 'bd', text: 'Bangladesh' },
+        { key: 'bb', value: 'bb', flag: 'bb', text: 'Barbados' },
+        { key: 'by', value: 'by', flag: 'by', text: 'Belarus' },
+        { key: 'be', value: 'be', flag: 'be', text: 'Belgium' },
+        { key: 'bz', value: 'bz', flag: 'bz', text: 'Belize' },
+        { key: 'bj', value: 'bj', flag: 'bj', text: 'Benin' },
+      ]
+
     return (
         <>
             <div className="createAccountform my-5 mx-auto">
@@ -19,7 +46,7 @@ export default function PostSignupForm() {
                         <div className="createAccountform-inputs">
                             <div className="form-title">
                                 <h2 className="text-success fw-600">CREATE YOUR ACCOUNT</h2>
-                                <p>Already a User? <a>Sign in </a></p>
+                                <p>Already a User? <a href="/" onClick={e => ValidateSignin(e)}>Sign in </a></p>
                             </div>
                             <form>
                                 <div className="form-control">
@@ -59,9 +86,14 @@ export default function PostSignupForm() {
                                 </div>
                                 <div className="form-control">
                                     <label className="d-block">Mobile Number</label>
-                                    <div className="ui input w-100 position-relative">
-                                        <input type="tel" placeholder="Enter Mobile Number" />
-                                        <img className="position-absolute l-1 t-1 norway-img" src="/assets/images/norway.png" alt="Norway" />
+                                    <div className="ui input w-100">
+                                    <Input  type="tel" placeholder="Enter Mobile Number"
+                                            label={<Dropdown  search  options={options} />}
+                                            labelPosition='left'
+                                        
+                                        />
+                              
+                                        
                                     </div>
                                 </div>
                                 <div className="form-control">
@@ -79,7 +111,7 @@ export default function PostSignupForm() {
                                 <button className="ui button w-100 fw-100" onClick={e => ValidateSignin(e)}>Create an account</button>
                             </form>
                             <div className="signup-div text-center">
-                                <p>Already have an Account? <a>Sign in</a></p>
+                            <p>Already have an Account? <a href="/" onClick={e => ValidateSignin(e)}>Sign in</a></p>
                             </div>
                         </div>
                     </div>

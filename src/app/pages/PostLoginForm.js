@@ -5,6 +5,10 @@ const PostLoginForm = () => {
       e.preventDefault();
       navigate('/postBooking/Profile')
     }
+    const ForgotPassword=(e)=>{
+        e.preventDefault();
+        navigate('/forgotpassword')
+      }
     return(
         <div className="postloginform my-5 mx-auto">
             <div className="row">
@@ -367,7 +371,7 @@ const PostLoginForm = () => {
                             </div>
                             <div className="remember-div d-flex justify-content-between">
                                 <p className="d-inline-flex"><input type="checkbox" /><span>Remember me</span></p>
-                                <p><a>Forget your password?</a></p>
+                                <p><a href="/" onClick={e=>ForgotPassword(e)}>Forget your password?</a></p>
                             </div>
                             <button className="ui button w-100 fw-100" onClick={e=>ValidateSignin(e)}>Sign In</button>
                         </form>
