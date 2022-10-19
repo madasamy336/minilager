@@ -6,7 +6,8 @@ import unitFilterListReducer from './unitList/unitListReducer';
 const rootReducer = combineReducers({
   appConfig: appConfigReducer,
   unitFilter: unitFilterListReducer,
-  faciltyList: FaciltyReducer
+  faciltyList: FaciltyReducer,
+  
 })
 
 export default rootReducer

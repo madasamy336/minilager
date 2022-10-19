@@ -1,6 +1,6 @@
 import instance from '../../../services/instance';
 import request from '../../../services/request';
-import { appConfigConstant } from '../../constants/constant';
+import { constant } from '../../constants/constant';
 
 export const fetchFacilty = () => {
     return (dispatch) => {
@@ -28,23 +28,39 @@ export const fetchFacilty = () => {
     }
     
 }
+export const GetFacilityId = (locationId) => {
+    return (dispatch) => {
+        if(locationId !== null && locationId !== 'undefined'&& locationId !== ''){
+            localStorage.setItem('locationid',locationId);
+            dispatch(getLocationId(locationId));    
+        }
+
+    }
+
+}
 
 export const fetchAppConfigRequest = () => {
     return {
-        type: appConfigConstant.FACILITY_REQUEST
+        type: constant.FACILITY_REQUEST
     }
 }
 
 export const fetchAppConfigSuccess = countries => {
     return {
-        type: appConfigConstant.FACILITY_SUCESS,
+        type: constant.FACILITY_SUCESS,
         payload: countries
     }
 }
 
+export const getLocationId = id => {
+    return {
+        type: constant.UNIT_GETLOCATIONID,
+        payload: id,
+    }
+}
 export const fetchAppConfigFailure = error => {
     return {
-        type: appConfigConstant.FACILITY_FAILURE,
-        payload: error
+        type: constant.FACILITY_FAILURE,
+        payload: error 
     }
 }

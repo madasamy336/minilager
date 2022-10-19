@@ -1,14 +1,19 @@
 import React from "react"
 import { useNavigate } from "react-router-dom";
-
+import { useTranslation } from "react-i18next";
+import { useSelector, useDispatch } from 'react-redux';
+import { GetFacilityId } from '../../redux/actions/facility/faciltyAction'
 const Card = (props) => {
     const facilityDetailResponse = props;
+    const dispatch = useDispatch()
     console.log(facilityDetailResponse.facilitydetails);
+    const { t } = useTranslation();
     // facilityDetailResponse.facilitydetails.map(response => {
     //     console.log(response)
     // })
     const navigate = useNavigate()
-    const navigateUnits = (e) => {
+    const navigateUnits = (e, id) => {
+        dispatch(GetFacilityId(id));
         e.preventDefault();
         navigate('/preBooking/units')
     }
@@ -73,7 +78,7 @@ const Card = (props) => {
                                 </div>
                                 <div className='col-lg-2 col-md-2 col-sm-12'>
                                     <div className='rentNow-card-action d-flex justify-content-center align-items-center h-100'>
-                                        <button className="ui button btn-success" onClick={e => navigateUnits(e)}>View Units</button>
+                                        <button className="ui button btn-success" onClick={e => navigateUnits(e,details.locationId)}> {t("View Units")}</button>
                                     </div>
                                 </div>
                             </div>
