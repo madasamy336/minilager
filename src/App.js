@@ -16,9 +16,24 @@ import AddOn from './app/pages/AddOn';
 import TenantDetails from './app/pages/TenantDetails';
 import EsignPayment from './app/pages/EsignPayment';
 import ForgotPassword from './app/pages/ForgotPassword';
+import { useSelector, useDispatch } from 'react-redux';
+import { useTranslation } from "react-i18next";
+import { fetchAppConfig } from '../src/app/redux/actions/appConfig/appConfigAction';
 
 function App() {
-    const windowWidth = window.innerWidth
+
+    const loading = useSelector(state => state.appConfig.loading)
+    const error = useSelector(state => state.appConfig.error)
+    const countries = useSelector(state => state.appConfig.countries)
+    const dispatch = useDispatch()
+
+    console.log({ loading }, { error }, { countries });
+
+    useEffect(() => {
+        dispatch(fetchAppConfig())
+    }, [])
+    const { t, i18n } = useTranslation();
+    const windowWidth = window.innerWidth;
     const [mobileWidth, SetmobileWidth] = useState();
     const location = useLocation()
     useEffect(() => {
@@ -37,11 +52,11 @@ function App() {
                         <Route path='/login' element={<PostLoginForm />} />
                         <Route path='/forgotpassword' element={<ForgotPassword />} />
                         <Route path='/signup' element={<PostSignupForm />} />
-                        <Route path='/preBooking/units' element={<Units/>} />
-                        <Route path='/preBooking/rentingDetails' element={<RentingDetails/>} />
-                        <Route path='/preBooking/addOns' element={<AddOn/>} />
-                        <Route path='/preBooking/TenantDetails' element={<TenantDetails/>}/>
-                        <Route path='/preBooking/esignPayment' element={<EsignPayment/>} />
+                        <Route path='/preBooking/units' element={<Units />} />
+                        <Route path='/preBooking/rentingDetails' element={<RentingDetails />} />
+                        <Route path='/preBooking/addOns' element={<AddOn />} />
+                        <Route path='/preBooking/TenantDetails' element={<TenantDetails />} />
+                        <Route path='/preBooking/esignPayment' element={<EsignPayment />} />
                     </Routes>
                     <div className={location.pathname.startsWith('/postBooking') && 'pusher pusher-desktop'}>
                         {/* for postBooking */}
