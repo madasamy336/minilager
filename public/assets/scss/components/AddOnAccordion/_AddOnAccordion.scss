@@ -1,0 +1,19 @@
+.addon-accordion-div{
+    .accordion{
+        border-radius: 0 !important;
+        padding: 1rem !important;
+        color: $textDarkColor;
+        border-bottom: 1px solid $RangeSliderBg;
+        .title{
+            p{
+                font-size: 1rem;
+            }
+            img{
+                height: 1rem;
+                width: 1rem;
+                object-fit: contain;
+                margin-right: 0.5rem;
+            }
+        }
+    }
+}

@@ -3,6 +3,7 @@ import PreBookingBreadcrumb from '../components/prebooking breadcrumb/PreBooking
 import SemanticDatepicker from 'react-semantic-ui-datepickers';
 import { Dropdown, Modal } from 'semantic-ui-react';
 import { useNavigate } from 'react-router-dom';
+import AddOnAccordion from '../components/addonaccordion/AddOnAccordion'
 
 export default function AddOn() {
   const navigate = useNavigate()
@@ -481,9 +482,10 @@ export default function AddOn() {
                       ></path>
                     </g>
                   </svg><span className='veritical-align-text-top ml-1'>Vehicle Details</span></h6>
-                <div class="ui form px-4 px-sm-2">
-                  <div className='addon-filter-div'>
+                  <div className='addon-accordion-div'>
+                    <AddOnAccordion />
                   </div>
+                <div class="ui form px-4 px-sm-2">
                   <div class="field w-100 datePicker my-3">
                     <label className='fw-500 fs-7 mb-2'>Vehicle Type</label>
                     <input placeholder='Vehicle Type' />

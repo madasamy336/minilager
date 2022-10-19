@@ -27,17 +27,26 @@ p{
 .text-white{
     color: $textLightColor !important;
 }
+.text-secondary{
+    color: $TextSecondary;
+}
 .text-success{
     color: $primaryColor !important;
 }
 .text-success-dark{
     color: $LoginFormTextColor !important;
 }
+.text-purple{
+    color: $TextPurple;
+}
 .text-danger{
     color: $Error !important;
 }
 .bg-danger{
     background:$Error !important;
+}
+.bg-secondary{
+    background-color: $textDisabledColor !important;
 }
 .bg-alert{
     background-color: $ForgotAlertBg;
