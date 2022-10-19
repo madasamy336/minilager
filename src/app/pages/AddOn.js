@@ -18,9 +18,9 @@ export default function AddOn() {
     open: false,
     dimmer: undefined,
   })
-  const navigateAddon = (e) => {
+  const navigateTenantDEtails = (e) => {
     e.preventDefault();
-    navigate('/preBooking/addOns')
+    navigate('/preBooking/TenantDetails')
 
   }
   const vehicleBrandSelectOption = [
@@ -527,7 +527,7 @@ export default function AddOn() {
 
               <div className='text-center my-4'>
                 <button class="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">BACK</button>
-                <button class="ui button bg-success-dark   fs-7 fw-400 text-white px-5" onClick={e => navigateAddon(e)}>NEXT</button>
+                <button class="ui button bg-success-dark   fs-7 fw-400 text-white px-5" onClick={e => navigateTenantDEtails(e)}>NEXT</button>
               </div>
             </div>
             <div className='col-12 col-md-5 pl-1 pl-sm-0 mb-3'>
