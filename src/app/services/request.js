@@ -1,5 +1,7 @@
 const requests = {
-    common_config: "v1/common/config"
+    common_config: "v1/common/config",
+    facility_cities:"v1/unit/location"
+
 }
 
 

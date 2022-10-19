@@ -1,8 +1,19 @@
 import React from "react";
 import Card from "../components/rentnow/Cards";
+import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from "react-i18next";
+import { fetchFacilty } from '../redux/actions/facility/faciltyAction';
+import { useEffect, useState } from 'react';
 const RentNow = () => {
-    const { t } = useTranslation();
+    const { t } = useTranslation(); 
+    const loading = useSelector(state => state.faciltyList.loading)
+    const error = useSelector(state => state.faciltyList.error)
+    const facilityDetails = useSelector(state => state.faciltyList.countries)
+    const dispatch = useDispatch()
+    useEffect(() => {
+        dispatch(fetchFacilty())
+    }, [])
+
     
     return (
         <div className="rentnow py-5">
@@ -22,7 +33,7 @@ const RentNow = () => {
                         </svg>
                         <input className='border-0 border-radius-0' placeholder={t('Zip,City or Address')} type="text" /><i aria-hidden="true" className="search icon"></i><button className="ui button">Search</button>
                         </div>
-                        <Card />
+                        <Card  facilitydetails={facilityDetails.result}/>
                     </div>
                 </div>
             </div>    

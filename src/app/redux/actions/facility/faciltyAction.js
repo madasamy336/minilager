@@ -2,7 +2,7 @@ import instance from '../../../services/instance';
 import request from '../../../services/request';
 import { appConfigConstant } from '../../constants/constant';
 
-export const fetchAppConfig = () => {
+export const fetchFacilty = () => {
     return (dispatch) => {
         dispatch(fetchAppConfigRequest());
         let config = {
@@ -11,12 +11,16 @@ export const fetchAppConfig = () => {
             },
         };
         instance
-            .get(request.common_config, config)
+            .post(request.facility_cities, config,{})
             .then(response => {
-                const configData = response.data
-                setTimeout(() => {  // to emulate some network delay
-                    dispatch(fetchAppConfigSuccess(configData))
-                }, 2000)
+                const configData = response.data;
+                if(configData.result !== null && configData.result !== 'undefined'&& configData.result !== ''){
+                   // to emulate some network delay
+                        dispatch(fetchAppConfigSuccess(configData))
+               
+                }else{
+                    dispatch(fetchAppConfigFailure('There is no record found'))
+                }
             })
             .catch(error => {
                 dispatch(fetchAppConfigFailure(error.message))
@@ -27,20 +31,20 @@ export const fetchAppConfig = () => {
 
 export const fetchAppConfigRequest = () => {
     return {
-        type: appConfigConstant.CONFIG_REQUEST
+        type: appConfigConstant.FACILITY_REQUEST
     }
 }
 
 export const fetchAppConfigSuccess = countries => {
     return {
-        type: appConfigConstant.CONFIG_SUCCESS,
+        type: appConfigConstant.FACILITY_SUCESS,
         payload: countries
     }
 }
 
 export const fetchAppConfigFailure = error => {
     return {
-        type: appConfigConstant.CONFIG_FAILURE,
+        type: appConfigConstant.FACILITY_FAILURE,
         payload: error
     }
 }
