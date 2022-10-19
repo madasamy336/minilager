@@ -1,6 +1,6 @@
 import instance from '../../../services/instance';
 import request from '../../../services/request';
-import { appConfigConstant } from '../../constants/constant';
+import { constant } from '../../constants/constant';
 
 export const fetchAppConfig = () => {
     return (dispatch) => {
@@ -14,9 +14,7 @@ export const fetchAppConfig = () => {
             .get(request.common_config, config)
             .then(response => {
                 const configData = response.data
-                setTimeout(() => {  // to emulate some network delay
-                    dispatch(fetchAppConfigSuccess(configData))
-                }, 2000)
+                dispatch(fetchAppConfigSuccess(configData));
             })
             .catch(error => {
                 dispatch(fetchAppConfigFailure(error.message))
@@ -27,20 +25,20 @@ export const fetchAppConfig = () => {
 
 export const fetchAppConfigRequest = () => {
     return {
-        type: appConfigConstant.CONFIG_REQUEST
+        type: constant.CONFIG_REQUEST
     }
 }
 
-export const fetchAppConfigSuccess = countries => {
+export const fetchAppConfigSuccess = configData => {
     return {
-        type: appConfigConstant.CONFIG_SUCCESS,
-        payload: countries
+        type: constant.CONFIG_SUCCESS,
+        payload: configData
     }
 }
 
 export const fetchAppConfigFailure = error => {
     return {
-        type: appConfigConstant.CONFIG_FAILURE,
+        type: constant.CONFIG_FAILURE,
         payload: error
     }
 }
