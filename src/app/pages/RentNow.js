@@ -31,7 +31,7 @@ const RentNow = () => {
                                 <path id="Path_4" data-name="Path 4" d="M133.208,79.849a6.729,6.729,0,1,1-6.75-6.719,6.751,6.751,0,0,1,6.75,6.719Zm-2.694,0a4.035,4.035,0,1,0-4.017,4.042A4.073,4.073,0,0,0,130.514,79.852Z" transform="translate(-106.292 -64.907)" fill="#67be5c"/>
                             </g>
                         </svg>
-                        <input className='border-0 border-radius-0' placeholder={t('Zip,City or Address')} type="text" /><i aria-hidden="true" className="search icon"></i><button className="ui button">Search</button>
+                        <input className='border-0 border-radius-0' placeholder={t('Zip,City or Address')} type="text" /><i aria-hidden="true" className="search icon"></i><button className="ui button"> {t('Search')}</button>
                         </div>
                         <Card  facilitydetails={facilityDetails.result}/>
                     </div>
