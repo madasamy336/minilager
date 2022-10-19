@@ -4,6 +4,7 @@ html{
 body{
     font-family: 'poppins'  !important;
     font-size: 14px !important;
+    background: #f9f9f9 !important;
 }
 p{
     line-height: 1.5 !important;
@@ -31,6 +32,15 @@ p{
 }
 .text-success-dark{
     color: $LoginFormTextColor !important;
+}
+.text-danger{
+    color: $Error !important;
+}
+.bg-danger{
+    background:$Error !important;
+}
+.bg-alert{
+    background-color: $ForgotAlertBg;
 }
 .w-100{
     width: 100% !important;
@@ -352,6 +362,9 @@ display: block !important;
 .card-border-secondary-dashed{
     border: 1px dashed $UnitsCardsDesc;
 }
+.error{
+    color: $Error;
+}
 @for $i from 0 through 6{
     @include for-mobile{
         .p-sm-#{$i * 1} {
@@ -407,5 +420,17 @@ display: block !important;
     .ui.container.responsive{
        margin-left: 0.2em !important;
        margin-right: 0.2em !important;
+    }
+    .reverse-sm{
+        flex-flow: column-reverse;
+    }
+}
+.tabel-borderless{
+    border: none !important;
+    tr{
+        border: none !important;
+        td{
+            border: none !important;
+        }
     }
 }
