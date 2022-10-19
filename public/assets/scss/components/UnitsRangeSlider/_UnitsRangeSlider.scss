@@ -1,0 +1,43 @@
+.range-div{
+  .range-slider{
+    width: 100% !important;
+    max-width: 500px !important; 
+    height: 50px !important;
+    .track{
+      top: 20px;
+      height: 10px;
+      background-color: $RangeSliderBg;
+      border-radius: 20px 0 0 20px;
+    }
+    .track-1 {
+      background: $RangeSlider;
+      top: 20px;
+      height: 10px;
+    }
+    .track-2{
+      top: 20px;
+      height: 10px;
+      background-color: $RangeSliderBg;
+      border-radius: 0 20px 20px 0;
+    }
+    .thumb{
+      display: flex;
+      flex-flow: column-reverse;
+      align-items: center;
+      top: 12px;
+      width: 1.5rem;
+      height: 1.5rem;
+      line-height: 4.5rem;
+      font-size: 0.9em;
+      text-align: center;
+      font-weight: 500;
+      background-color: $textLightColor;
+      color: $textDarkColor;
+      cursor: pointer;
+      border: 2px solid $LoginFormTextColor;
+      box-sizing: border-box;
+      border-radius: 50% !important;
+      outline: none;
+    }
+  }
+}
