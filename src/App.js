@@ -1,13 +1,13 @@
 import { Routes, Route, useLocation } from 'react-router-dom'
-import SidebarPostBooking from './app/components/postbooking/Sidebar';
+import SidebarPostBooking from './app/pages/postbooking/Sidebar';
 import Header from './app/components/header/Header';
 import PostLoginForm from './app/pages/PostLoginForm';
 import RentNow from './app/pages/RentNow'
-import Profile from './app/components/postbooking/profile/Profile';
-import MyLeases from './app/components/postbooking/my leases/MyLeases';
-import MYInvoices from './app/components/postbooking/my invoices/MYInvoices';
-import Payment from './app/components/postbooking/payment/Payment';
-import Updatepassword from './app/components/postbooking/update password/Updatepassword';
+import Profile from './app/pages/postbooking/profile/Profile';
+import MyLeases from './app/pages/postbooking/my leases/MyLeases';
+import MYInvoices from './app/pages/postbooking/my invoices/MYInvoices';
+import Payment from './app/pages/postbooking/payment/Payment';
+import Updatepassword from './app/pages/postbooking/update password/Updatepassword';
 import { useEffect, useState } from 'react';
 import PostSignupForm from './app/pages/PostSignupForm';
 import Units from './app/pages/Units';
@@ -31,7 +31,7 @@ function App() {
             <div className={`ui fluid container ${location.pathname.startsWith('/postBooking') && 'h-100'} `} id='mainContent'>
                 <div className={`p-1 ${location.pathname.startsWith('/postBooking') &&'ui segment pushable '}`}>
                     {location.pathname.startsWith('/postBooking') && <SidebarPostBooking />}
-
+                  
                     <Routes>
                         <Route exact path='/home' element={<RentNow />} />
                         <Route path='/login' element={<PostLoginForm />} />
