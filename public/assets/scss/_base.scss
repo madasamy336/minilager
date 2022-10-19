@@ -33,6 +33,15 @@ p{
 .text-success-dark{
     color: $LoginFormTextColor !important;
 }
+.text-danger{
+    color: $Error !important;
+}
+.bg-danger{
+    background:$Error !important;
+}
+.bg-alert{
+    background-color: $ForgotAlertBg;
+}
 .w-100{
     width: 100% !important;
 }
@@ -412,7 +421,16 @@ display: block !important;
        margin-left: 0.2em !important;
        margin-right: 0.2em !important;
     }
+    .reverse-sm{
+        flex-flow: column-reverse;
+    }
 }
-.bg-alert{
-    background-color: $ForgotAlertBg;
+.tabel-borderless{
+    border: none !important;
+    tr{
+        border: none !important;
+        td{
+            border: none !important;
+        }
+    }
 }
