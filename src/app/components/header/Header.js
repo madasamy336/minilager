@@ -7,7 +7,7 @@ export default function Header() {
 
     <div className='ui secondary pointing menu py-1 bg-white'>
     <a href="/" className="item">
-    <img className='w-50' src='https://123minilager.no/wp-content/uploads/2020/03/cropped-123Minilager-Lager-til-leie-1.jpg'/>
+    <img className='w-50' src='https://123minilager.no/wp-content/uploads/2020/03/cropped-123Minilager-Lager-til-leie-1.jpg' alt="123minilager.no"/>
     </a>
    <div className='right menu'>
 

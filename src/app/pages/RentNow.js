@@ -3,7 +3,7 @@ import Card from "../components/rentnow/Cards";
 
 const RentNow = () => {
     return (
-        <div className="rentnow py-5">
+        <div className="rentnow">
             <div className="container">
                 <div className="rentNow-banner position-relative">
                     <img className='w-100' src='./assets/images/rentnow-img.png' alt="RENT NOW"/>

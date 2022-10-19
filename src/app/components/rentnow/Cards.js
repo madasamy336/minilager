@@ -13,7 +13,7 @@ const Card = () => {
         <div className='row'>
             <div className='col-lg-3 col-md-3 col-sm-12'>
                 <div className='rentNow-card-img h-100'>
-                    <img className='w-100 h-100' src="./assets/images/Minilager-Container.png" alt='' />
+                    <img className='w-100 h-100' src="/assets/images/Minilager-Container.png" alt='' />
                 </div>
             </div>
             <div className='col-lg-7 col-md-7 col-sm-12'>
