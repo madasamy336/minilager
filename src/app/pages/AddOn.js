@@ -22,7 +22,6 @@ export default function AddOn() {
   const navigateTenantDEtails = (e) => {
     e.preventDefault();
     navigate('/preBooking/TenantDetails')
-
   }
   const vehicleBrandSelectOption = [
     {
@@ -528,7 +527,7 @@ export default function AddOn() {
               </div>
 
               <div className='text-center my-4'>
-                <button class="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">BACK</button>
+                <button onClick={()=>  navigate('/preBooking/rentingDetails')} class="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">BACK</button>
                 <button class="ui button bg-success-dark   fs-7 fw-400 text-white px-5" onClick={e => navigateTenantDEtails(e)}>NEXT</button>
               </div>
             </div>

@@ -233,7 +233,7 @@ export default function TenantDetails() {
     
       </div>
       <div className="ui container text-center my-5">
-      <button class="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">BACK</button>
+      <button onClick={()=>  navigate('/preBooking/addOns')} class="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">BACK</button>
       <button onClick={() => SetCreditCheckModal({ open: true, dimmer: 'blurring' })} class="ui button bg-success-dark   fs-7 fw-400 text-white px-5">NEXT</button>
       </div>
 

@@ -375,6 +375,57 @@ display: block !important;
     color: $Error;
 }
 @for $i from 0 through 6{
+    @include for-tablet{
+        .p-md-#{$i * 1} {
+            padding: 0.5rem * $i !important;
+        }
+        .pt-md-#{$i * 1} {
+            padding-top: 0.5rem * $i !important;
+        }
+        .pb-md-#{$i * 1} {
+            padding-bottom: 0.5rem * $i !important;
+        }
+        .pr-md-#{$i * 1} {
+            padding-right: 0.5rem * $i !important;
+        }
+        .pl-md-#{$i * 1} {
+            padding-left: 0.5rem * $i !important;
+        }
+        .px-md-#{$i * 1} {
+            padding-left: 0.5rem * $i !important;
+            padding-right: 0.5rem * $i !important;
+        }
+        .py-md-#{$i * 1} {
+            padding-top: 0.5rem * $i !important;
+            padding-bottom: 0.5rem * $i !important;
+        }
+        // for margin
+        .m-md-#{$i * 1} {
+            margin: 0.5rem * $i !important;
+        }
+        .mt-md-#{$i * 1} {
+            margin-top: 0.5rem * $i !important;
+        }
+        .mb-md-#{$i * 1} {
+            margin-bottom: 0.5rem * $i !important;
+        }
+        .mr-md-#{$i * 1} {
+            margin-right: 0.5rem * $i !important;
+        }
+        .ml-md-#{$i * 1} {
+            margin-left: 0.5rem * $i !important;
+        }
+        .mx-md-#{$i * 1} {
+            margin-left: 0.5rem * $i !important;
+            margin-right: 0.5rem * $i !important;
+        }
+        .my-md-#{$i * 1} {
+            margin-top: 0.5rem * $i !important;
+            margin-bottom: 0.5rem * $i !important;
+        }
+    }
+}
+@for $i from 0 through 6{
     @include for-mobile{
         .p-sm-#{$i * 1} {
             padding: 0.5rem * $i !important;
