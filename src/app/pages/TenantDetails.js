@@ -190,7 +190,6 @@ export default function TenantDetails() {
            {
             contactaccordian.map((data,index)=>(
               <TenantDetailEmergengyContactAccordian removefunction={removeEmergencyContact} index={index} contactLength={data.contactaccordianLength} firtName={data.firname} lastName={data.lastname} email={data.email} phone={data.phone}/>
-              
             ))
            }
           </div>

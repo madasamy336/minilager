@@ -64,7 +64,7 @@ export default function PostSignupForm() {
                                 <div className="form-control">
                                     <label className="d-block">Mobile Number</label>
                                     <div className="ui input w-100">
-                                    <Input  type="tel" placeholder="Enter Mobile Number"
+                                    <Input type="tel" placeholder="Enter Mobile Number"
                                             label={<Dropdown defaultValue='+91'  search  options={countriecodes} />}
                                             labelPosition='left' />
                               

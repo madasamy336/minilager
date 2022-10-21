@@ -22,13 +22,45 @@ export default class AddOnAccordion extends Component {
           index={0}
           onClick={this.handleClick}
         >
-          <p>Vehicle Detail 1</p>
+          <p>Vehicle Detail {this.props.VehicleLength}</p>
           <div><img src="/assets/images/arrow-down.png" alt="Down" /></div>
         </Accordion.Title>
         <Accordion.Content active={activeIndex === 0}>
-          <div className='row'>
-            <div className='col-lg-3'>Name</div>
-            <div className='col-lg-9'>Vehicle Detail 1</div>
+        <div className='row'>
+          <div className='col-lg-4 px-1 mb-2'>
+            <p><span className='fs-7 fw-500 mr-1 mb-2'>Vehicle Type:</span>{this.props.VehicleType}</p>
+          </div>
+
+          <div className='col-lg-4 px-1 mb-2'>
+            <p><span className='fs-7 fw-500 mr-1'>Year:</span>{this.props.Year}</p>
+          </div>
+
+          <div className='col-lg-4 px-1 mb-2'>
+            <p><span className='fs-7 fw-500 mr-1'>Brand:</span>{this.props.Brand}</p>
+          </div>
+
+          <div className='col-lg-4 px-1 mb-2'>
+            <p><span className='fs-7 fw-500 mr-1'>Model:</span>{this.props.Model}</p>
+          </div>
+
+          <div className='col-lg-4 px-1 mb-2'>
+            <p><span className='fs-7 fw-500 mr-1'>Color:</span>{this.props.Color}</p>
+          </div>
+
+          <div className='col-lg-4 px-1 mb-2'>
+            <p><span className='fs-7 fw-500 mr-1'>Vehicle State:</span>{this.props.VehicleState}</p>
+          </div>
+
+          <div className='col-lg-4 px-1 mb-2'>
+            <p><span className='fs-7 fw-500 mr-1'>Registration No:</span>{this.props.RegistrationNo}</p>
+          </div>
+
+          <div className='col-lg-4 px-1 mb-2'>
+            <p><span className='fs-7 fw-500 mr-1'>License No:</span>{this.props.LicenseNo}</p>
+          </div>
+        </div>
+          <div className='text-center'>
+            <button onClick={() => this.props.RemoveFunction(this.props.index)} class="ui button bg-danger-light fs-7 fw-400 text-white px-5">Remove</button>
           </div>
         </Accordion.Content>
       </Accordion>
