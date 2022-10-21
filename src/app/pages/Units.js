@@ -1,9 +1,7 @@
-import React, {useState} from 'react'
+import React from 'react'
 import AccordionExampleStyled from '../components/unitsfilter/UnitsFilter'
 import { Dropdown, Header, Pagination, Icon, Modal } from 'semantic-ui-react'
 import UnitsCard from '../components/unitscard/UnitsCard'
-import { Pagination, Icon } from 'semantic-ui-react';
-
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchUnitFilter } from '../redux/actions/unitList/unitListAction';
