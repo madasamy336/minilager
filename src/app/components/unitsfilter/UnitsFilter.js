@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Accordion } from 'semantic-ui-react'
+import UnitsRangeSlider from '../unitsrangeslider/UnitsRangeSlider'
 
 export default class AccordionExampleStyled extends Component {
   
@@ -131,8 +132,8 @@ export default class AccordionExampleStyled extends Component {
           </div>
         </Accordion.Title>
         <Accordion.Content active={activeIndex === 4}>
-        <div>
-        <input className='w-100' type="range" />
+        <div> 
+            <UnitsRangeSlider />
         </div>
         </Accordion.Content>
 

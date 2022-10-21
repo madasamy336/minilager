@@ -10,8 +10,9 @@ export const fetchFacilty = () => {
                 "Content-Type": "application/json",
             },
         };
+    
         instance
-            .post(request.facility_cities, config,{})
+            .post(request.facility_cities,{}, config)
             .then(response => {
                 const configData = response.data;
                 if(configData.result !== null && configData.result !== 'undefined'&& configData.result !== ''){

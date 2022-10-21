@@ -97,13 +97,10 @@ export default function RentingDetails() {
                     <label className='fw-500 fs-7 mb-2' >Desired Move Out date</label>
                     <SemanticDatepicker placeholder='Select date' className='w-100' />
                   </div>
-
                 </div>
-
-
               </div>
               <div className='text-center my-4'>
-                <button class="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">BACK</button>
+                <button onClick={()=>  navigate('/preBooking/units')}  class="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">BACK</button>
                 <button class="ui button bg-success-dark   fs-7 fw-400 text-white px-5"onClick={e=>navigateAddon(e)}>NEXT</button>
               </div>
             </div>
