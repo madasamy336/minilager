@@ -13,7 +13,8 @@ p{
     background: $layoutBackground !important;
 }
 .pusher-desktop{
-    transform: translate3d(170px,0,0) !important;
+    transform:unset !important;
+    margin-left: 170px !important;
 }
 .bg-white{
     background-color: $textLightColor !important;

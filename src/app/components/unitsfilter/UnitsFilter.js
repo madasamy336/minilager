@@ -50,7 +50,7 @@ export default class AccordionExampleStyled extends Component {
               <li><input className='mr-1 mb-1' type="checkbox" />10x8x8</li>
               <li><input className='mr-1 mb-1' type="checkbox" />10x9x9</li>
             </ul>
-            <a href="/" className='text-success text-right d-block'>MORE</a>
+            <a href="javascript:void(0)" className='text-success text-right d-block' onClick={this.props.modal}>MORE</a>
             </div>
         </Accordion.Content>
 
@@ -75,7 +75,7 @@ export default class AccordionExampleStyled extends Component {
                 <ul>
                   <li><input className='mr-1 mb-1' type="checkbox" />Small</li>
                   <li><input className='mr-1 mb-1' type="checkbox" />Medium</li>
-                  <li><input className='mr-1 mb-1' type="checkbox" onClick={this.props.modal} />Large</li>
+                  <li><input className='mr-1 mb-1' type="checkbox" />Large</li>
                 </ul>
             </div>
         </Accordion.Content>
