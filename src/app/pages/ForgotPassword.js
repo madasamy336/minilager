@@ -41,9 +41,9 @@ const ForgotPassword = () => {
             )}
           </Transition.Group>
           </div>
-                <div className="row justify-content-center mt-3">
-                    <div className="col-12 col-lg-4">
-                        <div className='bg-white card-boxshadow px-0 pt-2 pb-4 border-radius-15 border-top-success-4'>
+                <div className="mt-3">
+                    <div>
+                        <div className='bg-white card-boxshadow w-35 mx-auto px-0 pt-2 pb-4 border-radius-15 border-top-success-4'>
                             <h6 className='text-success-dark text-center fw-500 fs-6 px-4 pt-2 mb-1  px-sm-2'>FORGOT PASSWORD</h6>
                             <div className='px-4 px-sm-2'>
                                 <div className="forgot-img text-center">

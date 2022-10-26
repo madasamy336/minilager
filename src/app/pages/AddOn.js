@@ -3,12 +3,12 @@ import PreBookingBreadcrumb from '../components/prebooking breadcrumb/PreBooking
 import SemanticDatepicker from 'react-semantic-ui-datepickers';
 import { Dropdown, Modal } from 'semantic-ui-react';
 import { useNavigate } from 'react-router-dom';
-import AddOnAccordion from '../components/addonaccordion/AddOnAccordion'
+import AddOnAccordion from '../components/addonaccordion/AddOnAccordion';
+import AddonCard from '../components/AddonCard/AddonCard';
 
 export default function AddOn() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [ownInsurance, setOwnInsurance] = useState(false);
-  const[count, setCount] = useState(1);
   const ownInsuranceHandler = () => {
     setOwnInsurance(true);
   }
@@ -57,17 +57,41 @@ export default function AddOn() {
       value: 'Annually',
     },
   ]
-  const merchandiseDeleteItem = (e) => {
+
+
+  const [vehicleaccordian, SetVehicleAccordian] = useState([]);
+  const [vehicleType, setVehicleType] = useState("");
+  const [year, setYear] = useState("");
+  const [brand, setBrand] = useState("");
+  const [model, setModel] = useState("");
+  const [color, setColor] = useState("");
+  const [vehicleState, setVehicleState] = useState("");
+  const [registrationNo, setRegistrationNo] = useState("");
+  const [licenseNo, setLicenseNo] = useState("");
+
+  const VehicleFormSubmitHandler = (e) => {
     e.preventDefault();
-    if(count > 0){
-      setCount(count - 1)
-    }
-  }
-  const merchandiseAddItem = (e) => {
-    e.preventDefault();
-    setCount(count + 1)
+    SetVehicleAccordian([
+      ...vehicleaccordian,
+      {
+        VehicleType: vehicleType,
+        Year: year,
+        Brand: brand,
+        Model: model,
+        Color: color,
+        VehicleState: vehicleState,
+        RegistrationNo: registrationNo,
+        LicenseNo: licenseNo,
+        VehicleAccordianLength: vehicleaccordian.length + 1
+      }
+    ])
   }
 
+  const removeVehicleForm = (index) => {
+    const list = [...vehicleaccordian]
+    list.splice(index, 1);
+    SetVehicleAccordian(list)
+  }
 
   return (
     <>
@@ -162,8 +186,8 @@ export default function AddOn() {
                     </div>
                   </div>
                   <div className='text-center my-4'>
-                    <button class="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2" onClick={cancelInsuranceHandler}>BACK</button>
-                    <button class="ui button bg-success-dark fs-7 fw-400 text-white px-5">NEXT</button>
+                    <button class="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2 mb-sm-1" onClick={cancelInsuranceHandler}>BACK</button>
+                    <button class="ui button bg-success-dark fs-7 fw-400 text-white px-5 mb-sm-1">NEXT</button>
                   </div>
                 </div>)}
               </div>
@@ -332,127 +356,12 @@ export default function AddOn() {
                   </div>
                 </div>
                 <div class="row p-3 merchandise">
-                  <div className='col-lg-4 col-md-6 col-sm-12 px-1 mb-2'>
-                    <div className='card card-border-secondary border-radius-10'>
-                      <div className='merchandise-img text-center py-1 card-border-bottom'>
-                        <img src="/assets/images/merchandise.png" alt="Merchandise" />
-                      </div>
-                      <div className='row p-1'>
-                        <div className='col-lg-6 col-md-6 col-sm-6'>
-                          <p>Small Box</p>
-                          <span className='text-success-dark fw-500'>$150</span>
-                        </div>
-                        <div className='col-lg-6 col-md-6 col-sm-6'>
-                          <div className='counter'>
-                            <a href="/" onClick={merchandiseDeleteItem} className='text-white'>-</a>
-                            <input className='merchandiseInput' type="text" value={count} />
-                            <a href="/" onClick={merchandiseAddItem} className='text-white'>+</a>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className='col-lg-4 col-md-6 col-sm-12 px-1 mb-2'>
-                    <div className='card card-border-secondary border-radius-10'>
-                      <div className='merchandise-img text-center py-1 card-border-bottom'>
-                        <img src="/assets/images/merchandise.png" alt="Merchandise" />
-                      </div>
-                      <div className='row p-1'>
-                        <div className='col-lg-6 col-md-6 col-sm-6'>
-                          <p>Small Box</p>
-                          <span className='text-success-dark fw-500'>$150</span>
-                        </div>
-                        <div className='col-lg-6 col-md-6 col-sm-6'>
-                          <div className='counter'>
-                            <a href="/" onClick={merchandiseDeleteItem} className='text-white'>-</a>
-                            <input type="text" value={count} />
-                            <a href="/" onClick={merchandiseAddItem} className='text-white'>+</a>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className='col-lg-4 col-md-6 col-sm-12 px-1 mb-2'>
-                    <div className='card card-border-secondary border-radius-10'>
-                      <div className='merchandise-img text-center py-1 card-border-bottom'>
-                        <img src="/assets/images/merchandise.png" alt="Merchandise" />
-                      </div>
-                      <div className='row p-1'>
-                        <div className='col-lg-6 col-md-6 col-sm-6'>
-                          <p>Small Box</p>
-                          <span className='text-success-dark fw-500'>$150</span>
-                        </div>
-                        <div className='col-lg-6 col-md-6 col-sm-6'>
-                          <div className='counter'>
-                            <a href="/" onClick={merchandiseDeleteItem} className='text-white'>-</a>
-                            <input type="text" value={count} />
-                            <a href="/" onClick={merchandiseAddItem} className='text-white'>+</a>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className='col-lg-4 col-md-6 col-sm-12 px-1 mb-2'>
-                    <div className='card card-border-secondary border-radius-10'>
-                      <div className='merchandise-img text-center py-1 card-border-bottom'>
-                        <img src="/assets/images/merchandise.png" alt="Merchandise" />
-                      </div>
-                      <div className='row p-1'>
-                        <div className='col-lg-6 col-md-6 col-sm-6'>
-                          <p>Small Box</p>
-                          <span className='text-success-dark fw-500'>$150</span>
-                        </div>
-                        <div className='col-lg-6 col-md-6 col-sm-6'>
-                          <div className='counter'>
-                            <a href="/" onClick={merchandiseDeleteItem} className='text-white'>-</a>
-                            <input type="text" value={count} />
-                            <a href="/" onClick={merchandiseAddItem} className='text-white'>+</a>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className='col-lg-4 col-md-6 col-sm-12 px-1 mb-2'>
-                    <div className='card card-border-secondary border-radius-10'>
-                      <div className='merchandise-img text-center py-1 card-border-bottom'>
-                        <img src="/assets/images/merchandise.png" alt="Merchandise" />
-                      </div>
-                      <div className='row p-1'>
-                        <div className='col-lg-6 col-md-6 col-sm-6'>
-                          <p>Small Box</p>
-                          <span className='text-success-dark fw-500'>$150</span>
-                        </div>
-                        <div className='col-lg-6 col-md-6 col-sm-6'>
-                          <div className='counter'>
-                            <a href="/" onClick={merchandiseDeleteItem} className='text-white'>-</a>
-                            <input type="text" value={count} />
-                            <a href="/" onClick={merchandiseAddItem} className='text-white'>+</a>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className='col-lg-4 col-md-6 col-sm-12 px-1 mb-2'>
-                    <div className='card card-border-secondary border-radius-10'>
-                      <div className='merchandise-img text-center py-1 card-border-bottom'>
-                        <img src="/assets/images/merchandise.png" alt="Merchandise" />
-                      </div>
-                      <div className='row p-1'>
-                        <div className='col-lg-6 col-md-6 col-sm-6'>
-                          <p>Small Box</p>
-                          <span className='text-success-dark fw-500'>$150</span>
-                        </div>
-                        <div className='col-lg-6 col-md-6 col-sm-6'>
-                          <div className='counter'>
-                            <a href="/" onClick={merchandiseDeleteItem} className='text-white'>-</a>
-                            <input type="text" value={count} />
-                            <a href="/" onClick={merchandiseAddItem} className='text-white'>+</a>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
+                  <AddonCard decrementBy={1} incrementBy={1} />
+                  <AddonCard decrementBy={1} incrementBy={1} />
+                  <AddonCard decrementBy={1} incrementBy={1} />
+                  <AddonCard decrementBy={1} incrementBy={1} />
+                  <AddonCard decrementBy={1} incrementBy={1} />
+                  <AddonCard decrementBy={1} incrementBy={1} />
                 </div>
               </div>
               <div className='bg-white card-boxshadow px-0 py-2 border-radius-15 mb-3'>
@@ -481,53 +390,57 @@ export default function AddOn() {
                       ></path>
                     </g>
                   </svg><span className='veritical-align-text-top ml-1'>Vehicle Details</span></h6>
-                  <div className='addon-accordion-div'>
-                    <AddOnAccordion />
-                  </div>
-                <div class="ui form px-4 px-sm-2">
-                  <div class="field w-100 datePicker my-3">
-                    <label className='fw-500 fs-7 mb-2'>Vehicle Type</label>
-                    <input placeholder='Vehicle Type' />
-                  </div>
-                  <div class="field w-100 datePicker my-3">
-                    <label className='fw-500 fs-7 mb-2' >Year</label>
-                    <SemanticDatepicker placeholder='Year' className='w-100' />
-                  </div>
-                  <div class="field w-100 datePicker my-3">
-                    <label className='fw-500 fs-7 mb-2'>Brand</label>
-                    <Dropdown placeholder='Brand' clearable fluid search selection options={vehicleBrandSelectOption} />
-                  </div>
-                  <div class="field w-100 datePicker my-3">
-                    <label className='fw-500 fs-7 mb-2'>Model</label>
-                    <input placeholder='Model' />
-                  </div>
-                  <div class="field w-100 datePicker my-3">
-                    <label className='fw-500 fs-7 mb-2'>Color</label>
-                    <input placeholder='Color' />
-                  </div>
-                  <div class="field w-100 datePicker my-3">
-                    <label className='fw-500 fs-7 mb-2'>Vehicle State</label>
-                    <input placeholder='Vehicle State' />
-                  </div>
-                  <div class="field w-100 datePicker my-3">
-                    <label className='fw-500 fs-7 mb-2'>Registration No</label>
-                    <input placeholder='Registration No' />
-                  </div>
-                  <div class="field w-100 datePicker my-3">
-                    <label className='fw-500 fs-7 mb-2'>License No</label>
-                    <input placeholder='License No' />
-                  </div>
-                  <div className='text-success-dark mb-2'>
-                    <a href="/" className='d-flex align-items-center'> <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 27.505 27.5">
-                      <path id="floating" d="M577.346,2164.47h1.719c.468.061.939.108,1.4.186a13.8,13.8,0,0,1,11.276,11.2c.089.5.142,1.006.211,1.51v1.719c-.04.327-.075.656-.122.981a13.749,13.749,0,1,1-23.4-11.494,13.464,13.464,0,0,1,7.4-3.886C576.337,2164.593,576.843,2164.539,577.346,2164.47Zm2,14.892h4.82a1.14,1.14,0,1,0,.027-2.278c-1.5-.009-3.007,0-4.51,0h-.336v-4.813a1.118,1.118,0,0,0-.693-1.111,1.131,1.131,0,0,0-1.588,1.07c-.01,1.5,0,3.007,0,4.51v.344h-4.806a1.141,1.141,0,1,0-.055,2.28c1.512.011,3.025,0,4.537,0h.323v.364c0,1.477,0,2.953,0,4.43a1.141,1.141,0,1,0,2.28.068c.012-1.5,0-3.007,0-4.51Z" transform="translate(-564.451 -2164.47)" fill="#328128" />
-                    </svg>
-                      <span className='ml-1 fs-6'>Add more</span></a>
-                  </div>
+                <div className='addon-accordion-div'>
+                  {vehicleaccordian.map((data, index) => (
+                    <AddOnAccordion RemoveFunction={removeVehicleForm} key={index} index={index} VehicleLength={data.VehicleAccordianLength} VehicleType={data.VehicleType} Year={data.Year} Brand={data.Brand} Model={data.Model} Color={data.Color} VehicleState={data.VehicleState} RegistrationNo={data.RegistrationNo} LicenseNo={data.LicenseNo} />
+                  ))}
                 </div>
+                {vehicleaccordian.length < 3 && (
+                  <div class="ui form px-4 px-sm-2">
+                    <div class="field w-100 datePicker my-3">
+                      <label className='fw-500 fs-7 mb-2'>Vehicle Type</label>
+                      <input placeholder='Vehicle Type' onChange={(e) => setVehicleType(e.target.value)} />
+                    </div>
+                    <div class="field w-100 datePicker my-3">
+                      <label className='fw-500 fs-7 mb-2'>Year</label>
+                      <SemanticDatepicker placeholder='Year' className='w-100' onChange={(e) => setYear(e.target.ariaLabel)} />
+                    </div>
+                    <div class="field w-100 datePicker my-3">
+                      <label className='fw-500 fs-7 mb-2'>Brand</label>
+                      <Dropdown placeholder='Brand' clearable fluid search selection options={vehicleBrandSelectOption} onChange={(e) => setBrand(e.target.innerText)} />
+                    </div>
+                    <div class="field w-100 datePicker my-3">
+                      <label className='fw-500 fs-7 mb-2'>Model</label>
+                      <input placeholder='Model' onChange={(e) => setModel(e.target.value)} />
+                    </div>
+                    <div class="field w-100 datePicker my-3">
+                      <label className='fw-500 fs-7 mb-2'>Color</label>
+                      <input placeholder='Color' onChange={(e) => setColor(e.target.value)} />
+                    </div>
+                    <div class="field w-100 datePicker my-3">
+                      <label className='fw-500 fs-7 mb-2'>Vehicle State</label>
+                      <input placeholder='Vehicle State' onChange={(e) => setVehicleState(e.target.value)} />
+                    </div>
+                    <div class="field w-100 datePicker my-3">
+                      <label className='fw-500 fs-7 mb-2'>Registration No</label>
+                      <input placeholder='Registration No' onChange={(e) => setRegistrationNo(e.target.value)} />
+                    </div>
+                    <div class="field w-100 datePicker my-3">
+                      <label className='fw-500 fs-7 mb-2'>License No</label>
+                      <input placeholder='License No' onChange={(e) => setLicenseNo(e.target.value)} />
+                    </div>
+                    <div className='text-success-dark mb-2'>
+                      <a onClick={e => VehicleFormSubmitHandler(e)} href="/" className='d-flex align-items-center'> <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 27.505 27.5">
+                        <path id="floating" d="M577.346,2164.47h1.719c.468.061.939.108,1.4.186a13.8,13.8,0,0,1,11.276,11.2c.089.5.142,1.006.211,1.51v1.719c-.04.327-.075.656-.122.981a13.749,13.749,0,1,1-23.4-11.494,13.464,13.464,0,0,1,7.4-3.886C576.337,2164.593,576.843,2164.539,577.346,2164.47Zm2,14.892h4.82a1.14,1.14,0,1,0,.027-2.278c-1.5-.009-3.007,0-4.51,0h-.336v-4.813a1.118,1.118,0,0,0-.693-1.111,1.131,1.131,0,0,0-1.588,1.07c-.01,1.5,0,3.007,0,4.51v.344h-4.806a1.141,1.141,0,1,0-.055,2.28c1.512.011,3.025,0,4.537,0h.323v.364c0,1.477,0,2.953,0,4.43a1.141,1.141,0,1,0,2.28.068c.012-1.5,0-3.007,0-4.51Z" transform="translate(-564.451 -2164.47)" fill="#328128" />
+                      </svg>
+                        <span className='ml-1 fs-6'>Add more</span></a>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className='text-center my-4'>
-                <button onClick={()=>  navigate('/preBooking/rentingDetails')} class="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">BACK</button>
+                <button onClick={() => navigate('/preBooking/rentingDetails')} class="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">BACK</button>
                 <button class="ui button bg-success-dark   fs-7 fw-400 text-white px-5" onClick={e => navigateTenantDEtails(e)}>NEXT</button>
               </div>
             </div>

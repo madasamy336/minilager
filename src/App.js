@@ -20,18 +20,19 @@ import ForgotPassword from './app/pages/ForgotPassword';
 function App() {
     const windowWidth = window.innerWidth
     const [mobileWidth, SetmobileWidth] = useState();
+    const[sidebar,ShowSidebar]=useState(false)
     const location = useLocation()
     useEffect(() => {
         SetmobileWidth(windowWidth)
-    }, [windowWidth])
+    }, [mobileWidth])
     return (
         <>
 
-            <Header />
+            <Header width={mobileWidth} sidebar={sidebar}  showSidebar={ShowSidebar} />
             <div className={`ui fluid container ${location.pathname.startsWith('/postBooking') && 'h-100'} `} id='mainContent'>
                 <div className={`p-1 ${location.pathname.startsWith('/postBooking') &&'ui segment pushable '}`}>
-                    {location.pathname.startsWith('/postBooking') && <SidebarPostBooking />}
-                  
+                    {location.pathname.startsWith('/postBooking') && <SidebarPostBooking width={mobileWidth} sidebar={sidebar} />}
+                    
                     <Routes>
                         <Route exact path='/home' element={<RentNow />} />
                         <Route path='/login' element={<PostLoginForm />} />
@@ -43,7 +44,7 @@ function App() {
                         <Route path='/preBooking/TenantDetails' element={<TenantDetails/>}/>
                         <Route path='/preBooking/esignPayment' element={<EsignPayment/>} />
                     </Routes>
-                    <div className={location.pathname.startsWith('/postBooking') && 'pusher pusher-desktop'}>
+                    <div className={`${location.pathname.startsWith('/postBooking') && `pusher ${mobileWidth>980 && 'pusher-desktop'} `}`}>
                         {/* for postBooking */}
                         <Routes>
                             <Route path='/postBooking/Profile' element={<Profile />} />

@@ -32,7 +32,15 @@
 .bg-primary-light{
     background-color: $EsignViewBg;
 }
-
 .actionMsgContainer{
     min-height: 35px !important;
+}
+.w-35{
+    width: 35% !important;
+    @include for-tablet{
+        width: 50% !important;
+    }
+    @include for-mobile{
+        width: 90% !important;
+    }
 }

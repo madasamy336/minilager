@@ -45,6 +45,9 @@ p{
 .bg-danger{
     background:$Error !important;
 }
+.bg-danger-light{
+    background:$ErrorLight !important;
+}
 .bg-secondary{
     background-color: $textDisabledColor !important;
 }
