@@ -81,15 +81,15 @@ export default function RentingDetails() {
                     <label className='fw-500 fs-7 mb-2' >Move-In Date</label>
                     <SemanticDatepicker placeholder='Select date' className='w-100' />
                   </div>
-                  <div class="field w-100 datePicker my-3">
+                  <div class="field w-100  my-3">
                     <label className='fw-500 fs-7 mb-2'>Invoice Period</label>
                     <Dropdown placeholder='Select Invoice Period' clearable fluid search selection options={invoicePeriodSelectOption} />
                   </div>
-                  <div class="field w-100 datePicker my-3">
+                  <div class="field w-100  my-3">
                     <label className='fw-500 fs-7 mb-2'>Invoice Recurring</label>
                     <Dropdown placeholder='Select Invoice Recurring' clearable fluid search selection options={invoiceRecurringSelectOption} />
                   </div>
-                  <div class="field w-100 datePicker my-3">
+                  <div class="field w-100  my-3">
                     <label className='fw-500 fs-7 mb-2'>Gate Access Code</label>
                     <input placeholder='Enter Gate Access Code' />
                   </div>
@@ -119,7 +119,7 @@ export default function RentingDetails() {
                         <span>NB HST (15%)</span><span >$14.25</span>
                       </div>
                       <p></p>
-                      <div class="field w-100 datePicker mt-3 mb-2">
+                      <div class="field w-100  mt-3 mb-2">
                         <label className='fs-6 fw-500'>Promo Code</label>
                         <div className='row mt-1'>
                           <div className='col-9 ui input'>
