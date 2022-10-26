@@ -1,5 +1,6 @@
 
 
+import { useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import {
 
@@ -10,19 +11,21 @@ import {
   Segment,
   Sidebar,
 } from 'semantic-ui-react'
-export default function SidebarPostBooking() {
-  // const [visible, setVisible] = useState(true)
+export default function SidebarPostBooking(props) {
 
   return (
    <>    
-          <Sidebar id='postBookingSidebar' className=' pt-3'
+          <Sidebar id='postBookingSidebar' className='t-9 pt-3'
             as={Menu}
-            animation='push'
+            animation={props.width>980 ?'push': 'overlay'}
             // icon='labeled'
             inverted
             // onHide={() => setVisible(false)}
             vertical
-            visible
+            visible={props.width>980 ? true: 
+            //  props.sidebar 
+            true
+            }
           >
             <NavLink to={'/postBooking/Profile'} className='item disablBefore fs-7 my-1' >
             <svg className='mr-1' height='12' width='12'  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18.023 21.404">
@@ -126,7 +129,7 @@ export default function SidebarPostBooking() {
           </svg>
             Update Password
             </NavLink>
-            <a href="/" className='item disablBefore fs-7 my-1'>
+            <a href=""  className='item disablBefore fs-7 my-1'>
           <svg className='mr-1' height='12' width='12'
             xmlns="http://www.w3.org/2000/svg"
             data-name="log-out (1)"

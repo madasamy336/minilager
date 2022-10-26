@@ -1,6 +1,6 @@
 export default function PreBookingBreadcrumb(props) {
   return (
-  <div className="pt-1">
+  <div className="py-1">
       <div className="text-center my-6">
           <div className="ui small breadcrumb">
               <div className={`section mb-1  ${props.activeStep.startsWith(1)&&' text-success'}` }>

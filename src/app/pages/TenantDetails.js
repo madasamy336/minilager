@@ -1,9 +1,10 @@
 import PreBookingBreadcrumb from "../components/prebooking breadcrumb/PreBookingBreadcrumb";
-import {Image, Modal } from "semantic-ui-react";
+import {Dropdown, Image, Input, Modal } from "semantic-ui-react";
 import SemanticDatepicker from "react-semantic-ui-datepickers";
 import React, { useEffect, useState } from "react";
 import TenantDetailEmergengyContactAccordian from "../components/tenantDetailsAccordian/TenantDetailsAccordian";
 import { useNavigate } from "react-router-dom";
+import countriecodes from "../components/CountryCode";
 
 export default function TenantDetails() {
   const navigate=useNavigate()
@@ -81,13 +82,13 @@ export default function TenantDetails() {
         <div className="row reverse-sm">
           <div className="col-12 col-md-6 ui form">
           <div className="col-12 px-4 px-sm-2">
-          <div class="field w-100 datePicker my-3">
+          <div class="field w-100  my-3">
                     <label className='fw-500 fs-7 mb-2'>First Name <i className="text-danger ">*</i></label>
                     <input type='text' placeholder='Enter Name' />
                   </div>
           </div>
           <div className="col-12  px-4 px-sm-2">
-          <div class="field w-100 datePicker my-3">
+          <div class="field w-100  my-3">
                     <label className='fw-500 fs-7 mb-2'>Last Name</label>
                     <input type='text' placeholder='Enter Name' />
                   </div>
@@ -105,25 +106,27 @@ export default function TenantDetails() {
         </div>
         <div className="row ui form">
           <div className="col-12  col-md-6  px-4 px-sm-2">
-                  <div class="field w-100 datePicker my-3">
+                  <div class="field datePicker w-100 my-3">
                     <label className='fw-500 fs-7 mb-2' >Date of Birth <i className="text-danger ">*</i></label>
                     <SemanticDatepicker placeholder='Select date' className='w-100' />
                   </div>
           </div>
           <div className="col-12  col-md-6  px-4 px-sm-2">
-             <div class="field w-100 datePicker my-3">
+             <div class="field w-100  my-3">
                     <label className='fw-500 fs-7 mb-2'>Email <i className="text-danger ">*</i></label>
                     <input type='email' placeholder='Enter Email' />
                   </div>
           </div>
           <div className="col-12  col-md-6  px-4 px-sm-2">
-             <div class="field w-100 datePicker my-3">
+             <div class="field w-100  my-3">
                     <label className='fw-500 fs-7 mb-2'>Phone Number <i className="text-danger ">*</i></label>
-                    <input className="noCounterNumber" type='number' placeholder='Enter Phone Number' />
+                    <Input className="noCounterNumber" type="number" placeholder="Enter Mobile Number"
+                                            label={<Dropdown defaultValue='+91'  search  options={countriecodes} />}
+                                            labelPosition='left' />
                   </div>
           </div>
           <div className="col-12  col-md-6  px-4 px-sm-2">
-             <div class="field w-100 datePicker my-3">
+             <div class="field w-100  my-3">
                     <label className='fw-500 fs-7 mb-2'>Social Security Number</label>
                     <input className="noCounterNumber" type='number' placeholder='Social Security Number' />
                </div>
@@ -144,31 +147,31 @@ export default function TenantDetails() {
          <span className='veritical-align-text-top ml-1'>Address Deatils</span></h6>
           </div>
           <div className="col-12 col-md-6 px-4 px-sm-2">
-          <div class="field w-100 datePicker my-3">
+          <div class="field w-100  my-3">
                     <label className='fw-500 fs-7 mb-2'>Address Line 1</label>
                     <input type='text' placeholder='Address Line 1' />
                </div>
           </div>
           <div className="col-12 col-md-6 px-4 px-sm-2">
-          <div class="field w-100 datePicker my-3">
+          <div class="field w-100  my-3">
                     <label className='fw-500 fs-7 mb-2'>Address Line 2</label>
                     <input type='text' placeholder='Address Line 2' />
                </div>
           </div>
           <div className="col-12 col-md-6 px-4 px-sm-2">
-          <div class="field w-100 datePicker my-3">
+          <div class="field w-100  my-3">
                     <label className='fw-500 fs-7 mb-2'>City</label>
                     <input type='text' placeholder='City' />
                </div>
           </div>
           <div className="col-12 col-md-6 px-4 px-sm-2">
-          <div class="field w-100 datePicker my-3">
+          <div class="field w-100  my-3">
                     <label className='fw-500 fs-7 mb-2'>State/Provine</label>
                     <input type='text' placeholder='State/Provine' />
                </div>
           </div>
           <div className="col-12 col-md-6 px-4 px-sm-2">
-          <div class="field w-100 datePicker my-3">
+          <div class="field w-100  my-3">
                     <label className='fw-500 fs-7 mb-2'>Zip/Postal Code</label>
                     <input className="noCounterNumber" type='number' placeholder='Zip/Postal Code' />
                </div>
@@ -197,27 +200,30 @@ export default function TenantDetails() {
           {contactaccordian.length <3 && 
                 <div className="row ui form mb-4">
                 <div className="col-12 col-md-6 px-4 px-sm-2">
-                <div class="field w-100 datePicker my-3">
+                <div class="field w-100  my-3">
                           <label className='fw-500 fs-7 mb-2'>First Name <i className="text-danger ">*</i></label>
                           <input value={contactFirstName} onChange={e=>SetContactFirstName(e.target.value)} type='text' placeholder='Enter Name' />
                      </div>
                 </div>
                 <div className="col-12 col-md-6 px-4 px-sm-2">
-                <div class="field w-100 datePicker my-3">
+                <div class="field w-100  my-3">
                           <label className='fw-500 fs-7 mb-2'>Last Name</label>
                           <input value={contactLastName} onChange={e=>SetContactLastName(e.target.value)} type='text' placeholder='Last Name' />
                      </div>
                 </div>
                 <div className="col-12 col-md-6 px-4 px-sm-2">
-                <div class="field w-100 datePicker my-3">
+                <div class="field w-100  my-3">
                           <label className='fw-500 fs-7 mb-2'>Email <i className="text-danger ">*</i></label>
                           <input value={contactEmail} onChange={e=>SetContactEmail(e.target.value)} type='email' placeholder='Enter Email' />
                      </div>
                 </div>
                 <div className="col-12 col-md-6 px-4 px-sm-2">
-                <div class="field w-100 datePicker my-3">
+                <div class="field w-100  my-3">
                           <label className='fw-500 fs-7 mb-2'>Phone Number <i className="text-danger ">*</i></label>
-                          <input value={contactPhone} onChange={e=>SetContactPhone(e.target.value)} className="noCounterNumber" type='number' placeholder='State/Provine' />
+                          {/* <input value={contactPhone} onChange={e=>SetContactPhone(e.target.value)} className="noCounterNumber" type='number' placeholder='Enter Phone Number' /> */}
+                          <Input  value={contactPhone} onChange={e=>SetContactPhone(e.target.value)} className="noCounterNumber" type="number" placeholder="Enter Mobile Number"
+                                            label={<Dropdown defaultValue='+91'  search  options={countriecodes} />}
+                                            labelPosition='left' />
                      </div>
                 </div>
                 <div className="col-12">

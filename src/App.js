@@ -1,5 +1,5 @@
 import { Routes, Route, useLocation } from 'react-router-dom'
-import SidebarPostBooking from './app/pages/postbooking/Sidebar';
+import SidebarPostBooking from './app/components/postbooking/Sidebar';
 import Header from './app/components/header/Header';
 import PostLoginForm from './app/pages/PostLoginForm';
 import RentNow from './app/pages/RentNow'
@@ -20,41 +20,35 @@ import ForgotPassword from './app/pages/ForgotPassword';
 function App() {
     const windowWidth = window.innerWidth
     const [mobileWidth, SetmobileWidth] = useState();
+    const[sidebar,ShowSidebar]=useState(false)
     const location = useLocation()
     useEffect(() => {
         SetmobileWidth(windowWidth)
-    }, [windowWidth])
+    }, [mobileWidth])
     return (
         <>
 
-            <Header />
-            <div className={`ui fluid container ${location.pathname.startsWith('/postBooking') && 'h-100'} `} id='mainContent'>
-                <div className={`p-1 ${location.pathname.startsWith('/postBooking') &&'ui segment pushable '}`}>
-                    {location.pathname.startsWith('/postBooking') && <SidebarPostBooking />}
-                  
+            <Header width={mobileWidth} sidebar={sidebar}  showSidebar={ShowSidebar} />
+            {location.pathname.startsWith('/postBooking') && <SidebarPostBooking width={mobileWidth} sidebar={sidebar} />}
+                <div className={` pusher  ${location.pathname.startsWith('/postBooking') && `${mobileWidth>980 && 'pusher-desktop'}`} `} id='mainContent'>      
                     <Routes>
                         <Route exact path='/home' element={<RentNow />} />
                         <Route path='/login' element={<PostLoginForm />} />
                         <Route path='/forgotpassword' element={<ForgotPassword />} />
                         <Route path='/signup' element={<PostSignupForm />} />
-                        <Route path='/preBooking/units' element={<Units/>} />
-                        <Route path='/preBooking/rentingDetails' element={<RentingDetails/>} />
-                        <Route path='/preBooking/addOns' element={<AddOn/>} />
-                        <Route path='/preBooking/TenantDetails' element={<TenantDetails/>}/>
-                        <Route path='/preBooking/esignPayment' element={<EsignPayment/>} />
+                        <Route path='/preBooking/units' element={<Units />} />
+                        <Route path='/preBooking/rentingDetails' element={<RentingDetails />} />
+                        <Route path='/preBooking/addOns' element={<AddOn />} />
+                        <Route path='/preBooking/TenantDetails' element={<TenantDetails />} />
+                        <Route path='/preBooking/esignPayment' element={<EsignPayment />} />
+
+                        <Route path='/postBooking/Profile' element={<Profile />} />
+                        <Route path='/postBooking/myLeases' element={<MyLeases />} />
+                        <Route path='/postBooking/myInvoices' element={<MYInvoices />} />
+                        <Route path='/postBooking/payment' element={<Payment />} />
+                        <Route path='/postBooking/updatePassword' element={<Updatepassword />} />
                     </Routes>
-                    <div className={location.pathname.startsWith('/postBooking') && 'pusher pusher-desktop'}>
-                        {/* for postBooking */}
-                        <Routes>
-                            <Route path='/postBooking/Profile' element={<Profile />} />
-                            <Route path='/postBooking/myLeases' element={<MyLeases />} />
-                            <Route path='/postBooking/myInvoices' element={<MYInvoices />} />
-                            <Route path='/postBooking/payment' element={<Payment />} />
-                            <Route path='/postBooking/updatePassword' element={<Updatepassword />} />
-                        </Routes>
-                    </div>
                 </div>
-            </div>
 
         </>
     );
