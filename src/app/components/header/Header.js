@@ -9,9 +9,9 @@ export default function Header(props) {
   // }  
   return (
     <>
-    <div>
 
-    <div className='ui secondary pointing menu py-1 bg-white d-block'>
+
+    <div id='mainHeader' className='ui secondary pointing menu py-1 bg-white d-block position-fixed w-100'>
     <a href="/" className={`item d-inline-block ${props.width <981 && 'w-50'}`}>
     <img className={props.width >980 ?'w-50' :'w-75'} src='https://123minilager.no/wp-content/uploads/2020/03/cropped-123Minilager-Lager-til-leie-1.jpg' alt="123minilager.no"/>
     </a>
@@ -63,7 +63,6 @@ export default function Header(props) {
     </div>
     } */}
    
-    </div>
     </div>
     </>
   )
