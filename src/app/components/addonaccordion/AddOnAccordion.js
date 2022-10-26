@@ -27,35 +27,35 @@ export default class AddOnAccordion extends Component {
         </Accordion.Title>
         <Accordion.Content active={activeIndex === 0}>
         <div className='row'>
-          <div className='col-lg-4 px-1 mb-2'>
+          <div className='col-lg-4 col-md-6 col-sm-12 px-1 mb-2'>
             <p><span className='fs-7 fw-500 mr-1 mb-2'>Vehicle Type:</span>{this.props.VehicleType}</p>
           </div>
 
-          <div className='col-lg-4 px-1 mb-2'>
+          <div className='col-lg-4 col-md-6 col-sm-12 px-1 mb-2'>
             <p><span className='fs-7 fw-500 mr-1'>Year:</span>{this.props.Year}</p>
           </div>
 
-          <div className='col-lg-4 px-1 mb-2'>
+          <div className='col-lg-4 col-md-6 col-sm-12 px-1 mb-2'>
             <p><span className='fs-7 fw-500 mr-1'>Brand:</span>{this.props.Brand}</p>
           </div>
 
-          <div className='col-lg-4 px-1 mb-2'>
+          <div className='col-lg-4 col-md-6 col-sm-12 px-1 mb-2'>
             <p><span className='fs-7 fw-500 mr-1'>Model:</span>{this.props.Model}</p>
           </div>
 
-          <div className='col-lg-4 px-1 mb-2'>
+          <div className='col-lg-4 col-md-6 col-sm-12 px-1 mb-2'>
             <p><span className='fs-7 fw-500 mr-1'>Color:</span>{this.props.Color}</p>
           </div>
 
-          <div className='col-lg-4 px-1 mb-2'>
+          <div className='col-lg-4 col-md-6 col-sm-12 px-1 mb-2'>
             <p><span className='fs-7 fw-500 mr-1'>Vehicle State:</span>{this.props.VehicleState}</p>
           </div>
 
-          <div className='col-lg-4 px-1 mb-2'>
+          <div className='col-lg-4 col-md-6 col-sm-12 px-1 mb-2'>
             <p><span className='fs-7 fw-500 mr-1'>Registration No:</span>{this.props.RegistrationNo}</p>
           </div>
 
-          <div className='col-lg-4 px-1 mb-2'>
+          <div className='col-lg-4 col-md-6 col-sm-12 px-1 mb-2'>
             <p><span className='fs-7 fw-500 mr-1'>License No:</span>{this.props.LicenseNo}</p>
           </div>
         </div>
