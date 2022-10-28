@@ -1,0 +1,41 @@
+.myInvoiceTable{
+    @include for-mobile{
+        width: 100% !important;
+        overflow-x: scroll !important;
+    }
+    table{
+        tr{
+            border-bottom: 1px solid $UnitsCardBg;
+        }
+        th{
+            font-weight: 700;
+        }
+        th, td{
+            padding: 1em 1em;
+        }
+        .success-label{
+            font-size: 0.8rem !important;
+            font-weight: 400 !important;
+            color: $UnitsDropdownBg !important;
+            background-color: $LabelSuccessBg !important;
+            border: 1px solid $UnitsDropdownBg !important;
+            padding: 0 1rem !important;
+            border-radius: 5px !important;
+        }
+        .danger-label{
+            font-size: 0.8rem !important;
+            font-weight: 400 !important;
+            color: $Error !important;
+            background-color: $LabelDangerBg !important;
+            border: 1px solid $Error !important;
+            padding: 0 1rem !important;
+            border-radius: 5px !important;
+        }
+        #uploadInvoice{
+            display: none;
+        }
+        #uploadReceipt{
+            display: none;
+        }
+    }    
+}

@@ -1,12 +1,35 @@
-import React from "react"
+import React, {useState} from "react"
+import { Dropdown, Image, Input } from 'semantic-ui-react';
+import SemanticDatepicker from 'react-semantic-ui-datepickers';
+import countriecodes from '../../../components/CountryCode';
 
 export default function Profile() {
+  const[contactPhone,SetContactPhone]=useState();
+  const[tenantDetails, setTenantDetails] = useState(true);
+  const[tenantaddress, setTenantAddress] = useState(true);
+  const EditTenantDetailsHandler = () => {
+    setTenantDetails(false);
+  }
+  const EditTenantAddressHandler = () => {
+    setTenantAddress(false);
+  }
+
+  const trigger = (
+    <span>
+      <Image avatar src="/assets/images/edit-photo.svg" />
+    </span>
+  )
+  
+  const EditProfileOptions = [
+    { key: 'take photo', text: 'Take Photo', value: 'take photo' },
+    { key: 'upload photo', text: 'Upload Photo', value: 'upload photo' },
+  ]
   return (
     <>
-      <div className="mx-2">
+      <div className="mx-2 mx-sm-0">
         <div className="bg-white card-boxShadow border-radius-15 py-2 mb-2">
           <div className="row dashed-bottom px-4 py-2 px-sm-2">
-            <div className="col-lg-6">
+            <div className="col-lg-6 col-md-6 col-sm-6">
               <h6 className="fs-6 fw-500"><svg id="Tenant_Details" data-name="Tenant Details" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 29.311 29.248">
                 <path id="Path_15970" data-name="Path 15970" d="M37.378,38h.458a8.651,8.651,0,0,1,.777.463q3.061,2.275,6.111,4.563c.057.043.121.076.229.145V40.252a.725.725,0,0,1,.825-.823h2.488c.712,0,.935.224.935.941,0,1.893.005,3.787-.006,5.68a.577.577,0,0,0,.278.534c.483.34.936.722,1.425,1.052a2.841,2.841,0,0,1,1.365,1.844v.514c-.021.072-.043.144-.063.217a2.149,2.149,0,0,1-1.735,1.694,6.217,6.217,0,0,1-1.263-.014V64.922c0,.153,0,.305-.011.458a1.964,1.964,0,0,1-1.978,1.864q-9.6.008-19.2-.006a2.037,2.037,0,0,1-.857-.2,1.967,1.967,0,0,1-1.14-1.945q.007-6.454,0-12.91v-.373l-.245.067a2.128,2.128,0,0,1-2.431-.94A5.913,5.913,0,0,1,22.95,50v-.514a2.956,2.956,0,0,1,1.34-1.827q6.079-4.516,12.128-9.058C36.72,38.375,37.057,38.2,37.378,38Zm.2,28.334h9.444a1.1,1.1,0,0,0,1.26-1.261q0-6.812,0-13.624a.472.472,0,0,0-.208-.428Q43,47.215,37.933,43.39a.46.46,0,0,0-.653,0q-5.064,3.824-10.144,7.632a.471.471,0,0,0-.208.427q.007,6.813,0,13.624a1.1,1.1,0,0,0,1.26,1.261ZM50,51.108l.034-.069a1.29,1.29,0,0,0,1.258-.972,1.242,1.242,0,0,0-.546-1.39Q44.369,43.905,38,39.137c-.386-.288-.386-.288-.757-.01L30.1,44.469q-2.819,2.106-5.635,4.215A1.236,1.236,0,0,0,23.9,49.94a1.272,1.272,0,0,0,2.077.816q3.147-2.356,6.286-4.722l4.5-3.385a1.227,1.227,0,0,1,1.691,0c.161.12.321.24.48.361q5.13,3.857,10.262,7.708A4.824,4.824,0,0,0,50,51.108Zm-4.13-10.755v.337c0,.847.031,1.7-.012,2.541a1.043,1.043,0,0,0,.521,1.051c.642.421,1.239.908,1.889,1.394V40.353Z" transform="translate(-22.95 -38)" fill="#328128" />
                 <path id="Path_15971" data-name="Path 15971" d="M197.321,309.9h-.2l-.025-.005a1.6,1.6,0,0,1-.739-.229,1.672,1.672,0,0,1-.8-1.162c-.011-.063-.018-.128-.026-.192v-.2a.259.259,0,0,1,.006-.035c.011-.076.017-.147.032-.219a1.691,1.691,0,1,1,2.924,1.468,1.661,1.661,0,0,1-.978.55Zm-.363-1.413-.185-.17c-.094-.085-.185-.173-.282-.254a.162.162,0,0,0-.258.087.176.176,0,0,0,.061.181l.547.5a.169.169,0,0,0,.259-.007l1.051-1.043a.331.331,0,0,0,.027-.029.169.169,0,0,0-.021-.237.151.151,0,0,0-.025-.018.172.172,0,0,0-.218.04l-.928.928-.027.026Z" transform="translate(-182.359 -286.029)" fill="#328128" />
@@ -14,63 +37,114 @@ export default function Profile() {
               </svg>
                 <span className="veritical-align-text-top ml-1">Tenant Details</span></h6>
             </div>
-            <div className="col-lg-6 text-right">
+            {tenantDetails && <div className="col-lg-6 col-md-6 col-sm-6 text-right cursor-pointer" onClick={EditTenantDetailsHandler}>
               <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 28.419 28.276">
                 <g id="edit_copy" data-name="edit copy" opacity="0.55">
                   <path id="Path" d="M26.23,14.991a.708.708,0,0,0-.708.708v6.284A2.125,2.125,0,0,1,23.4,24.106H3.539a2.125,2.125,0,0,1-2.123-2.123V3.539A2.126,2.126,0,0,1,3.539,1.416H9.823A.708.708,0,1,0,9.823,0H3.539A3.543,3.543,0,0,0,0,3.539V21.983a3.543,3.543,0,0,0,3.539,3.539H23.4a3.543,3.543,0,0,0,3.539-3.539V15.7A.708.708,0,0,0,26.23,14.991Z" transform="translate(0 2.754)" fill="#393939" />
                   <path id="Shape" d="M.207,20.557a.71.71,0,0,1-.182-.69l1.66-5.995a.708.708,0,0,1,.182-.312L14.5.933a3.184,3.184,0,0,1,4.5,0l.83.831a3.188,3.188,0,0,1,0,4.5L7.2,18.9a.71.71,0,0,1-.311.182L.9,20.738a.709.709,0,0,1-.69-.182Z" transform="translate(7.657)" fill="#393939" />
                 </g>
               </svg>
-            </div>
+            </div>}
           </div>
           <div className="py-4 px-3">
-            <div className="row reverse-sm">
-              <div className="col-lg-9">
-                <div className="row">
-                  <div className="col-lg-4">
-                    <p className="fs-6 fw-500 text-dark">Name</p>
+            {!tenantDetails && <div className="ui form w-100">
+              <div className="row reverse-sm">
+                <div className="col-lg-6 col-md-6 col-sm-12 px-2">
+                  <div className="field my-3">
+                    <label className="text-dark fs-7 fw-500">First Name<span className="error">*</span></label>
+                    <input type="text" />
                   </div>
-                  <div className="col-lg-8">
+                  <div className="field my-3">
+                    <label className="text-dark fs-7 fw-500">Last Name</label>
+                    <input type="text" />
+                  </div>
+                </div>
+                <div className="col-lg-6 col-md-6 col-sm-12 px-2">
+                  <div className="edit-profile-img position-relative">
+                    <img src="/assets/images/post-tenant-img.png" class="ui medium circular image TenantDetailsProfileImage mx-auto" alt="Profile Image" />
+                    <div className="edit-icon position-absolute text-center l-18 r-0 t-0">
+                      <Dropdown downward floating options={EditProfileOptions} trigger={trigger} icon="null" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-lg-6 col-md-6 col-sm-12 px-2">
+                  <div className="field w-100 datePicker my-3">
+                    <label className="text-dark fs-7 fw-500">Date of Birth<span className="error">*</span></label>
+                    <SemanticDatepicker placeholder='Select date' className='w-100' />
+                  </div>
+                  <div className="field my-3">
+                    <label className="text-dark fs-7 fw-500">Phone Number<span className="error">*</span></label>
+                    <Input value={contactPhone} onChange={e => SetContactPhone(e.target.value)} className="noCounterNumber" type="text" placeholder="Enter Mobile Number"
+                      label={<Dropdown defaultValue='+91' search options={countriecodes} />}
+                      labelPosition='left' />
+                  </div>
+                </div>
+                <div className="col-lg-6 col-md-6 col-sm-12 px-2">
+                  <div className="field my-3">
+                    <label className="text-dark fs-7 fw-500">Email<span className="error">*</span></label>
+                    <input type="text" />
+                  </div>
+                  <div className="field my-3">
+                    <label className="text-dark fs-7 fw-500">Social Security Number</label>
+                    <input type="text" />
+                  </div>
+                </div>
+              </div>
+              <div className="mt-2 text-center">
+                <button className="ui button text-dark fs-7 fw-400 px-5 mx-1 mb-sm-1" onClick={setTenantDetails}>CANCEL</button>
+                <button className="ui button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-sm-1 ">SAVE</button>
+              </div>
+            </div>}
+
+            {tenantDetails && <div className="row reverse-sm">
+              <div className="col-lg-9 col-md-9 col-sm-12">
+                <div className="row">
+                  <div className="col-lg-4 col-md-4 col-sm-4">
+                    <p className="fs-6 fw-500 text-dark mb-2">Name</p>
+                  </div>
+                  <div className="col-lg-8 col-md-8 col-sm-8">
                     <p className="fs-7 mb-2">Peter John</p>
                   </div>
 
-                  <div className="col-lg-4">
-                    <p className="fs-6 fw-500 text-dark">Date of Birth</p>
+                  <div className="col-lg-4 col-md-4 col-sm-4">
+                    <p className="fs-6 fw-500 text-dark mb-2">Date of Birth</p>
                   </div>
-                  <div className="col-lg-8">
+                  <div className="col-lg-8 col-md-8 col-sm-8">
                     <p className="fs-7 mb-2">18-08-2022</p>
                   </div>
 
-                  <div className="col-lg-4">
-                    <p className="fs-6 fw-500 text-dark">Email</p>
+                  <div className="col-lg-4 col-md-4 col-sm-4">
+                    <p className="fs-6 fw-500 text-dark mb-2">Email</p>
                   </div>
-                  <div className="col-lg-8">
+                  <div className="col-lg-8 col-md-8 col-sm-8">
                     <p className="fs-7 mb-2">peterjohn@yopmail.com</p>
                   </div>
 
-                  <div className="col-lg-4">
-                    <p className="fs-6 fw-500 text-dark">Phone Number</p>
+                  <div className="col-lg-4 col-md-4 col-sm-4">
+                    <p className="fs-6 fw-500 text-dark mb-2">Phone Number</p>
                   </div>
-                  <div className="col-lg-8">
+                  <div className="col-lg-8 col-md-8 col-sm-8">
                     <p className="fs-7 mb-2">+47 123456780</p>
                   </div>
 
-                  <div className="col-lg-4">
-                    <p className="fs-6 fw-500 text-dark">Social Security Number</p>
+                  <div className="col-lg-4 col-md-4 col-sm-4">
+                    <p className="fs-6 fw-500 text-dark mb-2">Social Security Number</p>
                   </div>
-                  <div className="col-lg-8">
+                  <div className="col-lg-8 col-md-8 col-sm-8">
                     <p className="fs-7 mb-2">12346789090</p>
                   </div>
 
-                  <div className="col-lg-4">
+                  <div className="col-lg-4 col-md-4 col-sm-4">
                     <p className="fs-6 fw-500 text-dark">Company Registration Number</p>
                   </div>
-                  <div className="col-lg-8">
+                  <div className="col-lg-8 col-md-8 col-sm-8">
                     <p className="fs-7">34567890</p>
                   </div>
                 </div>
               </div>
-              <div className="col-lg-3 mb-2">
+              <div className="col-lg-3 col-md-3 col-sm-12 mb-2">
                 <div className="post-tenant-img">
                   <img src="/assets/images/post-tenant-img.png" className="ui medium circular image TenantDetailsProfileImage mx-auto" alt="Profile Image" />
                 </div>
@@ -83,13 +157,13 @@ export default function Profile() {
                 </svg>
                   <span className="text-success-dark ml-1">Personal User</span></p>
               </div>
-            </div>
+            </div>}
           </div>
         </div>
 
         <div className="bg-white card-boxShadow border-radius-15 py-2 mb-2">
           <div className="row dashed-bottom px-4 py-2 px-sm-2">
-            <div className="col-lg-6">
+            <div className="col-lg-6 col-md-6 col-sm-6">
               <h6 className="fs-6 fw-500"><svg id="location-svgrepo-com_1_" data-name="location-svgrepo-com (1)" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 21.924 29.667">
                 <g id="Group_6994" data-name="Group 6994" transform="translate(0)">
                   <g id="Group_6993" data-name="Group 6993">
@@ -101,62 +175,101 @@ export default function Profile() {
               </svg>
                 <span className="veritical-align-text-top ml-1">Address</span></h6>
             </div>
-            <div className="col-lg-6 text-right">
+            {tenantaddress && <div className="col-lg-6 col-md-6 col-sm-6 text-right cursor-pointer" onClick={EditTenantAddressHandler}>
               <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 28.419 28.276">
                 <g id="edit_copy" data-name="edit copy" opacity="0.55">
                   <path id="Path" d="M26.23,14.991a.708.708,0,0,0-.708.708v6.284A2.125,2.125,0,0,1,23.4,24.106H3.539a2.125,2.125,0,0,1-2.123-2.123V3.539A2.126,2.126,0,0,1,3.539,1.416H9.823A.708.708,0,1,0,9.823,0H3.539A3.543,3.543,0,0,0,0,3.539V21.983a3.543,3.543,0,0,0,3.539,3.539H23.4a3.543,3.543,0,0,0,3.539-3.539V15.7A.708.708,0,0,0,26.23,14.991Z" transform="translate(0 2.754)" fill="#393939" />
                   <path id="Shape" d="M.207,20.557a.71.71,0,0,1-.182-.69l1.66-5.995a.708.708,0,0,1,.182-.312L14.5.933a3.184,3.184,0,0,1,4.5,0l.83.831a3.188,3.188,0,0,1,0,4.5L7.2,18.9a.71.71,0,0,1-.311.182L.9,20.738a.709.709,0,0,1-.69-.182Z" transform="translate(7.657)" fill="#393939" />
                 </g>
               </svg>
-            </div>
+            </div>}
           </div>
           <div className="py-4 px-3">
-            <div className="row reverse-sm">
-              <div className="col-lg-9">
-                <div className="row">
-                  <div className="col-lg-4">
-                    <p className="fs-6 fw-500 text-dark">Address Line 1</p>
+            {!tenantaddress && <div className="ui form w-100">
+              <div className="row">
+                <div className="col-lg-6 col-md-6 col-sm-12 px-2">
+                  <div className="field my-2">
+                    <label className="text-dark fs-7 fw-500">Address Line 1<span className="error">*</span></label>
+                    <input type="text" />
                   </div>
-                  <div className="col-lg-8">
+                </div>
+                <div className="col-lg-6 col-md-6 col-sm-12 px-2">
+                  <div className="field my-2">
+                    <label className="text-dark fs-7 fw-500">Address Line 2<span className="error">*</span></label>
+                    <input type="text" />
+                  </div>
+                </div>
+                <div className="col-lg-6 col-md-6 col-sm-12 px-2">
+                  <div className="field my-2">
+                    <label className="text-dark fs-7 fw-500">City<span className="error">*</span></label>
+                    <input type="text" />
+                  </div>
+                </div>
+                <div className="col-lg-6 col-md-6 col-sm-12 px-2">
+                  <div className="field my-2">
+                    <label className="text-dark fs-7 fw-500">State/Provine<span className="error">*</span></label>
+                    <input type="text" />
+                  </div>
+                </div>
+                <div className="col-lg-6 col-md-6 col-sm-12 px-2">
+                  <div className="field my-2">
+                    <label className="text-dark fs-7 fw-500">Zip/Postal Code<span className="error">*</span></label>
+                    <input type="text" />
+                  </div>
+                </div>
+              </div>
+              <div className="mt-2 text-center">
+                <button className="ui button text-dark fs-7 fw-400 px-5 mx-1 mb-sm-1" onClick={setTenantAddress}>CANCEL</button>
+                <button className="ui button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-sm-1 ">SAVE</button>
+              </div>
+            </div>}
+
+            {tenantaddress && <div className="row reverse-sm">
+              <div className="col-lg-9 col-md-9 col-sm-12">
+                <div className="row">
+                  <div className="col-lg-4 col-md-4 col-sm-4">
+                    <p className="fs-6 fw-500 text-dark mb-2">Address Line 1</p>
+                  </div>
+                  <div className="col-lg-8 col-md-8 col-sm-8">
                     <p className="fs-7 mb-2">Address Line 1</p>
                   </div>
 
-                  <div className="col-lg-4">
-                    <p className="fs-6 fw-500 text-dark">Address Line 2</p>
+                  <div className="col-lg-4 col-md-4 col-sm-4">
+                    <p className="fs-6 fw-500 text-dark mb-2">Address Line 2</p>
                   </div>
-                  <div className="col-lg-8">
+                  <div className="col-lg-8 col-md-8 col-sm-8">
                     <p className="fs-7 mb-2">Dummy Addresss</p>
                   </div>
 
-                  <div className="col-lg-4">
-                    <p className="fs-6 fw-500 text-dark">City</p>
+                  <div className="col-lg-4 col-md-4 col-sm-4">
+                    <p className="fs-6 fw-500 text-dark mb-2">City</p>
                   </div>
-                  <div className="col-lg-8">
+                  <div className="col-lg-8 col-md-8 col-sm-8">
                     <p className="fs-7 mb-2">Dummy</p>
                   </div>
 
-                  <div className="col-lg-4">
-                    <p className="fs-6 fw-500 text-dark">State/Provine</p>
+                  <div className="col-lg-4 col-md-4 col-sm-4">
+                    <p className="fs-6 fw-500 text-dark mb-2">State/Provine</p>
                   </div>
-                  <div className="col-lg-8">
+                  <div className="col-lg-8 col-md-8 col-sm-8">
                     <p className="fs-7 mb-2">Dummy</p>
                   </div>
 
-                  <div className="col-lg-4">
+                  <div className="col-lg-4 col-md-4 col-sm-4">
                     <p className="fs-6 fw-500 text-dark">Zip/Postal Code</p>
                   </div>
-                  <div className="col-lg-8">
+                  <div className="col-lg-8 col-md-8 col-sm-8">
                     <p className="fs-7">1234678</p>
                   </div>
                 </div>
               </div>
-            </div>
+            </div>}
           </div>
         </div>
 
         <div className="bg-white card-boxShadow border-radius-15 py-2 mb-2">
           <div className="row dashed-bottom px-4 py-2 px-sm-2">
-            <div className="col-lg-6">
+            <div className="col-lg-6 col-md-6 col-sm-12">
               <h6 className="fs-6 fw-500"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 26.873 27.793">
                 <g id="ec" transform="translate(-0.008 -0.005)">
                   <path id="Path_19732" data-name="Path 19732" d="M7.077,110.133a7.082,7.082,0,0,1-.794-.16,11.345,11.345,0,0,1-1.24-.462.561.561,0,0,0-.519-.026A3.322,3.322,0,0,1,.1,107.955c-.165-.3-.117-.569.128-.709a.471.471,0,0,1,.674.25,2.363,2.363,0,0,0,1.9,1.356,8.537,8.537,0,0,0,1.2-.072c-.106-.141-.151-.2-.2-.262a2.789,2.789,0,0,1-.643-2.275,1.724,1.724,0,0,1,1.73-1.427A1.68,1.68,0,0,1,6.483,106.3a2.652,2.652,0,0,1-.595,2.178c-.073.091-.152.178-.228.268,1.29,1.042,4.526.3,5.509-1.282l-.244-.149a16.553,16.553,0,0,1-7.343-8.555,9.158,9.158,0,0,1-.361-5.7,7.79,7.79,0,0,1,2.205-3.644,2.206,2.206,0,0,1,2.7-.308,9.028,9.028,0,0,1,3.329,3.348,2.169,2.169,0,0,1-.582,2.86,2.491,2.491,0,0,0-.9,2.928,5.477,5.477,0,0,0,3.97,3.768,2.4,2.4,0,0,0,2.626-.929,2.182,2.182,0,0,1,3.013-.552,9.106,9.106,0,0,1,3.217,3.238,2.217,2.217,0,0,1-.334,2.767,8,8,0,0,1-7.343,2.326c-.16-.025-.321-.053-.479-.091a.464.464,0,1,1,.178-.91c.439.059.875.148,1.316.179a6.97,6.97,0,0,0,4.594-1.236c.052-.036.1-.079.2-.161-.44-.566-.856-1.145-1.319-1.683-.383-.444-.818-.844-1.24-1.253-.3-.289-.355-.544-.144-.768s.471-.181.762.075a14.717,14.717,0,0,1,2.494,2.852c.039.059.083.115.124.173a1.288,1.288,0,0,0,.427-1.743A8.094,8.094,0,0,0,19,101.261a1.243,1.243,0,0,0-1.614.285,3.393,3.393,0,0,1-4.045,1.259,6.4,6.4,0,0,1-4.315-4.539,3.261,3.261,0,0,1,.441-2.779c.092-.138.049-.222-.025-.334a13.727,13.727,0,0,0-2.648-3c-.09-.076-.183-.149-.266-.231a.456.456,0,0,1-.056-.635.447.447,0,0,1,.653-.059,15.379,15.379,0,0,1,1.354,1.251c.562.623,1.065,1.3,1.592,1.953.049.062.1.126.141.187a1.186,1.186,0,0,0,.5-1.6,7.714,7.714,0,0,0-3.2-3.193,1.165,1.165,0,0,0-1.408.228,6.821,6.821,0,0,0-2.221,4.713,10.144,10.144,0,0,0,1.49,5.69,16.05,16.05,0,0,0,6.565,6.34c.471.249.531.472.231.906a5.376,5.376,0,0,1-3.9,2.379.91.91,0,0,0-.152.046H7.077Zm-2.214-1.858a8.437,8.437,0,0,0,.583-.849,1.423,1.423,0,0,0,.052-1.211.69.69,0,0,0-1.219-.191,1.286,1.286,0,0,0-.219.753,2.077,2.077,0,0,0,.8,1.5Z" transform="translate(0 -82.337)" fill="#328128" />
@@ -169,26 +282,26 @@ export default function Profile() {
           </div>
           <div className="py-4 px-3">
             <div className="row reverse-sm">
-              <div className="col-lg-9">
+              <div className="col-lg-9 col-md-9 col-sm-12">
                 <div className="row">
-                  <div className="col-lg-4">
-                    <p className="fs-6 fw-500 text-dark">Name</p>
+                  <div className="col-lg-4 col-md-4 col-sm-4">
+                    <p className="fs-6 fw-500 text-dark mb-2">Name</p>
                   </div>
-                  <div className="col-lg-8">
+                  <div className="col-lg-8 col-md-8 col-sm-8">
                     <p className="fs-7 mb-2">Peter John</p>
                   </div>
 
-                  <div className="col-lg-4">
-                    <p className="fs-6 fw-500 text-dark">Email</p>
+                  <div className="col-lg-4 col-md-4 col-sm-4">
+                    <p className="fs-6 fw-500 text-dark mb-2">Email</p>
                   </div>
-                  <div className="col-lg-8">
+                  <div className="col-lg-8 col-md-8 col-sm-8">
                     <p className="fs-7 mb-2">peterjohn@yopmail.com</p>
                   </div>
 
-                  <div className="col-lg-4">
+                  <div className="col-lg-4 col-md-4 col-sm-4">
                     <p className="fs-6 fw-500 text-dark">Phone Number</p>
                   </div>
-                  <div className="col-lg-8">
+                  <div className="col-lg-8 col-md-8 col-sm-8">
                     <p className="fs-7">+47 123456780</p>
                   </div>
                 </div>
