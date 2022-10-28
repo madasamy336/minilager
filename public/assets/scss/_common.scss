@@ -22,25 +22,20 @@
 #mainHeader {
     z-index: 99999 !important;
 }
-
 .myLeaseUnitMenu {
     .item {
         background-color: $lightGray !important;
     }
 }
-
 .myLeaseUnitMenu {
     .active.item {
         background-color: $primaryColor !important;
         color: #fff !important;
     }
-
 }
-
 .unitDetails-card-image {
     background-color: $UnitsCardBg !important;
 }
-
 .MyleasesTab {
     .ui.pointing.menu {
         border-bottom: none !important;
@@ -61,7 +56,6 @@
     .insuranceContent{
         .card{
             border: 1px solid $textDisabledColor;
-           
         }
         .card.changePlanCard{
             height: 165px !important;
@@ -104,4 +98,30 @@
 .rentalAgreementContainer{
     height: 250px !important;
     min-width: 800px;
+}
+.w-sm-100{
+    @include for-mobile{
+        width: 100% !important;
+    } 
+}
+.pagination-div{
+    .ui.menu{
+        background-color: transparent !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        .item{
+            min-width: 0em;
+            padding: 0.7rem !important;
+            &::before{
+                display: none;
+            }
+            @include for-mobile{
+                padding: 0.6rem !important;
+            }
+        }
+        .item.active{
+            background-color: transparent !important;
+            color: $primaryColor;
+        }
+    }
 }
