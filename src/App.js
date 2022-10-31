@@ -29,8 +29,8 @@ function App() {
         <>
 
             <Header width={mobileWidth} sidebar={sidebar}  showSidebar={ShowSidebar} />
-            {location.pathname.startsWith('/postBooking') && <SidebarPostBooking width={mobileWidth} sidebar={sidebar} />}
-                <div className={` pusher  ${location.pathname.startsWith('/postBooking') && `${mobileWidth>980 && 'pusher-desktop'}`} `} id='mainContent'>      
+            {location.pathname.startsWith('/postBooking') && <SidebarPostBooking width={mobileWidth} sidebar={sidebar} showSidebar={ShowSidebar}/>}
+                <div className={` pusher  ${location.pathname.startsWith('/postBooking') && `${mobileWidth>980 ? 'pusher-desktop ':'pt-120'}`} `} id='mainContent'>      
                     <Routes>
                         <Route exact path='/home' element={<RentNow />} />
                         <Route path='/login' element={<PostLoginForm />} />

@@ -49,9 +49,6 @@ p{
 .text-danger{
     color: $Error !important;
 }
-.text-white-light{
-    color: $PrimaryCardTextColor !important;
-}
 .bg-layout{
     background-color: $layoutBackground !important;
 }
@@ -67,10 +64,12 @@ p{
 .bg-alert{
     background-color: $ForgotAlertBg;
 }
+.bgImg-none{
+    background-image: none !important;
+}
 .w-100{
     width: 100% !important;
 }
-
 .mx-auto{
     margin: 0 auto !important;
 }
@@ -236,6 +235,9 @@ vertical-align: super !important;
 .mh-400{
     max-height: 400px !important;
 }
+.min-h-100{
+    min-height: 100% !important;
+}
 .h-100vh{
     height: 100vh !important;
 }
@@ -256,7 +258,7 @@ vertical-align: super !important;
     font-size: 1.25rem !important;
 }
 .fs-6{
-    font-size: 1rem !important;
+    font-size: 1.1rem !important;
 }
 .fs-7{
     font-size: 0.9rem !important;
@@ -395,6 +397,9 @@ vertical-align: super !important;
     }
  
 }
+.t-n1{
+    top: -0.5rem !important;
+}
 @for $i from 1 through 4{
     .h-#{$i*25}{
         height: 25% * $i !important;
@@ -431,6 +436,9 @@ display: block !important;
 }
 .error{
     color: $Error;
+}
+.pt-120{
+    padding-top: 120px !important;
 }
 @for $i from 0 through 6{
     @include for-tablet{

@@ -20,7 +20,8 @@
 }
 
 #mainHeader {
-    z-index: 99999 !important;
+    z-index: 999 !important;
+    background-color:$layoutBackground !important ;
 }
 .myLeaseUnitMenu {
     .item {
@@ -124,4 +125,10 @@
             color: $primaryColor;
         }
     }
+}
+input[type=checkbox] {
+    accent-color: #2c7a22  !important;
+  }
+.ml-4px{
+    margin-left: 4px !important;
 }
