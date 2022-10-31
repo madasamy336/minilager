@@ -65,7 +65,7 @@ const Card = () => {
             </div>
             <div className='col-lg-2 col-md-2 col-sm-12'>
             <div className='rentNow-card-action d-flex justify-content-center align-items-center h-100'>
-                <button className="ui button btn-success" onClick={e=>navigateUnits(e)}>View Units</button>
+                <button className="ui button btn-success px-4" onClick={e=>navigateUnits(e)}>View Units</button>
             </div>
             </div>
         </div>

@@ -20,7 +20,7 @@ export default function PostSignupForm() {
                         </div>
                     </div>
                     <div className="col-lg-6 col-md-6 col-sm-12">
-                        <div className="createAccountform-inputs">
+                        <div className="createAccountform-inputs bg-white">
                             <div className="form-title">
                                 <h2 className="text-success fw-600">CREATE YOUR ACCOUNT</h2>
                                 <p>Already a User? <a href="/" onClick={e => ValidateSignin(e)}>Sign in </a></p>
@@ -61,14 +61,12 @@ export default function PostSignupForm() {
                                         </svg>
                                     </div>
                                 </div>
-                                <div className="form-control">
+                                <div className="field form-control w-100">
                                     <label className="d-block">Mobile Number</label>
                                     <div className="ui input w-100">
-                                    <Input type="tel" placeholder="Enter Mobile Number"
+                                    <Input className="noCounterNumber w-100" type="number" placeholder="Enter Mobile Number"
                                             label={<Dropdown defaultValue='+91'  search  options={countriecodes} />}
                                             labelPosition='left' />
-                              
-                                        
                                     </div>
                                 </div>
                                 <div className="form-control">

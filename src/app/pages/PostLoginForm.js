@@ -338,7 +338,7 @@ const PostLoginForm = () => {
                     </div>
                 </div>
                 <div className="col-lg-7 col-md-7 col-sm-12">
-                    <div className="postloginform-inputs">
+                    <div className="postloginform-inputs bg-white">
                         <div className="form-title">
                             <h2 className="text-success fw-600">WELCOME</h2>
                             <p>Don't have an account? <Link to={'/signup'} className="fw-500">Signup Now</Link></p>
