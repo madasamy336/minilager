@@ -42,7 +42,7 @@ export default function MyLeases() {
     console.log(ScheduleMoveOutDate)
   },[ScheduleMoveOutDate])
   return (
-   <div className="mx-2">
+   <div className="ui container">
     <Menu secondary className="myLeaseUnitMenu overflow-x-auto pb-1">
       {
         ['#18b','#19A','#20C','#21A','30A','22S','24C','25N','26M'].map((unitnumber)=>(

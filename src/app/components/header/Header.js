@@ -1,23 +1,23 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { NavLink } from 'react-router-dom'
 import { Dropdown, Icon, Menu } from 'semantic-ui-react'
+import { useLocation } from 'react-router-dom'
 export default function Header(props) {
-  
-  //  const openSidebar=(e)=>{
-  //    e.preventDefault();
-  //    props.showSidebar(!props.sidebar)
-  // }  
+  const location=useLocation()
+   const openSidebar=(e)=>{
+     e.preventDefault();
+     props.showSidebar(!props.sidebar)
+  }  
   return (
     <>
 
-
-    <div id='mainHeader' className='ui secondary pointing menu py-1 bg-white d-block position-fixed w-100'>
+<div className={`position-fixed w-100 ${location.pathname.startsWith('/postBooking')&&`${props.width <980 && 'pb-5'}`}`}id='mainHeader'>
+    <div  className='ui secondary pointing menu py-1 bg-white d-block  w-100'>
     <a href="/" className={`item d-inline-block ${props.width <981 && 'w-50'}`}>
-    <img className={props.width >980 ?'w-50' :'w-75'} src='https://123minilager.no/wp-content/uploads/2020/03/cropped-123Minilager-Lager-til-leie-1.jpg' alt="123minilager.no"/>
-    </a>
+    <img className={`${props.width >980 && 'w-50'} ${props.width>500 ? `${props.width<980 && 'w-25'}`:`w-75`}`} src='https://123minilager.no/wp-content/uploads/2020/03/cropped-123Minilager-Lager-til-leie-1.jpg' alt="123minilager.no"/>
+    </a>  
     {
-      // props.width >980 
-      true
+     props.width >980 
        &&
       <div className='right menu d-inline-block float-right'>
 
@@ -33,7 +33,7 @@ export default function Header(props) {
    </div>
 
     }
-    {/* {
+    {
       props.width <980 &&
     <div className='d-inline-block float-right pr-3'>
     <Menu className='min-h-100' compact>
@@ -58,11 +58,11 @@ export default function Header(props) {
   </Dropdown.Menu>
    </Dropdown>
   </Menu>
-  <Icon onClick={(e)=>openSidebar(e)} name='bars'/> 
-
+{location.pathname.startsWith('/postBooking') &&  <Icon className='position-fixed fs-4 l-2 t-9' onClick={(e)=>openSidebar(e)} name='bars'/> }
     </div>
-    } */}
+    }
    
+    </div>
     </div>
     </>
   )

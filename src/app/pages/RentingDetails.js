@@ -51,8 +51,8 @@ export default function RentingDetails() {
         <div className='ui container responsive'>
           <div className='row'>
             <div className='col-12 col-md-7 pr-1 pr-sm-0 mb-3'>
-              <div className='bg-white px-0 py-2 border-radius-15'>
-                <h6 className='text-dark fw-500 fs-6 px-4 py-2 px-sm-2'><svg
+              <div className='bg-white px-0 py-2 border-radius-15 card-boxShadow'>
+                <h6 className='text-dark fw-500 fs-6 px-4 pb-2 px-sm-2 card-border-bottom'><svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="25"
                   height="25"
@@ -105,17 +105,18 @@ export default function RentingDetails() {
               </div>
             </div>
             <div className='col-12 col-md-5 pl-1 pl-sm-0 mb-3'>
-              <div className='bg-white px-0 py-2 border-radius-15 border-top-success-4'>
+              <div className='bg-white px-0 py-2 border-radius-15 border-top-success-4 card-boxShadow'>
                 <h6 className='text-success-dark fw-500 fs-6 px-4 pt-2 mb-1  px-sm-2'>Total Amount</h6>
-                <p className='px-4 mb-2  px-sm-2'>Please see the breakdown below</p>
+                <p className='px-4 mb-2  px-sm-2 fw-600 text-light-gray'>Please see the breakdown below</p>
                 <div className='px-4  px-sm-2'>
                   <div class="px-1 py-2 card-border-secondary border-radius-10 mb-2">
                     <div class="content">
+                    <p className='text-success-dark mb-1 fw-600 fs-6'>Unit-#123</p>
                       <div class="text-dark fw-500 mb-2">Billing Period ( 18-06-2021 to 17-06-2022)</div>
-                      <div className='mb-2 d-flex justify-content-between'>
+                      <div className='mb-2 d-flex justify-content-between text-light-gray fw-500'>
                         <span>Storage Unit-5'x10'</span><span>$90</span>
                       </div>
-                      <div className='mb-2 d-flex justify-content-between'>
+                      <div className='mb-2 d-flex justify-content-between text-light-gray fw-500'>
                         <span>NB HST (15%)</span><span >$14.25</span>
                       </div>
                       <p></p>
@@ -125,8 +126,8 @@ export default function RentingDetails() {
                           <div className='col-9 ui input'>
                             <input placeholder='Enter the code' className='border-bottom-only border-radius-0' />
                           </div>
-                          <div className='col-3 d-flex align-items-end'>
-                            <button className='ui button bg-success-dark fs-7 fw-400 text-white p-1' onClick={() => SetApplyDiscountModal({ open: true, dimmer: 'blurring' })}>Apply</button>
+                          <div className='col-3 d-flex align-items-end justify-content-center'>
+                            <button className='ui button bg-success-dark fs-8 fw-400 text-white py-1 px-2' onClick={() => SetApplyDiscountModal({ open: true, dimmer: 'blurring' })}>Apply</button>
                           </div>
                         </div>
                       </div>
@@ -139,7 +140,7 @@ export default function RentingDetails() {
                           </g>
                         </svg>
                         <span className='veritical-align-text-bottom ml-1'>Use Promocode</span></p>
-                      <div className='fw-600 d-flex justify-content-between'>
+                      <div className='fw-700 d-flex justify-content-between'>
                         <span>Total</span><span >$134.25</span>
                       </div>
                     </div>
