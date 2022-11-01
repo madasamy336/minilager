@@ -89,10 +89,6 @@ export default function RentingDetails() {
                     <label className='fw-500 fs-7 mb-2'>Invoice Recurring</label>
                     <Dropdown placeholder='Select Invoice Recurring' clearable fluid search selection options={invoiceRecurringSelectOption} />
                   </div>
-                  <div class="field w-100  my-3">
-                    <label className='fw-500 fs-7 mb-2'>Gate Access Code</label>
-                    <input placeholder='Enter Gate Access Code' />
-                  </div>
                   <div class="field w-100 datePicker my-3">
                     <label className='fw-500 fs-7 mb-2' >Desired Move Out date</label>
                     <SemanticDatepicker placeholder='Select date' className='w-100' />
@@ -109,18 +105,18 @@ export default function RentingDetails() {
                 <h6 className='text-success-dark fw-500 fs-6 px-4 pt-2 mb-1  px-sm-2'>Invoice Details</h6>
                 <p className='px-4 mb-2 px-sm-2 fw-400 text-light-gray'>Please see the breakdown below</p>
                 <div className='px-4  px-sm-2'>
-                  <div class="px-1 py-2 card-border-secondary border-radius-10 mb-2">
+                  <div class="py-2 card-border-secondary border-radius-10 mb-2">
                     <div class="content">
-                    <p className='text-success-dark mb-1 fw-600 fs-6'>Unit-#123</p>
-                      <div class="text-dark fw-500 mb-2">Billing Period ( 18-06-2021 to 17-06-2022)</div>
-                      <div className='mb-2 d-flex justify-content-between text-light-gray fw-500'>
+                    <p className='text-success-dark mb-1 fw-600 fs-6 px-1'>Unit-#123</p>
+                      <div class="text-dark fw-500 mb-2 px-1">Billing Period ( 18-06-2021 to 17-06-2022)</div>
+                      <div className='mb-2 d-flex px-1 justify-content-between text-light-gray fw-500'>
                         <span>Storage Unit-5'x10'</span><span>$90</span>
                       </div>
-                      <div className='mb-2 d-flex justify-content-between text-light-gray fw-500'>
+                      <div className='mb-2 d-flex px-1 justify-content-between text-light-gray fw-500'>
                         <span>NB HST (15%)</span><span >$14.25</span>
                       </div>
                       <p></p>
-                      <div class="field w-100  mt-3 mb-2">
+                      <div class="field w-100 px-1 mt-3 mb-2">
                         <label className='fs-6 fw-500'>Promo Code</label>
                         <div className='row mt-1'>
                           <div className='col-9 ui input'>
@@ -131,7 +127,7 @@ export default function RentingDetails() {
                           </div>
                         </div>
                       </div>
-                      <p className='text-success mb-3'>
+                      <p className='text-success mb-3 px-1'>
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 22 22.938">
                           <g id="offer" transform="translate(-0.012 -0.021)">
                             <path id="Path_16041" data-name="Path 16041" d="M11.235,22.959h-.448A2.634,2.634,0,0,1,9.309,22.1c-.338-.348-.7-.674-1.044-1.014a.752.752,0,0,0-.674-.22c-.568.083-1.138.159-1.706.247A2,2,0,0,1,3.47,19.438q-.17-.844-.3-1.7a.893.893,0,0,0-.521-.725c-.507-.252-1.006-.523-1.5-.793a2,2,0,0,1-.9-2.763c.25-.525.5-1.048.768-1.566a.834.834,0,0,0,0-.811C.754,10.572.5,10.055.256,9.537a2.008,2.008,0,0,1,.915-2.793c.506-.272,1.011-.545,1.523-.805a.832.832,0,0,0,.472-.66q.133-.828.283-1.653A2,2,0,0,1,5.8,1.864c.571.065,1.139.151,1.706.244A.844.844,0,0,0,8.3,1.863c.411-.412.834-.814,1.255-1.216a2,2,0,0,1,2.906,0q.648.619,1.288,1.246a.772.772,0,0,0,.695.224c.568-.084,1.137-.163,1.705-.249a2,2,0,0,1,2.4,1.669c.116.569.212,1.144.3,1.719a.864.864,0,0,0,.495.693c.5.25.99.521,1.483.784a2.013,2.013,0,0,1,.919,2.842c-.241.5-.478.995-.73,1.485a.865.865,0,0,0,0,.852c.261.511.511,1.028.758,1.546a2,2,0,0,1-.9,2.764c-.511.278-1.024.553-1.543.815a.834.834,0,0,0-.476.657c-.089.552-.185,1.1-.283,1.653A2.009,2.009,0,0,1,16.2,21.115c-.57-.07-1.139-.153-1.706-.245a.827.827,0,0,0-.774.242c-.332.334-.684.646-1.011.984a2.631,2.631,0,0,1-1.477.862Zm4.851-15.8a.739.739,0,0,0-.72-.693.759.759,0,0,0-.541.275L6.258,15.307a1.225,1.225,0,0,0-.149.166.658.658,0,0,0,.525,1.038.793.793,0,0,0,.6-.306q3.775-3.778,7.552-7.553c.338-.338.684-.667,1.009-1.017a2.8,2.8,0,0,0,.295-.476ZM13.65,12.6A2.423,2.423,0,1,0,16.079,15,2.42,2.42,0,0,0,13.65,12.6ZM8.372,10.382A2.424,2.424,0,1,0,5.944,7.974a2.424,2.424,0,0,0,2.429,2.408Z" transform="translate(0 0)" fill="#67be5c" />
@@ -140,7 +136,7 @@ export default function RentingDetails() {
                           </g>
                         </svg>
                         <span className='veritical-align-text-bottom ml-1 cursor-pointer' onClick={() => SetApplyDiscountModal({ open: true, dimmer: 'blurring' })}>Use Promocode</span></p>
-                      <div className='fw-700 d-flex justify-content-between'>
+                      <div className='fw-700 px-1 d-flex justify-content-between'>
                         <span>Total</span><span >$134.25</span>
                       </div>
                     </div>

@@ -79,6 +79,15 @@
                         }
                     }
                 }
+                .selectedFilter{
+                    p{
+                        background-color: $UnitsFilterSelectedText;
+                        img{
+                            width: 0.6rem;
+                            height: 0.6rem;
+                        }
+                    }
+                }
             }
         }
         .units-container-div{

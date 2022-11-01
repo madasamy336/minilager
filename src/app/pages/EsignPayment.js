@@ -159,7 +159,6 @@ export default function EsignPayment() {
                     </div>
                     <div className='pt-4 d-flex justify-content-center flex-wrap'>
                         <button class="ui button bg-success-dark d-flex align-items-center border-radius-5 fs-6 fw-100 text-white px-5 px-md-2 mb-sm-1"><img src='/assets/images/executed-payment.svg' alt='Pay Now' /><span className='ml-1'>Pay Now</span></button>
-                        <button class="ui button bg-white d-flex align-items-center border-radius-5 card-border fs-6 fw-400 text-dark px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1" onClick={e=>ThankYou(e)}><img src='/assets/images/pay.svg' alt='Pay Later' /><span className='ml-1'>Pay Later</span></button>
                     </div>
                   </div>
                 </div>
@@ -193,7 +192,7 @@ export default function EsignPayment() {
                 <h6 className='text-dark fw-500 fs-6 px-4 py-2 px-sm-2 card-border-bottom fw-600 text-success-dark'>
                   <span className='veritical-align-text-top ml-1'>CHOOSE PAYMENT TYPE</span></h6>
                   <div className='py-4 px-3'>
-                    <div className='card-border bank-div border-radius-5 d-flex align-items-center position-relative mb-3'>
+                    <div className='card-border bank-div border-radius-5 d-flex align-items-center position-relative mb-3' onClick={e=>ThankYou(e)}>
                       <div className='bank-img px-2'>
                         <img className='w-100 h-100' src="/assets/images/direct-debit.svg" alt="Debit card" />
                       </div>
@@ -202,7 +201,7 @@ export default function EsignPayment() {
                       </div>
                       <img className='bankid-img position-absolute r-2' src="/assets/images/arrow-down.png" alt="Arrow" />
                     </div>
-                    <div className='card-border bank-div border-radius-5 d-flex align-items-center position-relative'>
+                    <div className='card-border bank-div border-radius-5 d-flex align-items-center position-relative' onClick={e=>ThankYou(e)}>
                       <div className='bank-img px-2'>
                         <img className='w-100 h-100' src="/assets/images/credit-payment.svg" alt="Credit card" />
                       </div>
@@ -214,7 +213,7 @@ export default function EsignPayment() {
                   </div>
               </div>
               <div class="text-center mt-4">
-                <button onClick={()=>  navigate('/preBooking/TenantDetails')} class="ui button bg-white text-success-dark border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">BACK</button>
+                <button onClick={()=>navigate('/preBooking/TenantDetails')} class="ui button bg-white text-success-dark border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">BACK</button>
               </div>
             </div>
 
@@ -236,21 +235,21 @@ export default function EsignPayment() {
                 </div>
                 <h6 className='text-dark text-center fw-500 fs-6 px-4 pt-2 mb-1 px-sm-2'>Recurring charges</h6>
                 <p className='text-dark text-center px-4 mb-2 px-sm-2'>This will be your recurring charges until you decide to move out.</p>
-                <div className='mt-2 card-border border-radius-5 p-2 m-2'>
-                  <h6 className='fw-600 fs-6 mb-1'>Total Amount</h6>
-                  <div className='d-flex justify-content-between dashed-bottom py-1'>
+                <div className='mt-2 card-border border-radius-5 py-2 m-2'>
+                  <h6 className='fw-600 fs-6 mb-1 px-2'>Total Amount</h6>
+                  <div className='d-flex justify-content-between dashed-bottom py-1 px-2'>
                     <p>Storage Unit - 5'x10'</p>
                     <p>$90</p>
                   </div>
-                  <div className='d-flex justify-content-between dashed-bottom py-1'>
+                  <div className='d-flex justify-content-between dashed-bottom py-1 px-2'>
                     <p>Protection Plan: Standard</p>
                     <p>$5</p>
                   </div>
-                  <div className='d-flex justify-content-between py-1'>
+                  <div className='d-flex justify-content-between py-1 px-2'>
                     <p>NB HST (15%)</p>
                     <p>$14.25</p>
                   </div>
-                  <div className='d-flex justify-content-between border-top pt-1'>
+                  <div className='d-flex justify-content-between border-top pt-1 px-2'>
                     <p className='fw-600'>Net Amount</p>
                     <p className='fw-600'>$109.25</p>
                   </div>

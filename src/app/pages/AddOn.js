@@ -183,7 +183,7 @@ export default function AddOn() {
                   </div>
                   <div className='text-center my-4'>
                     <button class="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2 mb-sm-1" onClick={cancelInsuranceHandler}>BACK</button>
-                    <button class="ui button bg-success-dark fs-7 fw-400 text-white px-5 mb-sm-1">NEXT</button>
+                    <button class="ui button bg-success-dark fs-7 fw-400 text-white px-5 mb-sm-1">SAVE</button>
                   </div>
                 </div>)}
               </div>
@@ -445,19 +445,19 @@ export default function AddOn() {
               <div className='bg-white card-boxshadow px-0 py-2 border-radius-15 border-top-success-4'>
                 <h6 className='text-success-dark fw-500 fs-6 px-4 pt-2 mb-1  px-sm-2'>Invoice Details</h6>
                 <p className='px-4 mb-2 px-sm-2 fw-400 text-light-gray'>Please see the breakdown below</p>
-                <div className='px-4  px-sm-2'>
-                  <div class="px-1 py-2 card-border-secondary border-radius-10 mb-2">
+                <div className='px-4 px-sm-2'>
+                  <div class="py-2 card-border-secondary border-radius-10 mb-2">
                     <div class="content">
-                      <p className='text-success-dark mb-1 fw-600 fs-6'>Unit-#123</p>
-                      <div class="text-dark fw-500 mb-2">Billing Period ( 18-06-2021 to 17-06-2022)</div>
-                      <div className='mb-2 d-flex justify-content-between text-light-gray fw-500'>
+                      <p className='text-success-dark mb-1 fw-600 fs-6 px-1'>Unit-#123</p>
+                      <div className="text-dark fw-500 mb-2 px-1">Billing Period ( 18-06-2021 to 17-06-2022)</div>
+                      <div className='mb-2 d-flex justify-content-between text-light-gray fw-500 px-1'>
                         <span>Storage Unit-5'x10'</span><span>$90</span>
                       </div>
-                      <div className='mb-2 card-border-bottom-dashed pb-1 d-flex justify-content-between text-light-gray fw-500'>
+                      <div className='mb-2 card-border-bottom-dashed pb-1 d-flex justify-content-between text-light-gray fw-500 px-1'>
                         <span>NB HST (15%)</span><span >$14.25</span>
                       </div>
                       <p></p>
-                      <div class="field w-100 datePicker mt-3 mb-2">
+                      <div class="field w-100 datePicker mt-3 mb-2 px-1">
                         <label className='fs-6 fw-500'>Promo Code</label>
                         <div className='row mt-1'>
                           <div className='col-6'>
@@ -473,7 +473,7 @@ export default function AddOn() {
                           </div>
                         </div>
                       </div>
-                      <div className='row pb-1 mb-2 card-border-bottom-dashed'>
+                      <div className='row pb-1 mb-2 px-1 card-border-bottom-dashed'>
                         <div className='col-6'>
                           <p className='text-success'>
                             <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 22 22.938">
@@ -489,7 +489,7 @@ export default function AddOn() {
                           <p className='error cursor-pointer' onClick={() => SetApplyDiscountModal({ open: true, dimmer: 'blurring' })}>Change</p>
                         </div>
                       </div>
-                      <div className='fw-600 d-flex justify-content-between'>
+                      <div className='fw-600 d-flex justify-content-between px-1'>
                         <span>Total</span><span >$134.25</span>
                       </div>
                     </div>

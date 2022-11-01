@@ -19,11 +19,28 @@ export default class AccordionExampleStyled extends Component {
 
     return (
       <Accordion styled>
-        <Accordion.Title className='d-flex justify-content-between align-items-center' active={activeIndex === 0} index={0}>
+        <Accordion.Title active={activeIndex === 0} index={0}>
           <div className='d-flex justify-content-between align-items-center'>
-            <img src="/assets/images/filter.png" alt="" />Filters
+            <div className='d-flex justify-content-between align-items-center'>
+              <img src="/assets/images/filter.png" alt="" />Filters
+            </div>
+            <div>
+              <p className='fs-8 text-success'>Clear All</p>
+            </div>
           </div>
-          <div>
+          <div className='row mt-3 selectedFilter'>
+            <div className='col-lg-4 col-md-6 col-sm-4'>
+              <p className='fs-8 d-flex justify-content-between align-items-center p-1 mr-1 mb-1'>Building 1 <img src='/assets/images/wrong.svg' alt='Close' /></p>
+            </div>
+            <div className='col-lg-4 col-md-6 col-sm-4'>
+              <p className='fs-8 d-flex justify-content-between align-items-center p-1 mr-1'>Small <img src='/assets/images/wrong.svg' alt='Close' /></p>
+            </div>
+            <div className='col-lg-4 col-md-6 col-sm-4'>
+              <p className='fs-8 d-flex justify-content-between align-items-center p-1 mr-1'>10x9x9 <img src='/assets/images/wrong.svg' alt='Close' /></p>
+            </div>
+            <div className='col-lg-4 col-md-6 col-sm-4'>
+              <p className='fs-8 d-flex justify-content-between align-items-center p-1 mr-1'>Amenity 1 <img src='/assets/images/wrong.svg' alt='Close' /></p>
+            </div>
           </div>
         </Accordion.Title>
 

@@ -309,26 +309,6 @@ export default function Profile() {
             </div>
           </div>
         </div>
-
-        <div className="bg-white card-boxShadow border-radius-15 py-2 mb-2">
-          <div className="row dashed-bottom px-4 py-2 px-sm-2">
-            <div className="col-lg-6">
-              <h6 className="fs-6 fw-500"><svg id="credit_score" data-name="credit score" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 28.031 13.978">
-                <path id="Path_19703" data-name="Path 19703" d="M158.848,44.579h-4.835a9.4,9.4,0,0,0-1.872-5.533l3.409-3.456a12.933,12.933,0,0,1,2.72,5c.245.845.388,1.72.577,2.582v1.4Zm-.583-.635a13.2,13.2,0,0,0-2.754-7.5c-.917.933-1.76,1.8-2.569,2.619A23.55,23.55,0,0,1,154,41.355a26.191,26.191,0,0,1,.633,2.59h3.627Z" transform="translate(-130.817 -30.602)" fill="#328128" />
-                <path id="Path_19704" data-name="Path 19704" d="M0,43.512c.184-.84.331-1.69.561-2.517A13.025,13.025,0,0,1,3.238,35.98l3.4,3.481a9.162,9.162,0,0,0-1.784,5.452H0Zm5.972-4.087c-.9-.91-1.745-1.767-2.591-2.626C1.893,38.255.367,42.435.678,44.26H4.3A9.925,9.925,0,0,1,5.972,39.425Z" transform="translate(0 -30.937)" fill="#328128" />
-                <path id="Path_19705" data-name="Path 19705" d="M110.06,7.327a9.282,9.282,0,0,0-5.69-2.5V0a13.936,13.936,0,0,1,9.09,3.87Zm2.754-3.4-3.491-2.287c-.607,1.232-1.138,2.31-1.651,3.348l2.5,1.594,2.636-2.655Z" transform="translate(-89.742)" fill="#328128" />
-                <path id="Path_19706" data-name="Path 19706" d="M33.463,7.421,30.07,3.973A13.963,13.963,0,0,1,39.268,0V4.827a9.4,9.4,0,0,0-5.805,2.594ZM38.709.612a13.217,13.217,0,0,0-7.762,3.329l2.6,2.641A10.089,10.089,0,0,1,38.709,4.3Z" transform="translate(-25.856)" fill="#328128" />
-                <path id="Path_19707" data-name="Path 19707" d="M93.882,48c-.091.314-.128.486-.191.65-.708,1.849-1.428,3.693-2.126,5.547a1.32,1.32,0,0,1-1.225.98,1.277,1.277,0,0,1-1.3-.779,1.3,1.3,0,0,1,.3-1.536c1.392-1.509,2.775-3.029,4.163-4.541.076-.081.17-.146.374-.321Z" transform="translate(-76.448 -41.273)" fill="#328128" />
-              </svg>
-                <span className="veritical-align-text-top ml-1">Credit Score</span></h6>
-            </div>
-          </div>
-          <div className="py-4 px-3">
-              <div className="credit-score-img text-center">
-                <img className="ui image medium mx-auto" src="/assets/images/credit-score.png" alt="Credit Score" />
-              </div>
-          </div>
-        </div>
       </div>
     </>
   )
