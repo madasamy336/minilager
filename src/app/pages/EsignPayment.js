@@ -9,6 +9,10 @@ export default function EsignPayment() {
   const esignMethodHandler = () => {
     setEsignMethod(!esignMethod);
   }
+  const ThankYou=(e)=>{
+    e.preventDefault();
+    navigate('/preBooking/thankyou')
+  }
   return (
     <>
       <PreBookingBreadcrumb activeStep='1234' />
@@ -155,7 +159,7 @@ export default function EsignPayment() {
                     </div>
                     <div className='pt-4 d-flex justify-content-center flex-wrap'>
                         <button class="ui button bg-success-dark d-flex align-items-center border-radius-5 fs-6 fw-100 text-white px-5 px-md-2 mb-sm-1"><img src='/assets/images/executed-payment.svg' alt='Pay Now' /><span className='ml-1'>Pay Now</span></button>
-                        <button class="ui button bg-white d-flex align-items-center border-radius-5 card-border fs-6 fw-400 text-dark px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1"><img src='/assets/images/pay.svg' alt='Pay Later' /><span className='ml-1'>Pay Later</span></button>
+                        <button class="ui button bg-white d-flex align-items-center border-radius-5 card-border fs-6 fw-400 text-dark px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1" onClick={e=>ThankYou(e)}><img src='/assets/images/pay.svg' alt='Pay Later' /><span className='ml-1'>Pay Later</span></button>
                     </div>
                   </div>
                 </div>

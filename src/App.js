@@ -16,6 +16,7 @@ import AddOn from './app/pages/AddOn';
 import TenantDetails from './app/pages/TenantDetails';
 import EsignPayment from './app/pages/EsignPayment';
 import ForgotPassword from './app/pages/ForgotPassword';
+import SuccessfulMoveIn from './app/pages/SuccessfulMoveIn';
 
 function App() {
     const windowWidth = window.innerWidth
@@ -41,6 +42,7 @@ function App() {
                         <Route path='/preBooking/addOns' element={<AddOn />} />
                         <Route path='/preBooking/TenantDetails' element={<TenantDetails />} />
                         <Route path='/preBooking/esignPayment' element={<EsignPayment />} />
+                        <Route path='/preBooking/thankyou' element={<SuccessfulMoveIn />} />
 
                         <Route path='/postBooking/Profile' element={<Profile />} />
                         <Route path='/postBooking/myLeases' element={<MyLeases />} />

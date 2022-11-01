@@ -106,8 +106,8 @@ export default function RentingDetails() {
             </div>
             <div className='col-12 col-md-5 pl-1 pl-sm-0 mb-3'>
               <div className='bg-white px-0 py-2 border-radius-15 border-top-success-4 card-boxShadow'>
-                <h6 className='text-success-dark fw-500 fs-6 px-4 pt-2 mb-1  px-sm-2'>Total Amount</h6>
-                <p className='px-4 mb-2  px-sm-2 fw-600 text-light-gray'>Please see the breakdown below</p>
+                <h6 className='text-success-dark fw-500 fs-6 px-4 pt-2 mb-1  px-sm-2'>Invoice Details</h6>
+                <p className='px-4 mb-2 px-sm-2 fw-400 text-light-gray'>Please see the breakdown below</p>
                 <div className='px-4  px-sm-2'>
                   <div class="px-1 py-2 card-border-secondary border-radius-10 mb-2">
                     <div class="content">
@@ -127,7 +127,7 @@ export default function RentingDetails() {
                             <input placeholder='Enter the code' className='border-bottom-only border-radius-0' />
                           </div>
                           <div className='col-3 d-flex align-items-end justify-content-center'>
-                            <button className='ui button bg-success-dark fs-8 fw-400 text-white py-1 px-2' onClick={() => SetApplyDiscountModal({ open: true, dimmer: 'blurring' })}>Apply</button>
+                            <button className='ui button bg-success-dark fs-8 fw-400 text-white py-1 px-2'>Apply</button>
                           </div>
                         </div>
                       </div>
@@ -139,7 +139,7 @@ export default function RentingDetails() {
                             <path id="Path_16043" data-name="Path 16043" d="M131.451,123.107a1.1,1.1,0,1,1-2.2.006,1.1,1.1,0,0,1,2.2-.006Z" transform="translate(-121.987 -115.154)" fill="#67be5c" />
                           </g>
                         </svg>
-                        <span className='veritical-align-text-bottom ml-1'>Use Promocode</span></p>
+                        <span className='veritical-align-text-bottom ml-1 cursor-pointer' onClick={() => SetApplyDiscountModal({ open: true, dimmer: 'blurring' })}>Use Promocode</span></p>
                       <div className='fw-700 d-flex justify-content-between'>
                         <span>Total</span><span >$134.25</span>
                       </div>

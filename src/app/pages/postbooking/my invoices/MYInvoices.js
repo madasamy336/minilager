@@ -3,7 +3,7 @@ import { Icon, Pagination } from 'semantic-ui-react';
 
 export default function MYInvoices() {
   return (
-    <div className="ui container">
+    <div className="mx-2 mx-sm-1">
       <div>
         <p className="fs-6 fw-500 text-success-dark ml-1 mb-2">14 Records Selected</p>
         <div className="bg-white card-boxShadow border-radius-15 py-1 mb-2">

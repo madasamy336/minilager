@@ -97,6 +97,8 @@ const Units = () => {
                                 <div className='units-div'>
                                     <div className='row'>
                                         <UnitsCard />
+                                        <UnitsCard />
+                                        <UnitsCard />
                                     </div>
                                 </div>
                                 <div className='pagination-div mt-2 mb-3 text-center'>

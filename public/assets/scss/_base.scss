@@ -41,13 +41,16 @@ p{
     color: $primaryColor !important;
 }
 .text-success-dark{
-    color: $LoginFormTextColor !important;
+    color: $primaryColor !important;
 }
 .text-purple{
     color: $TextPurple;
 }
 .text-danger{
     color: $Error !important;
+}
+.text-white-light{
+    color: $PrimaryCardTextColor !important;
 }
 .bg-layout{
     background-color: $layoutBackground !important;
@@ -135,10 +138,10 @@ p{
     background-color: $primaryColor !important;
 }
 .bg-success-dark{
-    background-color: $LoginFormTextColor !important;
+    background-color: $primaryColor !important;
 }
 .border-success-dark-1{
-    border:1px solid $LoginFormTextColor !important;
+    border:1px solid $primaryColor !important;
 }
 .border-success-dark-light-1{
 border:1px solid $border-Success-1 !important;
@@ -147,7 +150,7 @@ border:1px solid $border-Success-1 !important;
     border:1px solid $primaryColor !important;
 }
 .border-top-success-4{
-    border-top: 4px solid $LoginFormTextColor;
+    border-top: 4px solid $primaryColor;
 }
 .box-shadow-none{
     box-shadow: none !important;

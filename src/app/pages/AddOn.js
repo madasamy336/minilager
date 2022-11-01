@@ -140,7 +140,7 @@ export default function AddOn() {
                       </div>
                     </div>
                     <div className='col-lg-3 col-md-6 col-sm-12 px-1 mb-1'>
-                      <div onClick={ownInsuranceHandler} className='card card-border-secondary border-radius-10 text-center p-2'>
+                      <div onClick={ownInsuranceHandler} className='card card-border-secondary border-radius-10 text-center p-2 cursor-pointer'>
                         <p className='text-dark fs-7 fw-500 mt-1'>I HAVE A</p>
                         <h4 className='text-success-dark fs-6 fw-400 pb-1'>OWN INSURANCE</h4>
                       </div>
@@ -169,13 +169,9 @@ export default function AddOn() {
                     <SemanticDatepicker placeholder='Effective To Date' className='w-100' />
                   </div>
                   <div class="field w-100 datePicker my-3">
-                    <label className='fw-500 fs-7 mb-2' >Effective To Date</label>
-                    <SemanticDatepicker placeholder='Effective To Date' className='w-100' />
-                  </div>
-                  <div class="field w-100 datePicker my-3">
                     <label className='fw-500 fs-7 mb-2'>Document Upload</label>
                     <div className='upload text-center py-3'>
-                      <label for="insuranceUpload"><svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" viewBox="0 0 66 65.99">
+                      <label className='cursor-pointer' for="insuranceUpload"><svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" viewBox="0 0 66 65.99">
                         <g id="upload_neww" data-name="upload  neww" transform="translate(0 -0.061)" opacity="0.18">
                           <path id="Path_19750" data-name="Path 19750" d="M-356.118,239.355v40.918a5.079,5.079,0,0,1-.053,1.026,2.362,2.362,0,0,1-2.559,1.862,2.384,2.384,0,0,1-2.1-2.284c-.012-.244,0-.49,0-.736V239.526l-.165-.106c-.163.2-.311.417-.492.6q-5.829,5.835-11.664,11.662a2.351,2.351,0,0,1-4.085-.9,2.379,2.379,0,0,1,.778-2.455q5.034-5.014,10.052-10.04l6.04-6.038a2.388,2.388,0,0,1,3.784,0q8.05,8.042,16.088,16.092c1.459,1.463.984,3.636-.9,4.122a2.366,2.366,0,0,1-2.4-.76q-4.807-4.825-9.629-9.634Z" transform="translate(391.468 -231.26)" />
                           <path id="Path_19751" data-name="Path 19751" d="M-416.15,499.227h-27.83c-3.232,0-5.168-1.935-5.17-5.166v-8.69a2.379,2.379,0,0,1,2.341-2.64,2.374,2.374,0,0,1,2.362,2.612c0,2.849.016,5.7-.012,8.542,0,.516.122.64.638.64q27.649-.02,55.3,0c.6,0,.654-.2.65-.7-.022-2.823-.012-5.646,0-8.465a2.379,2.379,0,0,1,2.362-2.626,2.382,2.382,0,0,1,2.362,2.626v8.762a4.731,4.731,0,0,1-5.083,5.107Z" transform="translate(449.15 -433.176)" />
@@ -390,11 +386,7 @@ export default function AddOn() {
                       ></path>
                     </g>
                   </svg><span className='veritical-align-text-top ml-1'>Vehicle Details</span></h6>
-                <div className='addon-accordion-div'>
-                  {vehicleaccordian.map((data, index) => (
-                    <AddOnAccordion RemoveFunction={removeVehicleForm} key={index} index={index} VehicleLength={data.VehicleAccordianLength} VehicleType={data.VehicleType} Year={data.Year} Brand={data.Brand} Model={data.Model} Color={data.Color} VehicleState={data.VehicleState} RegistrationNo={data.RegistrationNo} LicenseNo={data.LicenseNo} />
-                  ))}
-                </div>
+
                 {vehicleaccordian.length < 3 && (
                   <div class="ui form px-4 px-sm-2">
                     <div class="field w-100 datePicker my-3">
@@ -403,7 +395,7 @@ export default function AddOn() {
                     </div>
                     <div class="field w-100 datePicker my-3">
                       <label className='fw-500 fs-7 mb-2'>Year</label>
-                      <SemanticDatepicker placeholder='Year' className='w-100' onChange={(e) => setYear(e.target.ariaLabel)} />
+                      <input placeholder='Year' className='w-100' onChange={(e) => setYear(e.target.value)} />
                     </div>
                     <div class="field w-100 datePicker my-3">
                       <label className='fw-500 fs-7 mb-2'>Brand</label>
@@ -437,6 +429,11 @@ export default function AddOn() {
                     </div>
                   </div>
                 )}
+                <div className='addon-accordion-div mt-5'>
+                  {vehicleaccordian.map((data, index) => (
+                    <AddOnAccordion RemoveFunction={removeVehicleForm} key={index} index={index} VehicleLength={data.VehicleAccordianLength} VehicleType={data.VehicleType} Year={data.Year} Brand={data.Brand} Model={data.Model} Color={data.Color} VehicleState={data.VehicleState} RegistrationNo={data.RegistrationNo} LicenseNo={data.LicenseNo} />
+                  ))}
+                </div>
               </div>
 
               <div className='text-center my-4'>
@@ -446,8 +443,8 @@ export default function AddOn() {
             </div>
             <div className='col-12 col-md-5 pl-1 pl-sm-0 mb-3'>
               <div className='bg-white card-boxshadow px-0 py-2 border-radius-15 border-top-success-4'>
-                <h6 className='text-success-dark fw-500 fs-6 px-4 pt-2 mb-1  px-sm-2'>Total Amount</h6>
-                <p className='px-4 mb-2  px-sm-2 fw-600 text-light-gray'>Please see the breakdown below</p>
+                <h6 className='text-success-dark fw-500 fs-6 px-4 pt-2 mb-1  px-sm-2'>Invoice Details</h6>
+                <p className='px-4 mb-2 px-sm-2 fw-400 text-light-gray'>Please see the breakdown below</p>
                 <div className='px-4  px-sm-2'>
                   <div class="px-1 py-2 card-border-secondary border-radius-10 mb-2">
                     <div class="content">
@@ -472,10 +469,7 @@ export default function AddOn() {
                             </p>
                           </div>
                           <div className='col-6 text-right'>
-                            <p className='d-flex justify-content-end align-items-center'><span>$14.25</span> <svg className='ml-1' xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 19.506 19.501">
-                              <path id="remove-1" d="M8.672,0H9.829c.315.041.633.07.945.125A9.063,9.063,0,0,1,16.6,3.657a8.968,8.968,0,0,1,1.728,7.325A8.9,8.9,0,0,1,15.2,16.32,9.012,9.012,0,0,1,8,18.413a8.9,8.9,0,0,1-4.862-2.23,9.11,9.11,0,0,1-3-5.32c-.062-.342-.1-.689-.144-1.034V8.672c.041-.309.071-.62.123-.927A9.106,9.106,0,0,1,2.665,2.766,9.063,9.063,0,0,1,7.657.142C7.994.083,8.334.047,8.673,0Zm.577,10.351c.051.047.1.085.137.127l1.086,1.085c.366.366.728.736,1.1,1.1a.768.768,0,0,0,1.306-.508.8.8,0,0,0-.276-.641q-1.063-1.057-2.121-2.119c-.045-.045-.087-.093-.137-.147L12.02,7.572c.217-.217.441-.428.648-.654a.771.771,0,1,0-1.143-1.034Q10.461,6.953,9.393,8.017c-.045.045-.093.088-.157.148-.18-.186-.344-.362-.513-.532q-.88-.883-1.763-1.762a.772.772,0,1,0-1.08,1.1Q6.944,8.039,8.013,9.1c.046.046.088.094.138.148-.049.052-.089.1-.13.139L6.756,10.655c-.3.3-.609.6-.906.908a.77.77,0,0,0,.223,1.253.792.792,0,0,0,.906-.2Q8.041,11.554,9.1,10.493c.046-.046.094-.089.149-.141Z" transform="translate(0.5 0.5)" fill="none" stroke="red" stroke-width="1" />
-                            </svg>
-                            </p>
+                            <p><span>$14.25</span></p>
                           </div>
                         </div>
                       </div>
@@ -489,10 +483,10 @@ export default function AddOn() {
                                 <path id="Path_16043" data-name="Path 16043" d="M131.451,123.107a1.1,1.1,0,1,1-2.2.006,1.1,1.1,0,0,1,2.2-.006Z" transform="translate(-121.987 -115.154)" fill="#67be5c" />
                               </g>
                             </svg>
-                            <span className='veritical-align-text-bottom ml-1'>Use Promocode</span></p>
+                            <span className='veritical-align-text-bottom ml-1 cursor-pointer' onClick={() => SetApplyDiscountModal({ open: true, dimmer: 'blurring' })}>Use Promocode</span></p>
                         </div>
                         <div className='col-6 text-right'>
-                          <p className='error'>Change</p>
+                          <p className='error cursor-pointer' onClick={() => SetApplyDiscountModal({ open: true, dimmer: 'blurring' })}>Change</p>
                         </div>
                       </div>
                       <div className='fw-600 d-flex justify-content-between'>

@@ -54,8 +54,8 @@ export default function TenantDetails() {
   return (
     <>
       <PreBookingBreadcrumb activeStep='123' />
-      <div className="ui container bg-white p-1">
-        <h6 className='text-dark fw-500 fs-6 px-4 py-2 px-sm-2'><svg
+      <div className="ui container bg-white card-boxshadow border-radius-15 py-2">
+        <h6 className='text-dark dashed-bottom fw-500 fs-6 px-4 py-2 px-sm-2 mb-2'><svg
           xmlns="http://www.w3.org/2000/svg"
           width="25"
           height="25"
@@ -98,7 +98,8 @@ export default function TenantDetails() {
             <div className="">
               <Image className="TenantDetailsProfileImage" src='/assets/images/rentnow-img.png' size='medium' circular />
               <div className="text-center mt-1">
-                <a className="text-success fw-500">Add Photo</a>
+                <label for="photoUpload" className="text-success fw-500 cursor-pointer">Upload Photo</label>
+                <input id='photoUpload' type="file" />
               </div>
             </div>
           </div>
@@ -134,7 +135,7 @@ export default function TenantDetails() {
         </div>
         <div className="row ui form">
           <div className="col-12">
-          <h6 className='text-dark fw-500 fs-6 px-4 py-2 px-sm-2'>
+          <h6 className='text-dark dashed-bottom fw-500 fs-6 px-4 py-2 px-sm-2'>
           <svg id="location-svgrepo-com_1_" data-name="location-svgrepo-com (1)" xmlns="http://www.w3.org/2000/svg" width="25" height="22" viewBox="0 0 25 33.828">
   <g id="Group_6994" data-name="Group 6994" transform="translate(0)">
     <g id="Group_6993" data-name="Group 6993">
@@ -177,9 +178,9 @@ export default function TenantDetails() {
                </div>
           </div>
         </div>
-        <div className="row ui form mb-4">
+        <div className="row ui form mb-2">
           <div className="col-12">
-          <h6 className='text-dark fw-500 fs-6 px-4 py-2 px-sm-2'>
+          <h6 className='text-dark fw-500 fs-6 px-4 py-2 px-sm-2 dashed-bottom'>
           <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 34.809 36">
                 <g id="ec" transform="translate(-0.008 -0.005)">
                   <path id="Path_19732" data-name="Path 19732" d="M9.165,116.439a9.172,9.172,0,0,1-1.028-.208,14.7,14.7,0,0,1-1.606-.6.726.726,0,0,0-.672-.034,4.3,4.3,0,0,1-5.727-1.982c-.213-.394-.151-.738.165-.919a.609.609,0,0,1,.873.323,3.061,3.061,0,0,0,2.465,1.756,11.06,11.06,0,0,0,1.549-.093c-.137-.183-.2-.262-.255-.339A3.613,3.613,0,0,1,4.1,111.4a2.233,2.233,0,0,1,2.241-1.848,2.176,2.176,0,0,1,2.055,1.92,3.435,3.435,0,0,1-.77,2.822c-.095.118-.2.231-.3.347,1.671,1.349,5.862.382,7.136-1.661-.105-.065-.21-.13-.317-.194A21.442,21.442,0,0,1,4.637,101.7a11.863,11.863,0,0,1-.468-7.382A10.09,10.09,0,0,1,7.026,89.6a2.858,2.858,0,0,1,3.5-.4,11.694,11.694,0,0,1,4.313,4.336,2.809,2.809,0,0,1-.754,3.7,3.226,3.226,0,0,0-1.169,3.793,7.094,7.094,0,0,0,5.142,4.88,3.11,3.11,0,0,0,3.4-1.2,2.827,2.827,0,0,1,3.9-.715,11.8,11.8,0,0,1,4.167,4.194,2.872,2.872,0,0,1-.432,3.584,10.357,10.357,0,0,1-9.511,3.012c-.208-.033-.416-.069-.621-.117a.6.6,0,1,1,.231-1.179c.568.077,1.133.192,1.7.232a9.029,9.029,0,0,0,5.951-1.6c.067-.046.126-.1.256-.209-.57-.733-1.109-1.484-1.709-2.18-.5-.575-1.06-1.093-1.606-1.624-.385-.375-.459-.7-.187-.995.256-.273.61-.235.987.1a19.063,19.063,0,0,1,3.23,3.694c.051.076.107.149.161.224a1.669,1.669,0,0,0,.553-2.258,10.484,10.484,0,0,0-3.932-3.927,1.61,1.61,0,0,0-2.091.369,4.4,4.4,0,0,1-5.239,1.631,8.284,8.284,0,0,1-5.589-5.879,4.224,4.224,0,0,1,.571-3.6c.119-.179.063-.288-.033-.433a17.78,17.78,0,0,0-3.43-3.887c-.117-.1-.237-.193-.345-.3a.591.591,0,0,1-.072-.822.58.58,0,0,1,.846-.076,19.919,19.919,0,0,1,1.754,1.62c.728.807,1.379,1.684,2.062,2.53.064.08.124.163.183.242a1.536,1.536,0,0,0,.643-2.066A9.992,9.992,0,0,0,9.72,90.141a1.509,1.509,0,0,0-1.824.3A8.835,8.835,0,0,0,5.02,96.541a13.14,13.14,0,0,0,1.93,7.371,20.79,20.79,0,0,0,8.5,8.212c.61.322.688.612.3,1.174a6.963,6.963,0,0,1-5.056,3.082,1.179,1.179,0,0,0-.2.06H9.164ZM6.3,114.032a10.929,10.929,0,0,0,.755-1.1,1.843,1.843,0,0,0,.067-1.568.894.894,0,0,0-1.578-.248,1.666,1.666,0,0,0-.284.975A2.69,2.69,0,0,0,6.3,114.033Z" transform="translate(0 -80.435)" fill="#328128"/>
@@ -188,13 +189,6 @@ export default function TenantDetails() {
                 </g>
           </svg>
          <span className='veritical-align-text-top ml-1'>Emergency Conatct</span></h6>
-          </div>
-          <div className="col-12 px-4 px-sm-2" id="EmergencyContactDiv">
-           {
-            contactaccordian.map((data,index)=>(
-              <TenantDetailEmergengyContactAccordian removefunction={removeEmergencyContact} index={index} contactLength={data.contactaccordianLength} firtName={data.firname} lastName={data.lastname} email={data.email} phone={data.phone}/>
-            ))
-           }
           </div>
           </div>
           {contactaccordian.length <3 && 
@@ -235,6 +229,13 @@ export default function TenantDetails() {
                 </div>
               </div>
           }
+        <div className="col-12 px-sm-2" id="EmergencyContactDiv">
+          {
+            contactaccordian.map((data, index) => (
+              <TenantDetailEmergengyContactAccordian removefunction={removeEmergencyContact} index={index} contactLength={data.contactaccordianLength} firtName={data.firname} lastName={data.lastname} email={data.email} phone={data.phone} />
+            ))
+          }
+        </div>
     
       </div>
       <div className="ui container text-center my-5">

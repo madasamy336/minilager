@@ -17,17 +17,19 @@ const UnitsCard = () => {
                 <div className='card-body'>
                     <div className='card-title'>
                         <div className='row align-items-center'>
-                            <div className='col-lg-8'>
-                                <h2 className='fw-700 mb-1'>5x5 <small className='fw-500'>Small</small></h2>
+                            <div className='col-lg-12 col-md-12 col-sm-12'>
+                                <div className='d-flex align-items-center justify-content-between'>
+                                    <h2 className='fw-700 mb-1'>5x5 <small className='fw-500'>Small</small></h2>
+                                    <div className='units-left'>
+                                        <p className='error'>Only 3 Units left</p>
+                                    </div>
+                                </div>
                                 <div className='d-flex align-items-start'>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="14" viewBox="0 0 13.68 18.951">
                                         <path id="Location_" data-name="Location " d="M-233.385-421.251a6.829,6.829,0,0,1,1.987-4.839,6.641,6.641,0,0,1,3.848-1.94,6.643,6.643,0,0,1,4.759,1.054,6.62,6.62,0,0,1,2.866,4.039,6.635,6.635,0,0,1-.878,5.358q-2.546,4-5.12,7.978c-.034.052-.065.1-.1.156a.618.618,0,0,1-1.046,0c-.19-.271-.363-.556-.539-.835q-2.357-3.678-4.712-7.357A6.543,6.543,0,0,1-233.385-421.251Zm9.946-.024a3.118,3.118,0,0,0-3.114-3.107,3.118,3.118,0,0,0-3.1,3.1,3.119,3.119,0,0,0,3.1,3.117,3.118,3.118,0,0,0,3.113-3.11Z" transform="translate(233.386 428.108)" fill="#67be5c" />
                                     </svg>
                                     <span>The cove, The Country of the east</span>
                                 </div>
-                            </div>
-                            <div className='col-lg-4 units-left'>
-                                <p>Only 3 Units left</p>
                             </div>
                         </div>
                     </div>

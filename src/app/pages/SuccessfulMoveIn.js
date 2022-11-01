@@ -1,6 +1,14 @@
-import React from "react"
+import React from "react";
+import { useNavigate } from 'react-router-dom';
+
 
 const SuccessfulMoveIn = () => {
+  const navigate = useNavigate();
+
+    const RentNow = (e) => {
+        e.preventDefault();
+        navigate('/home')
+      }
     return (
         <div className="bg-white border-radius-15 text-center border-top-success-4 card-boxshadow w-35 mx-auto px-2 py-5 mt-5">
             <div className="success-img text-center mb-2">
@@ -8,7 +16,7 @@ const SuccessfulMoveIn = () => {
             </div>
             <h6 className="text-success-dark fs-7 fw-500 mb-1">You have successfully Moved In</h6>
             <p className="mb-2">Check your inbox for lease-related information</p>
-            <button className="ui button bg-success-dark text-white fw-100">Go to Dashboard</button>
+            <button onClick={e=>RentNow(e)} className="ui button bg-success-dark text-white fw-100">Go to Dashboard</button>
         </div>
     )
 }
