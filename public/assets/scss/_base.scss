@@ -299,6 +299,10 @@ vertical-align: super !important;
 .bg-primary-light{
     background-color: $EsignViewBg;
 }
+//z for index
+.z-index-1{
+    z-index: 1 !important;
+}
 // for overflow
 .overflow-auto{
     overflow: auto !important;
@@ -319,6 +323,10 @@ vertical-align: super !important;
 
 .overflow-y-hidden{
     overflow-y: hidden !important;
+}
+// for object fit
+.object-fit-cover{
+    object-fit: cover !important;
 }
 // for disbaling before
 .disablBefore::before{
@@ -561,5 +569,11 @@ display: block !important;
         td{
             border: none !important;
         }
+    }
+}
+
+@for $i from 0 through 10{
+    .min-width-#{$i * 1}{
+        min-width: 1rem * $i !important;
     }
 }

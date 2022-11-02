@@ -1,5 +1,5 @@
 import PreBookingBreadcrumb from "../components/prebooking breadcrumb/PreBookingBreadcrumb";
-import {Dropdown, Image, Input, Modal } from "semantic-ui-react";
+import {Dropdown, Image, Input, Modal, Transition } from "semantic-ui-react";
 import SemanticDatepicker from "react-semantic-ui-datepickers";
 import React, { useEffect, useState } from "react";
 import TenantDetailEmergengyContactAccordian from "../components/tenantDetailsAccordian/TenantDetailsAccordian";
@@ -8,6 +8,10 @@ import countriecodes from "../components/CountryCode";
 
 export default function TenantDetails() {
   const navigate=useNavigate()
+  const [profileImageSrc,setprofileImageSrc]=useState({
+    img:'/assets/images/userDemoProfile.svg'
+  })
+  const [imguploadStatus,SetimguploadStatus]=useState(false)
    const [contactaccordian,SetContactaccordian]=useState([]);
    const[contactFirstName,SetContactFirstName]=useState('');
    const[contactLastName,SetContactLastName]=useState('');
@@ -48,6 +52,24 @@ export default function TenantDetails() {
     e.preventDefault();
     navigate('/preBooking/esignPayment')
    }
+   const profileImageUpload=(e)=>{
+    e.preventDefault();
+    let img=e.target.files[0];
+    if (!img.name.match(/\.(jpg|jpeg|png|svg)$/)) {
+    alert('Please check the your file format,only jpg,jpeg,png,svg formats are supported')
+      return false;
+    }
+    if(img.size>	1000000 ){
+      alert('Please make sure the file size is less than 1mb and try again')
+      return false;
+    }
+    console.log(e.target.files[0])
+  if(e.target.files && e.target.files[0]){
+  setprofileImageSrc({img:URL.createObjectURL(img)});
+  SetimguploadStatus(true);
+ 
+  }
+   }
    useEffect(()=>{
       console.log(contactaccordian);
    },[contactaccordian])
@@ -55,6 +77,7 @@ export default function TenantDetails() {
     <>
       <PreBookingBreadcrumb activeStep='123' />
       <div className="ui container bg-white card-boxshadow border-radius-15 py-2">
+      
         <h6 className='text-dark dashed-bottom fw-500 fs-6 px-4 py-2 px-sm-2 mb-2'><svg
           xmlns="http://www.w3.org/2000/svg"
           width="25"
@@ -95,11 +118,17 @@ export default function TenantDetails() {
           </div>
           </div>
           <div className="col-12 col-md-6 d-flex justify-content-center mb-2">
-            <div className="">
-              <Image className="TenantDetailsProfileImage" src='/assets/images/rentnow-img.png' size='medium' circular />
+            <div className="position-relative">
+              {imguploadStatus &&
+              
+              <label className="position-absolute r-0 t-1 z-index-1 cursor-pointer" for="photoUpload"><img  width='50' height='50' className="" src="/assets/images/edit-photo.svg"/></label>
+              }
+              <Image className="TenantDetailsProfileImage object-fit-cover" src={profileImageSrc.img} size='medium' circular />
               <div className="text-center mt-1">
+                {!imguploadStatus && 
                 <label for="photoUpload" className="text-success fw-500 cursor-pointer">Upload Photo</label>
-                <input id='photoUpload' type="file" />
+                 }
+                <input id='photoUpload' onChange={e=>profileImageUpload(e)} type="file"  hidden  />
               </div>
             </div>
           </div>
