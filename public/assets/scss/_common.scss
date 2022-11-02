@@ -135,3 +135,15 @@ input[type=checkbox] {
 .ui.breadcrumb .icon.divider {
     font-size: 1em !important;
 }
+.success-label-leases{
+    font-size: 0.8rem !important;
+    color: $UnitsDropdownBg !important;
+    background-color: $LabelSuccessBg !important;
+    border-radius: 5px !important;
+}
+.danger-label-leases{
+    font-size: 0.8rem !important;
+    color: $Error !important;
+    background-color: $LabelDangerBg !important;
+    border-radius: 5px !important;
+}
