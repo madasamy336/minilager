@@ -40,23 +40,6 @@ export default function AddOn() {
       value: 'Annually',
     },
   ]
-  const policyNumberSelectOption = [
-    {
-      key: 1,
-      text: 'Monthly',
-      value: 'Monthly'
-    },
-    {
-      key: 2,
-      text: 'Semi-Annually',
-      value: 'Semi-Annually',
-    },
-    {
-      key: 3,
-      text: 'Annually',
-      value: 'Annually',
-    },
-  ]
 
 
   const [vehicleaccordian, SetVehicleAccordian] = useState([]);
@@ -158,7 +141,7 @@ export default function AddOn() {
                   </div>
                   <div class="field w-100 datePicker my-3">
                     <label className='fw-500 fs-7 mb-2'>Policy Phone Number</label>
-                    <Dropdown placeholder='Policy Phone Number' clearable fluid search selection options={policyNumberSelectOption} />
+                    <input placeholder='Policy Phone Number' />
                   </div>
                   <div class="field w-100 datePicker my-3">
                     <label className='fw-500 fs-7 mb-2' >Effective From Date</label>
@@ -343,7 +326,7 @@ export default function AddOn() {
                     </svg>
                     <span className='veritical-align-text-top ml-1'>Merchandise</span></h6>
                   <div className='text-dark fw-500 fs-6 px-4 py-2 px-sm-2'>
-                    <a href="">                  <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 33.547 31.336">
+                    <a href="/">                  <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 33.547 31.336">
                       <g id="add-to-cart_1_" data-name="add-to-cart (1)" transform="translate(0.062 -0.009)">
                         <path id="Path_19728" data-name="Path 19728" d="M640.452-514.489H630.419a2.728,2.728,0,0,1,.467,2.233,2.862,2.862,0,0,1-1.318,1.859,2.75,2.75,0,0,1-3.3-.374,2.876,2.876,0,0,1-.383-3.7c-.093-.01-.181-.027-.265-.028-.654,0-1.308.008-1.963,0a2.15,2.15,0,0,1-2.176-1.921,2.12,2.12,0,0,1,1.489-2.327c.834-.291,1.677-.561,2.514-.841.142-.048.28-.1.445-.16l-1.047-3.889-3.7-13.755c-.135-.5-.266-.6-.782-.606h-2.168c-.45,0-.693-.2-.685-.561s.242-.541.67-.543c.781,0,1.563-.006,2.343,0a1.657,1.657,0,0,1,1.647,1.26c.245.874.475,1.751.72,2.656H635.5a8.073,8.073,0,0,0,3.165,7.663,8.12,8.12,0,0,0,8.16,1.327c-.124.986-.242,1.93-.363,2.873-.041.324-.068.654-.132.969a2.759,2.759,0,0,1-2.76,2.26c-2.8.008-5.6.042-8.393-.008a25.473,25.473,0,0,0-9.217,1.525c-.853.308-1.721.578-2.583.862a1.044,1.044,0,0,0-.8.912,1.085,1.085,0,0,0,.241.8,1.084,1.084,0,0,0,.737.391c.15.015.3.008.454.008h18.534a2.718,2.718,0,0,1,2.788,1.85,2.849,2.849,0,0,1-.977,3.219,2.8,2.8,0,0,1-3.353-.084,2.853,2.853,0,0,1-.872-3.247C640.215-514.067,640.33-514.255,640.452-514.489Z" transform="translate(-617.61 541.358)" fill="#328128" />
                         <path id="Path_19729" data-name="Path 19729" d="M828.489-548.606a7.066,7.066,0,0,1-7.234-7.324,7.229,7.229,0,0,1,7.29-7.171,7.231,7.231,0,0,1,7.218,7.21A7.066,7.066,0,0,1,828.489-548.606Zm.584-7.79v-2.7a.576.576,0,0,0-.569-.654c-.341,0-.554.251-.561.663,0,.489,0,.978,0,1.467v1.225h-2.7c-.406,0-.654.226-.654.567s.252.555.662.561c.489,0,.978,0,1.467,0h1.226v2.7c0,.4.226.654.567.654s.555-.253.561-.663c0-.489,0-.978,0-1.467v-1.225h.432c.768,0,1.537.007,2.306,0a.549.549,0,0,0,.515-.856.81.81,0,0,0-.561-.258c-.878-.029-1.761-.014-2.688-.014Z" transform="translate(-802.278 563.11)" fill="#328128" />

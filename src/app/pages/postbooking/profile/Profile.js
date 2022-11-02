@@ -61,7 +61,7 @@ export default function Profile() {
                 </div>
                 <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                   <div className="edit-profile-img position-relative">
-                    <img src="/assets/images/post-tenant-img.png" class="ui medium circular image TenantDetailsProfileImage mx-auto" alt="Profile Image" />
+                    <img src="/assets/images/post-tenant-img.png" class="ui medium circular image TenantDetailsProfileImage mx-auto" alt="Profile" />
                     <div className="edit-icon position-absolute text-center l-18 r-0 t-0">
                       <Dropdown downward floating options={EditProfileOptions} trigger={trigger} icon="null" />
                     </div>
@@ -102,42 +102,42 @@ export default function Profile() {
               <div className="col-lg-9 col-md-9 col-sm-12">
                 <div className="row">
                   <div className="col-lg-4 col-md-4 col-sm-4">
-                    <p className="fs-6 fw-500 text-dark mb-2">Name</p>
+                    <p className="fs-7 fw-500 text-dark mb-2">Name</p>
                   </div>
                   <div className="col-lg-8 col-md-8 col-sm-8">
                     <p className="fs-7 mb-2">Peter John</p>
                   </div>
 
                   <div className="col-lg-4 col-md-4 col-sm-4">
-                    <p className="fs-6 fw-500 text-dark mb-2">Date of Birth</p>
+                    <p className="fs-7 fw-500 text-dark mb-2">Date of Birth</p>
                   </div>
                   <div className="col-lg-8 col-md-8 col-sm-8">
                     <p className="fs-7 mb-2">18-08-2022</p>
                   </div>
 
                   <div className="col-lg-4 col-md-4 col-sm-4">
-                    <p className="fs-6 fw-500 text-dark mb-2">Email</p>
+                    <p className="fs-7 fw-500 text-dark mb-2">Email</p>
                   </div>
                   <div className="col-lg-8 col-md-8 col-sm-8">
                     <p className="fs-7 mb-2">peterjohn@yopmail.com</p>
                   </div>
 
                   <div className="col-lg-4 col-md-4 col-sm-4">
-                    <p className="fs-6 fw-500 text-dark mb-2">Phone Number</p>
+                    <p className="fs-7 fw-500 text-dark mb-2">Phone Number</p>
                   </div>
                   <div className="col-lg-8 col-md-8 col-sm-8">
                     <p className="fs-7 mb-2">+47 123456780</p>
                   </div>
 
                   <div className="col-lg-4 col-md-4 col-sm-4">
-                    <p className="fs-6 fw-500 text-dark mb-2">Social Security Number</p>
+                    <p className="fs-7 fw-500 text-dark mb-2">Social Security Number</p>
                   </div>
                   <div className="col-lg-8 col-md-8 col-sm-8">
                     <p className="fs-7 mb-2">12346789090</p>
                   </div>
 
                   <div className="col-lg-4 col-md-4 col-sm-4">
-                    <p className="fs-6 fw-500 text-dark">Company Registration Number</p>
+                    <p className="fs-7 fw-500 text-dark">Company Registration Number</p>
                   </div>
                   <div className="col-lg-8 col-md-8 col-sm-8">
                     <p className="fs-7">34567890</p>
@@ -146,7 +146,7 @@ export default function Profile() {
               </div>
               <div className="col-lg-3 col-md-3 col-sm-12 mb-2">
                 <div className="post-tenant-img">
-                  <img src="/assets/images/post-tenant-img.png" className="ui medium circular image TenantDetailsProfileImage mx-auto" alt="Profile Image" />
+                  <img src="/assets/images/post-tenant-img.png" className="ui medium circular image TenantDetailsProfileImage mx-auto" alt="Profile" />
                 </div>
                 <p className="text-center mt-1"> <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 12.426 18.378">
                   <g id="owner" transform="translate(0)">
@@ -155,7 +155,7 @@ export default function Profile() {
                     <path id="Path_14953" data-name="Path 14953" d="M2077.969-231.344c.167,0,.334-.009.5,0a.622.622,0,0,1,.5.956c-.569.751-.4.909-.334,1.7a4.1,4.1,0,0,0,.069.551,1.054,1.054,0,0,1-.083.643c-.112.277-.21.557-.311.839a.368.368,0,0,1-.371.279.363.363,0,0,1-.371-.276c-.13-.359-.264-.717-.391-1.077a.522.522,0,0,1-.023-.21c.037-.452.074-.905.129-1.356a1.125,1.125,0,0,0-.184-.783c-.055-.085-.115-.167-.168-.254a.647.647,0,0,1,.513-1.011C2077.621-231.355,2077.8-231.344,2077.969-231.344Z" transform="translate(-2071.693 240.273)" fill="#328128" />
                   </g>
                 </svg>
-                  <span className="text-success-dark ml-1">Personal User</span></p>
+                  <span className="text-success-dark ml-1 fw-500">Personal User</span></p>
               </div>
             </div>}
           </div>
@@ -207,7 +207,7 @@ export default function Profile() {
                 </div>
                 <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                   <div className="field my-2">
-                    <label className="text-dark fs-7 fw-500">State/Provine<span className="error">*</span></label>
+                    <label className="text-dark fs-7 fw-500">State/Province<span className="error">*</span></label>
                     <input type="text" />
                   </div>
                 </div>
@@ -228,35 +228,35 @@ export default function Profile() {
               <div className="col-lg-9 col-md-9 col-sm-12">
                 <div className="row">
                   <div className="col-lg-4 col-md-4 col-sm-4">
-                    <p className="fs-6 fw-500 text-dark mb-2">Address Line 1</p>
+                    <p className="fs-7 fw-500 text-dark mb-2">Address Line 1</p>
                   </div>
                   <div className="col-lg-8 col-md-8 col-sm-8">
                     <p className="fs-7 mb-2">Address Line 1</p>
                   </div>
 
                   <div className="col-lg-4 col-md-4 col-sm-4">
-                    <p className="fs-6 fw-500 text-dark mb-2">Address Line 2</p>
+                    <p className="fs-7 fw-500 text-dark mb-2">Address Line 2</p>
                   </div>
                   <div className="col-lg-8 col-md-8 col-sm-8">
                     <p className="fs-7 mb-2">Dummy Addresss</p>
                   </div>
 
                   <div className="col-lg-4 col-md-4 col-sm-4">
-                    <p className="fs-6 fw-500 text-dark mb-2">City</p>
+                    <p className="fs-7 fw-500 text-dark mb-2">City</p>
                   </div>
                   <div className="col-lg-8 col-md-8 col-sm-8">
                     <p className="fs-7 mb-2">Dummy</p>
                   </div>
 
                   <div className="col-lg-4 col-md-4 col-sm-4">
-                    <p className="fs-6 fw-500 text-dark mb-2">State/Provine</p>
+                    <p className="fs-7 fw-500 text-dark mb-2">State/Province</p>
                   </div>
                   <div className="col-lg-8 col-md-8 col-sm-8">
                     <p className="fs-7 mb-2">Dummy</p>
                   </div>
 
                   <div className="col-lg-4 col-md-4 col-sm-4">
-                    <p className="fs-6 fw-500 text-dark">Zip/Postal Code</p>
+                    <p className="fs-7 fw-500 text-dark">Zip/Postal Code</p>
                   </div>
                   <div className="col-lg-8 col-md-8 col-sm-8">
                     <p className="fs-7">1234678</p>
@@ -285,21 +285,21 @@ export default function Profile() {
               <div className="col-lg-9 col-md-9 col-sm-12">
                 <div className="row">
                   <div className="col-lg-4 col-md-4 col-sm-4">
-                    <p className="fs-6 fw-500 text-dark mb-2">Name</p>
+                    <p className="fs-7 fw-500 text-dark mb-2">Name</p>
                   </div>
                   <div className="col-lg-8 col-md-8 col-sm-8">
                     <p className="fs-7 mb-2">Peter John</p>
                   </div>
 
                   <div className="col-lg-4 col-md-4 col-sm-4">
-                    <p className="fs-6 fw-500 text-dark mb-2">Email</p>
+                    <p className="fs-7 fw-500 text-dark mb-2">Email</p>
                   </div>
                   <div className="col-lg-8 col-md-8 col-sm-8">
                     <p className="fs-7 mb-2">peterjohn@yopmail.com</p>
                   </div>
 
                   <div className="col-lg-4 col-md-4 col-sm-4">
-                    <p className="fs-6 fw-500 text-dark">Phone Number</p>
+                    <p className="fs-7 fw-500 text-dark">Phone Number</p>
                   </div>
                   <div className="col-lg-8 col-md-8 col-sm-8">
                     <p className="fs-7">+47 123456780</p>

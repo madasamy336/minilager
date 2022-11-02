@@ -4,7 +4,7 @@ import UpdatePasswordForm from "../../../components/updatepasswordform/UpdatePas
 export default function Updatepassword() {
   return (
     <div className="mx-2 mx-sm-1">
-      <div className="mx-2 mx-sm-0">
+      <div>
         <div className="bg-white card-boxShadow border-radius-15 py-2 mb-2">
           <div className="row dashed-bottom px-4 py-2 px-sm-2">
             <div className="col-lg-6 col-md-6 col-sm-6">

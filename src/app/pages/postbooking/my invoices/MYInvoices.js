@@ -1,7 +1,45 @@
-import React from "react"; 
+import React, { useState, useEffect } from "react"; 
 import { Icon, Pagination } from 'semantic-ui-react';
 
 export default function MYInvoices() {
+  const [checkedAll, setCheckedAll] = useState(false);
+  const [checked, setChecked] = useState({
+    chk: false,
+  });
+
+  const selectAll = (value) => {
+    setCheckedAll(value);
+    setChecked((prevState) => {
+      const newState = { ...prevState };
+      for (const inputName in newState) {
+        newState[inputName] = value;
+      }
+      return newState;
+    });
+  };
+
+  const toggleCheck = (inputName) => {
+    setChecked((prevState) => {
+      const newState = { ...prevState };
+      newState[inputName] = !prevState[inputName];
+      return newState;
+    });
+  };
+
+  useEffect(() => {
+    let allChecked = true;
+    for (const inputName in checked) {
+      if (checked[inputName] === false) {
+        allChecked = false;
+      }
+    }
+    if (allChecked) {
+      setCheckedAll(true);
+    } else {
+      setCheckedAll(false);
+    }
+  }, [checked]);
+
   return (
     <div className="mx-2 mx-sm-1">
       <div>
@@ -37,7 +75,8 @@ export default function MYInvoices() {
             <table className="w-100">
               <thead>
                 <tr>
-                  <th className="text-center"><input value="all" type="checkbox" /></th>
+                  <th className="text-center"><input type="checkbox" onChange={(event) => selectAll(event.target.checked)}
+                    checked={checkedAll} /></th>
                   <th className="text-center">Invoice Amount</th>
                   <th className="text-center">Invoice Date</th>
                   <th className="text-center">Paid On</th>
@@ -60,7 +99,8 @@ export default function MYInvoices() {
                 </tr>
 
                 <tr>
-                  <td className="text-center"><input value="1" type="checkbox" /></td>
+                  <td className="text-center"><input name="chk" type="checkbox" onChange={() => toggleCheck("chk")}
+                    checked={checked["chk"]} /></td>
                   <td className="text-center"><p className="fw-500 error"><label className="danger-label">NOTPAID</label> $98.00</p></td>
                   <td className="text-center"><p className="fw-500">18/08/2022</p></td>
                   <td className="text-center"><p className="fw-500">23/08/2022</p></td>
