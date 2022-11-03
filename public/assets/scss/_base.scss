@@ -299,6 +299,13 @@ vertical-align: super !important;
 .bg-primary-light{
     background-color: $EsignViewBg;
 }
+.card-border-bottom-dashed{
+    border-bottom: 1px dashed $UnitsCardBg;
+}
+.card-boxshadow{
+    box-shadow: $AddonCardBoxShadow;
+}
+
 //z for index
 .z-index-1{
     z-index: 1 !important;
