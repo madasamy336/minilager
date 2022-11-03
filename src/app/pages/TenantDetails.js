@@ -1,5 +1,5 @@
 import PreBookingBreadcrumb from "../components/prebooking breadcrumb/PreBookingBreadcrumb";
-import {Dropdown, Image, Input, Modal, Transition } from "semantic-ui-react";
+import {Dropdown, Image, Input, Modal } from "semantic-ui-react";
 import SemanticDatepicker from "react-semantic-ui-datepickers";
 import React, { useEffect, useState } from "react";
 import TenantDetailEmergengyContactAccordian from "../components/tenantDetailsAccordian/TenantDetailsAccordian";
@@ -121,7 +121,7 @@ export default function TenantDetails() {
             <div className="position-relative">
               {imguploadStatus &&
               
-              <label className="position-absolute r-0 t-1 z-index-1 cursor-pointer" for="photoUpload"><img  width='50' height='50' className="" src="/assets/images/edit-photo.svg"/></label>
+              <label className="position-absolute r-0 t-1 z-index-1 cursor-pointer" for="photoUpload"><img  width='50' height='50' className="" alt="Edit Photo" src="/assets/images/edit-photo.svg"/></label>
               }
               <Image className="TenantDetailsProfileImage object-fit-cover" src={profileImageSrc.img} size='medium' circular />
               <div className="text-center mt-1">
@@ -134,10 +134,10 @@ export default function TenantDetails() {
           </div>
         
         </div>
-        <div className="row ui form">
+        <div className="row ui form mb-1">
           <div className="col-12  col-md-6  px-4 px-sm-2">
                   <div class="field datePicker w-100 my-3">
-                    <label className='fw-500 fs-7 mb-2' >Date of Birth <i className="text-danger ">*</i></label>
+                    <label className='fw-500 fs-7 mb-2' >Date of Birth</label>
                     <SemanticDatepicker placeholder='Select date' className='w-100' />
                   </div>
           </div>
@@ -160,6 +160,9 @@ export default function TenantDetails() {
                     <label className='fw-500 fs-7 mb-2'>Social Security Number</label>
                     <input className="noCounterNumber" type='number' placeholder='Social Security Number' />
                </div>
+          </div>
+          <div className="col-12  col-md-6  px-4 px-sm-2 my-3">
+             <span>Are you Military user? <span className="mx-2"><input className="mr-1" type="checkbox"/><label>Yes</label></span><span><input className="mr-1" type="checkbox"/><label>No</label></span></span>
           </div>
         </div>
         <div className="row ui form">
@@ -245,7 +248,7 @@ export default function TenantDetails() {
                           <label className='fw-500 fs-7 mb-2'>Phone Number <i className="text-danger ">*</i></label>
                           {/* <input value={contactPhone} onChange={e=>SetContactPhone(e.target.value)} className="noCounterNumber" type='number' placeholder='Enter Phone Number' /> */}
                           <Input  value={contactPhone} onChange={e=>SetContactPhone(e.target.value)} className="noCounterNumber" type="number" placeholder="Enter Mobile Number"
-                                            label={<Dropdown defaultValue='+91'  search  options={countriecodes} />}
+                                            label={<Dropdown defaultValue='+91' search  options={countriecodes} />}
                                             labelPosition='left' />
                      </div>
                 </div>

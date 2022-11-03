@@ -10,7 +10,7 @@ const PostLoginForm = () => {
         navigate('/forgotpassword')
       }
     return(
-        <div className="postloginform my-5 mx-auto">
+        <div className="postloginform my-5 mx-auto overflow-hidden">
             <div className="row">
                 <div className="col-lg-5 col-md-5 col-sm-12">
                     <div className="postloginform-img py-6 h-100">

@@ -88,3 +88,16 @@
             }
         }
 }
+
+.AddonsInsurance{
+    .card{
+        border: 1px solid $textDisabledColor;
+    }
+    .card.changePlanCard{
+        height: 165px !important;
+    }
+    .card.active{
+     background-color: $primaryColor !important;
+     color: white !important;
+    }
+}

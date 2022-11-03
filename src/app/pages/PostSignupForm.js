@@ -12,7 +12,7 @@ export default function PostSignupForm() {
 
     return (
         <>
-            <div className="createAccountform my-5 mx-auto">
+            <div className="createAccountform my-5 mx-auto overflow-hidden">
                 <div className="row">
                     <div className="col-lg-6 col-md-6 col-sm-12">
                         <div className="createAccountform-img d-flex justify-content-center align-items-center py-6 h-100">
@@ -20,7 +20,7 @@ export default function PostSignupForm() {
                         </div>
                     </div>
                     <div className="col-lg-6 col-md-6 col-sm-12">
-                        <div className="createAccountform-inputs bg-white">
+                        <div className="createAccountform-inputs bg-white h-100">
                             <div className="form-title">
                                 <h2 className="text-success fw-600">CREATE YOUR ACCOUNT</h2>
                                 <p>Already a User? <a href="/" onClick={e => ValidateSignin(e)}>Sign in </a></p>
