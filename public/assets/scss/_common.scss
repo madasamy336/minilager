@@ -147,3 +147,13 @@ input[type=checkbox] {
     background-color: $LabelDangerBg !important;
     border-radius: 5px !important;
 }
+.field .noCounterNumber .ui.dropdown input {
+    width: 100% !important;
+}
+.ui.icon.input{
+    input{
+        &:hover{
+            cursor: pointer;
+        }
+    }
+} 

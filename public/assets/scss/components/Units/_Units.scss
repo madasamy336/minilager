@@ -151,6 +151,11 @@
                             span{
                                 font-size: 0.8rem;
                                 line-height: 1.3;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                                display: -webkit-box;
+                                -webkit-line-clamp: 2;
+                                -webkit-box-orient: vertical;
                             }
                             .units-left{
                                 p{
@@ -189,6 +194,12 @@
                             border-bottom: 1px dotted #eee;
                             p{
                                 font-size: 0.6rem;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                                display: -webkit-box;
+                                -webkit-line-clamp: 2;
+                                -webkit-box-orient: vertical;
+                                cursor: pointer;
                             }
                         }
                         .card-actions{

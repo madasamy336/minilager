@@ -1,5 +1,6 @@
 import PopupExampleInverted from '../unitstooltip/UnitsTooltip'
 import { useNavigate } from 'react-router-dom'
+import { Popup } from 'semantic-ui-react'
 
 const UnitsCard = () => {
     const navigate=useNavigate()
@@ -12,7 +13,11 @@ const UnitsCard = () => {
             <div className='card my-2'>
                 <div className='card-img text-center position-relative'>
                     <img src='/assets/images/units.png' alt='Units' />
-                    <p className='position-absolute t-2 r-0'>1 MONTH FREE</p>
+                    <Popup wide inverted size='tiny'
+                        trigger={<p className='position-absolute t-2 r-0'>1 MONTH FREE</p>}
+                        content='1 MONTH FREE FOR FIRST OF MONTH'
+                        hideOnScroll
+                    />
                 </div>
                 <div className='card-body'>
                     <div className='card-title'>
@@ -92,7 +97,12 @@ const UnitsCard = () => {
                         <p className='d-flex align-items-center'><img src='/assets/images/Unloaded.png' alt='Unloaded and Loaded' /> <span className='fw-600'>Loading And Unloading Charges</span></p>
                     </div>
                     <div className='card-text'>
-                        <p>This Unit consists of individual enclosed compartments for storing goods or materials (other than hazardous or offensive goods or materials).</p>
+                        <Popup wide inverted size='tiny'
+                            trigger={<p>This Unit consists of individual enclosed compartments for storing goods or materials (other than hazardous or offensive goods or materials).</p>}
+                            content='This Unit consists of individual enclosed compartments for storing goods or materials (other than hazardous or offensive goods or materials).'
+                            on='click'
+                            hideOnScroll
+                        />
                     </div>
                     <div className='card-actions'>
                         <div className='d-flex justify-content-between align-items-center'>
