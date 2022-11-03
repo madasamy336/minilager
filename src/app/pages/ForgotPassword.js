@@ -20,6 +20,10 @@ const ForgotPassword = () => {
         animation:'fly left',
         duration:1000
         })
+        setTimeout(() => {
+            SetPassSuccessMsg({
+                show:false,})
+        }, 4000);
     }
     return (
         <div className="forgot-password pt-2 pb-5">
@@ -27,7 +31,7 @@ const ForgotPassword = () => {
          <div className="actionMsgContainer" >
             <Transition.Group animation={passSuccessMsg.animation} duration={passSuccessMsg.duration}>
             {passSuccessMsg.show && (   
-              <div>
+              <div  >
               <div className="d-flex justify-content-end  mb-3">
               <p className="bg-alert d-flex align-items-center p-1 fs-8"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24.998 25.006">
                   <g id="tick_new" data-name="tick new" transform="translate(0.003 -0.04)">

@@ -4,6 +4,9 @@ import SemanticDatepicker from 'react-semantic-ui-datepickers';
 import countriecodes from '../../../components/CountryCode';
 
 export default function Profile() {
+  const [profileImageSrc,setprofileImageSrc]=useState({
+    img:'/assets/images/post-tenant-img.png'
+  })
   const[contactPhone,SetContactPhone]=useState();
   const[tenantDetails, setTenantDetails] = useState(true);
   const[tenantaddress, setTenantAddress] = useState(true);
@@ -14,16 +17,29 @@ export default function Profile() {
     setTenantAddress(false);
   }
 
-  const trigger = (
-    <span>
-      <Image avatar src="/assets/images/edit-photo.svg" />
-    </span>
-  )
-  
-  const EditProfileOptions = [
-    { key: 'take photo', text: 'Take Photo', value: 'take photo' },
-    { key: 'upload photo', text: 'Upload Photo', value: 'upload photo' },
-  ]
+
+  const profileImageUpload=(e)=>{
+    debugger;
+    e.preventDefault();
+    let img=e.target.files[0];
+    if (!img.name.match(/\.(jpg|jpeg|png|svg)$/)) {
+    alert('Please check the your file format,only jpg,jpeg,png,svg formats are supported')
+      return false;
+    }
+    if(img.size>	1000000 ){
+      alert('Please make sure the file size is less than 1mb and try again')
+      return false;
+    }
+    console.log({img:URL.createObjectURL(img)})
+  if(e.target.files && e.target.files[0]){
+  setprofileImageSrc({img:URL.createObjectURL(img)}); 
+  }
+   }
+   const savetenantDetails=(e)=>{
+    e.preventDefault();
+    setTenantDetails(true)
+   }
+
   return (
     <>
       <div className="mx-2 mx-sm-1">
@@ -61,9 +77,9 @@ export default function Profile() {
                 </div>
                 <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                   <div className="edit-profile-img position-relative">
-                    <img src="/assets/images/post-tenant-img.png" class="ui medium circular image TenantDetailsProfileImage mx-auto" alt="Profile" />
-                    <div className="edit-icon position-absolute text-center l-18 r-0 t-0">
-                      <Dropdown downward floating options={EditProfileOptions} trigger={trigger} icon="null" />
+                    <img src={profileImageSrc.img} class="ui medium circular image object-fit-cover TenantDetailsProfileImage mx-auto" alt="Profile" />
+                    <div className="edit-icon position-absolute text-center l-18 r-0 t-1">
+                    <label className="cursor-pointer" for='profileImageUpload'><img  width='50' height='50' className="" src="/assets/images/edit-photo.svg"/></label>  <input id="profileImageUpload" onChange={(e)=>profileImageUpload(e)} hidden type='file'/>
                     </div>
                   </div>
                 </div>
@@ -94,7 +110,7 @@ export default function Profile() {
               </div>
               <div className="mt-2 text-center">
                 <button className="ui button text-dark fs-7 fw-400 px-5 mx-1 mb-sm-1" onClick={setTenantDetails}>CANCEL</button>
-                <button className="ui button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-sm-1 ">SAVE</button>
+                <button className="ui button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-sm-1" onClick={(e)=>savetenantDetails(e)}>SAVE</button>
               </div>
             </div>}
 
@@ -146,7 +162,7 @@ export default function Profile() {
               </div>
               <div className="col-lg-3 col-md-3 col-sm-12 mb-2">
                 <div className="post-tenant-img">
-                  <img src="/assets/images/post-tenant-img.png" className="ui medium circular image TenantDetailsProfileImage mx-auto" alt="Profile" />
+                  <img src={profileImageSrc.img} className="ui medium circular object-fit-cover image TenantDetailsProfileImage mx-auto" alt="Profile" />
                 </div>
                 <p className="text-center mt-1"> <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 12.426 18.378">
                   <g id="owner" transform="translate(0)">

@@ -3,6 +3,7 @@ import { Dropdown, Image, Radio } from 'semantic-ui-react';
 
 const CreditCardTab = () => {
     const[showcard, setShowCard] = useState(false);
+    const [openAutopayDropdown,SetopenAutopayDropdown]=useState(false)
     const showCardHandler = () => {
         setShowCard(true);
     }
@@ -84,14 +85,15 @@ const CreditCardTab = () => {
                             <Dropdown
                                 icon='filter'
                                 floating
-                                labeled
+                                
                                 className='icon'
-                                simple
+                                simple={openAutopayDropdown}
+                                onClick={()=>SetopenAutopayDropdown(true)}
                                 item
                                 trigger={trigger} 
                             >
-                                <Dropdown.Menu>
-                                        <Dropdown.Item><Radio toggle /> Autopay</Dropdown.Item>
+                                <Dropdown.Menu onMouseLeave={()=>SetopenAutopayDropdown(false)}>
+                                        <Dropdown.Item><Radio className="autopayToggle" toggle label='Autopay' /> </Dropdown.Item>
                                 </Dropdown.Menu>
                             </Dropdown>
                         </div>
