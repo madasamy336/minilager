@@ -10,7 +10,7 @@ export default function InsuranceTabContent() {
     }
   return (
     <div className='insuranceContent'>
-           <div class="row">
+           <div className="row">
               {changePlan
               
               && [
@@ -37,7 +37,7 @@ export default function InsuranceTabContent() {
           
               {
                 !changePlan &&
-         <div class="row">
+         <div className="row">
             <div className='col-lg-4 col-md-4 col-sm-12 px-4 mb-1 '>
                 <div className='card cursor-pointer  border-radius-10 text-center p-2' >
                     <p className=' fs-7 fw-500 pb-1 mt-2'>GOLD PLAN</p>

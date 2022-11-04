@@ -60,7 +60,7 @@ export default class AddOnAccordion extends Component {
           </div>
         </div>
           <div className='text-center'>
-            <button onClick={() => this.props.RemoveFunction(this.props.index)} class="ui button bg-danger-light fs-7 fw-400 text-white px-5">Remove</button>
+            <button onClick={() => this.props.RemoveFunction(this.props.index)} className="ui button bg-danger-light fs-7 fw-400 text-white px-5">Remove</button>
           </div>
         </Accordion.Content>
       </Accordion>

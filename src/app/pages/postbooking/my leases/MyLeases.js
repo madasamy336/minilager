@@ -64,7 +64,7 @@ export default function MyLeases() {
             </div>
             {!ScheduleMovedOut &&
             <div className="col-6 text-right">
-            <button  onClick={() => SetScheduleMoveOutMOdal({ open: true, dimmer: 'blurring' })} class="ui button basic box-shadow-none border-success-dark-light-1 fs-7 fw-400  px-1">
+            <button  onClick={() => SetScheduleMoveOutMOdal({ open: true, dimmer: 'blurring' })} className="ui button basic box-shadow-none border-success-dark-light-1 fs-7 fw-400  px-1">
               <img height="16" width="16" src="/assets/images/calendar.svg" alt="calendar"/>
               <span className="text-success ml-1 veritical-align-text-top fw-600" >Schedule Move-Out</span></button>
             </div>
@@ -73,7 +73,7 @@ export default function MyLeases() {
               ScheduleMovedOut&&
             <div className="col-12 col-md-6 text-right">                                                                                                                                                                                                                                                                                                                                                         
               <span className="text-secondary fw-500">Schedule Move-Out date:<span className="mx-1 text-success">26 March, 2022</span></span>
-              <button class="ui button bg-success-dark   fs-7 fw-400 text-white px-3 py-1"onClick={e=>CancelScheduleMOveOut(e)}>Cancel</button>
+              <button className="ui button bg-success-dark   fs-7 fw-400 text-white px-3 py-1"onClick={e=>CancelScheduleMOveOut(e)}>Cancel</button>
              </div>
             }
           </div>
@@ -219,17 +219,17 @@ export default function MyLeases() {
 
         </Modal.Header>
         <Modal.Content className=' p-1'>
-               <div class="ui form px-4 px-sm-2">
-                  <div class="field w-100 datePicker my-3">
+               <div className="ui form px-4 px-sm-2">
+                  <div className="field w-100 datePicker my-3">
                     <label className='fw-500 fs-7 mb-1' >Schedule Move-Out Date</label>
                     <SemanticDatepicker value={ScheduleMoveOutDate} onChange={(e,data)=>SetScheduleMoveOutDate(data.value)} placeholder='Select date' className='w-100' />
                   </div>
-                  <div class="field w-100  my-3">
+                  <div className="field w-100  my-3">
                     <label className='fw-500 fs-7 mb-1' >Reason</label>
                     <textarea rows='5'></textarea>
                   </div>
                <div className='text-center my-2'>
-                <button class="ui button bg-success-dark   fs-7 fw-400 text-white px-3 py-1"onClick={e=>ScheduleMOveOut(e)}>Schedule</button>
+                <button className="ui button bg-success-dark   fs-7 fw-400 text-white px-3 py-1"onClick={e=>ScheduleMOveOut(e)}>Schedule</button>
               </div>
                   </div>
         </Modal.Content>

@@ -23,11 +23,11 @@ const CreditCardTab = () => {
         <div className="creditCardtab py-4 px-3 px-sm-1">
             {!showcard && <div className="ui form w-50 w-sm-100">
                 <div className="field mb-3">
-                    <label className="fw-500 mb-2">Name on the Card<i class="text-danger ">*</i></label>
+                    <label className="fw-500 mb-2">Name on the Card<i className="text-danger ">*</i></label>
                     <input placeholder='Name on the Card' />
                 </div>
                 <div className="field mb-3 position-relative">
-                    <label className="fw-500 mb-2">Card Number<i class="text-danger ">*</i></label>
+                    <label className="fw-500 mb-2">Card Number<i className="text-danger ">*</i></label>
                     <input placeholder='Card Number' />
                     <div className="mastercard-img position-absolute">
                         <img src="/assets/images/Mastercard-img.png" alt="Master Card" />
@@ -35,7 +35,7 @@ const CreditCardTab = () => {
                 </div>
                 <div className="row">
                     <div className="col-lg-9 col-md-12 col-sm-12">
-                        <label className="fw-500 mb-2 d-block">Expire Date<i class="text-danger ">*</i></label>
+                        <label className="fw-500 mb-2 d-block">Expire Date<i className="text-danger ">*</i></label>
                         <div className="row mb-md-3">
                             <div className="col-lg-6 col-md-6 col-sm-6 pr-3 pr-md-1">
                                 <input placeholder='Month' />
@@ -47,7 +47,7 @@ const CreditCardTab = () => {
                     </div>
                     <div className="col-lg-3 col-md-12 col-sm-12">
                         <div className="field mb-3 position-relative">
-                            <label className="fw-500 mb-2">CVV<i class="text-danger ">*</i></label>
+                            <label className="fw-500 mb-2">CVV<i className="text-danger ">*</i></label>
                             <input placeholder='CVV' />
                             <div className="cvv-img position-absolute">
                                 <img src="/assets/images/cvv.png" alt="CVV" />

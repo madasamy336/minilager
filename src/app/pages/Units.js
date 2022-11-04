@@ -138,28 +138,28 @@ const Units = () => {
                         </div>
                         <div className='row'>
                             <div className='col-lg-3 col-md-3 col-sm-6 mb-2'>
-                                <label><input class="mr-1 mb-1" type="checkbox" />10x8x8</label>
+                                <label><input className="mr-1 mb-1" type="checkbox" />10x8x8</label>
                             </div>
                             <div className='col-lg-3 col-md-3 col-sm-6 mb-2'>
-                                <label><input class="mr-1 mb-1" type="checkbox" />10x8x8</label>
+                                <label><input className="mr-1 mb-1" type="checkbox" />10x8x8</label>
                             </div>
                             <div className='col-lg-3 col-md-3 col-sm-6 mb-2'>
-                                <label><input class="mr-1 mb-1" type="checkbox" />10x8x8</label>
+                                <label><input className="mr-1 mb-1" type="checkbox" />10x8x8</label>
                             </div>
                             <div className='col-lg-3 col-md-3 col-sm-6 mb-2'>
-                                <label><input class="mr-1 mb-1" type="checkbox" />10x8x8</label>
+                                <label><input className="mr-1 mb-1" type="checkbox" />10x8x8</label>
                             </div>
                             <div className='col-lg-3 col-md-3 col-sm-6 mb-2'>
-                                <label><input class="mr-1 mb-1" type="checkbox" />10x8x8</label>
+                                <label><input className="mr-1 mb-1" type="checkbox" />10x8x8</label>
                             </div>
                             <div className='col-lg-3 col-md-3 col-sm-6 mb-2'>
-                                <label><input class="mr-1 mb-1" type="checkbox" />10x8x8</label>
+                                <label><input className="mr-1 mb-1" type="checkbox" />10x8x8</label>
                             </div>
                             <div className='col-lg-3 col-md-3 col-sm-6 mb-2'>
-                                <label><input class="mr-1 mb-1" type="checkbox" />10x8x8</label>
+                                <label><input className="mr-1 mb-1" type="checkbox" />10x8x8</label>
                             </div>
                             <div className='col-lg-3 col-md-3 col-sm-6 mb-2'>
-                                <label><input class="mr-1 mb-1" type="checkbox" />10x8x8</label>
+                                <label><input className="mr-1 mb-1" type="checkbox" />10x8x8</label>
                             </div>
                             
                         </div>

@@ -1,14 +1,6 @@
-
-
-import { useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import {
-
-  Header,
-  Icon,
-  Image,
   Menu,
-  Segment,
   Sidebar,
 } from 'semantic-ui-react'
 export default function SidebarPostBooking(props) {

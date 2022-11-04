@@ -27,15 +27,15 @@ const DebitCardTab = () => {
             </div> }
             {!showtable && <div className="ui form w-50 w-sm-100">
                 <div className="field mb-3">
-                    <label className="fw-500 mb-2">Name<i class="text-danger ">*</i></label>
+                    <label className="fw-500 mb-2">Name<i className="text-danger ">*</i></label>
                     <input placeholder='Enter Name' />
                 </div>
                 <div className="field mb-3">
-                    <label className="fw-500 mb-2">Email Address<i class="text-danger ">*</i></label>
+                    <label className="fw-500 mb-2">Email Address<i className="text-danger ">*</i></label>
                     <input placeholder='Enter Email Address' />
                 </div>
                 <div className="field mb-3">
-                    <label className="fw-500 mb-2">IBAN<i class="text-danger ">*</i></label>
+                    <label className="fw-500 mb-2">IBAN<i className="text-danger ">*</i></label>
                     <input placeholder='Enter IBAN' />
                 </div>
                 <div className="mt-2 text-left">

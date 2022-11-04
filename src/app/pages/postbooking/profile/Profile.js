@@ -1,5 +1,5 @@
 import React, {useState} from "react"
-import { Dropdown, Image, Input } from 'semantic-ui-react';
+import { Dropdown, Input } from 'semantic-ui-react';
 import SemanticDatepicker from 'react-semantic-ui-datepickers';
 import countriecodes from '../../../components/CountryCode';
 
@@ -44,7 +44,7 @@ export default function Profile() {
     <>
       <div className="mx-2 mx-sm-1">
         <div className="bg-white card-boxShadow border-radius-15 py-2 mb-2">
-          <div className="row dashed-bottom px-4 py-2 px-sm-2">
+          <div className="row dashed-bottom px-3 py-2 px-sm-2">
             <div className="col-lg-6 col-md-6 col-sm-6">
               <h6 className="fs-6 fw-500"><svg id="Tenant_Details" data-name="Tenant Details" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 29.311 29.248">
                 <path id="Path_15970" data-name="Path 15970" d="M37.378,38h.458a8.651,8.651,0,0,1,.777.463q3.061,2.275,6.111,4.563c.057.043.121.076.229.145V40.252a.725.725,0,0,1,.825-.823h2.488c.712,0,.935.224.935.941,0,1.893.005,3.787-.006,5.68a.577.577,0,0,0,.278.534c.483.34.936.722,1.425,1.052a2.841,2.841,0,0,1,1.365,1.844v.514c-.021.072-.043.144-.063.217a2.149,2.149,0,0,1-1.735,1.694,6.217,6.217,0,0,1-1.263-.014V64.922c0,.153,0,.305-.011.458a1.964,1.964,0,0,1-1.978,1.864q-9.6.008-19.2-.006a2.037,2.037,0,0,1-.857-.2,1.967,1.967,0,0,1-1.14-1.945q.007-6.454,0-12.91v-.373l-.245.067a2.128,2.128,0,0,1-2.431-.94A5.913,5.913,0,0,1,22.95,50v-.514a2.956,2.956,0,0,1,1.34-1.827q6.079-4.516,12.128-9.058C36.72,38.375,37.057,38.2,37.378,38Zm.2,28.334h9.444a1.1,1.1,0,0,0,1.26-1.261q0-6.812,0-13.624a.472.472,0,0,0-.208-.428Q43,47.215,37.933,43.39a.46.46,0,0,0-.653,0q-5.064,3.824-10.144,7.632a.471.471,0,0,0-.208.427q.007,6.813,0,13.624a1.1,1.1,0,0,0,1.26,1.261ZM50,51.108l.034-.069a1.29,1.29,0,0,0,1.258-.972,1.242,1.242,0,0,0-.546-1.39Q44.369,43.905,38,39.137c-.386-.288-.386-.288-.757-.01L30.1,44.469q-2.819,2.106-5.635,4.215A1.236,1.236,0,0,0,23.9,49.94a1.272,1.272,0,0,0,2.077.816q3.147-2.356,6.286-4.722l4.5-3.385a1.227,1.227,0,0,1,1.691,0c.161.12.321.24.48.361q5.13,3.857,10.262,7.708A4.824,4.824,0,0,0,50,51.108Zm-4.13-10.755v.337c0,.847.031,1.7-.012,2.541a1.043,1.043,0,0,0,.521,1.051c.642.421,1.239.908,1.889,1.394V40.353Z" transform="translate(-22.95 -38)" fill="#328128" />
@@ -77,9 +77,12 @@ export default function Profile() {
                 </div>
                 <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                   <div className="edit-profile-img position-relative">
-                    <img src={profileImageSrc.img} class="ui medium circular image object-fit-cover TenantDetailsProfileImage mx-auto" alt="Profile" />
+                    <img src={profileImageSrc.img} className="ui medium circular image object-fit-cover TenantDetailsProfileImage mx-auto" alt="Profile" />
                     <div className="edit-icon position-absolute text-center l-18 r-0 t-1">
-                    <label className="cursor-pointer" for='profileImageUpload'><img  width='50' height='50' className="" src="/assets/images/edit-photo.svg"/></label>  <input id="profileImageUpload" onChange={(e)=>profileImageUpload(e)} hidden type='file'/>
+                      <label className="cursor-pointer" for='profileImageUpload'>
+                        <img width='50' height='50' className="" src="/assets/images/edit-photo.svg" alt="Edit" />
+                      </label>  
+                      <input id="profileImageUpload" onChange={(e) => profileImageUpload(e)} hidden type='file' />
                     </div>
                   </div>
                 </div>
@@ -178,7 +181,7 @@ export default function Profile() {
         </div>
 
         <div className="bg-white card-boxShadow border-radius-15 py-2 mb-2">
-          <div className="row dashed-bottom px-4 py-2 px-sm-2">
+          <div className="row dashed-bottom px-3 py-2 px-sm-2">
             <div className="col-lg-6 col-md-6 col-sm-6">
               <h6 className="fs-6 fw-500"><svg id="location-svgrepo-com_1_" data-name="location-svgrepo-com (1)" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 21.924 29.667">
                 <g id="Group_6994" data-name="Group 6994" transform="translate(0)">
@@ -284,7 +287,7 @@ export default function Profile() {
         </div>
 
         <div className="bg-white card-boxShadow border-radius-15 py-2 mb-2">
-          <div className="row dashed-bottom px-4 py-2 px-sm-2">
+          <div className="row dashed-bottom px-3 py-2 px-sm-2">
             <div className="col-lg-6 col-md-6 col-sm-12">
               <h6 className="fs-6 fw-500"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 26.873 27.793">
                 <g id="ec" transform="translate(-0.008 -0.005)">
