@@ -76,32 +76,32 @@ export default function RentingDetails() {
                     ></path>
                   </g>
                 </svg><span className='veritical-align-text-top ml-1'>Renting Details</span></h6>
-                <div class="ui form px-4 px-sm-2">
-                  <div class="field w-100 datePicker my-3">
+                <div className="ui form px-4 px-sm-2">
+                  <div className="field w-100 datePicker my-3">
                     <label className='fw-500 fs-7 mb-2' >Move-In Date</label>
                     <SemanticDatepicker placeholder='Select date' className='w-100' />
                   </div>
-                  <div class="field w-100 datePicker my-3">
+                  <div className="field w-100 datePicker my-3">
                     <label className='fw-500 fs-7 mb-2'>Invoice Period</label>
                     <Dropdown placeholder='Select Invoice Period' clearable fluid search selection options={invoicePeriodSelectOption} />
                   </div>
-                  <div class="field w-100 datePicker my-3">
+                  <div className="field w-100 datePicker my-3">
                     <label className='fw-500 fs-7 mb-2'>Invoice Recurring</label>
                     <Dropdown placeholder='Select Invoice Recurring' clearable fluid search selection options={invoiceRecurringSelectOption} />
                   </div>
-                  <div class="field w-100 datePicker my-3">
+                  <div className="field w-100 datePicker my-3">
                     <label className='fw-500 fs-7 mb-2'>Gate Access Code</label>
                     <input placeholder='Enter Gate Access Code' />
                   </div>
-                  <div class="field w-100 datePicker my-3">
+                  <div className="field w-100 datePicker my-3">
                     <label className='fw-500 fs-7 mb-2' >Desired Move Out date</label>
                     <SemanticDatepicker placeholder='Select date' className='w-100' />
                   </div>
                 </div>
               </div>
               <div className='text-center my-4'>
-                <button onClick={()=>  navigate('/preBooking/units')}  class="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">BACK</button>
-                <button class="ui button bg-success-dark   fs-7 fw-400 text-white px-5"onClick={e=>navigateAddon(e)}>NEXT</button>
+                <button onClick={()=>  navigate('/preBooking/units')}  className="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">BACK</button>
+                <button className="ui button bg-success-dark   fs-7 fw-400 text-white px-5"onClick={e=>navigateAddon(e)}>NEXT</button>
               </div>
             </div>
             <div className='col-12 col-md-5 pl-1 pl-sm-0 mb-3'>
@@ -109,9 +109,9 @@ export default function RentingDetails() {
                 <h6 className='text-success-dark fw-500 fs-6 px-4 pt-2 mb-1  px-sm-2'>Total Amount</h6>
                 <p className='px-4 mb-2  px-sm-2'>Please see the breakdown below</p>
                 <div className='px-4  px-sm-2'>
-                  <div class="px-1 py-2 card-border-secondary border-radius-10 mb-2">
-                    <div class="content">
-                      <div class="text-dark fw-500 mb-2">Billing Period ( 18-06-2021 to 17-06-2022)</div>
+                  <div className="px-1 py-2 card-border-secondary border-radius-10 mb-2">
+                    <div className="content">
+                      <div className="text-dark fw-500 mb-2">Billing Period ( 18-06-2021 to 17-06-2022)</div>
                       <div className='mb-2 d-flex justify-content-between'>
                         <span>Storage Unit-5'x10'</span><span>$90</span>
                       </div>
@@ -119,7 +119,7 @@ export default function RentingDetails() {
                         <span>NB HST (15%)</span><span >$14.25</span>
                       </div>
                       <p></p>
-                      <div class="field w-100 datePicker mt-3 mb-2">
+                      <div className="field w-100 datePicker mt-3 mb-2">
                         <label className='fs-6 fw-500'>Promo Code</label>
                         <div className='row mt-1'>
                           <div className='col-9 ui input'>
@@ -175,7 +175,7 @@ export default function RentingDetails() {
                 <p className='fs-7'>Lorem Ipsum has been the industry's</p>
                 </div>
                 <div className='col-sm-12 col-md-3 d-flex align-items-center justify-content-center'>
-                <button class="ui button text-success bg-white border-success-1  fs-7 fw-400 py-1 px-3">Apply</button>
+                <button className="ui button text-success bg-white border-success-1  fs-7 fw-400 py-1 px-3">Apply</button>
                 </div>
               </div>
             

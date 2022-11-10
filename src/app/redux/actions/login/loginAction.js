@@ -1,5 +1,3 @@
-import instance from '../../../services/instance';
-import request from '../../../services/request';
 import { constant } from '../../constants/constant';
 
 export const fetchLoginFailure = error => {

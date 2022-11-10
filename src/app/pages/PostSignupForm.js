@@ -1,10 +1,22 @@
-
 import { useNavigate } from "react-router-dom";
-import { Dropdown, Flag, Input } from "semantic-ui-react";
+import { Dropdown, Input } from "semantic-ui-react";
 import countriecodes from "../components/CountryCode";
 import React from "react";
+import { useSelector, useDispatch } from 'react-redux';
+import instance from '../services/instance';
+import request from '../services/request';
 export default function PostSignupForm() {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    // getting culture 
+    let culture = JSON.parse(sessionStorage.getItem('culture')).culture;
+    
+    console.log(culture);
+    function sixStorageCheckPhoneNumber(event) {
+        let inputValue = event.target.value;
+        let numbers = inputValue.replace(/[^0-9]/g, '');
+        event.target.value = numbers;
+    }
     //setting value in state
     const [values, setValues] = React.useState({
         firstName: '',
@@ -26,9 +38,11 @@ export default function PostSignupForm() {
         confirmPassword:'',
     });
 
+  
+
     let { firstName, lastName, email, UserName ,phoneNumber, password, confirmPassword } = values;
     const validateOne = (e) => {
-       
+        console.log(UserName, confirmPassword);
         const { name } = e.target
         const value = values[name]
         let message = ''
@@ -44,15 +58,15 @@ export default function PostSignupForm() {
             if(value.length < 8){
             message = 'Password must contain at least eight characters!';
             }
-            // else if( /[0-9]/.test(value)){
-            //     message = 'Password must contain at least one number (0-9)';
-            // }
-            // else if(/[a-z]/.test(value)){
-            //     message = 'Password must contain at least one lowercase letter (a-z)';
-            // }
-            // else if( /[A-Z]/.test(value)){
-            //     message = 'Password must contain at least one uppercase letter (A-Z)';
-            // }
+            if(!/[0-9]/.test(value)){
+                message = 'Password must contain at least one number (0-9)';
+            }
+             if(!/[a-z]/.test(value)){
+                message = 'Password must contain at least one lowercase letter (a-z)';
+            }
+             if( !/[A-Z]/.test(value)){
+                message = 'Password must contain at least one uppercase letter (A-Z)';
+            }
         }
 
         setValidations({ ...validations, [name]: message })
@@ -91,12 +105,42 @@ export default function PostSignupForm() {
         if (!isValid) {
             setValidations(validations)
         }else {
-
-
+            values['UserName'] = values['email'];
+            values['confirmPassword'] = values['password'];
+            signupcall();
         }
-        // navigate('/login');
 
     }
+
+    const signupcall = () => {
+        let config = {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        };
+
+        instance
+            .post(request.user_signup,values,config)
+            .then(response => {
+                const configData = response.data
+                if( configData.result !== null && typeof configData.result !== 'undefined'&& configData.result !== ''){
+                  if(configData.returnCode === 'SUCCESS'){
+                    console.log('success');
+                    navigate('/login');
+                  }else if(configData.returnCode === 'FAILED') {
+                    console.log(configData.returnMessage);
+                  }
+               
+                }else{
+                    console.log('test');
+
+                }
+            })
+            .catch(error => {
+            console.log(error);
+            })
+
+     }
 
     const { 
         firstName: nameVal,
@@ -163,11 +207,9 @@ export default function PostSignupForm() {
                                 <div className="form-control">
                                     <label className="d-block">Mobile Number</label>
                                     <div className="ui input w-100">
-                                        <Input type="tel" placeholder="Enter Mobile Number" name="phoneNumber" value={phoneNumber}  onBlur={validateOne} onChange={(e)=>{handleChange(e)}}
+                                        <Input type="tel" placeholder="Enter Mobile Number" onInput={(e)=>{sixStorageCheckPhoneNumber(e)}} name="phoneNumber" value={phoneNumber}  onBlur={validateOne} onChange={(e)=>{handleChange(e)}}
                                             label={<Dropdown defaultValue='+91' search options={countriecodes} />}
                                             labelPosition='left' />
-
-
                                     </div>
                                     <div className="text-danger mt-1"> {phoneNumberval}</div>
                                 </div>

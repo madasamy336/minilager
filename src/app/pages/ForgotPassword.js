@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Transition } from "semantic-ui-react";
-import { useSelector, useDispatch } from 'react-redux';
+// import { useSelector, useDispatch } from 'react-redux';
 import instance from '../services/instance';
 import request from '../services/request';
-
+import React from 'react';
 
 const ForgotPassword = () => {
     const navigate = useNavigate();
@@ -77,7 +77,7 @@ const ForgotPassword = () => {
             .post(request.forgot_password, username, config)
             .then(response => {
                 const configData = response.data
-                if (typeof configData.result !== null && configData.result !== 'undefined' && configData.result !== '') {
+                if ( configData.result !== null && typeof configData.result !== 'undefined' && configData.result !== '') {
                     // to emulate some network delay
                    
                     if (configData.isSuccess === true) {
@@ -92,9 +92,12 @@ const ForgotPassword = () => {
 
                 } else {
 
+                    //else 
+
                 }
             })
             .catch(error => {
+                console.log(error);
 
             })
 

@@ -4,7 +4,8 @@ const requests = {
     //Unit Filters
     unit_filters: "v2/unit/filters",
     user_login:"v1/user/login",
-    forgot_password:"v1/user/password/forgot"
+    forgot_password:"v1/user/password/forgot",
+    user_signup :"v1/user/signup"
 }
 
 

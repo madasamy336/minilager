@@ -14,8 +14,8 @@ const Units = () => {
         size: undefined
     })
 
-    const loading = useSelector(state => state.unitFilter.loading);
-    const error = useSelector(state => state.unitFilter.error);
+    // const loading = useSelector(state => state.unitFilter.loading);
+    // const error = useSelector(state => state.unitFilter.error);
     const filters = useSelector(state => state.unitFilter.filters);
 
     console.log(filters);
@@ -149,28 +149,28 @@ const Units = () => {
                         </div>
                         <div className='row'>
                             <div className='col-lg-3 col-md-3 col-sm-6 mb-2'>
-                                <label><input class="mr-1 mb-1" type="checkbox" />10x8x8</label>
+                                <label><input className="mr-1 mb-1" type="checkbox" />10x8x8</label>
                             </div>
                             <div className='col-lg-3 col-md-3 col-sm-6 mb-2'>
-                                <label><input class="mr-1 mb-1" type="checkbox" />10x8x8</label>
+                                <label><input className="mr-1 mb-1" type="checkbox" />10x8x8</label>
                             </div>
                             <div className='col-lg-3 col-md-3 col-sm-6 mb-2'>
-                                <label><input class="mr-1 mb-1" type="checkbox" />10x8x8</label>
+                                <label><input className="mr-1 mb-1" type="checkbox" />10x8x8</label>
                             </div>
                             <div className='col-lg-3 col-md-3 col-sm-6 mb-2'>
-                                <label><input class="mr-1 mb-1" type="checkbox" />10x8x8</label>
+                                <label><input className="mr-1 mb-1" type="checkbox" />10x8x8</label>
                             </div>
                             <div className='col-lg-3 col-md-3 col-sm-6 mb-2'>
-                                <label><input class="mr-1 mb-1" type="checkbox" />10x8x8</label>
+                                <label><input className="mr-1 mb-1" type="checkbox" />10x8x8</label>
                             </div>
                             <div className='col-lg-3 col-md-3 col-sm-6 mb-2'>
-                                <label><input class="mr-1 mb-1" type="checkbox" />10x8x8</label>
+                                <label><input className="mr-1 mb-1" type="checkbox" />10x8x8</label>
                             </div>
                             <div className='col-lg-3 col-md-3 col-sm-6 mb-2'>
-                                <label><input class="mr-1 mb-1" type="checkbox" />10x8x8</label>
+                                <label><input className="mr-1 mb-1" type="checkbox" />10x8x8</label>
                             </div>
                             <div className='col-lg-3 col-md-3 col-sm-6 mb-2'>
-                                <label><input class="mr-1 mb-1" type="checkbox" />10x8x8</label>
+                                <label><input className="mr-1 mb-1" type="checkbox" />10x8x8</label>
                             </div>
                             
                         </div>

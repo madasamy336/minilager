@@ -81,13 +81,13 @@ export default function TenantDetails() {
         <div className="row reverse-sm">
           <div className="col-12 col-md-6 ui form">
           <div className="col-12 px-4 px-sm-2">
-          <div class="field w-100 datePicker my-3">
+          <div className="field w-100 datePicker my-3">
                     <label className='fw-500 fs-7 mb-2'>First Name <i className="text-danger ">*</i></label>
                     <input type='text' placeholder='Enter Name' />
                   </div>
           </div>
           <div className="col-12  px-4 px-sm-2">
-          <div class="field w-100 datePicker my-3">
+          <div className="field w-100 datePicker my-3">
                     <label className='fw-500 fs-7 mb-2'>Last Name</label>
                     <input type='text' placeholder='Enter Name' />
                   </div>
@@ -105,25 +105,25 @@ export default function TenantDetails() {
         </div>
         <div className="row ui form">
           <div className="col-12  col-md-6  px-4 px-sm-2">
-                  <div class="field w-100 datePicker my-3">
+                  <div className="field w-100 datePicker my-3">
                     <label className='fw-500 fs-7 mb-2' >Date of Birth <i className="text-danger ">*</i></label>
                     <SemanticDatepicker placeholder='Select date' className='w-100' />
                   </div>
           </div>
           <div className="col-12  col-md-6  px-4 px-sm-2">
-             <div class="field w-100 datePicker my-3">
+             <div className="field w-100 datePicker my-3">
                     <label className='fw-500 fs-7 mb-2'>Email <i className="text-danger ">*</i></label>
                     <input type='email' placeholder='Enter Email' />
                   </div>
           </div>
           <div className="col-12  col-md-6  px-4 px-sm-2">
-             <div class="field w-100 datePicker my-3">
+             <div className="field w-100 datePicker my-3">
                     <label className='fw-500 fs-7 mb-2'>Phone Number <i className="text-danger ">*</i></label>
                     <input className="noCounterNumber" type='number' placeholder='Enter Phone Number' />
                   </div>
           </div>
           <div className="col-12  col-md-6  px-4 px-sm-2">
-             <div class="field w-100 datePicker my-3">
+             <div className="field w-100 datePicker my-3">
                     <label className='fw-500 fs-7 mb-2'>Social Security Number</label>
                     <input className="noCounterNumber" type='number' placeholder='Social Security Number' />
                </div>
@@ -144,31 +144,31 @@ export default function TenantDetails() {
          <span className='veritical-align-text-top ml-1'>Address Deatils</span></h6>
           </div>
           <div className="col-12 col-md-6 px-4 px-sm-2">
-          <div class="field w-100 datePicker my-3">
+          <div className="field w-100 datePicker my-3">
                     <label className='fw-500 fs-7 mb-2'>Address Line 1</label>
                     <input type='text' placeholder='Address Line 1' />
                </div>
           </div>
           <div className="col-12 col-md-6 px-4 px-sm-2">
-          <div class="field w-100 datePicker my-3">
+          <div className="field w-100 datePicker my-3">
                     <label className='fw-500 fs-7 mb-2'>Address Line 2</label>
                     <input type='text' placeholder='Address Line 2' />
                </div>
           </div>
           <div className="col-12 col-md-6 px-4 px-sm-2">
-          <div class="field w-100 datePicker my-3">
+          <div className="field w-100 datePicker my-3">
                     <label className='fw-500 fs-7 mb-2'>City</label>
                     <input type='text' placeholder='City' />
                </div>
           </div>
           <div className="col-12 col-md-6 px-4 px-sm-2">
-          <div class="field w-100 datePicker my-3">
+          <div className="field w-100 datePicker my-3">
                     <label className='fw-500 fs-7 mb-2'>State/Provine</label>
                     <input type='text' placeholder='State/Provine' />
                </div>
           </div>
           <div className="col-12 col-md-6 px-4 px-sm-2">
-          <div class="field w-100 datePicker my-3">
+          <div className="field w-100 datePicker my-3">
                     <label className='fw-500 fs-7 mb-2'>Zip/Postal Code</label>
                     <input className="noCounterNumber" type='number' placeholder='Zip/Postal Code' />
                </div>
@@ -189,7 +189,7 @@ export default function TenantDetails() {
           <div className="col-12 px-4 px-sm-2" id="EmergencyContactDiv">
            {
             contactaccordian.map((data,index)=>(
-              <TenantDetailEmergengyContactAccordian removefunction={removeEmergencyContact} index={index} contactLength={data.contactaccordianLength} firtName={data.firname} lastName={data.lastname} email={data.email} phone={data.phone}/>
+              <TenantDetailEmergengyContactAccordian key= {''} removefunction={removeEmergencyContact} index={index} contactLength={data.contactaccordianLength} firtName={data.firname} lastName={data.lastname} email={data.email} phone={data.phone}/>
               
             ))
            }
@@ -198,25 +198,25 @@ export default function TenantDetails() {
           {contactaccordian.length <3 && 
                 <div className="row ui form mb-4">
                 <div className="col-12 col-md-6 px-4 px-sm-2">
-                <div class="field w-100 datePicker my-3">
+                <div className="field w-100 datePicker my-3">
                           <label className='fw-500 fs-7 mb-2'>First Name <i className="text-danger ">*</i></label>
                           <input value={contactFirstName} onChange={e=>SetContactFirstName(e.target.value)} type='text' placeholder='Enter Name' />
                      </div>
                 </div>
                 <div className="col-12 col-md-6 px-4 px-sm-2">
-                <div class="field w-100 datePicker my-3">
+                <div className="field w-100 datePicker my-3">
                           <label className='fw-500 fs-7 mb-2'>Last Name</label>
                           <input value={contactLastName} onChange={e=>SetContactLastName(e.target.value)} type='text' placeholder='Last Name' />
                      </div>
                 </div>
                 <div className="col-12 col-md-6 px-4 px-sm-2">
-                <div class="field w-100 datePicker my-3">
+                <div className="field w-100 datePicker my-3">
                           <label className='fw-500 fs-7 mb-2'>Email <i className="text-danger ">*</i></label>
                           <input value={contactEmail} onChange={e=>SetContactEmail(e.target.value)} type='email' placeholder='Enter Email' />
                      </div>
                 </div>
                 <div className="col-12 col-md-6 px-4 px-sm-2">
-                <div class="field w-100 datePicker my-3">
+                <div className="field w-100 datePicker my-3">
                           <label className='fw-500 fs-7 mb-2'>Phone Number <i className="text-danger ">*</i></label>
                           <input value={contactPhone} onChange={e=>SetContactPhone(e.target.value)} className="noCounterNumber" type='number' placeholder='State/Provine' />
                      </div>
@@ -233,8 +233,8 @@ export default function TenantDetails() {
     
       </div>
       <div className="ui container text-center my-5">
-      <button onClick={()=>  navigate('/preBooking/addOns')} class="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">BACK</button>
-      <button onClick={() => SetCreditCheckModal({ open: true, dimmer: 'blurring' })} class="ui button bg-success-dark   fs-7 fw-400 text-white px-5">NEXT</button>
+      <button onClick={()=>  navigate('/preBooking/addOns')} className="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">BACK</button>
+      <button onClick={() => SetCreditCheckModal({ open: true, dimmer: 'blurring' })} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">NEXT</button>
       </div>
 
 
