@@ -1,16 +1,16 @@
 import { Link, useNavigate } from "react-router-dom";
 import React from "react";
-import { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { useTranslation } from "react-i18next";
+// import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+// import { useTranslation } from "react-i18next";
 import instance from '../services/instance';
 import request from '../services/request';
 import {fetchLoginSuccess,fetchLoginFailure,fetchLoginRequest} from '../redux/actions/login/loginAction';
 const PostLoginForm = () => {
-    const { t } = useTranslation(); 
-    const loading = useSelector(state => state.login.loading);
-    const error = useSelector(state => state.login.error);
-    const Login  = useSelector(state => state.login.userid);
+    // const { t } = useTranslation(); 
+    // const loading = useSelector(state => state.login.loading);
+    // const error = useSelector(state => state.login.error);
+    // const Login  = useSelector(state => state.login.userid);
     const dispatch = useDispatch();
 
     const [values, setValues] = React.useState({
@@ -72,7 +72,6 @@ const PostLoginForm = () => {
     }
     const navigate = useNavigate();
     const ValidateSignin = (e) => {
-        debugger
         e.preventDefault();
         const validations = { username: '', password: '' }
         let isValid = true
@@ -114,7 +113,7 @@ const PostLoginForm = () => {
             .post(request.user_login,values,config)
             .then(response => {
                 const configData = response.data
-                if(typeof configData.result !== null && configData.result !== 'undefined'&& configData.result !== ''){
+                if( configData.result !== null && typeof configData.result !== 'undefined'&& configData.result !== ''){
                    // to emulate some network delay
                        if(configData.returnMessage === 'Invalid user name or password'){
                         console.log(" Invalid UserName Password");
@@ -127,7 +126,7 @@ const PostLoginForm = () => {
 
                         }
                         let userid = localStorage.getItem('userid');
-                        if(typeof userid !== null && userid !== 'undefined' && userid !== ''){
+                        if( userid !== null && typeof userid !== 'undefined' && userid !== ''){
                             navigate('/postBooking/Profile');
                         }
                        }

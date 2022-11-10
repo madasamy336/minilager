@@ -1,4 +1,5 @@
-import { Routes, Route, useLocation } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom';
+import React from 'react';
 import SidebarPostBooking from './app/pages/postbooking/Sidebar';
 import Header from './app/components/header/Header';
 import PostLoginForm from './app/pages/PostLoginForm';
@@ -8,7 +9,7 @@ import MyLeases from './app/pages/postbooking/my leases/MyLeases';
 import MYInvoices from './app/pages/postbooking/my invoices/MYInvoices';
 import Payment from './app/pages/postbooking/payment/Payment';
 import Updatepassword from './app/pages/postbooking/update password/Updatepassword';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import PostSignupForm from './app/pages/PostSignupForm';
 import Units from './app/pages/Units';
 import RentingDetails from './app/pages/RentingDetails';
@@ -17,9 +18,8 @@ import TenantDetails from './app/pages/TenantDetails';
 import EsignPayment from './app/pages/EsignPayment';
 import ForgotPassword from './app/pages/ForgotPassword';
 import { useSelector, useDispatch } from 'react-redux';
-import { useTranslation } from "react-i18next";
+// import { useTranslation } from "react-i18next";
 import { fetchAppConfig } from '../src/app/redux/actions/appConfig/appConfigAction';
-
 function App() {
 
     const loading = useSelector(state => state.appConfig.loading)
@@ -32,16 +32,15 @@ function App() {
     useEffect(() => {
         dispatch(fetchAppConfig())
     }, [])
-    const { t, i18n } = useTranslation();
-    const windowWidth = window.innerWidth;
-    const [mobileWidth, SetmobileWidth] = useState();
+    // const { t, i18n } = useTranslation();
+    // const windowWidth = window.innerWidth;
+    // const [mobileWidth, SetmobileWidth] = useState();
     const location = useLocation()
-    useEffect(() => {
-        SetmobileWidth(windowWidth)
-    }, [windowWidth])
+    // useEffect(() => {
+    //     SetmobileWidth(windowWidth)
+    // }, [windowWidth])
     return (
         <>
-
             <Header />
             <div className={`ui fluid container ${location.pathname.startsWith('/postBooking') && 'h-100'} `} id='mainContent'>
                 <div className={`p-1 ${location.pathname.startsWith('/postBooking') &&'ui segment pushable '}`}>

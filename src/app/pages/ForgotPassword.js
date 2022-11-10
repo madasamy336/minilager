@@ -1,46 +1,130 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Transition } from "semantic-ui-react";
+// import { useSelector, useDispatch } from 'react-redux';
+import instance from '../services/instance';
+import request from '../services/request';
+import React from 'react';
 
 const ForgotPassword = () => {
     const navigate = useNavigate();
-    const [passSuccessMsg,SetPassSuccessMsg]=useState({
-        show:false,
-        animation:0,
-        duration:0
+    // Username value
+    const [username, setUserName] = useState({ userName: '' });
+    const { userName } = username;
+    // Validation messege
+    const [validations, setValidations] = useState({ userName: '' });
+    const { userName: nameVal } = validations;
+
+    const [passSuccessMsg, SetPassSuccessMsg] = useState({
+        show: false,
+        animation: 0,
+        duration: 0
     })
     const ValidateSignin = (e) => {
         e.preventDefault();
-        navigate('/login')
+        navigate('/login');
     }
-    const passWordReset=(e)=>{
+    const handleChange = (e) => {
+        e.persist();
+        const { name, value } = e.target;
+        setUserName({ ...userName, [name]: value });
+
+    }
+
+    const validateOne = (e) => {
+
+        const { name } = e.target
+        const value = username[name]
+        let message = ''
+
+        if (!value) {
+            message = `${name} is required`
+        }
+        setValidations({ ...validations, [name]: message })
+        console.log(validations);
+
+    }
+    const passWordReset = (e) => {
+
         e.preventDefault();
-        SetPassSuccessMsg({
-            show:true,
-        animation:'fly left',
-        duration:1000
-        })
+        const validations = { userName: '' };
+        let isValid = true;
+        if (!userName) {
+            validations.userName = 'UserName is required';
+            isValid = false;
+        }
+        if (!isValid) {
+
+            setValidations(validations);
+        } else {
+            forgetCall()
+            //SetPassSuccessMsg({show:true, animation:'fly left',duration:1000});
+
+
+        }
+
     }
+
+    //forget password Api call 
+    const forgetCall = () => {
+        let config = {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        };
+
+        instance
+            .post(request.forgot_password, username, config)
+            .then(response => {
+                const configData = response.data
+                if ( configData.result !== null && typeof configData.result !== 'undefined' && configData.result !== '') {
+                    // to emulate some network delay
+                   
+                    if (configData.isSuccess === true) {
+                        // success msg
+                        SetPassSuccessMsg({ show: true, animation: 'fly left', duration: 1000 });
+
+                    }else {
+                        //failure msg
+
+                    }
+
+
+                } else {
+
+                    //else 
+
+                }
+            })
+            .catch(error => {
+                console.log(error);
+
+            })
+
+    }
+
     return (
         <div className="forgot-password pt-2 pb-5">
             <div className="ui container">
-         <div className="actionMsgContainer" >
-            <Transition.Group animation={passSuccessMsg.animation} duration={passSuccessMsg.duration}>
-            {passSuccessMsg.show && (   
-              <div>
-              <div className="d-flex justify-content-end  mb-3">
-              <p className="bg-alert d-flex align-items-center p-1 fs-8"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24.998 25.006">
-                  <g id="tick_new" data-name="tick new" transform="translate(0.003 -0.04)">
-                      <path id="Path_19724" data-name="Path 19724" d="M-1080.575,715.275v1.468c-.015.087-.033.173-.045.26-.078.539-.122,1.084-.239,1.615a12.157,12.157,0,0,1-4.662,7.331,12.124,12.124,0,0,1-10.118,2.286,12.071,12.071,0,0,1-7.38-4.672,12.157,12.157,0,0,1-2.489-8.821,12.086,12.086,0,0,1,3.062-6.987,12.272,12.272,0,0,1,7.216-4.051c.471-.084.948-.131,1.422-.2h1.468l.53.061a12.343,12.343,0,0,1,7.055,3.124,12.26,12.26,0,0,1,3.989,7.164C-1080.686,714.326-1080.639,714.8-1080.575,715.275Zm-12.506-9.74a10.494,10.494,0,0,0-10.466,10.472,10.494,10.494,0,0,0,10.466,10.472A10.5,10.5,0,0,0-1082.6,716,10.5,10.5,0,0,0-1093.081,705.536Z" transform="translate(1105.57 -703.47)" fill="#328128" />
-                      <path id="Path_19725" data-name="Path 19725" d="M-1002.432,841.989c.105-.094.172-.151.235-.212l6.165-5.844a1.027,1.027,0,0,1,1.463-.111,1,1,0,0,1,.13,1.366,1.928,1.928,0,0,1-.2.214q-3.506,3.326-7.015,6.65a1.017,1.017,0,0,1-1.57-.013q-1.835-1.875-3.663-3.758a1.018,1.018,0,0,1-.312-1,1,1,0,0,1,.659-.725,1,1,0,0,1,.963.181,2.986,2.986,0,0,1,.229.219q1.374,1.407,2.743,2.813C-1002.543,841.836-1002.494,841.911-1002.432,841.989Z" transform="translate(1013.24 -827.45)" fill="#328128" />
-                  </g>
-              </svg>
-                  <span className="ml-1 ">Password has been sent successfully. Please check your inbox for the password</span></p>
-              </div>
-              </div>
-            )}
-          </Transition.Group>
-          </div>
+                <div className="actionMsgContainer" >
+                    <Transition.Group animation={passSuccessMsg.animation} duration={passSuccessMsg.duration}>
+                        
+                        {passSuccessMsg.show && (
+                            <div>
+                                <div className="d-flex justify-content-end  mb-3">
+                                    <p className="bg-alert d-flex align-items-center p-1 fs-8"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24.998 25.006">
+                                        <g id="tick_new" data-name="tick new" transform="translate(0.003 -0.04)">
+                                            <path id="Path_19724" data-name="Path 19724" d="M-1080.575,715.275v1.468c-.015.087-.033.173-.045.26-.078.539-.122,1.084-.239,1.615a12.157,12.157,0,0,1-4.662,7.331,12.124,12.124,0,0,1-10.118,2.286,12.071,12.071,0,0,1-7.38-4.672,12.157,12.157,0,0,1-2.489-8.821,12.086,12.086,0,0,1,3.062-6.987,12.272,12.272,0,0,1,7.216-4.051c.471-.084.948-.131,1.422-.2h1.468l.53.061a12.343,12.343,0,0,1,7.055,3.124,12.26,12.26,0,0,1,3.989,7.164C-1080.686,714.326-1080.639,714.8-1080.575,715.275Zm-12.506-9.74a10.494,10.494,0,0,0-10.466,10.472,10.494,10.494,0,0,0,10.466,10.472A10.5,10.5,0,0,0-1082.6,716,10.5,10.5,0,0,0-1093.081,705.536Z" transform="translate(1105.57 -703.47)" fill="#328128" />
+                                            <path id="Path_19725" data-name="Path 19725" d="M-1002.432,841.989c.105-.094.172-.151.235-.212l6.165-5.844a1.027,1.027,0,0,1,1.463-.111,1,1,0,0,1,.13,1.366,1.928,1.928,0,0,1-.2.214q-3.506,3.326-7.015,6.65a1.017,1.017,0,0,1-1.57-.013q-1.835-1.875-3.663-3.758a1.018,1.018,0,0,1-.312-1,1,1,0,0,1,.659-.725,1,1,0,0,1,.963.181,2.986,2.986,0,0,1,.229.219q1.374,1.407,2.743,2.813C-1002.543,841.836-1002.494,841.911-1002.432,841.989Z" transform="translate(1013.24 -827.45)" fill="#328128" />
+                                        </g>
+                                    </svg>
+                                        <span className="ml-1 ">Password has been sent successfully. Please check your inbox for the password</span></p>
+                                </div>
+                            </div>
+                        ) }
+                        
+                    </Transition.Group>
+                </div>
                 <div className="row justify-content-center mt-3">
                     <div className="col-12 col-lg-4">
                         <div className='bg-white card-boxshadow px-0 pt-2 pb-4 border-radius-15 border-top-success-4'>
@@ -82,7 +166,7 @@ const ForgotPassword = () => {
                                 <div className="form-control mb-2">
                                     <label className="d-block mb-1">Email/User Name</label>
                                     <div className="ui input w-100 position-relative">
-                                        <input type="text" className="pl-5" placeholder="Enter Email/User Name" />
+                                        <input type="text" className="pl-5" placeholder="Enter Email/User Name" name="userName" value={userName} onChange={(e) => { handleChange(e) }} onBlur={validateOne} />
                                         <svg className="position-absolute l-1 t-1" id="user-svgrepo-com" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 30.667 30.667">
                                             <g id="Group_6355" data-name="Group 6355">
                                                 <path id="Path_18913" data-name="Path 18913" d="M26.176,4.49A15.334,15.334,0,0,0,4.49,26.176,15.334,15.334,0,0,0,26.176,4.49ZM15.333,28.973a13.64,13.64,0,1,1,13.64-13.64A13.658,13.658,0,0,1,15.333,28.973Z" fill="#b5b3b3" />
@@ -91,9 +175,10 @@ const ForgotPassword = () => {
                                             </g>
                                         </svg>
                                     </div>
+                                    <div className="text-danger mt-1"> {nameVal}</div>
                                 </div>
                                 <div className="text-center mb-2 mt-4">
-                                    <button onClick={e=>passWordReset(e)} className="ui button bg-success-dark text-white fw-100 py-1">Submit</button>
+                                    <button onClick={e => passWordReset(e)} className="ui button bg-success-dark text-white fw-100 py-1">Submit</button>
                                 </div>
                                 <div className="signup-div text-center">
                                     <p className="fs-8">Already have an Account? <a href="/" onClick={e => ValidateSignin(e)}>Sign in</a></p>

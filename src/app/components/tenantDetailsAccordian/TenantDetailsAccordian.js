@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Accordion, Icon } from 'semantic-ui-react'
+import { Accordion } from 'semantic-ui-react'
 
 export default class TenantDetailEmergengyContactAccordian extends Component {
   
@@ -52,7 +52,7 @@ export default class TenantDetailEmergengyContactAccordian extends Component {
             </tbody>
           </table>
           <div className='text-center'>
-          <button onClick={()=>this.props.removefunction(this.props.index)} class="ui button bg-danger   fs-7 fw-400 text-white px-5" >Remove</button>
+          <button onClick={()=>this.props.removefunction(this.props.index)} className="ui button bg-danger   fs-7 fw-400 text-white px-5" >Remove</button>
           </div>
         </Accordion.Content>
       </Accordion>

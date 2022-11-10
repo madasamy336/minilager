@@ -1,7 +1,7 @@
-import React from "react"
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { GetFacilityId } from '../../redux/actions/facility/faciltyAction'
 const Card = (props) => {
     const facilityDetailResponse = props;
@@ -22,7 +22,7 @@ const Card = (props) => {
             {typeof facilityDetailResponse.facilitydetails !== 'undefined' && facilityDetailResponse.facilitydetails !== null ? (
                 <div className='rentNow-container'>
                     {facilityDetailResponse.facilitydetails.map( details => {
-                        return <div className='rentNow-card bg-white'>
+                        return <div key={""} className='rentNow-card bg-white'>
                             <div className='row'>
                                 <div className='col-lg-3 col-md-3 col-sm-12'>
                                     <div className='rentNow-card-img h-100'>

@@ -3,11 +3,11 @@ import Card from "../components/rentnow/Cards";
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from "react-i18next";
 import { fetchFacilty } from '../redux/actions/facility/faciltyAction';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 const RentNow = () => {
     const { t } = useTranslation(); 
-    const loading = useSelector(state => state.faciltyList.loading)
-    const error = useSelector(state => state.faciltyList.error)
+    // const loading = useSelector(state => state.faciltyList.loading)
+    // const error = useSelector(state => state.faciltyList.error)
     const facilityDetails = useSelector(state => state.faciltyList.countries)
     const dispatch = useDispatch()
     useEffect(() => {

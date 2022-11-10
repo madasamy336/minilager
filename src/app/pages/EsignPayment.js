@@ -119,9 +119,9 @@ export default function EsignPayment() {
                 <div className='p-3 px-sm-1'>
                   <div className='card-bg-secondary w-100 px-2 py-2'>
                     <iframe height="250" title='Documents' />
-                    <div class="text-center mt-4">
-                      <button class="ui button bg-white text-success-dark border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2 mb-sm-1">Preview</button>
-                      <button class="ui button bg-white text-success-dark border-success-dark-1 fs-7 fw-400 text-dark px-5">Download</button>
+                    <div className="text-center mt-4">
+                      <button className="ui button bg-white text-success-dark border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2 mb-sm-1">Preview</button>
+                      <button className="ui button bg-white text-success-dark border-success-dark-1 fs-7 fw-400 text-dark px-5">Download</button>
                     </div>
                   </div>
                   <div className='row mt-2'>
@@ -151,11 +151,11 @@ export default function EsignPayment() {
                   <div className='pt-4'>
                     <div className='d-flex justify-content-between flex-wrap bg-primary-light p-1 border-success-dark-1 border-radius-5'>
                       <p className='d-flex align-items-center'><img src='/assets/images/esign.svg' alt='Esign' /><span className='ml-1'>Great! You have successfully signed the documents</span></p>
-                      <button class="ui button text-success-dark bg-white card-border fs-7 fw-400 text-dark px-1 mr-2 mt-md-1">View Document</button>
+                      <button className="ui button text-success-dark bg-white card-border fs-7 fw-400 text-dark px-1 mr-2 mt-md-1">View Document</button>
                     </div>
                     <div className='pt-4 d-flex justify-content-center flex-wrap'>
-                        <button class="ui button bg-success-dark d-flex align-items-center border-radius-5 fs-6 fw-100 text-white px-5 px-md-2 mb-sm-1"><img src='/assets/images/executed-payment.svg' alt='Pay Now' /><span className='ml-1'>Pay Now</span></button>
-                        <button class="ui button bg-white d-flex align-items-center border-radius-5 card-border fs-6 fw-400 text-dark px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1"><img src='/assets/images/pay.svg' alt='Pay Later' /><span className='ml-1'>Pay Later</span></button>
+                        <button className="ui button bg-success-dark d-flex align-items-center border-radius-5 fs-6 fw-100 text-white px-5 px-md-2 mb-sm-1"><img src='/assets/images/executed-payment.svg' alt='Pay Now' /><span className='ml-1'>Pay Now</span></button>
+                        <button className="ui button bg-white d-flex align-items-center border-radius-5 card-border fs-6 fw-400 text-dark px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1"><img src='/assets/images/pay.svg' alt='Pay Later' /><span className='ml-1'>Pay Later</span></button>
                     </div>
                   </div>
                 </div>
@@ -209,8 +209,8 @@ export default function EsignPayment() {
                     </div>
                   </div>
               </div>
-              <div class="text-center mt-4">
-                <button onClick={()=>  navigate('/preBooking/TenantDetails')} class="ui button bg-white text-success-dark border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">BACK</button>
+              <div className="text-center mt-4">
+                <button onClick={()=>  navigate('/preBooking/TenantDetails')} className="ui button bg-white text-success-dark border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">BACK</button>
               </div>
             </div>
 
