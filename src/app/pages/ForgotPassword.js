@@ -101,6 +101,15 @@ const ForgotPassword = () => {
 
             })
 
+        SetPassSuccessMsg({
+            show:true,
+        animation:'fly left',
+        duration:1000
+        })
+        setTimeout(() => {
+            SetPassSuccessMsg({
+                show:false,})
+        }, 4000);
     }
 
     return (

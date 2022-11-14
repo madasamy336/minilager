@@ -53,6 +53,11 @@ a{
                 width: 1.5rem;
                 object-fit: contain;
             }
+            .noCounterNumber{
+                input{
+                    padding-left: 1rem !important;
+                }
+            }
         }
         button{
             background-color: $LoginFormTextColor !important;

@@ -11,7 +11,7 @@
     .rentNow-units{
         .ui.input{
             padding: 0rem 0.5rem;
-            width: 50%;
+            width: 55%;
             box-shadow: 0px 3px 6px #00000029;
             border-radius: 10px;
             bottom: 2rem;
@@ -54,7 +54,8 @@
             border-radius: 20px;
             background-color: $rentNowCard;
             margin: 0rem auto 2rem;
-            width: 60%;
+            width: 70%;
+            box-shadow: $LoginFormBoxShadow;
             @include for-desktop {
                 width: 90%;
             }
@@ -93,8 +94,8 @@
                     .unit-amenity{
                         margin: 0.5rem 0.5rem 0 0;
                         span{
-                            font-size: 0.8rem;
-                            color: $textDisabledColor;
+                            font-size: 0.75rem;
+                            color: $textDarkColor;
                         }
                     }
                 }

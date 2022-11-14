@@ -18,7 +18,7 @@ export default class TenantDetailEmergengyContactAccordian extends Component {
 
     return (
  
-      <Accordion styled fluid className='p-1'>
+      <Accordion className='p-1'>
 
 
         <Accordion.Title className='d-flex justify-content-between align-items-center'

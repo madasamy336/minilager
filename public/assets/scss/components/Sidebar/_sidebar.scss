@@ -1,7 +1,18 @@
 #postBookingSidebar{
     width: 170px !important;
+    z-index: 9999 !important;
 }
 #postBookingSidebar .active.item{
     background: transparent !important;
     color:$primaryColor !important;
+    svg{
+        g:not(.strokeSvg){
+            fill: $primaryColor !important;
+           
+         
+        }
+        g.strokeSvg{
+            stroke:$primaryColor !important ;
+        }
+    }
 }

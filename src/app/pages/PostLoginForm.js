@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 // import { useTranslation } from "react-i18next";
 import instance from '../services/instance';
 import request from '../services/request';
-import {fetchLoginSuccess,fetchLoginFailure,fetchLoginRequest} from '../redux/actions/login/loginAction';
+import { fetchLoginSuccess, fetchLoginFailure, fetchLoginRequest } from '../redux/actions/login/loginAction';
 const PostLoginForm = () => {
     // const { t } = useTranslation(); 
     // const loading = useSelector(state => state.login.loading);
@@ -16,32 +16,32 @@ const PostLoginForm = () => {
     const [values, setValues] = React.useState({
         username: '',
         password: '',
-        rememberPassword:false
+        rememberPassword: false
     });
     const [validations, setValidations] = React.useState({
         username: '',
         password: ''
     })
 
-    let { username, password, rememberPassword} = values;
+    let { username, password, rememberPassword } = values;
     let localusername = localStorage.getItem('username');
     let localpassword = localStorage.getItem('password');
 
-    if(localpassword !== null && typeof localpassword !== "undefined" && localpassword !== ''){
+    if (localpassword !== null && typeof localpassword !== "undefined" && localpassword !== '') {
         // setValues({...values, password:localpassword })
         password = localpassword;
     }
-    
-    if( localusername !== null && typeof localusername !== "undefined" && localusername !== ''){
-     
-        
+
+    if (localusername !== null && typeof localusername !== "undefined" && localusername !== '') {
+
+
         username = localusername;
         // setValues({...values,username:username })
-       
+
     }
 
     const validateOne = (e) => {
-       
+
         const { name } = e.target
         const value = values[name]
         let message = ''
@@ -51,24 +51,24 @@ const PostLoginForm = () => {
         }
         if (value && name === 'username' && !/\S+@\S+\.\S+/.test(value)) {
             message = 'Email format must be as example@mail.com'
-          }
+        }
 
         setValidations({ ...validations, [name]: message })
     }
 
-    const handleChange = (e) =>  {
+    const handleChange = (e) => {
         e.persist();
         const { name, value } = e.target
         setValues({ ...values, [name]: value })
-       
+
     }
 
     function handleChechbox(e) {
         const { name, checked } = e.target;
         setValues({ ...values, [name]: checked });
-        
-        
-        
+
+
+
     }
     const navigate = useNavigate();
     const ValidateSignin = (e) => {
@@ -83,25 +83,25 @@ const PostLoginForm = () => {
         if (username && !/\S+@\S+\.\S+/.test(username)) {
             validations.username = 'UserName format must be as example@mail.com'
             isValid = false
-          }
+        }
 
         if (!password) {
             validations.password = 'password is required'
             isValid = false
         }
-        
+
         if (!isValid) {
-            
+
             setValidations(validations)
-        }else {
+        } else {
             // setValues({...values,username:username });
             // setValues({...values, password:localpassword });
-           loginCall(values)
-            
+            loginCall(values)
+
         }
 
     }
-     const loginCall = (values) => {
+    const loginCall = (values) => {
         dispatch(fetchLoginRequest())
         let config = {
             headers: {
@@ -110,31 +110,31 @@ const PostLoginForm = () => {
         };
 
         instance
-            .post(request.user_login,values,config)
+            .post(request.user_login, values, config)
             .then(response => {
                 const configData = response.data
-                if( configData.result !== null && typeof configData.result !== 'undefined'&& configData.result !== ''){
-                   // to emulate some network delay
-                       if(configData.returnMessage === 'Invalid user name or password'){
+                if (configData.result !== null && typeof configData.result !== 'undefined' && configData.result !== '') {
+                    // to emulate some network delay
+                    if (configData.returnMessage === 'Invalid user name or password') {
                         console.log(" Invalid UserName Password");
-                       }else if(configData.returnMessage === 'SUCCESS') {
+                    } else if (configData.returnMessage === 'SUCCESS') {
                         dispatch(fetchLoginSuccess(configData));
                         console.log(rememberPassword);
-                        if(rememberPassword === true){
-                            localStorage.setItem('username',username);
-                            localStorage.setItem('password',password);
+                        if (rememberPassword === true) {
+                            localStorage.setItem('username', username);
+                            localStorage.setItem('password', password);
 
                         }
                         let userid = localStorage.getItem('userid');
-                        if( userid !== null && typeof userid !== 'undefined' && userid !== ''){
+                        if (userid !== null && typeof userid !== 'undefined' && userid !== '') {
                             navigate('/postBooking/Profile');
                         }
-                       }
-                       
-                        
-                        
-               
-                }else{
+                    }
+
+
+
+
+                } else {
                     dispatch(fetchLoginFailure('There is no record found'))
                 }
             })
@@ -142,21 +142,21 @@ const PostLoginForm = () => {
                 dispatch(fetchLoginFailure(error.message))
             })
 
-     }
-    
+    }
+
     const ForgotPassword = (e) => {
         e.preventDefault();
         navigate('/forgotpassword')
     }
-    
 
 
-    const { 
-      username: nameVal, 
-      password: passwordVal, 
+
+    const {
+        username: nameVal,
+        password: passwordVal,
     } = validations
     return (
-        <div className="postloginform my-5 mx-auto">
+        <div className="postloginform my-5 mx-auto overflow-hidden">
             <div className="row">
                 <div className="col-lg-5 col-md-5 col-sm-12">
                     <div className="postloginform-img py-6 h-100">
@@ -484,7 +484,7 @@ const PostLoginForm = () => {
                     </div>
                 </div>
                 <div className="col-lg-7 col-md-7 col-sm-12">
-                    <div className="postloginform-inputs">
+                    <div className="postloginform-inputs bg-white">
                         <div className="form-title">
                             <h2 className="text-success fw-600">WELCOME</h2>
                             <p>Don't have an account? <Link to={'/signup'} className="fw-500">Signup Now</Link></p>
@@ -494,7 +494,7 @@ const PostLoginForm = () => {
                                 <label className="d-block">User Name</label>
                                 <div className="ui input w-100 position-relative">
                                     <input type="text" name="username" placeholder="Enter First Name" value={username}
-                                        onChange={(e)=>{handleChange(e)}}
+                                        onChange={(e) => { handleChange(e) }}
                                         onBlur={validateOne} />
                                     <svg className="position-absolute l-1 t-1" id="user-svgrepo-com" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 30.667 30.667">
                                         <g id="Group_6355" data-name="Group 6355">
@@ -511,8 +511,8 @@ const PostLoginForm = () => {
                                 <label className="d-block">Password</label>
                                 <div className="ui input w-100 position-relative">
                                     <input type="password" placeholder="Enter Password"
-                                     value={password} name="password"
-                                    onChange={(e)=>{handleChange(e)}}
+                                        value={password} name="password"
+                                        onChange={(e) => { handleChange(e) }}
                                         onBlur={validateOne} />
                                     <svg className="position-absolute l-1 t-1" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 22.036 32">
                                         <g id="password-svgrepo-com" transform="translate(-31.62)" opacity="0.21">
@@ -525,7 +525,7 @@ const PostLoginForm = () => {
                             </div>
                             <div className="remember-div d-flex justify-content-between">
                                 <p className="d-inline-flex">
-                                <input type="checkbox" name="rememberPassword" checked={rememberPassword}  onChange={(event) => handleChechbox(event)} /><span>Remember me</span></p>
+                                    <input type="checkbox" name="rememberPassword" checked={rememberPassword} onChange={(event) => handleChechbox(event)} /><span>Remember me</span></p>
                                 <p><a href="/" onClick={e => ForgotPassword(e)}>Forget your password?</a></p>
                             </div>
                             <button className="ui button w-100 fw-100" onClick={e => ValidateSignin(e)}>Sign In</button>

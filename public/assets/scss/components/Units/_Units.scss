@@ -79,6 +79,15 @@
                         }
                     }
                 }
+                .selectedFilter{
+                    p{
+                        background-color: $UnitsFilterSelectedText;
+                        img{
+                            width: 0.6rem;
+                            height: 0.6rem;
+                        }
+                    }
+                }
             }
         }
         .units-container-div{
@@ -111,6 +120,11 @@
                     box-shadow: $UnitsCardBoxshadow;
                     border-radius: 10px;
                     border: 1px solid #E6E6E6;
+                    transition: .5s ease;
+                    &:hover{
+                        box-shadow: $AddonCardBoxShadow;
+                        transform: scale(1.1);
+                    }
                     .card-img{
                         background-color: $UnitsCardBg;
                         border-radius: 10px 10px 0 0;
@@ -137,11 +151,15 @@
                             span{
                                 font-size: 0.8rem;
                                 line-height: 1.3;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                                display: -webkit-box;
+                                -webkit-line-clamp: 2;
+                                -webkit-box-orient: vertical;
                             }
                             .units-left{
                                 p{
                                     font-size: 0.7rem;
-                                    color: $UnitsCardsLeft;
                                 }
                             }
                         }
@@ -176,6 +194,12 @@
                             border-bottom: 1px dotted #eee;
                             p{
                                 font-size: 0.6rem;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                                display: -webkit-box;
+                                -webkit-line-clamp: 2;
+                                -webkit-box-orient: vertical;
+                                cursor: pointer;
                             }
                         }
                         .card-actions{

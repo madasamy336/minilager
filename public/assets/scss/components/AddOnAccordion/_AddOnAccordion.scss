@@ -3,6 +3,7 @@
         border-radius: 0 !important;
         padding: 1rem !important;
         color: $textDarkColor;
+        border-top: 1px solid $RangeSliderBg;
         border-bottom: 1px solid $RangeSliderBg;
         .title{
             p{

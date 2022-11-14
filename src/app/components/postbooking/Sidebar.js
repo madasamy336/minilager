@@ -1,31 +1,37 @@
 import React from "react";
 import { NavLink } from 'react-router-dom'
 import {
-
-  Header,
-  Icon,
-  Image,
   Menu,
-  Segment,
   Sidebar,
 } from 'semantic-ui-react'
-export default function SidebarPostBooking() {
-  // const [visible, setVisible] = useState(true)
+export default function SidebarPostBooking(props) {
 
   return (
    <>    
-          <Sidebar id='postBookingSidebar' className=' pt-3'
+          <Sidebar id='postBookingSidebar' className={`pt-3 ${props.width<980 ? 't-9':'t-10'}`}
             as={Menu}
-            animation='push'
+            animation={props.width>980 ?'push': 'overlay'}
             // icon='labeled'
             inverted
-            // onHide={() => setVisible(false)}
+            onHide={() => props.showSidebar(false)}
             vertical
-            visible
+            visible={props.width>980 ? true: 
+              props.sidebar 
+
+            }
           >
+            {
+               props.width <980 &&
+            <div className='item disablBefore  position-relative p-0'>
+            <svg onClick={()=>props.showSidebar(false)} className='r-2 t-n1 cursor-pointer position-absolute' xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 17.473 17.47">
+              <path id="wrong-5" d="M978.609-438.353l-2.052-2.043-4.37-4.366a1.33,1.33,0,0,1-.4-1.425,1.3,1.3,0,0,1,.833-.843,1.3,1.3,0,0,1,1.171.183,3.019,3.019,0,0,1,.353.321q3.009,3,6.009,6.01c.088.088.159.193.254.309.127-.118.217-.2.3-.281l6.156-6.156a1.332,1.332,0,0,1,1.325-.431,1.3,1.3,0,0,1,.927.828,1.3,1.3,0,0,1-.188,1.228,3.412,3.412,0,0,1-.325.35q-3,3.009-6.011,6.009a3.233,3.233,0,0,1-.317.244c.132.14.213.23.3.316q3.052,3.053,6.108,6.1a1.36,1.36,0,0,1,.441,1.387,1.305,1.305,0,0,1-2.205.564c-.59-.568-1.163-1.157-1.74-1.736l-4.487-4.491a2.068,2.068,0,0,1-.183-.248l-.142-.051a1.52,1.52,0,0,1-.191.325q-3.047,3.059-6.1,6.111a1.341,1.341,0,0,1-1.45.419,1.3,1.3,0,0,1-.851-.866,1.3,1.3,0,0,1,.235-1.19,3.215,3.215,0,0,1,.257-.274l6.034-6.033C978.386-438.167,978.484-438.245,978.609-438.353Z" transform="translate(-971.716 447.116)" fill="#fff"/>
+           </svg>
+            </div>
+            }
+  
             <NavLink to={'/postBooking/Profile'} className='item disablBefore fs-7 my-1' >
             <svg className='mr-1' height='12' width='12'  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18.023 21.404">
-                <g fill="none" stroke="#fff"strokeWidth="1" data-name="Group 12" transform="translate(.5 .5)" >
+                <g fill="none" className='strokeSvg' stroke="#fff"strokeWidth="1" data-name="Group 12" transform="translate(.5 .5)" >
                   <path d="M4.908 8.389a4.755 4.755 0 01-1.44-3.474 4.753 4.753 0 011.44-3.475A4.753 4.753 0 018.383 0a4.758 4.758 0 013.474 1.439 4.756 4.756 0 011.44 3.475 4.755 4.755 0 01-1.44 3.475 4.752 4.752 0 01-3.474 1.439 4.758 4.758 0 01-3.475-1.439z"></path>
                   <path d="M3.6 20.404a3.623 3.623 0 01-2.594-.948A3.39 3.39 0 010 16.895c0-.41.014-.816.041-1.205a12.144 12.144 0 01.165-1.29 10.232 10.232 0 01.318-1.3 6.369 6.369 0 01.533-1.209 4.529 4.529 0 01.8-1.047 3.534 3.534 0 011.157-.721 3.974 3.974 0 011.473-.267 1.5 1.5 0 01.8.339c.243.158.523.339.832.536a4.755 4.755 0 001.076.474 4.293 4.293 0 001.317.213 4.285 4.285 0 001.316-.212 4.747 4.747 0 001.072-.475c.313-.2.593-.38.832-.536a1.494 1.494 0 01.8-.339 3.981 3.981 0 011.474.267 3.531 3.531 0 011.154.725 4.55 4.55 0 01.8 1.047 6.443 6.443 0 01.54 1.209 10.1 10.1 0 01.317 1.3 12.206 12.206 0 01.165 1.289c.028.389.041.794.041 1.205a3.387 3.387 0 01-1.006 2.558 3.623 3.623 0 01-2.593.946z"
                     data-name="Shape"
@@ -125,7 +131,7 @@ export default function SidebarPostBooking() {
           </svg>
             Update Password
             </NavLink>
-            <a href="/" className='item disablBefore fs-7 my-1'>
+            <a href="/"  className='item disablBefore fs-7 my-1'>
           <svg className='mr-1' height='12' width='12'
             xmlns="http://www.w3.org/2000/svg"
             data-name="log-out (1)"

@@ -20,6 +20,7 @@ import ForgotPassword from './app/pages/ForgotPassword';
 import { useSelector, useDispatch } from 'react-redux';
 // import { useTranslation } from "react-i18next";
 import { fetchAppConfig } from '../src/app/redux/actions/appConfig/appConfigAction';
+import SuccessfulMoveIn from './app/pages/SuccessfulMoveIn';
 function App() {
 
     const loading = useSelector(state => state.appConfig.loading)
@@ -56,6 +57,7 @@ function App() {
                         <Route path='/preBooking/addOns' element={<AddOn />} />
                         <Route path='/preBooking/TenantDetails' element={<TenantDetails />} />
                         <Route path='/preBooking/esignPayment' element={<EsignPayment />} />
+                        <Route path='/preBooking/thankyou' element={<SuccessfulMoveIn />} />
                     </Routes>
                     <div className={location.pathname.startsWith('/postBooking') && 'pusher pusher-desktop'}>
                         {/* for postBooking */}

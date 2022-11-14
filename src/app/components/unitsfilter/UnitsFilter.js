@@ -19,11 +19,28 @@ export default class AccordionExampleStyled extends Component {
 
     return (
       <Accordion styled>
-        <Accordion.Title className='d-flex justify-content-between align-items-center' active={activeIndex === 0} index={0}>
+        <Accordion.Title active={activeIndex === 0} index={0}>
           <div className='d-flex justify-content-between align-items-center'>
-            <img src="/assets/images/filter.png" alt="" />Filters
+            <div className='d-flex justify-content-between align-items-center'>
+              <img src="/assets/images/filter.png" alt="" />Filters
+            </div>
+            <div>
+              <p className='fs-8 text-success'>Clear All</p>
+            </div>
           </div>
-          <div>
+          <div className='row mt-3 selectedFilter'>
+            <div className='col-lg-4 col-md-6 col-sm-4'>
+              <p className='fs-8 d-flex justify-content-between align-items-center p-1 mr-1 mb-1'>Building 1 <img src='/assets/images/wrong.svg' alt='Close' /></p>
+            </div>
+            <div className='col-lg-4 col-md-6 col-sm-4'>
+              <p className='fs-8 d-flex justify-content-between align-items-center p-1 mr-1'>Small <img src='/assets/images/wrong.svg' alt='Close' /></p>
+            </div>
+            <div className='col-lg-4 col-md-6 col-sm-4'>
+              <p className='fs-8 d-flex justify-content-between align-items-center p-1 mr-1'>10x9x9 <img src='/assets/images/wrong.svg' alt='Close' /></p>
+            </div>
+            <div className='col-lg-4 col-md-6 col-sm-4'>
+              <p className='fs-8 d-flex justify-content-between align-items-center p-1 mr-1'>Amenity 1 <img src='/assets/images/wrong.svg' alt='Close' /></p>
+            </div>
           </div>
         </Accordion.Title>
 
@@ -50,7 +67,7 @@ export default class AccordionExampleStyled extends Component {
               <li><input className='mr-1 mb-1' type="checkbox" />10x8x8</li>
               <li><input className='mr-1 mb-1' type="checkbox" />10x9x9</li>
             </ul>
-            <a href="/" className='text-success text-right d-block'>MORE</a>
+            <a href="javascript:void(0)" className='text-success text-right d-block'>MORE</a>
             </div>
         </Accordion.Content>
 
@@ -75,7 +92,7 @@ export default class AccordionExampleStyled extends Component {
                 <ul>
                   <li><input className='mr-1 mb-1' type="checkbox" />Small</li>
                   <li><input className='mr-1 mb-1' type="checkbox" />Medium</li>
-                  <li><input className='mr-1 mb-1' type="checkbox" onClick={this.props.modal} />Large</li>
+                  <li><input className='mr-1 mb-1' type="checkbox" />Large</li>
                 </ul>
             </div>
         </Accordion.Content>
@@ -103,7 +120,7 @@ export default class AccordionExampleStyled extends Component {
               <li><input className='mr-1 mb-1' type="checkbox" />10x8x8</li>
               <li><input className='mr-1 mb-1' type="checkbox" />10x9x9</li>
             </ul>
-            <a href="/" className='text-success text-right d-block'>MORE</a>
+            <a href="javascript:void(0);" className='text-success text-right d-block' onClick={this.props.modal}>MORE</a>
             </div>
             <div>
               <h6 className='fw-600 mt-2 mb-1'>LARGE</h6>
@@ -115,7 +132,7 @@ export default class AccordionExampleStyled extends Component {
                 <li><input className='mr-1 mb-1' type="checkbox" />10x8x8</li>
                 <li><input className='mr-1 mb-1' type="checkbox" />10x9x9</li>
               </ul>
-              <a href="/" className='text-success text-right d-block'>MORE</a>
+              <a href="javascript:void(0);" className='text-success text-right d-block' onClick={this.props.modal}>MORE</a>
             </div>
         </Accordion.Content>
 

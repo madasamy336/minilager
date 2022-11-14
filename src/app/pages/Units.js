@@ -73,7 +73,7 @@ const Units = () => {
 
     return (
         <div className="units-wrapper">
-            <div className="container">
+            <div className="ui container fluid">
                 <div className="units-banner position-relative">
                     <img className='w-100' src='/assets/images/rentnow-img.png' alt="Storage Units" />
                     <div className='dropdown-div mx-auto position-absolute'>
@@ -93,6 +93,10 @@ const Units = () => {
                         <div className="col-lg-3 col-md-3 col-sm-12">
                             <div className="filters-div">
                                 <AccordionExampleStyled modal={() => SetunitTypeModal({ open: true, size: 'tiny', dimmer: 'blurring' })} />
+                                <div className='text-center my-2'>
+                                    <button className='ui button bg-white border-success-dark-light-1 text-success fs-7 fw-400 px-5 mx-1 mb-1 mb-sm-1 px-sm-2'>Clear All</button>
+                                    <button className='ui button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-1 mb-sm-1 px-sm-2'>Apply</button>
+                                </div>
                             </div>
                         </div>
                         <div className="col-lg-9 col-md-9 col-sm-12">
@@ -113,6 +117,8 @@ const Units = () => {
                                 </div>
                                 <div className='units-div'>
                                     <div className='row'>
+                                        <UnitsCard />
+                                        <UnitsCard />
                                         <UnitsCard />
                                     </div>
                                 </div>

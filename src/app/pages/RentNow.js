@@ -17,7 +17,7 @@ const RentNow = () => {
     
     return (
         <div className="rentnow">
-            <div className="container">
+            <div className="ui container fluid">
                 <div className="rentNow-banner position-relative">
                     <img className='w-100' src='./assets/images/rentnow-img.png' alt="RENT NOW"/>
                     <h2 className="text-white position-absolute w-100 text-center"> {t('RENT NOW')}</h2>    

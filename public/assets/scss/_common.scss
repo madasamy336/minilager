@@ -1,38 +1,159 @@
-.TenantDetailsProfileImage{
+.TenantDetailsProfileImage {
     height: 170px !important;
     width: 170px !important;
 }
-.card-bg-secondary{
-    background-color: $EsignCardBg;
-}
-.card-border{
-    border: 1px solid $UnitsCardBg !important;
-}
-.card-border-primary{
-    border: 1px solid $LoginFormTextColor;
-}
-.card-border-bottom{
-    border-bottom: 1px solid $UnitsCardBg;
-}
-.card-boxShadow{
-    box-shadow: 0px 0px 6px #00000029;;
-}
-.border-radius-5{
-    border-radius: 5px !important;
-}
-.dashed-bottom{
-    border-bottom: 1px dashed $UnitsCardBg;
-}
-.border-top{
-    border-top: 1px solid $UnitsCardBg;
-}
-.border-right{
-    border-right: 1px solid $UnitsCardBg;
-}
-.bg-primary-light{
-    background-color: $EsignViewBg;
-}
 
-.actionMsgContainer{
+.actionMsgContainer {
     min-height: 35px !important;
 }
+
+.w-35 {
+    width: 35% !important;
+
+    @include for-tablet {
+        width: 50% !important;
+    }
+
+    @include for-mobile {
+        width: 90% !important;
+    }
+}
+
+#mainHeader {
+    z-index: 999 !important;
+    background-color:$layoutBackground !important ;
+}
+.myLeaseUnitMenu {
+    .item {
+        background-color: $lightGray !important;
+    }
+}
+.myLeaseUnitMenu {
+    .active.item {
+        background-color: $primaryColor !important;
+        color: #fff !important;
+    }
+}
+.unitDetails-card-image {
+    background-color: $UnitsCardBg !important;
+}
+.MyleasesTab {
+    .ui.pointing.menu {
+        border-bottom: none !important;
+        .item{
+            color: $TextSecondary !important;
+            font-weight: 600 !important;
+        }
+        .item.active {
+            border-color: $primaryColor !important;
+
+            color: $primaryColor !important;
+        }
+    }
+
+    .ui.segment.tab {
+        border: none !important;
+        box-shadow: none !important;
+    .insuranceContent{
+        .card{
+            border: 1px solid $textDisabledColor;
+        }
+        .card.changePlanCard{
+            height: 165px !important;
+        }
+        .card.active{
+         background-color: $primaryColor !important;
+         color: white !important;
+        }
+        .invoiceDocumentContainer{
+            height: 170px !important;
+        
+        }
+    }
+    .serviceContent,.MerchandiseContent{
+        .serviceTable,.MerchandiseTable{
+            min-width: 800px;
+            thead{
+                th{
+                    padding:0.5rem 1rem;
+                    border-bottom:1px $lightGray;
+                    border-style:dashed;
+                    font-weight: 600;
+                    font-size: 0.9rem;
+                    color: $textDisabledColor;
+                }
+            }
+            .ScrollBody{
+                max-height: 250px;
+                tbody{
+                    td{
+                        padding: 1rem;
+                    }
+                   }
+            }
+      
+        }
+    }
+    }
+}
+.rentalAgreementContainer{
+    height: 250px !important;
+    min-width: 800px;
+}
+.w-sm-100{
+    @include for-mobile{
+        width: 100% !important;
+    } 
+}
+.pagination-div{
+    .ui.menu{
+        background-color: transparent !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        .item{
+            min-width: 0em;
+            padding: 0.7rem !important;
+            &::before{
+                display: none;
+            }
+            @include for-mobile{
+                padding: 0.6rem !important;
+            }
+        }
+        .item.active{
+            background-color: transparent !important;
+            color: $primaryColor;
+        }
+    }
+}
+input[type=checkbox] {
+    accent-color: #2c7a22  !important;
+  }
+.ml-4px{
+    margin-left: 4px !important;
+}
+.ui.breadcrumb .icon.divider {
+    font-size: 1em !important;
+}
+.success-label-leases{
+    font-size: 0.8rem !important;
+    color: $UnitsDropdownBg !important;
+    background-color: $LabelSuccessBg !important;
+    border-radius: 5px !important;
+}
+.danger-label-leases{
+    font-size: 0.8rem !important;
+    color: $Error !important;
+    background-color: $LabelDangerBg !important;
+    border-radius: 5px !important;
+}
+.field .noCounterNumber .ui.dropdown input {
+    width: 100% !important;
+}
+.ui.icon.input{
+    input{
+        &:hover{
+            cursor: pointer;
+        }
+    }
+} 
