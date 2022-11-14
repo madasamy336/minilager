@@ -14,14 +14,19 @@ export default function Header(props) {
     const languageValue = e.target.value
     i18n.changeLanguage(languageValue);
   }
+  const Languages=[
+    
+      { key: 'Norwegian', text: 'Norwegian', value: 'Norwegian' }
+    ,
+    
+      { key: 'english', text: 'english', value: 'english' },
+    
+  ]
   return (
     <>
 
       <div className={`position-fixed w-100 ${location.pathname.startsWith('/postBooking') && `${props.width < 980 && 'pb-5'}`}`} id='mainHeader'>
-        <select className="custom-select" style={{ width: 200 }} onChange={changeLanguageHandler}>
-          <option value="en" >English</option>
-          <option value="nn" >Norwegian</option>
-        </select>
+ 
         <div className='ui secondary pointing menu py-1 bg-white d-block  w-100'>
           <a href="/" className={`item d-inline-block ${props.width < 981 && 'w-50'}`}>
             <img className={`${props.width > 980 && 'w-50'} ${props.width > 500 ? `${props.width < 980 && 'w-25'}` : `w-75`}`} src='https://123minilager.no/wp-content/uploads/2020/03/cropped-123Minilager-Lager-til-leie-1.jpg' alt="123minilager.no" />
@@ -40,6 +45,8 @@ export default function Header(props) {
               <NavLink to={'/login'} className="item fs-7 fw-700 mx-4 navtext py-3 d-inline-block">
                 MY SIDE
               </NavLink>
+              <Dropdown placeholder='State' search selection  options={Languages} />
+
             </div>
 
           }
@@ -68,6 +75,8 @@ export default function Header(props) {
                   </Dropdown.Menu>
                 </Dropdown>
               </Menu>
+              {/* <Dropdown placeholder='State' search selection  options={Languages} /> */}
+
               {location.pathname.startsWith('/postBooking') && <Icon className='position-fixed fs-4 l-2 t-9' onClick={(e) => openSidebar(e)} name='bars' />}
             </div>
           }

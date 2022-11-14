@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 export default function InsuranceTabContent() {
     const [activePlan,SetactivePlan]=useState('');
     const [changePlan,SetChangePlan]=useState(false);
-    const [ownInsurance,SetownInsurance]=useState(false)
+    const [ownInsurance,SetownInsurance]=useState(true)
     const SavePlan=(e)=>{
         e.preventDefault();
         SetChangePlan(false)
