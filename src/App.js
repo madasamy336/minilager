@@ -8,7 +8,7 @@ import MyLeases from './app/pages/postbooking/my leases/MyLeases';
 import MYInvoices from './app/pages/postbooking/my invoices/MYInvoices';
 import Payment from './app/pages/postbooking/payment/Payment';
 import Updatepassword from './app/pages/postbooking/update password/Updatepassword';
-import { useEffect, useState } from 'react';
+import { useEffect, useState,React } from 'react';
 import PostSignupForm from './app/pages/PostSignupForm';
 import Units from './app/pages/Units';
 import RentingDetails from './app/pages/RentingDetails';
@@ -41,6 +41,7 @@ function App() {
             {location.pathname.startsWith('/postBooking') && <SidebarPostBooking width={mobileWidth} sidebar={sidebar} showSidebar={ShowSidebar}/>}
                 <div className={` pusher  ${location.pathname.startsWith('/postBooking') && `${mobileWidth>980 ? 'pusher-desktop ':'pt-120'}`} `} id='mainContent'>      
                     <Routes>
+                        <Route exact path='/' element={<RentNow />} />
                         <Route exact path='/home' element={<RentNow />} />
                         <Route path='/login' element={<PostLoginForm />} />
                         <Route path='/forgotpassword' element={<ForgotPassword />} />

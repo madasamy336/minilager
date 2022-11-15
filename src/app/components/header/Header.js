@@ -16,10 +16,10 @@ export default function Header(props) {
   }
   const Languages=[
     
-      { key: 'Norwegian', text: 'Norwegian', value: 'Norwegian' }
+      { key: 'nn', text: 'Norwegian', value: 'nn' }
     ,
     
-      { key: 'english', text: 'english', value: 'english' },
+      { key: 'en', text: 'english', value: 'en' },
     
   ]
   return (

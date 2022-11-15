@@ -8,22 +8,21 @@ import { fetchUnitFilter } from '../redux/actions/unitList/unitListAction';
 
 const Units = () => {
 
+    const [storageTypeValue, setStorageTypeValue] = useState('');
     const [unitTypeModal, SetunitTypeModal] = useState({
         open: false,
         dimmer: undefined,
         size: undefined
-    })
-
-    // const loading = useSelector(state => state.unitFilter.loading);
-    // const error = useSelector(state => state.unitFilter.error);
+    });
+    const loading = useSelector(state => state.unitFilter.loading);
+    const error = useSelector(state => state.unitFilter.error);
     const filters = useSelector(state => state.unitFilter.filters);
-
-    console.log(filters);
 
     const dispatch = useDispatch()
 
     useEffect(() => {
         dispatch(fetchUnitFilter())
+        
     }, [])
     
     const tenantTypeOptions = [
@@ -38,18 +37,25 @@ const Units = () => {
             value: 'Business User',
         },
     ]
-    const storageTypeOptions = [
-        {
-            key: 1,
-            text: 'All',
-            value: 1
-        },
-        {
-            key: 2,
-            text: 'Units',
-            value: 2,
-        },
-    ]
+
+    const storageTypeOptions = typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof filters.storageType !== 'undefined' && filters.storageType !== null && filters.storageType !== "" && filters.storageType.length > 0 ?
+        filters.storageType.map(storageType => {
+          return {
+                key: storageType.storageTypeId,
+                text: storageType.storageTypeName,
+                value: storageType.storageTypeId
+            }
+        }
+        
+          
+        ) : '';
+        
+
+        const changeStorageType = (e, data) => {
+            setStorageTypeValue(data.value);
+            console.log(data.value);
+        }
+
     const sortUnitOptions = [
         {
             key: 'popular',
@@ -83,7 +89,9 @@ const Units = () => {
                                 <Dropdown placeholder="Choose Tenant Type" clearable fluid search selection options={tenantTypeOptions} />
                             </div>
                             <div className='col-lg-6 col-md-6 col-sm-12'>
-                                <Dropdown placeholder="Choose Storage Type" clearable fluid search selection options={storageTypeOptions} />
+                                {storageTypeOptions !==null && typeof storageTypeOptions !== 'undefined' && storageTypeOptions !== '' && typeof storageTypeOptions[0].value !== 'undefined' && storageTypeOptions[0].value !== null &&  storageTypeOptions[0].value !== ''?
+                                 <Dropdown placeholder="Choose Storage Type" value={storageTypeValue} defaultOpen={storageTypeOptions[0].value} onChange={changeStorageType} fluid search selection options={storageTypeOptions} />
+                                : ''}
                             </div>
                         </div>
                     </div>
@@ -92,7 +100,7 @@ const Units = () => {
                     <div className="row">
                         <div className="col-lg-3 col-md-3 col-sm-12">
                             <div className="filters-div">
-                                <AccordionExampleStyled modal={() => SetunitTypeModal({ open: true, size: 'tiny', dimmer: 'blurring' })} />
+                                <AccordionExampleStyled storageTypeValue={storageTypeValue} modal={() => SetunitTypeModal({ open: true, size: 'tiny', dimmer: 'blurring' })} />
                                 <div className='text-center my-2'>
                                     <button className='ui button bg-white border-success-dark-light-1 text-success fs-7 fw-400 px-5 mx-1 mb-1 mb-sm-1 px-sm-2'>Clear All</button>
                                     <button className='ui button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-1 mb-sm-1 px-sm-2'>Apply</button>
