@@ -5,7 +5,8 @@ const requests = {
     unit_filters: "v2/unit/filters?UnitVisibility=1&Availability=2",
     user_login:"v1/user/login",
     forgot_password:"v1/user/password/forgot",
-    user_signup :"v1/user/signup"
+    user_signup :"v1/user/signup",
+    user_search: "v1/unit/type/price"
 }
 
 

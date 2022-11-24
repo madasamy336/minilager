@@ -5,10 +5,15 @@ import UnitsCard from '../components/unitscard/UnitsCard'
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchUnitFilter } from '../redux/actions/unitList/unitListAction';
+import PlaceholderLoader from "../components/placeholder/Placeholder";
+import instance from '../services/instance';
+import request from '../services/request';
 
 const Units = () => {
-
+    const [UnitResponse, setUnitResponse] = useState(null);
     const [storageTypeValue, setStorageTypeValue] = useState('');
+    const [loader, setLoading] = useState(true);
+    const [filtercall, setFilterCall] = useState(false);
     const [unitTypeModal, SetunitTypeModal] = useState({
         open: false,
         dimmer: undefined,
@@ -21,10 +26,49 @@ const Units = () => {
     const dispatch = useDispatch()
 
     useEffect(() => {
-        dispatch(fetchUnitFilter())
-        
-    }, [])
-    
+        sixStorageLoadUnitList(storageTypeValue);
+        if (filtercall === false) {
+            dispatch(fetchUnitFilter())
+        }
+
+
+    }, [storageTypeValue])
+
+    const sixStorageLoadUnitList = (storageTypeid) => {
+        setLoading(true);
+
+        let config = {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        };
+
+        let requestbody = {
+            storageTypeId: [storageTypeid],
+            locationId: null,
+            buildingId: null,
+            unitTypeId: null,
+            amenityId: null,
+            pageNumber: 1,
+            pageSize: 10,
+            isBusinessUser: false,
+            unitSort: "UnitNumber",
+            unitVisibility: 1,
+            availability: 2
+        }
+        instance
+            .post(request.user_search, requestbody, config)
+            .then(response => {
+                setUnitResponse(response.data.result);
+                setLoading(false);
+                setFilterCall(true);
+            })
+            .catch(error => {
+
+            })
+
+    }
+
     const tenantTypeOptions = [
         {
             key: 1,
@@ -40,21 +84,22 @@ const Units = () => {
 
     const storageTypeOptions = typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof filters.storageType !== 'undefined' && filters.storageType !== null && filters.storageType !== "" && filters.storageType.length > 0 ?
         filters.storageType.map(storageType => {
-          return {
+            return {
                 key: storageType.storageTypeId,
                 text: storageType.storageTypeName,
                 value: storageType.storageTypeId
             }
         }
-        
-          
-        ) : '';
-        
 
-        const changeStorageType = (e, data) => {
-            setStorageTypeValue(data.value);
-            console.log(data.value);
-        }
+
+        ) : '';
+
+
+    const changeStorageType = (e, data) => {
+        setUnitResponse([]);
+        setStorageTypeValue(data.value);
+        console.log(data.value);
+    }
 
     const sortUnitOptions = [
         {
@@ -89,9 +134,9 @@ const Units = () => {
                                 <Dropdown placeholder="Choose Tenant Type" clearable fluid search selection options={tenantTypeOptions} />
                             </div>
                             <div className='col-lg-6 col-md-6 col-sm-12'>
-                                {storageTypeOptions !==null && typeof storageTypeOptions !== 'undefined' && storageTypeOptions !== '' && typeof storageTypeOptions[0].value !== 'undefined' && storageTypeOptions[0].value !== null &&  storageTypeOptions[0].value !== ''?
-                                 <Dropdown placeholder="Choose Storage Type" value={storageTypeValue} defaultOpen={storageTypeOptions[0].value} onChange={changeStorageType} fluid search selection options={storageTypeOptions} />
-                                : ''}
+                                {storageTypeOptions !== null && typeof storageTypeOptions !== 'undefined' && storageTypeOptions !== '' && typeof storageTypeOptions[0].value !== 'undefined' && storageTypeOptions[0].value !== null && storageTypeOptions[0].value !== '' ?
+                                    <Dropdown placeholder="Choose Storage Type" value={storageTypeValue} defaultOpen={storageTypeOptions[0].value} onChange={changeStorageType} fluid search selection options={storageTypeOptions} />
+                                    : ''}
                             </div>
                         </div>
                     </div>
@@ -125,9 +170,18 @@ const Units = () => {
                                 </div>
                                 <div className='units-div'>
                                     <div className='row'>
-                                        <UnitsCard />
-                                        <UnitsCard />
-                                        <UnitsCard />
+
+                                        <div className={!loader && `d-none`}>
+                                            <PlaceholderLoader cardCount={7} />
+                                        </div>
+
+                                        {!loader && <UnitsCard storageTypevalue={storageTypeValue} UnitResponse={UnitResponse} setUnitResponse={setUnitResponse} setLoading={setLoading} />
+                                        }
+
+
+
+
+
                                     </div>
                                 </div>
                                 <div className='pagination-div mt-2 mb-3 text-center'>
@@ -186,7 +240,7 @@ const Units = () => {
                             <div className='col-lg-3 col-md-3 col-sm-6 mb-2'>
                                 <label><input className="mr-1 mb-1" type="checkbox" />10x8x8</label>
                             </div>
-                            
+
                         </div>
                         <div className='text-center mt-1'>
                             <button className='ui button bg-success-dark text-white'>Apply</button>

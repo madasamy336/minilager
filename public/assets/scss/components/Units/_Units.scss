@@ -121,6 +121,7 @@
                     border-radius: 10px;
                     border: 1px solid #E6E6E6;
                     transition: .5s ease;
+                    min-height: 444px;
                     &:hover{
                         box-shadow: $AddonCardBoxShadow;
                         transform: scale(1.1);
@@ -164,7 +165,7 @@
                             }
                         }
                         .card-desc{
-                            background-color: $UnitsCardBg;
+                            //background-color: $UnitsCardBg;
                             .units-amenitiy{
                             div{
                                 margin-left: 0.7rem;

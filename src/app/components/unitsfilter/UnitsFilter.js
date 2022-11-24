@@ -13,16 +13,13 @@ const AccordionExampleStyled = (selectedStorageType) => {
   const loading = useSelector(state => state.unitFilter.loading);
   const error = useSelector(state => state.unitFilter.error);
   const filters = useSelector(state => state.unitFilter.filters);
-
   const [activeIndex, setActiveIndex] = useState(0);
-
+  const [filterSelectedName , setFilterSelectedName] = useState([]);
   const handleClick = (e, titleProps) => {
     const { index } = titleProps;
     const newIndex = activeIndex === index ? -1 : index
     setActiveIndex(newIndex);
   }
-
-
   function checkStoragePriceRange(PriceRangeArray, storageCategoryValue) {
     let PriceArray = [];
     PriceRangeArray.map((array) => {
@@ -78,12 +75,12 @@ const AccordionExampleStyled = (selectedStorageType) => {
       }
     }) : '';
 
-  const onFilterChange = (e) => {
+  const onFilterChange = (e,name) => {
     let filters = []
     if (e.target.checked) {
       filters.push(e.target.value);
     }
-    console.log(e.target.value)
+    setFilterSelectedName(name);
 
   }
 
@@ -132,7 +129,7 @@ const AccordionExampleStyled = (selectedStorageType) => {
           <ul>
             {typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof filters.building !== 'undefined' && filters.building !== null && filters.building !== "" && filters.building.length > 0 ?
               Buildingfilter.map(buildingVal => {
-                return <li key={buildingVal.key}><input value={buildingVal.buildingId} className='mr-1 mb-1' type="checkbox" onChange={onFilterChange} />{buildingVal.buildingName}</li>
+                return <li key={buildingVal.key}><input value={buildingVal.buildingId} className='mr-1 mb-1' type="checkbox" onChange={(e)=>onFilterChange(e,buildingVal.buildingName)} />{buildingVal.buildingName}</li>
               })
               : ''}
           </ul>

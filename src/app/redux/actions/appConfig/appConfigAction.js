@@ -13,7 +13,9 @@ export const fetchAppConfig = () => {
         instance
             .get(request.common_config, config)
             .then(response => {
-                const configData = response.data
+                const configData = response.data.result
+                sessionStorage.setItem('configdata', JSON.stringify(configData));
+                
                 dispatch(fetchAppConfigSuccess(configData));
             })
             .catch(error => {

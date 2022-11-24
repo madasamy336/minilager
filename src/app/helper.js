@@ -18,9 +18,9 @@ class Helper {
 
     constructor() {
 
-        this.culture = window.sixstorage_toolkit.sixStorageClientCulture;
-        this.currency = window.sixstorage_toolkit.sixStorageCurrencyFormat;
-        this.dateFormat = window.sixstorage_toolkit.sixStorageDateFormat;
+        this.culture = JSON.parse(sessionStorage.getItem("culture")).culture;
+        this.currency =JSON.parse(sessionStorage.getItem("culture")).currency;
+        this.dateFormat =JSON.parse(sessionStorage.getItem("culture")).dateFormat;
     }
 
     checkPhoneNumber(event) {
@@ -53,20 +53,20 @@ class Helper {
         }
     }
 
-    checkEmail(event) {
-        const mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-        let inputValue = this.value;
-        if (inputValue.match(mailformat)) {
-            return true;
-        } else {
-            const err = document.getElementById(`${this.id}-err`);
-            if (typeof err !== "undefined" && err != null) {
-                err.style.display = "";
-                err.innerHTML = `Please Enter Valid Email`;
-            }
-            return false;
-        }
-    }
+    // checkEmail(event) {
+    //     const mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    //     let inputValue = this.value;
+    //     if (inputValue.match(mailformat)) {
+    //         return true;
+    //     } else {
+    //         const err = document.getElementById(`${this.id}-err`);
+    //         if (typeof err !== "undefined" && err != null) {
+    //             err.style.display = "";
+    //             err.innerHTML = `Please Enter Valid Email`;
+    //         }
+    //         return false;
+    //     }
+    // }
 
     validURL(str) {
         let regexp = /^(?:(?:https?|ftp):\/\/)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/\S*)?$/;
@@ -153,21 +153,21 @@ class Helper {
         return returnFormat;
     }
 
-    displayCurrency_listing(amount) {
+    // displayCurrency_listing(amount) {
 
-        let returnFormat = new Intl.NumberFormat(this.culture, {
-            style: "currency",
-            currency: typeof this.currency !== 'undefined' && this.currency != null ? this.currency : 'USD',
-            maximumFractionDigits: 0
-        }).format(amount);
-        if (this.culture === 'ar-SA') {
-            returnFormat = SAR + amount;
-        } else if (this.culture === 'is-IS') {
-            returnFormat = amount + 'kr';
-        }
+    //     let returnFormat = new Intl.NumberFormat(this.culture, {
+    //         style: "currency",
+    //         currency: typeof this.currency !== 'undefined' && this.currency != null ? this.currency : 'USD',
+    //         maximumFractionDigits: 0
+    //     }).format(amount);
+    //     if (this.culture === 'ar-SA') {
+    //         returnFormat = SAR + amount;
+    //     } else if (this.culture === 'is-IS') {
+    //         returnFormat = amount + 'kr';
+    //     }
 
-        return returnFormat;
-    }
+    //     return returnFormat;
+    // }
 
     //Display Number In Localised Format
     displayNumber(number) {
@@ -237,14 +237,14 @@ class Helper {
         return window.location.href;
     }
 
-    getParameterByName(name, url = window.location.href) {
-        name = name.replace(/[\[\]]/g, '\\$&');
-        let regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
-            results = regex.exec(url);
-        if (!results) return null;
-        if (!results[2]) return '';
-        return decodeURIComponent(results[2].replace(/\+/g, ' '));
-    }
+    // getParameterByName(name, url = window.location.href) {
+    //     name = name.replace(/[\[\]]/g, '\\$&');
+    //     let regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+    //         results = regex.exec(url);
+    //     if (!results) return null;
+    //     if (!results[2]) return '';
+    //     return decodeURIComponent(results[2].replace(/\+/g, ' '));
+    // }
 
     measurementDisplayFormat(format) {
         let returnResult = "";
