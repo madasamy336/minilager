@@ -5,10 +5,16 @@ import UnitsCard from '../components/unitscard/UnitsCard'
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchUnitFilter } from '../redux/actions/unitList/unitListAction';
+import PlaceholderLoader from "../components/placeholder/Placeholder";
+import instance from '../services/instance';
+import request from '../services/request';
 
 const Units = () => {
-
+    const [UnitResponse, setUnitResponse] = useState(null);
     const [storageTypeValue, setStorageTypeValue] = useState('');
+    const [filterRequest, setFilterRequest] = useState('')
+    const [loader, setLoading] = useState(true);
+    const [filtercall, setFilterCall] = useState(false);
     const [unitTypeModal, SetunitTypeModal] = useState({
         open: false,
         dimmer: undefined,
@@ -17,14 +23,54 @@ const Units = () => {
     const loading = useSelector(state => state.unitFilter.loading);
     const error = useSelector(state => state.unitFilter.error);
     const filters = useSelector(state => state.unitFilter.filters);
+    let locationId = localStorage.getItem('locationid');
 
     const dispatch = useDispatch()
 
     useEffect(() => {
-        dispatch(fetchUnitFilter())
-        
-    }, [])
-    
+        sixStorageLoadUnitList(storageTypeValue);
+        if (filtercall === false) {
+            dispatch(fetchUnitFilter(locationId))
+        }
+
+
+    }, [storageTypeValue])
+
+    const sixStorageLoadUnitList = (storageTypeid) => {
+        setLoading(true);
+
+        let config = {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        };
+
+        let requestbody = {
+            storageTypeId: [storageTypeid],
+            locationId: [locationId],
+            buildingId: filterRequest.buildingValue,
+            unitTypeId: filterRequest.unitTypeId,
+            amenityId: filterRequest.amenityId,
+            pageNumber: 1,
+            pageSize: 10,
+            isBusinessUser: false,
+            unitSort: "UnitNumber",
+            unitVisibility: 1,
+            availability: 2
+        }
+        instance
+            .post(request.user_search, requestbody, config)
+            .then(response => {
+                setUnitResponse(response.data.result);
+                setLoading(false);
+                setFilterCall(true);
+            })
+            .catch(error => {
+
+            })
+
+    }
+
     const tenantTypeOptions = [
         {
             key: 1,
@@ -40,22 +86,30 @@ const Units = () => {
 
     const storageTypeOptions = typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof filters.storageType !== 'undefined' && filters.storageType !== null && filters.storageType !== "" && filters.storageType.length > 0 ?
         filters.storageType.map(storageType => {
-          return {
+            return {
                 key: storageType.storageTypeId,
                 text: storageType.storageTypeName,
                 value: storageType.storageTypeId
             }
         }
-        
-          
         ) : '';
-        
 
-        const changeStorageType = (e, data) => {
-            setStorageTypeValue(data.value);
-            console.log(data.value);
-        }
+    const changeStorageType = (e, data) => {
+        setUnitResponse([]);
+        setStorageTypeValue(data.value);
+        console.log(data.value);
 
+    }
+    const filterValue =(data) =>{
+        setFilterRequest(data);
+
+    }
+
+    const filterUnit = () => {
+
+        sixStorageLoadUnitList(storageTypeValue);
+
+    }
     const sortUnitOptions = [
         {
             key: 'popular',
@@ -89,9 +143,9 @@ const Units = () => {
                                 <Dropdown placeholder="Choose Tenant Type" clearable fluid search selection options={tenantTypeOptions} />
                             </div>
                             <div className='col-lg-6 col-md-6 col-sm-12'>
-                                {storageTypeOptions !==null && typeof storageTypeOptions !== 'undefined' && storageTypeOptions !== '' && typeof storageTypeOptions[0].value !== 'undefined' && storageTypeOptions[0].value !== null &&  storageTypeOptions[0].value !== ''?
-                                 <Dropdown placeholder="Choose Storage Type" value={storageTypeValue} defaultOpen={storageTypeOptions[0].value} onChange={changeStorageType} fluid search selection options={storageTypeOptions} />
-                                : ''}
+                                {storageTypeOptions !== null && typeof storageTypeOptions !== 'undefined' && storageTypeOptions !== '' && typeof storageTypeOptions[0].value !== 'undefined' && storageTypeOptions[0].value !== null && storageTypeOptions[0].value !== '' ?
+                                    <Dropdown placeholder="Choose Storage Type" value={storageTypeValue} defaultOpen={storageTypeOptions[0].value} onChange={changeStorageType} fluid search selection options={storageTypeOptions} />
+                                    : ''}
                             </div>
                         </div>
                     </div>
@@ -100,10 +154,10 @@ const Units = () => {
                     <div className="row">
                         <div className="col-lg-3 col-md-3 col-sm-12">
                             <div className="filters-div">
-                                <AccordionExampleStyled storageTypeValue={storageTypeValue} modal={() => SetunitTypeModal({ open: true, size: 'tiny', dimmer: 'blurring' })} />
+                                <AccordionExampleStyled filterValue={filterValue} storageTypeValue={storageTypeValue} modal={() => SetunitTypeModal({ open: true, size: 'tiny', dimmer: 'blurring' })} />
                                 <div className='text-center my-2'>
                                     <button className='ui button bg-white border-success-dark-light-1 text-success fs-7 fw-400 px-5 mx-1 mb-1 mb-sm-1 px-sm-2'>Clear All</button>
-                                    <button className='ui button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-1 mb-sm-1 px-sm-2'>Apply</button>
+                                    <button className='ui button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-1 mb-sm-1 px-sm-2' onClick={filterUnit}>Apply</button>
                                 </div>
                             </div>
                         </div>
@@ -125,9 +179,17 @@ const Units = () => {
                                 </div>
                                 <div className='units-div'>
                                     <div className='row'>
-                                        <UnitsCard />
-                                        <UnitsCard />
-                                        <UnitsCard />
+
+                                        <div className={!loader && `d-none`}>
+                                            <PlaceholderLoader cardCount={7} />
+                                        </div>
+
+                                        {!loader && <UnitsCard filterRequest={filterRequest} storageTypevalue={storageTypeValue} UnitResponse={UnitResponse} setUnitResponse={setUnitResponse} setLoading={setLoading} />
+                                        }
+
+
+
+
                                     </div>
                                 </div>
                                 <div className='pagination-div mt-2 mb-3 text-center'>
@@ -186,10 +248,10 @@ const Units = () => {
                             <div className='col-lg-3 col-md-3 col-sm-6 mb-2'>
                                 <label><input className="mr-1 mb-1" type="checkbox" />10x8x8</label>
                             </div>
-                            
+
                         </div>
                         <div className='text-center mt-1'>
-                            <button className='ui button bg-success-dark text-white'>Apply</button>
+                            <button className='ui button bg-success-dark text-white' >Apply</button>
                         </div>
                     </Modal.Content>
                 </Modal>

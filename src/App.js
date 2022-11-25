@@ -24,7 +24,7 @@ import { fetchAppConfig } from '../src/app/redux/actions/appConfig/appConfigActi
 function App() {
     const loading = useSelector(state => state.appConfig.loading)
     const error = useSelector(state => state.appConfig.error)
-    const countries = useSelector(state => state.appConfig.countries)
+    const countries = useSelector(state => state.appConfig.countries);
     const dispatch = useDispatch()
     // useEffect(() => {
     //     dispatch(fetchAppConfig())

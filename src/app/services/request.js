@@ -8,7 +8,8 @@ const requests = {
     user_signup :"v1/user/signup",
     unit_info_by_id :"v1/movein/lease/calculation",
     promo_discount : "v1/unit/discount",
-    validate_promocode: "v1/unit/discount/promocode"
+    validate_promocode: "v1/unit/discount/promocode",
+    user_search: "v1/unit/type/price"
 }
 
 export default requests; 
