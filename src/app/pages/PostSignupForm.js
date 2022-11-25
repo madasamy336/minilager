@@ -1,17 +1,24 @@
-import { useNavigate } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import { Dropdown, Input } from "semantic-ui-react";
 import countriecodes from "../components/CountryCode";
 import React from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import instance from '../services/instance';
 import request from '../services/request';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
+
+
 export default function PostSignupForm() {
+        
     const navigate = useNavigate();
     const dispatch = useDispatch();
     // getting culture 
-    let culture = JSON.parse(sessionStorage.getItem('culture')).culture;
+    // let culture = JSON.parse(sessionStorage.getItem('culture')).culture;
 
-    console.log(culture);
+    // console.log(culture);
     function sixStorageCheckPhoneNumber(event) {
         let inputValue = event.target.value;
         let numbers = inputValue.replace(/[^0-9]/g, '');
@@ -42,7 +49,6 @@ export default function PostSignupForm() {
 
     let { firstName, lastName, email, UserName, phoneNumber, password, confirmPassword } = values;
     const validateOne = (e) => {
-        console.log(UserName, confirmPassword);
         const { name } = e.target
         const value = values[name]
         let message = ''
@@ -52,6 +58,9 @@ export default function PostSignupForm() {
         }
         if (value && name === 'email' && !/\S+@\S+\.\S+/.test(value)) {
             message = 'Email format must be as example@mail.com'
+        }
+        if (value && name === "phoneNumber" && values.phoneNumber.length < 10){
+            message = 'Phone Number must be at least 10 characters'
         }
 
         if (value && name === 'password') {
@@ -66,6 +75,9 @@ export default function PostSignupForm() {
             }
             if (!/[A-Z]/.test(value)) {
                 message = 'Password must contain at least one uppercase letter (A-Z)';
+            }
+            if(!/[*@!#%&()$^~{}]/.test(value)){
+                message = 'Password must contain at least one special character!';
             }
         }
 
@@ -124,17 +136,27 @@ export default function PostSignupForm() {
             .then(response => {
                 const configData = response.data
                 if (configData.result !== null && typeof configData.result !== 'undefined' && configData.result !== '') {
-                    if (configData.returnCode === 'SUCCESS') {
-                        console.log('success');
+
+                  if (configData.returnCode === 'SUCCESS') {
                         navigate('/login');
-                    } else if (configData.returnCode === 'FAILED') {
-                        console.log(configData.returnMessage);
+                    } else if (configData.returnCode === 'FAILED' &&  configData.returnMessage === "Username/email already exists.") {
+
+                        toast.error('Username / email already exists', {
+                            position: "top-right",
+                            autoClose: 3000,
+                            duration:100,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                            });
                     }
 
                 } else {
-                    console.log('test');
-
+                    console.log("test");
                 }
+
             })
             .catch(error => {
                 console.log(error);
@@ -152,6 +174,8 @@ export default function PostSignupForm() {
 
     return (
         <>
+                <ToastContainer />
+
             <div className="createAccountform my-5 mx-auto overflow-hidden">
                 <div className="row">
                     <div className="col-lg-6 col-md-6 col-sm-12">
@@ -229,7 +253,7 @@ export default function PostSignupForm() {
                                 <button className="ui button w-100 fw-100" onClick={e => ValidateSignin(e)}>Create an account</button>
                             </form>
                             <div className="signup-div text-center">
-                                <p>Already have an Account? <a href="/" onClick={e => ValidateSignin(e)}>Sign in</a></p>
+                                <p>Already have an Account?  <Link to = {'/login'}>Sign in</Link></p>
                             </div>
                         </div>
                     </div>
@@ -238,3 +262,4 @@ export default function PostSignupForm() {
         </>
     )
 }
+

@@ -20,13 +20,16 @@ import SuccessfulMoveIn from './app/pages/SuccessfulMoveIn';
 import { useSelector, useDispatch } from 'react-redux';
 // import { useTranslation } from "react-i18next";
 import { fetchAppConfig } from '../src/app/redux/actions/appConfig/appConfigAction';
+
 function App() {
     const loading = useSelector(state => state.appConfig.loading)
     const error = useSelector(state => state.appConfig.error)
     const countries = useSelector(state => state.appConfig.countries)
     const dispatch = useDispatch()
+    // useEffect(() => {
+    //     dispatch(fetchAppConfig())
+    // }, [])
 
-    console.log({ loading }, { error }, { countries });
     const windowWidth = window.innerWidth
     const [mobileWidth, SetmobileWidth] = useState();
     const[sidebar,ShowSidebar]=useState(false)

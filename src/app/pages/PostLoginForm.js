@@ -119,7 +119,6 @@ const PostLoginForm = () => {
                         console.log(" Invalid UserName Password");
                     } else if (configData.returnMessage === 'SUCCESS') {
                         dispatch(fetchLoginSuccess(configData));
-                        console.log(rememberPassword);
                         if (rememberPassword === true) {
                             localStorage.setItem('username', username);
                             localStorage.setItem('password', password);
@@ -493,7 +492,7 @@ const PostLoginForm = () => {
                             <div className="form-control">
                                 <label className="d-block">User Name</label>
                                 <div className="ui input w-100 position-relative">
-                                    <input type="text" name="username" placeholder="Enter First Name" value={username}
+                                    <input type="text" name="username" placeholder="Enter First Name" defaultValue ={username}
                                         onChange={(e) => { handleChange(e) }}
                                         onBlur={validateOne} />
                                     <svg className="position-absolute l-1 t-1" id="user-svgrepo-com" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 30.667 30.667">
@@ -510,8 +509,8 @@ const PostLoginForm = () => {
                             <div className="form-control">
                                 <label className="d-block">Password</label>
                                 <div className="ui input w-100 position-relative">
-                                    <input type="password" placeholder="Enter Password"
-                                        value={password} name="password"
+                                    <input type="password" placeholder="Enter Password" 
+                                        defaultValue ={password} name="password"
                                         onChange={(e) => { handleChange(e) }}
                                         onBlur={validateOne} />
                                     <svg className="position-absolute l-1 t-1" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 22.036 32">

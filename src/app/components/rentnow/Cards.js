@@ -2,10 +2,15 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from 'react-redux';
+import { useEffect } from 'react';
 import { GetFacilityId } from '../../redux/actions/facility/faciltyAction'
+import { fetchAppConfig } from '../../redux/actions/appConfig/appConfigAction';
 const Card = (props) => {
     const facilityDetailResponse = props;
     const dispatch = useDispatch()
+      useEffect(() => {
+        dispatch(fetchAppConfig())
+    }, [])
     console.log(facilityDetailResponse.facilitydetails);
     const { t } = useTranslation();
     // facilityDetailResponse.facilitydetails.map(response => {

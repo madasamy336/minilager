@@ -5,6 +5,8 @@ import { Transition } from "semantic-ui-react";
 import instance from '../services/instance';
 import request from '../services/request';
 import React from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ForgotPassword = () => {
     const navigate = useNavigate();
@@ -15,11 +17,7 @@ const ForgotPassword = () => {
     const [validations, setValidations] = useState({ userName: '' });
     const { userName: nameVal } = validations;
 
-    const [passSuccessMsg, SetPassSuccessMsg] = useState({
-        show: false,
-        animation: 0,
-        duration: 0
-    })
+    
     const ValidateSignin = (e) => {
         e.preventDefault();
         navigate('/login');
@@ -77,22 +75,32 @@ const ForgotPassword = () => {
             .post(request.forgot_password, username, config)
             .then(response => {
                 const configData = response.data
-                if ( configData.result !== null && typeof configData.result !== 'undefined' && configData.result !== '') {
+                if ( configData.isSuccess === true && configData.returnCode === "SUCCESS" &&  configData.returnMessage === "SUCCESS") {
                     // to emulate some network delay
+
+                    toast.success('Password has been sent successfully. Please check your inbox for the password', {
+                        position: "top-right",
+                        autoClose: 3000,
+                        duration:100,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                        });
                    
-                    if (configData.isSuccess === true) {
-                        // success msg
-                        SetPassSuccessMsg({ show: true, animation: 'fly left', duration: 1000 });
-
-                    }else {
-                        //failure msg
-
-                    }
-
-
                 } else {
 
-                    //else 
+                    toast.error('Email not exits. Please verify your email', {
+                        position: "top-right",
+                        autoClose: 3000,
+                        duration:100,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                        });
 
                 }
             })
@@ -101,38 +109,14 @@ const ForgotPassword = () => {
 
             })
 
-        SetPassSuccessMsg({
-            show:true,
-        animation:'fly left',
-        duration:1000
-        })
-        setTimeout(() => {
-            SetPassSuccessMsg({
-                show:false,})
-        }, 4000);
+
     }
 
     return (
         <div className="forgot-password pt-2 pb-5">
             <div className="ui container">
                 <div className="actionMsgContainer" >
-                    <Transition.Group animation={passSuccessMsg.animation} duration={passSuccessMsg.duration}>
-                        
-                        {passSuccessMsg.show && (
-                            <div>
-                                <div className="d-flex justify-content-end  mb-3">
-                                    <p className="bg-alert d-flex align-items-center p-1 fs-8"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24.998 25.006">
-                                        <g id="tick_new" data-name="tick new" transform="translate(0.003 -0.04)">
-                                            <path id="Path_19724" data-name="Path 19724" d="M-1080.575,715.275v1.468c-.015.087-.033.173-.045.26-.078.539-.122,1.084-.239,1.615a12.157,12.157,0,0,1-4.662,7.331,12.124,12.124,0,0,1-10.118,2.286,12.071,12.071,0,0,1-7.38-4.672,12.157,12.157,0,0,1-2.489-8.821,12.086,12.086,0,0,1,3.062-6.987,12.272,12.272,0,0,1,7.216-4.051c.471-.084.948-.131,1.422-.2h1.468l.53.061a12.343,12.343,0,0,1,7.055,3.124,12.26,12.26,0,0,1,3.989,7.164C-1080.686,714.326-1080.639,714.8-1080.575,715.275Zm-12.506-9.74a10.494,10.494,0,0,0-10.466,10.472,10.494,10.494,0,0,0,10.466,10.472A10.5,10.5,0,0,0-1082.6,716,10.5,10.5,0,0,0-1093.081,705.536Z" transform="translate(1105.57 -703.47)" fill="#328128" />
-                                            <path id="Path_19725" data-name="Path 19725" d="M-1002.432,841.989c.105-.094.172-.151.235-.212l6.165-5.844a1.027,1.027,0,0,1,1.463-.111,1,1,0,0,1,.13,1.366,1.928,1.928,0,0,1-.2.214q-3.506,3.326-7.015,6.65a1.017,1.017,0,0,1-1.57-.013q-1.835-1.875-3.663-3.758a1.018,1.018,0,0,1-.312-1,1,1,0,0,1,.659-.725,1,1,0,0,1,.963.181,2.986,2.986,0,0,1,.229.219q1.374,1.407,2.743,2.813C-1002.543,841.836-1002.494,841.911-1002.432,841.989Z" transform="translate(1013.24 -827.45)" fill="#328128" />
-                                        </g>
-                                    </svg>
-                                        <span className="ml-1 ">Password has been sent successfully. Please check your inbox for the password</span></p>
-                                </div>
-                            </div>
-                        ) }
-                        
-                    </Transition.Group>
+                <ToastContainer />
                 </div>
                 <div className="row justify-content-center mt-3">
                     <div className="col-12 col-lg-4">
