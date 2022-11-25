@@ -24,7 +24,8 @@ export default function RentingDetails() {
   const [invoiceState, setinvoiceState] = useState(false);
   const [PromoDiscount, setPromoDiscount] = useState();
   const [promoValidate, setPromoValidate] = useState('');
-
+  let unitid = localStorage.getItem('unitid');
+  console.log(unitid); 
   const visibility = 1;
 
   const movindateOnchange = (e, item) => {
@@ -156,7 +157,7 @@ export default function RentingDetails() {
               insurance: [],
               merchandise: []
             },
-            id: "69509b5c-9a75-483d-bb54-7ba4ac74545b"
+            id: unitid
           }
         ],
         moveInDate: "2022-11-24T11:24:37.301Z",
@@ -174,7 +175,7 @@ export default function RentingDetails() {
               insurance: [],
               merchandise: []
             },
-            id: "69509b5c-9a75-483d-bb54-7ba4ac74545b"
+            id: unitid
           }
         ],
         moveInDate: "2022-11-24T11:24:37.301Z",
