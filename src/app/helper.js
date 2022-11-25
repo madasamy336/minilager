@@ -17,10 +17,14 @@ class Helper {
     sixStorageOverrideCultureCurrency;
 
     constructor() {
+        if(sessionStorage.getItem("culture") !== null){
+            this.culture = JSON.parse(sessionStorage.getItem("culture")).culture;
+            this.currency =JSON.parse(sessionStorage.getItem("culture")).currency;
+            this.dateFormat =JSON.parse(sessionStorage.getItem("culture")).dateFormat
 
-        this.culture = JSON.parse(sessionStorage.getItem("culture")).culture;
-        this.currency =JSON.parse(sessionStorage.getItem("culture")).currency;
-        this.dateFormat =JSON.parse(sessionStorage.getItem("culture")).dateFormat;
+        }
+
+       
     }
 
     checkPhoneNumber(event) {

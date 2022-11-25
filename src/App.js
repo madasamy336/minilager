@@ -29,7 +29,6 @@ function App() {
         dispatch(fetchAppConfig())
     }, [])
 
-    console.log({ loading }, { error }, { countries });
     const windowWidth = window.innerWidth
     const [mobileWidth, SetmobileWidth] = useState();
     const[sidebar,ShowSidebar]=useState(false)

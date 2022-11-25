@@ -2,7 +2,7 @@ import instance from '../../../services/instance';
 import request from '../../../services/request';
 import { constant } from '../../constants/constant';
 
-export const fetchUnitFilter = () => {
+export const fetchUnitFilter = (loactionid) => {
     return async (dispatch) => {
         dispatch(fetchUnitFilterRequest());
         let config = {
@@ -11,7 +11,7 @@ export const fetchUnitFilter = () => {
             },
         };
         instance
-            .get(request.unit_filters, config)
+            .get(request.unit_filters+`&LocationId=${loactionid} `, config)
             .then(response => {
                 const unitFilterResponse = response.data;
                 if (typeof unitFilterResponse !== 'undefined' && unitFilterResponse !== null && unitFilterResponse !== '' && unitFilterResponse.isSuccess === true && unitFilterResponse.result.length > 0) {
@@ -52,7 +52,6 @@ const constructFilterValues = (unitFilterResponse) => {
                     locationId: locationresponse.locationId,
                     locationName: locationresponse.locationName,
                 });
-
                 let storagebuilding = locationresponse.buildings;
                 if (typeof storagebuilding !== "undefined" && storagebuilding !== null && storagebuilding !== "" && storagebuilding.length > 0) {
                     storagebuilding.forEach((storagebuildingresponse) => {

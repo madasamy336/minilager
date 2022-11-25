@@ -1,4 +1,5 @@
 import { useEffect, useState, React } from 'react';
+import { useSelector} from 'react-redux';
 import PopupExampleInverted from '../unitstooltip/UnitsTooltip';
 import { useNavigate } from 'react-router-dom';
 import { Popup } from 'semantic-ui-react';
@@ -8,7 +9,6 @@ import Helper from "../../helper";
 import PlaceholderLoader from "../placeholder/Placeholder";
 let helper = new Helper();
 const UnitsCard = (props) => {
-    console.log(props.storageTypevalue)
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     let unicount = [1, 2, 3];
@@ -22,37 +22,7 @@ const UnitsCard = (props) => {
         navigate(`/preBooking/rentingDetails`)
     }
     
-    const sixStorageLoadUnitList = (storageTypeid) => {
-        let config = {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        };
-
-        let requestbody = {
-            storageTypeId: [storageTypeid],
-            locationId: null,
-            buildingId: null,
-            unitTypeId: null,
-            amenityId: null,
-            pageNumber: 1,
-            pageSize: 10,
-            isBusinessUser: false,
-            unitSort: "UnitNumber",
-            unitVisibility: 1,
-            availability: 2
-        }
-        instance
-            .post(request.user_search, requestbody, config)
-            .then(response => {
-                props.setUnitResponse(response.data.result);
-                props.setLoading(true);
-            })
-            .catch(error => {
-
-            })
-
-    }
+    
 
     return (
         <>
@@ -60,7 +30,6 @@ const UnitsCard = (props) => {
             {typeof props.UnitResponse !== 'undefined' && props.UnitResponse !== null &&
             
                 props.UnitResponse.map(details => {
-                    console.log(details);
                     return <div key={details.unitTypeId} className='col-lg-4 col-md-6 col-sm-12 2 px-2 '>
                         <div key="" className='card my-2'>
                             <div className='card-img text-center position-relative'>
@@ -71,7 +40,6 @@ const UnitsCard = (props) => {
 
                                 {typeof details.discounts !== 'undefined' && details.discounts !== null && details.discounts.length > 0 ? (
                                     details.discounts.map((item) => {
-                                        console.log(item);
                                         return <Popup key="" wide inverted size='tiny'
                                             trigger={<p className='position-absolute t-2 r-0'>{item.name}</p>}
                                             content={item.description}
@@ -108,7 +76,6 @@ const UnitsCard = (props) => {
                                     {typeof details.amenities !== 'undefined' && details.amenities !== null && details.amenities.length > 0 ?
                                         <div className='d-flex flex-wrap units-amenitiy'>
                                             {details.amenities.map((item) => {
-                                                console.log(item)
                                                 return <div key="" className='d-flex align-items-center my-1'>
                                                     <img src={item.imageUrl} alt='amenities' style={{ width: "10px", height: "10px" }} />
                                                     <span>{item.name}</span>
