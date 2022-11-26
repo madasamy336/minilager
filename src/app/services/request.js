@@ -9,7 +9,8 @@ const requests = {
     unit_info_by_id :"v1/movein/lease/calculation",
     promo_discount : "v1/unit/discount",
     validate_promocode: "v1/unit/discount/promocode",
-    user_search: "v1/unit/type/price"
+    user_search: "v1/unit/type/price",
+    tenant_details :"v1/user",
 }
 
 export default requests; 

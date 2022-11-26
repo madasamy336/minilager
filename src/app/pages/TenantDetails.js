@@ -5,12 +5,44 @@ import React, { useEffect, useState } from "react";
 import TenantDetailEmergengyContactAccordian from "../components/tenantDetailsAccordian/TenantDetailsAccordian";
 import { useNavigate } from "react-router-dom";
 import countriecodes from "../components/CountryCode";
+import instance from '../services/instance';
+import request from '../services/request';
+
 
 export default function TenantDetails() {
   const navigate = useNavigate()
   const [profileImageSrc, setprofileImageSrc] = useState({
     img: '/assets/images/userDemoProfile.svg'
   })
+
+
+  /** <button onClick={() => SetCreditCheckModal({ open: true, dimmer: 'blurring' })} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">NEXT</button> */
+
+  const [TenantInfoDetails, setTenantInfoDetails] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    birthDate: '',
+    phoneNumber: '',
+    addressLineOne: '',
+    addressLineTwo: '',
+    city: '',
+    country: '',
+    state: '',
+    zipCode: '',
+    social: '',
+    emergencyFname:'',
+    emergencylname:'',
+    emergencyemail:'',
+    emergencyphoneno:''
+  })
+
+  const [TenantInfoError, setTenantInfoError] = useState({
+    firstName: '',
+    email: '',
+    phoneNumber: '',
+  })
+
   const [imguploadStatus, SetimguploadStatus] = useState(false)
   const [contactaccordian, SetContactaccordian] = useState([]);
   const [contactFirstName, SetContactFirstName] = useState('');
@@ -23,6 +55,31 @@ export default function TenantDetails() {
     open: false,
     dimmer: undefined,
   })
+
+  const handlechange = (e) => {
+    e.persist();
+    const { name, value } = e.target;
+    setTenantInfoDetails({ ...TenantInfoDetails, [name]: value });
+  }
+
+  const validateTenantInfo = (e) => {
+    const { name } = e.target;
+    const value = TenantInfoDetails[name];
+    let message = ''
+    if (!value) {
+      message = `${name} is required`;
+    }
+    setTenantInfoError({ ...TenantInfoError, [name]: message });
+  }
+
+
+  const {
+    firstName: fname_Data,
+    email: email_Data,
+    phoneNumber: phoneNo_Data,
+  } = TenantInfoError;
+
+
   const addEmergencyContact = (e) => {
     e.preventDefault();
     SetContactaccordian([
@@ -35,7 +92,7 @@ export default function TenantDetails() {
         contactaccordianLength: contactaccordian.length + 1
       }
     ]);
-    console.log(contactaccordian)
+
 
   }
   const removeEmergencyContact = (index) => {
@@ -70,8 +127,70 @@ export default function TenantDetails() {
 
     }
   }
+
+
+  const tenantInfo = () => {
+
+    let userid = localStorage.getItem("userid");
+    let config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    let tenantinfodata;
+
+    tenantinfodata = {
+      userId: userid
+    }
+    instance
+      .get(request.tenant_details + '/' + userid, tenantinfodata, config)
+      .then((response) => {
+        const tenantInfoGetdata = response.data;
+        if (typeof tenantInfoGetdata !== "undefined" && tenantInfoGetdata !== null && tenantInfoGetdata !== "") {
+          const tenantInfoGetresult = tenantInfoGetdata.result;
+          if (typeof tenantInfoGetresult !== "undefined" && tenantInfoGetresult !== null & tenantInfoGetresult !== "") {
+            localStorage.setItem("tenantIfo", JSON.stringify(tenantInfoGetresult));
+            let tenantMovinData = JSON.parse(localStorage.getItem("tenantIfo"));
+            setTenantInfoDetails(tenantMovinData);
+          }
+
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+  }
+
+
+  const tenantInfoFinal = (e) => {
+
+    let firstName;
+    let email;
+    let phoneNumber;
+
+
+    e.preventDefault();
+    const TenantInfoError = { firstName: '', email: '', phoneNumber: '' }
+   
+    if (!firstName) {
+      TenantInfoError.firstName = "First Name is Required";
+      
+    }
+    if (email && !/\S+@\S+\.\S+/.test(email)) {
+      TenantInfoError.email = 'Email format must be as example@mail.com'
+      
+    }
+    
+
+  }
+
+
+ 
+
   useEffect(() => {
-    console.log(contactaccordian);
+    tenantInfo();
   }, [contactaccordian])
   return (
     <>
@@ -101,19 +220,21 @@ export default function TenantDetails() {
               transform="translate(-121.901 -177.054)"
             ></path>
           </g>
-        </svg><span className='veritical-align-text-top ml-1'>Tenant Details</span></h6>
+        </svg>
+          <span className='veritical-align-text-top ml-1'>Tenant Details</span></h6>
         <div className="row reverse-sm">
           <div className="col-12 col-md-6 ui form">
             <div className="col-12 px-4 px-sm-2">
               <div className="field w-100  my-3">
                 <label className='fw-500 fs-7 mb-2'>First Name <i className="text-danger ">*</i></label>
-                <input type='text' placeholder='Enter Name' />
+                <input type='text' placeholder='Enter Name' name="firstName" value={TenantInfoDetails.firstName} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
+                <div className="text-danger mt-1">{fname_Data}</div>
               </div>
             </div>
             <div className="col-12  px-4 px-sm-2">
               <div className="field w-100  my-3">
                 <label className='fw-500 fs-7 mb-2'>Last Name</label>
-                <input type='text' placeholder='Enter Name' />
+                <input type='text' placeholder='Enter Name' name="lastName" value={TenantInfoDetails.lastName} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
               </div>
             </div>
           </div>
@@ -138,27 +259,29 @@ export default function TenantDetails() {
           <div className="col-12  col-md-6  px-4 px-sm-2">
             <div className="field datePicker w-100 my-3">
               <label className='fw-500 fs-7 mb-2' >Date of Birth</label>
-              <SemanticDatepicker placeholder='Select date' className='w-100' />
+              <SemanticDatepicker placeholder='Select date' name="birthDate" className='w-100' defaultValue={new Date(TenantInfoDetails.birthDate)} onChange={(e) => handlechange(e)} />
             </div>
           </div>
           <div className="col-12  col-md-6  px-4 px-sm-2">
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-2'>Email <i className="text-danger ">*</i></label>
-              <input type='email' placeholder='Enter Email' />
+              <input disabled type='email' placeholder='Enter Email' name="email" value={TenantInfoDetails.email} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
+              <div className="text-danger mt-1">{email_Data}</div>
             </div>
           </div>
           <div className="col-12  col-md-6  px-4 px-sm-2">
-            <div className="field w-100  my-3">
+            <div className="points-events-none field w-100  my-3">
               <label className='fw-500 fs-7 mb-2'>Phone Number <i className="text-danger ">*</i></label>
-              <Input className="noCounterNumber" type="number" placeholder="Enter Mobile Number"
+              <Input disabled className="noCounterNumber" type="number" name="phoneNumber" placeholder="Enter Mobile Number" value={TenantInfoDetails.phoneNumber} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo}
                 label={<Dropdown defaultValue='+91' search options={countriecodes} />}
                 labelPosition='left' />
+              <div className="text-danger mt-1">{phoneNo_Data}</div>
             </div>
           </div>
           <div className="col-12  col-md-6  px-4 px-sm-2">
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-2'>Social Security Number</label>
-              <input className="noCounterNumber" type='number' placeholder='Social Security Number' />
+              <input className="noCounterNumber" type='number' name="social" placeholder='Social Security Number' value={TenantInfoDetails.social} onChange={(e) => handlechange(e)} />
             </div>
           </div>
           <div className="col-12  col-md-6  px-4 px-sm-2 my-3">
@@ -182,31 +305,31 @@ export default function TenantDetails() {
           <div className="col-12 col-md-6 px-4 px-sm-2">
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-2'>Address Line 1</label>
-              <input type='text' placeholder='Address Line 1' />
+              <input type='text' placeholder='Address Line 1' name="addressLineOne" value={TenantInfoDetails.addressLineOne} onChange={(e) => handlechange(e)} />
             </div>
           </div>
           <div className="col-12 col-md-6 px-4 px-sm-2">
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-2'>Address Line 2</label>
-              <input type='text' placeholder='Address Line 2' />
+              <input type='text' placeholder='Address Line 2' name="addressLineTwo" value={TenantInfoDetails.addressLineTwo} onChange={(e) => handlechange(e)} />
             </div>
           </div>
           <div className="col-12 col-md-6 px-4 px-sm-2">
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-2'>City</label>
-              <input type='text' placeholder='City' />
+              <input type='text' placeholder='City' name="city"  value={TenantInfoDetails.city} onChange={(e) => handlechange(e)} />
             </div>
           </div>
           <div className="col-12 col-md-6 px-4 px-sm-2">
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-2'>State/Provine</label>
-              <input type='text' placeholder='State/Provine' />
+              <input type='text' placeholder='State/Provine' name="state" value={TenantInfoDetails.state} onChange={(e) => handlechange(e)} />
             </div>
           </div>
           <div className="col-12 col-md-6 px-4 px-sm-2">
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-2'>Zip/Postal Code</label>
-              <input className="noCounterNumber" type='number' placeholder='Zip/Postal Code' />
+              <input className="noCounterNumber" type='number' name="zipCode" placeholder='Zip/Postal Code' defaultValue={TenantInfoDetails.zipCode} onChange={(e) => handlechange(e)} />
             </div>
           </div>
         </div>
@@ -228,26 +351,26 @@ export default function TenantDetails() {
             <div className="col-12 col-md-6 px-4 px-sm-2">
               <div className="field w-100  my-3">
                 <label className='fw-500 fs-7 mb-2'>First Name <i className="text-danger ">*</i></label>
-                <input value={contactFirstName} onChange={e => SetContactFirstName(e.target.value)} type='text' placeholder='Enter Name' />
+                <input value={contactFirstName} onChange={e => SetContactFirstName(e.target.value)} type='text' name="emergencyFname" placeholder='Enter Name' />
               </div>
             </div>
             <div className="col-12 col-md-6 px-4 px-sm-2">
               <div className="field w-100  my-3">
                 <label className='fw-500 fs-7 mb-2'>Last Name</label>
-                <input value={contactLastName} onChange={e => SetContactLastName(e.target.value)} type='text' placeholder='Last Name' />
+                <input value={contactLastName} onChange={e => SetContactLastName(e.target.value)} type='text' name="emergencylname"  placeholder='Last Name' />
               </div>
             </div>
             <div className="col-12 col-md-6 px-4 px-sm-2">
               <div className="field w-100  my-3">
                 <label className='fw-500 fs-7 mb-2'>Email <i className="text-danger ">*</i></label>
-                <input value={contactEmail} onChange={e => SetContactEmail(e.target.value)} type='email' placeholder='Enter Email' />
+                <input value={contactEmail} onChange={e => SetContactEmail(e.target.value)} type='email' name="emergencyemail" placeholder='Enter Email' />
               </div>
             </div>
             <div className="col-12 col-md-6 px-4 px-sm-2">
-              <div class="field w-100  my-3">
+              <div className="field w-100  my-3">
                 <label className='fw-500 fs-7 mb-2'>Phone Number <i className="text-danger ">*</i></label>
                 {/* <input value={contactPhone} onChange={e=>SetContactPhone(e.target.value)} className="noCounterNumber" type='number' placeholder='Enter Phone Number' /> */}
-                <Input value={contactPhone} onChange={e => SetContactPhone(e.target.value)} className="noCounterNumber" type="number" placeholder="Enter Mobile Number"
+                <Input value={contactPhone} onChange={e => SetContactPhone(e.target.value)} className="noCounterNumber" type="number" name="emergencyphoneno" placeholder="Enter Mobile Number"
                   label={<Dropdown defaultValue='+91' search options={countriecodes} />}
                   labelPosition='left' />
               </div>
@@ -264,18 +387,18 @@ export default function TenantDetails() {
         <div className="col-12 px-sm-2" id="EmergencyContactDiv">
           {
             contactaccordian.map((data, index) => (
-              <TenantDetailEmergengyContactAccordian removefunction={removeEmergencyContact} index={index} contactLength={data.contactaccordianLength} firtName={data.firname} lastName={data.lastname} email={data.email} phone={data.phone} />
+              <TenantDetailEmergengyContactAccordian key={index} removefunction={removeEmergencyContact} index={index} contactLength={data.contactaccordianLength} firtName={data.firname} lastName={data.lastname} email={data.email} phone={data.phone} />
             ))
           }
         </div>
 
       </div>
       <div className="ui container text-center my-5">
-        <button onClick={() => navigate('/preBooking/addOns')} class="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">BACK</button>
-        <button onClick={() => SetCreditCheckModal({ open: true, dimmer: 'blurring' })} class="ui button bg-success-dark   fs-7 fw-400 text-white px-5">NEXT</button>
+        <button onClick={() => navigate('/preBooking/addOns')} className="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">BACK</button>
+
+
+        <button onClick={e => tenantInfoFinal(e)} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">NEXT</button>
       </div>
-
-
 
 
       <Modal

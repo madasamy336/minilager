@@ -3,6 +3,8 @@ import PreBookingBreadcrumb from '../components/prebooking breadcrumb/PreBooking
 import SemanticDatepicker from 'react-semantic-ui-datepickers';
 import { Dropdown, Modal } from 'semantic-ui-react';
 import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // import { useTranslation } from "react-i18next";
 import instance from '../services/instance';
@@ -12,6 +14,7 @@ let helper = new Helper();
 
 let invoiceTypedata;
 let recurringTypedata;
+
 export default function RentingDetails() {
 
   const [invoice, setInvoice] = useState();
@@ -24,11 +27,17 @@ export default function RentingDetails() {
   const [invoiceState, setinvoiceState] = useState(false);
   const [PromoDiscount, setPromoDiscount] = useState();
   const [promoValidate, setPromoValidate] = useState('');
+  const [unitDetailnetAmount, setUnitDetailNetAmount] = useState();
+  const [unitDetailGrossAmount, setUnitDetailGrossAmount] = useState();
+  const [discountVal, setDiscountVal] = useState();
+
 
   const visibility = 1;
 
   const movindateOnchange = (e, item) => {
-    setMovindate(new Date(item.value));
+    setMovindate(item.value);
+    console.log(item.value);
+    unitinfodetails(item.value);
   }
   const invoiceOnchange = (e, items) => {
     setInvoiceSelect(items.value);
@@ -45,11 +54,19 @@ export default function RentingDetails() {
     dimmer: undefined,
   })
 
+  const autoApplybtn =(promos)=>{
+    setPromoValidate(promos);
+
+    SetApplyDiscountModal({ open: false })
+  }
+
   const navigateAddon = (e) => {
     e.preventDefault();
     navigate('/preBooking/addOns')
 
   }
+
+  
 
   useEffect(() => {
     unitinfodetails();
@@ -58,6 +75,9 @@ export default function RentingDetails() {
 
 
   /**  Validate Promocode Discount Start **/
+
+  
+  
 
   const applyCoupon = () => {
 
@@ -83,8 +103,33 @@ export default function RentingDetails() {
 
       .post(request.validate_promocode, validate_Promocodedata, config)
       .then((response) => {
+       const validatePromoMessgae = response.data;
+       if (typeof validatePromoMessgae !=="undefined" && validatePromoMessgae !== null && validatePromoMessgae !== "" && validatePromoMessgae.returnMessage ==="SUCCESS") {
+        toast.success('Promo Code Applied Successfully', {
+          position: "top-right",
+          autoClose: 3000,
+          duration:100,
+          hideProgressBar: false,
+          closeOnClick: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          });
 
-        console.log(response);
+       } else{
+
+        toast.error('Invalid Promo Code', {
+          position: "top-right",
+          autoClose: 3000,
+          duration:100,
+          hideProgressBar: false,
+          closeOnClick: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          });
+
+       }
 
       })
       .catch((error) => {
@@ -103,6 +148,7 @@ export default function RentingDetails() {
     /** Unit Details Page Start **/
 
   const unitinfodetails = () => {
+
     const clientDataconfig = JSON.parse(sessionStorage.getItem("configdata"));
     if (clientDataconfig !== null && typeof clientDataconfig !== "undefined") {
 
@@ -159,7 +205,7 @@ export default function RentingDetails() {
             id: "69509b5c-9a75-483d-bb54-7ba4ac74545b"
           }
         ],
-        moveInDate: "2022-11-24T11:24:37.301Z",
+        moveInDate: movindate,
         additionalMonths: 0,
         recurringPeriodId: invoiceTypedata,
         recurringTypeId: recurringTypedata,
@@ -177,7 +223,7 @@ export default function RentingDetails() {
             id: "69509b5c-9a75-483d-bb54-7ba4ac74545b"
           }
         ],
-        moveInDate: "2022-11-24T11:24:37.301Z",
+        moveInDate: movindate,
         additionalMonths: 0,
         recurringPeriodId: invoiceselect,
         recurringTypeId: recurringselect,
@@ -189,6 +235,12 @@ export default function RentingDetails() {
       .post(request.unit_info_by_id, unitdetailsdata, config)
       .then((response) => {
         const unit_infodetails = response.data.result;
+        const net_Amount =  response.data.result.netAmount;
+        const gross_Amount = response.data.result.grossAmount;
+        const discount_Amount = response.data.result.discount;
+        setUnitDetailNetAmount(net_Amount);
+        setUnitDetailGrossAmount(gross_Amount);
+        setDiscountVal(discount_Amount);
         const units_info = response.data.result.units;
         if (typeof unit_infodetails !== "undefined" && unit_infodetails !== null && unit_infodetails !== "") {
           if (typeof units_info !== "undefined" && units_info !== null && units_info.length > 0) {
@@ -241,7 +293,9 @@ export default function RentingDetails() {
 
   }
 
-  /** Promo Code Discount Start */
+  /** Promo Code Discount End */
+
+ 
 
 
   return (
@@ -300,6 +354,8 @@ export default function RentingDetails() {
 
             </div>
 
+            <ToastContainer />
+
             {typeof unitInfoDetails !== "undefined" && unitInfoDetails !== null && unitInfoDetails.length > 0 ?
               unitInfoDetails.map((item) => {
                 return (<div key={item.unitInfo.id} className='col-12 col-md-5 pl-1 pl-sm-0 mb-3'>
@@ -345,10 +401,16 @@ export default function RentingDetails() {
                             </svg>
                             <span className='veritical-align-text-bottom ml-1 cursor-pointer' onClick={() => SetApplyDiscountModal({ open: true, dimmer: 'blurring' })}>Use Promocode</span></p>
                             <div className='mb-2 d-flex px-1 justify-content-between text-light-gray fw-500'>
-                            <span>Net Amount</span><span >{helper.displayCurrency(item.estimation.netAmount)}</span>
+                            <span>Net Amount</span><span >{helper.displayCurrency(unitDetailnetAmount)}</span>
                           </div>
+                        
+                        {discountVal > 0 ? (
+                          <div className='mb-2 d-flex px-1 justify-content-between text-light-gray fw-500'>
+                            <span>Discount</span><span >{helper.displayCurrency(discountVal)}</span>
+                          </div>) : "" }
+
                           <div className='fw-700 px-1 d-flex justify-content-between'>
-                            <span>Total</span><span >$134.25</span>
+                            <span>Total</span><span >{helper.displayCurrency(unitDetailGrossAmount)}</span>
                           </div>
                         </div>
                       </div>
@@ -392,7 +454,7 @@ export default function RentingDetails() {
                         <p className='fs-7'>{item.description}</p>
                       </div>
                       <div className='col-sm-12 col-md-3 d-flex align-items-center justify-content-center'>
-                        <button className="ui button text-success bg-white border-success-1  fs-7 fw-400 py-1 px-3">Apply</button>
+                        <button className="ui button text-success bg-white border-success-1  fs-7 fw-400 py-1 px-3" onClick={()=>autoApplybtn(item.promotionalDiscount.promoCode)}>Add</button>
                       </div>
                     </div>
                   </div>
