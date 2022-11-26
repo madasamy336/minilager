@@ -32,6 +32,7 @@ export default function RentingDetails() {
   const [discountVal, setDiscountVal] = useState();
 
 
+  let unitid = localStorage.getItem('unitid');
   const visibility = 1;
 
   const movindateOnchange = (e, item) => {
@@ -202,7 +203,7 @@ export default function RentingDetails() {
               insurance: [],
               merchandise: []
             },
-            id: "69509b5c-9a75-483d-bb54-7ba4ac74545b"
+            id: unitid
           }
         ],
         moveInDate: movindate,
@@ -220,7 +221,7 @@ export default function RentingDetails() {
               insurance: [],
               merchandise: []
             },
-            id: "69509b5c-9a75-483d-bb54-7ba4ac74545b"
+            id: unitid
           }
         ],
         moveInDate: movindate,

@@ -18,8 +18,10 @@ const UnitsCard = (props) => {
     // },[props.storageTypevalue])
 
     const rentNow = (e,unitid) => {
+        let unitdetailid = typeof unitid !== "undefined" && unitid !== null && unitid.length > 0 ? unitid[0] : null;
+        localStorage.setItem('unitid', unitdetailid);
         e.preventDefault();
-        navigate(`/preBooking/rentingDetails`)
+        navigate(`/preBooking/rentingDetails`);
     }
     
     
@@ -111,7 +113,7 @@ const UnitsCard = (props) => {
                                 <div className='card-actions'>
                                     <div className='d-flex justify-content-between align-items-center'>
                                         <h2 className='fw-700'>{helper.displayCurrency(details.netAmount)} <PopupExampleInverted img={<img src='/assets/images/tooltip.png' alt='Price' />} tooltip={`Rent :${helper.displayCurrency(details.unitPrice)} Tax(${helper.displayPercent(details.taxPercentage)}): ${helper.displayCurrency(details.taxAmount)}`} /></h2>
-                                        <button className='ui button btn-success d-inline-flex align-items-center' onClick={e => rentNow(e,details.unitTypeId)}><img src='/assets/images/password-img.png' alt='Rent Now' /><span>Rent Now</span></button>
+                                        <button className='ui button btn-success d-inline-flex align-items-center' onClick={e => rentNow(e,details.unitIds)}><img src='/assets/images/password-img.png' alt='Rent Now' /><span>Rent Now</span></button>
                                     </div>
                                 </div>
                             </div>
