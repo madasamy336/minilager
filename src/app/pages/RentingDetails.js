@@ -37,8 +37,6 @@ export default function RentingDetails() {
 
   const movindateOnchange = (e, item) => {
     setMovindate(item.value);
-    console.log(item.value);
-    unitinfodetails(item.value);
   }
   const invoiceOnchange = (e, items) => {
     setInvoiceSelect(items.value);

@@ -97,7 +97,7 @@ const Units = () => {
     const changeStorageType = (e, data) => {
         setUnitResponse([]);
         setStorageTypeValue(data.value);
-        console.log(data.value);
+       
 
     }
     const filterValue =(data) =>{
