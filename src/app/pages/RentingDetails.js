@@ -4,6 +4,8 @@ import SemanticDatepicker from 'react-semantic-ui-datepickers';
 import { Dropdown, Modal } from 'semantic-ui-react';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
+import { useDispatch } from 'react-redux';
+import { rentDetailAction } from '../redux/actions/rentDetails/rentDetailAction'
 import 'react-toastify/dist/ReactToastify.css';
 
 // import { useTranslation } from "react-i18next";
@@ -30,6 +32,7 @@ export default function RentingDetails() {
   const [unitDetailnetAmount, setUnitDetailNetAmount] = useState();
   const [unitDetailGrossAmount, setUnitDetailGrossAmount] = useState();
   const [discountVal, setDiscountVal] = useState();
+  const dispatch = useDispatch()
 
 
   let unitid = localStorage.getItem('unitid');
@@ -37,7 +40,6 @@ export default function RentingDetails() {
 
   const movindateOnchange = (e, item) => {
     setMovindate(item.value);
-    console.log(item.value);
     unitinfodetails(item.value);
   }
   const invoiceOnchange = (e, items) => {
@@ -63,6 +65,8 @@ export default function RentingDetails() {
 
   const navigateAddon = (e) => {
     e.preventDefault();
+    sessionStorage.setItem(`rentDetails`,JSON.stringify({movindate,invoiceTypedata,recurringTypedata}));
+    dispatch(rentDetailAction({movindate,invoiceTypedata,recurringTypedata}));
     navigate('/preBooking/addOns')
 
   }
@@ -293,7 +297,7 @@ export default function RentingDetails() {
       });
 
   }
-
+  sessionStorage.setItem(`rentDetails`,JSON.stringify({movindate,invoiceTypedata,recurringTypedata}));
   /** Promo Code Discount End */
 
  

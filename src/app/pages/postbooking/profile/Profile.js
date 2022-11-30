@@ -79,7 +79,7 @@ export default function Profile() {
                   <div className="edit-profile-img position-relative">
                     <img src={profileImageSrc.img} className="ui medium circular image object-fit-cover TenantDetailsProfileImage mx-auto" alt="Profile" />
                     <div className="edit-icon position-absolute text-center l-18 r-0 t-1">
-                      <label className="cursor-pointer" for='profileImageUpload'>
+                      <label className="cursor-pointer" htmlFor='profileImageUpload'>
                         <img width='50' height='50' className="" src="/assets/images/edit-photo.svg" alt="Edit" />
                       </label>  
                       <input id="profileImageUpload" onChange={(e) => profileImageUpload(e)} hidden type='file' />

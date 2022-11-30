@@ -20,6 +20,8 @@ export const constant = {
   LOGIN_SUCESS: 'LOGIN_SUCESS',
   LOGIN_FAILURE: 'LOGIN_FAILURE',
 
+  RENT_DETAILS:'RENT_DETAILS'
+
 
 
 

@@ -16,8 +16,7 @@ export default function TenantDetails() {
   })
 
 
-  /** <button onClick={() => SetCreditCheckModal({ open: true, dimmer: 'blurring' })} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">NEXT</button> */
-
+  // <button onClick={e => tenantInfoFinal(e)} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">NEXT</button>
   const [TenantInfoDetails, setTenantInfoDetails] = useState({
     firstName: '',
     lastName: '',
@@ -165,7 +164,7 @@ export default function TenantDetails() {
 
 
   const tenantInfoFinal = (e) => {
-
+ 
     let firstName;
     let email;
     let phoneNumber;
@@ -395,9 +394,7 @@ export default function TenantDetails() {
       </div>
       <div className="ui container text-center my-5">
         <button onClick={() => navigate('/preBooking/addOns')} className="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">BACK</button>
-
-
-        <button onClick={e => tenantInfoFinal(e)} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">NEXT</button>
+        <button onClick={() => SetCreditCheckModal({ open: true, dimmer: 'blurring' })} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">NEXT</button>
       </div>
 
 
