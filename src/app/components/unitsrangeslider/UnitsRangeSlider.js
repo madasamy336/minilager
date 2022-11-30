@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import ReactSlider from "react-slider";
 
 const UnitsRangeSlider = (props) => {
-    console.log('rangesider');
+    
     let intialMin 
     let intialMax
     intialMin =Number(sessionStorage.getItem('MinValue'));

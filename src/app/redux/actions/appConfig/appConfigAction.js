@@ -13,9 +13,10 @@ export const fetchAppConfig = () => {
         instance
             .get(request.common_config, config)
             .then(response => {
-                const configData = response.data.result
+                const configData = response.data.result;
+                const culture =  response.data.result.culture;
                 sessionStorage.setItem('configdata', JSON.stringify(configData));
-                
+                sessionStorage.setItem('culture', JSON.stringify(culture));
                 dispatch(fetchAppConfigSuccess(configData));
             })
             .catch(error => {

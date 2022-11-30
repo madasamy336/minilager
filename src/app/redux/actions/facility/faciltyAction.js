@@ -10,16 +10,20 @@ export const fetchFacilty = () => {
                 "Content-Type": "application/json",
             },
         };
-    
+        let requestbody = {
+            unitVisibility: 1, 
+            availability: 2
+        }
+
         instance
-            .post(request.facility_cities,{}, config)
+            .post(request.facility_cities, requestbody, config)
             .then(response => {
                 const configData = response.data;
-                if(configData.result !== null && configData.result !== 'undefined'&& configData.result !== ''){
-                   // to emulate some network delay
-                        dispatch(fetchAppConfigSuccess(configData))
-               
-                }else{
+                if (configData.result !== null && configData.result !== 'undefined' && configData.result !== '') {
+                    // to emulate some network delay
+                    dispatch(fetchAppConfigSuccess(configData))
+
+                } else {
                     dispatch(fetchAppConfigFailure('There is no record found'))
                 }
             })
@@ -27,13 +31,13 @@ export const fetchFacilty = () => {
                 dispatch(fetchAppConfigFailure(error.message))
             })
     }
-    
+
 }
 export const GetFacilityId = (locationId) => {
     return (dispatch) => {
-        if(locationId !== null && locationId !== 'undefined'&& locationId !== ''){
-            localStorage.setItem('locationid',locationId);
-            dispatch(getLocationId(locationId));    
+        if (locationId !== null && locationId !== 'undefined' && locationId !== '') {
+            localStorage.setItem('locationid', locationId);
+            dispatch(getLocationId(locationId));
         }
 
     }
@@ -62,6 +66,6 @@ export const getLocationId = id => {
 export const fetchAppConfigFailure = error => {
     return {
         type: constant.FACILITY_FAILURE,
-        payload: error 
+        payload: error
     }
 }

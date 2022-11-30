@@ -11,7 +11,11 @@ const requests = {
     get_user_info: "v1/user",
     update_user_info: "v1/user/updateprofile",
     update_user_password: "v1/user/password",
+    unit_info_by_id :"v1/movein/lease/calculation",
+    promo_discount : "v1/unit/discount",
+    validate_promocode: "v1/unit/discount/promocode",
+    check_addons: "v1/moveIn/rent/rentDetails",
+    tenant_details :"v1/user",
 }
-
 
 export default requests; 

@@ -12,6 +12,7 @@ import request from '../services/request';
 const Units = () => {
     const [UnitResponse, setUnitResponse] = useState(null);
     const [storageTypeValue, setStorageTypeValue] = useState('');
+    const [filterRequest, setFilterRequest] = useState('')
     const [loader, setLoading] = useState(true);
     const [filtercall, setFilterCall] = useState(false);
     const [unitTypeModal, SetunitTypeModal] = useState({
@@ -22,13 +23,14 @@ const Units = () => {
     const loading = useSelector(state => state.unitFilter.loading);
     const error = useSelector(state => state.unitFilter.error);
     const filters = useSelector(state => state.unitFilter.filters);
+    let locationId = localStorage.getItem('locationid');
 
     const dispatch = useDispatch()
 
     useEffect(() => {
         sixStorageLoadUnitList(storageTypeValue);
         if (filtercall === false) {
-            dispatch(fetchUnitFilter())
+            dispatch(fetchUnitFilter(locationId))
         }
 
 
@@ -45,10 +47,10 @@ const Units = () => {
 
         let requestbody = {
             storageTypeId: [storageTypeid],
-            locationId: null,
-            buildingId: null,
-            unitTypeId: null,
-            amenityId: null,
+            locationId: [locationId],
+            buildingId: filterRequest.buildingValue,
+            unitTypeId: filterRequest.unitTypeId,
+            amenityId: filterRequest.amenityId,
             pageNumber: 1,
             pageSize: 10,
             isBusinessUser: false,
@@ -90,17 +92,24 @@ const Units = () => {
                 value: storageType.storageTypeId
             }
         }
-
-
         ) : '';
-
 
     const changeStorageType = (e, data) => {
         setUnitResponse([]);
         setStorageTypeValue(data.value);
-        console.log(data.value);
+       
+
+    }
+    const filterValue =(data) =>{
+        setFilterRequest(data);
+
     }
 
+    const filterUnit = () => {
+
+        sixStorageLoadUnitList(storageTypeValue);
+
+    }
     const sortUnitOptions = [
         {
             key: 'popular',
@@ -145,10 +154,10 @@ const Units = () => {
                     <div className="row">
                         <div className="col-lg-3 col-md-3 col-sm-12">
                             <div className="filters-div">
-                                <AccordionExampleStyled storageTypeValue={storageTypeValue} modal={() => SetunitTypeModal({ open: true, size: 'tiny', dimmer: 'blurring' })} />
+                                <AccordionExampleStyled filterValue={filterValue} storageTypeValue={storageTypeValue} modal={() => SetunitTypeModal({ open: true, size: 'tiny', dimmer: 'blurring' })} />
                                 <div className='text-center my-2'>
                                     <button className='ui button bg-white border-success-dark-light-1 text-success fs-7 fw-400 px-5 mx-1 mb-1 mb-sm-1 px-sm-2'>Clear All</button>
-                                    <button className='ui button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-1 mb-sm-1 px-sm-2'>Apply</button>
+                                    <button className='ui button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-1 mb-sm-1 px-sm-2' onClick={filterUnit}>Apply</button>
                                 </div>
                             </div>
                         </div>
@@ -175,9 +184,8 @@ const Units = () => {
                                             <PlaceholderLoader cardCount={7} />
                                         </div>
 
-                                        {!loader && <UnitsCard storageTypevalue={storageTypeValue} UnitResponse={UnitResponse} setUnitResponse={setUnitResponse} setLoading={setLoading} />
+                                        {!loader && <UnitsCard filterRequest={filterRequest} storageTypevalue={storageTypeValue} UnitResponse={UnitResponse} setUnitResponse={setUnitResponse} setLoading={setLoading} />
                                         }
-
 
 
 
@@ -243,7 +251,7 @@ const Units = () => {
 
                         </div>
                         <div className='text-center mt-1'>
-                            <button className='ui button bg-success-dark text-white'>Apply</button>
+                            <button className='ui button bg-success-dark text-white' >Apply</button>
                         </div>
                     </Modal.Content>
                 </Modal>

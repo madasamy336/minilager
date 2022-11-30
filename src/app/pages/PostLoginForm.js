@@ -5,6 +5,8 @@ import { useDispatch } from 'react-redux';
 // import { useTranslation } from "react-i18next";
 import instance from '../services/instance';
 import request from '../services/request';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { fetchLoginSuccess, fetchLoginFailure, fetchLoginRequest } from '../redux/actions/login/loginAction';
 const PostLoginForm = () => {
     // const { t } = useTranslation(); 
@@ -27,17 +29,16 @@ const PostLoginForm = () => {
     let localusername = localStorage.getItem('username');
     let localpassword = localStorage.getItem('password');
 
-    if (localpassword !== null && typeof localpassword !== "undefined" && localpassword !== '') {
-        // setValues({...values, password:localpassword })
-        password = localpassword;
-    }
+    // if (localpassword !== null && typeof localpassword !== "undefined" && localpassword !== '') {
+    //     // setValues({...values, password:localpassword })
+    //     password = localpassword;
+    // }
 
-    if (localusername !== null && typeof localusername !== "undefined" && localusername !== '') {
+    if (localusername !== null && typeof localusername !== "undefined" && localusername !== '' && localpassword !== null && typeof localpassword !== "undefined" && localpassword !== "") {
 
-
-        username = localusername;
+        const navigate = useNavigate();
+        navigate('/postBooking/Profile');
         // setValues({...values,username:username })
-
     }
 
     const validateOne = (e) => {
@@ -59,7 +60,7 @@ const PostLoginForm = () => {
     const handleChange = (e) => {
         e.persist();
         const { name, value } = e.target
-        setValues({ ...values, [name]: value })
+        setValues({ ...values, [name]: value });
 
     }
 
@@ -112,14 +113,22 @@ const PostLoginForm = () => {
         instance
             .post(request.user_login, values, config)
             .then(response => {
-                const configData = response.data
+                const configData = response.data;
+                console.log(configData);
                 if (configData.result !== null && typeof configData.result !== 'undefined' && configData.result !== '') {
                     // to emulate some network delay
-                    if (configData.returnMessage === 'Invalid user name or password') {
-                        console.log(" Invalid UserName Password");
-                    } else if (configData.returnMessage === 'SUCCESS') {
+                       if (configData.returnMessage === 'SUCCESS') {
+                        toast.success('You are logged in successfully', {
+                            position: "top-right",
+                            autoClose: 3000,
+                            duration: 100,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        });
                         dispatch(fetchLoginSuccess(configData));
-                        console.log(rememberPassword);
                         if (rememberPassword === true) {
                             localStorage.setItem('username', username);
                             localStorage.setItem('password', password);
@@ -134,7 +143,21 @@ const PostLoginForm = () => {
 
 
 
-                } else {
+                  } else if (configData.result === null && configData.returnCode === "INVALID_PARAM" && configData.returnMessage === "Invalid user name or password") {
+                    toast.error('Invalid UserName or Password', {
+                        position: "top-right",
+                        autoClose: 3000,
+                        duration: 100,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    });
+
+                }
+
+                else {
                     dispatch(fetchLoginFailure('There is no record found'))
                 }
             })
@@ -148,7 +171,6 @@ const PostLoginForm = () => {
         e.preventDefault();
         navigate('/forgotpassword')
     }
-
 
 
     const {
@@ -484,6 +506,9 @@ const PostLoginForm = () => {
                     </div>
                 </div>
                 <div className="col-lg-7 col-md-7 col-sm-12">
+
+                    <ToastContainer />
+
                     <div className="postloginform-inputs bg-white">
                         <div className="form-title">
                             <h2 className="text-success fw-600">WELCOME</h2>

@@ -5,38 +5,151 @@ import React, { useEffect, useState } from "react";
 import TenantDetailEmergengyContactAccordian from "../components/tenantDetailsAccordian/TenantDetailsAccordian";
 import { useNavigate } from "react-router-dom";
 import countriecodes from "../components/CountryCode";
+import instance from '../services/instance';
+import request from '../services/request';
+
 
 export default function TenantDetails() {
   const navigate = useNavigate()
   const [profileImageSrc, setprofileImageSrc] = useState({
     img: '/assets/images/userDemoProfile.svg'
   })
-  const [imguploadStatus, SetimguploadStatus] = useState(false)
-  const [contactaccordian, SetContactaccordian] = useState([]);
-  const [contactFirstName, SetContactFirstName] = useState('');
-  const [contactLastName, SetContactLastName] = useState('');
-  const [contactEmail, SetContactEmail] = useState('');
-  const [contactPhone, SetContactPhone] = useState()
-  const [creditStatus, SetCreditStatus] = useState(false);
 
+
+  /** <button onClick={() => SetCreditCheckModal({ open: true, dimmer: 'blurring' })} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">NEXT</button> */
+
+  const [TenantInfoDetails, setTenantInfoDetails] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    birthDate: '',
+    phoneNumber: '',
+    addressLineOne: '',
+    addressLineTwo: '',
+    city: '',
+    country: '',
+    state: '',
+    zipCode: '',
+    social: '',
+
+  });
+
+  const [TenantInfoError, setTenantInfoError] = useState({
+    firstName: '',
+    email: '',
+    phoneNumber: '',
+  });
+
+  const [emergencyContactDetails, setEmergencyContactDetails] = useState({
+    emergencyFname: '',
+    emergencylname: '',
+    emergencyemail: '',
+    emergencyphoneno: ''
+  });
+
+  const [emergencyContactErr, setEmergencyContactErr] = useState({
+    emergencyFname: '',
+    emergencyemail: '',
+    emergencyphoneno: '',
+  });
+
+
+  const [imguploadStatus, SetimguploadStatus] = useState(false);
+  const [contactaccordian, SetContactaccordian] = useState([]);
+
+  const [creditStatus, SetCreditStatus] = useState(false);
   const [creditCheckModal, SetCreditCheckModal] = useState({
     open: false,
     dimmer: undefined,
   })
+
+  const handlechange = (e) => {
+    e.persist();
+    const { name, value } = e.target;
+    setTenantInfoDetails({ ...TenantInfoDetails, [name]: value });
+  }
+  const validateemergencycontactInfo =(e)=>{
+
+    const {name} = e.target;
+    const value = emergencyContactDetails[name];
+    let message = '';
+   if(!value && name === "emergencyFname"){
+    message = 'First Name is Required';
+   }
+   if(!value && name === "emergencyemail"){
+    message = 'Email is Required';
+   }
+   if(value && name === "emergencyemail" && !/\S+@\S+\.\S+/.test(value)){
+    message = 'Email format must be as example@mail.com';
+   }
+   if(!value && name === "emergencyphoneno"){
+    message = 'Phone No is Required';
+   }
+
+   setEmergencyContactErr({...emergencyContactErr, [name]: message })
+
+  }
+
+  const validateTenantInfo = (e) => {
+    const { name } = e.target;
+    const value = TenantInfoDetails[name];
+    let message = ''
+    if (!value) {
+      message = `${name} is required`;
+    }
+    setTenantInfoError({ ...TenantInfoError, [name]: message });
+  }
+
+  const emergencyhandlechange = (e) => {
+    setEmergencyContactDetails({ ...emergencyContactDetails, [e.target.name]: e.target.value });
+  }
+
+
   const addEmergencyContact = (e) => {
     e.preventDefault();
-    SetContactaccordian([
-      ...contactaccordian,
-      {
-        firname: contactFirstName,
-        lastname: contactLastName,
-        email: contactEmail,
-        phone: contactPhone,
+
+    const emergencyContactErr = {emergencyFname: '', emergencyemail:'', emergencyphoneno:''}
+    let isValid = true;
+
+    if(!emergencyContactDetails.emergencyFname){
+      emergencyContactErr.emergencyFname = "First Name is Required ";
+      isValid = false;
+    } 
+    if(!emergencyContactDetails.emergencyemail){
+      emergencyContactErr.emergencyemail = "Email is Required";
+      isValid = false;
+    }
+    if(emergencyContactDetails.emergencyemail && !/\S+@\S+\.\S+/.test(emergencyContactDetails.emergencyemail) ){
+      emergencyContactErr.emergencyemail = "Email format must be as example@mail.com ";
+      isValid = false; 
+    }
+    if(!emergencyContactDetails.emergencyphoneno){
+      emergencyContactErr.emergencyphoneno = "Phone No is Required";
+      isValid = false; 
+    }
+    if(!isValid){
+      setEmergencyContactErr(emergencyContactErr);
+    } else {
+
+      const newcontactdetails = {
+        name: emergencyContactDetails.emergencyFname,
+        lname: emergencyContactDetails.emergencylname,
+        email: emergencyContactDetails.emergencyemail,
+        phone: emergencyContactDetails.emergencyphoneno,
         contactaccordianLength: contactaccordian.length + 1
       }
-    ]);
-    console.log(contactaccordian)
+      SetContactaccordian([...contactaccordian, newcontactdetails]);
+  
+      /** Clear all Input values */
+  
+      emergencyContactDetails.emergencyFname = '';
+      emergencyContactDetails.emergencylname = '';
+      emergencyContactDetails.emergencyemail = '';
+      emergencyContactDetails.emergencyphoneno = '';
+  
+      /** Clear all Input values */
 
+    }
   }
   const removeEmergencyContact = (index) => {
     const list = [...contactaccordian]
@@ -63,16 +176,84 @@ export default function TenantDetails() {
       alert('Please make sure the file size is less than 1mb and try again')
       return false;
     }
-    console.log(e.target.files[0])
+
     if (e.target.files && e.target.files[0]) {
       setprofileImageSrc({ img: URL.createObjectURL(img) });
       SetimguploadStatus(true);
 
     }
   }
+
+
+  const tenantInfo = () => {
+
+    let userid = localStorage.getItem("userid");
+    let config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    let tenantinfodata;
+
+    tenantinfodata = {
+      userId: userid
+    }
+    instance
+      .get(request.tenant_details + '/' + userid, tenantinfodata, config)
+      .then((response) => {
+        const tenantInfoGetdata = response.data;
+        if (typeof tenantInfoGetdata !== "undefined" && tenantInfoGetdata !== null && tenantInfoGetdata !== "") {
+          const tenantInfoGetresult = tenantInfoGetdata.result;
+          console.log(tenantInfoGetresult);
+          if (typeof tenantInfoGetresult !== "undefined" && tenantInfoGetresult !== null & tenantInfoGetresult !== "") {
+            localStorage.setItem("tenantIfo", JSON.stringify(tenantInfoGetresult));
+            let tenantMovinData = JSON.parse(localStorage.getItem("tenantIfo"));
+            setTenantInfoDetails(tenantMovinData);
+          }
+
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+  }
+
+
+  const tenantInfoFinal = (e) => {
+    e.preventDefault();
+    const TenantInfoError = { firstName:'', email:'',phoneNumber:''}
+    let isValid = true;
+    if(!TenantInfoDetails.firstName){
+      TenantInfoError.firstName = "first Name is Required";
+      isValid = false;
+    }
+    if (!isValid) {
+    setTenantInfoError(TenantInfoError);
+    } 
+
+  }
+
+
   useEffect(() => {
-    console.log(contactaccordian);
+    tenantInfo();
   }, [contactaccordian])
+
+
+  const {
+    firstName: fname_Data,
+    email: email_Data,
+    phoneNumber: phoneNo_Data,
+  } = TenantInfoError;
+
+const {
+  emergencyFname:fname_err,
+  emergencyemail:email_err,
+  emergencyphoneno:phone_err
+
+} = emergencyContactErr;
+
   return (
     <>
       <PreBookingBreadcrumb activeStep='123' />
@@ -101,19 +282,21 @@ export default function TenantDetails() {
               transform="translate(-121.901 -177.054)"
             ></path>
           </g>
-        </svg><span className='veritical-align-text-top ml-1'>Tenant Details</span></h6>
+        </svg>
+          <span className='veritical-align-text-top ml-1'>Tenant Details</span></h6>
         <div className="row reverse-sm">
           <div className="col-12 col-md-6 ui form">
             <div className="col-12 px-4 px-sm-2">
               <div className="field w-100  my-3">
                 <label className='fw-500 fs-7 mb-2'>First Name <i className="text-danger ">*</i></label>
-                <input type='text' placeholder='Enter Name' />
+                <input type='text' placeholder='Enter Name' name="firstName" value={TenantInfoDetails.firstName} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
+                <div className="text-danger mt-1">{fname_Data}</div>
               </div>
             </div>
             <div className="col-12  px-4 px-sm-2">
               <div className="field w-100  my-3">
                 <label className='fw-500 fs-7 mb-2'>Last Name</label>
-                <input type='text' placeholder='Enter Name' />
+                <input type='text' placeholder='Enter Name' name="lastName" value={TenantInfoDetails.lastName} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
               </div>
             </div>
           </div>
@@ -138,27 +321,29 @@ export default function TenantDetails() {
           <div className="col-12  col-md-6  px-4 px-sm-2">
             <div className="field datePicker w-100 my-3">
               <label className='fw-500 fs-7 mb-2' >Date of Birth</label>
-              <SemanticDatepicker placeholder='Select date' className='w-100' />
+              <SemanticDatepicker placeholder='Select date' name="birthDate" className='w-100' defaultValue={new Date(TenantInfoDetails.birthDate)} onChange={(e) => handlechange(e)} />
             </div>
           </div>
           <div className="col-12  col-md-6  px-4 px-sm-2">
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-2'>Email <i className="text-danger ">*</i></label>
-              <input type='email' placeholder='Enter Email' />
+              <input disabled type='email' placeholder='Enter Email' name="email" value={TenantInfoDetails.email} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
+              <div className="text-danger mt-1">{email_Data}</div>
             </div>
           </div>
           <div className="col-12  col-md-6  px-4 px-sm-2">
-            <div className="field w-100  my-3">
+            <div className="points-events-none field w-100  my-3">
               <label className='fw-500 fs-7 mb-2'>Phone Number <i className="text-danger ">*</i></label>
-              <Input className="noCounterNumber" type="number" placeholder="Enter Mobile Number"
+              <Input disabled className="noCounterNumber" type="number" name="phoneNumber" placeholder="Enter Mobile Number" value={TenantInfoDetails.phoneNumber} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo}
                 label={<Dropdown defaultValue='+91' search options={countriecodes} />}
                 labelPosition='left' />
+              <div className="text-danger mt-1">{phoneNo_Data}</div>
             </div>
           </div>
           <div className="col-12  col-md-6  px-4 px-sm-2">
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-2'>Social Security Number</label>
-              <input className="noCounterNumber" type='number' placeholder='Social Security Number' />
+              <input className="noCounterNumber" type='number' name="social" placeholder='Social Security Number' value={TenantInfoDetails.social} onChange={(e) => handlechange(e)} />
             </div>
           </div>
           <div className="col-12  col-md-6  px-4 px-sm-2 my-3">
@@ -182,31 +367,31 @@ export default function TenantDetails() {
           <div className="col-12 col-md-6 px-4 px-sm-2">
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-2'>Address Line 1</label>
-              <input type='text' placeholder='Address Line 1' />
+              <input type='text' placeholder='Address Line 1' name="addressLineOne" value={TenantInfoDetails.addressLineOne} onChange={(e) => handlechange(e)} />
             </div>
           </div>
           <div className="col-12 col-md-6 px-4 px-sm-2">
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-2'>Address Line 2</label>
-              <input type='text' placeholder='Address Line 2' />
+              <input type='text' placeholder='Address Line 2' name="addressLineTwo" value={TenantInfoDetails.addressLineTwo} onChange={(e) => handlechange(e)} />
             </div>
           </div>
           <div className="col-12 col-md-6 px-4 px-sm-2">
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-2'>City</label>
-              <input type='text' placeholder='City' />
+              <input type='text' placeholder='City' name="city" value={TenantInfoDetails.city} onChange={(e) => handlechange(e)} />
             </div>
           </div>
           <div className="col-12 col-md-6 px-4 px-sm-2">
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-2'>State/Provine</label>
-              <input type='text' placeholder='State/Provine' />
+              <input type='text' placeholder='State/Provine' name="state" value={TenantInfoDetails.state} onChange={(e) => handlechange(e)} />
             </div>
           </div>
           <div className="col-12 col-md-6 px-4 px-sm-2">
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-2'>Zip/Postal Code</label>
-              <input className="noCounterNumber" type='number' placeholder='Zip/Postal Code' />
+              <input className="noCounterNumber" type='number' name="zipCode" placeholder='Zip/Postal Code' defaultValue={TenantInfoDetails.zipCode} onChange={(e) => handlechange(e)} />
             </div>
           </div>
         </div>
@@ -228,32 +413,35 @@ export default function TenantDetails() {
             <div className="col-12 col-md-6 px-4 px-sm-2">
               <div className="field w-100  my-3">
                 <label className='fw-500 fs-7 mb-2'>First Name <i className="text-danger ">*</i></label>
-                <input value={contactFirstName} onChange={e => SetContactFirstName(e.target.value)} type='text' placeholder='Enter Name' />
+                <input value={emergencyContactDetails.emergencyFname} onChange={(e) => emergencyhandlechange(e)}  onBlur={(e)=> validateemergencycontactInfo(e)} name="emergencyFname" type='text' placeholder='Enter Name' />
+                <div className="text-danger mt-1">{fname_err}</div>
               </div>
             </div>
             <div className="col-12 col-md-6 px-4 px-sm-2">
               <div className="field w-100  my-3">
                 <label className='fw-500 fs-7 mb-2'>Last Name</label>
-                <input value={contactLastName} onChange={e => SetContactLastName(e.target.value)} type='text' placeholder='Last Name' />
+                <input value={emergencyContactDetails.emergencylname} onChange={(e) => emergencyhandlechange(e)} onBlur={(e)=> validateemergencycontactInfo(e)} type='text' name="emergencylname" placeholder='Last Name' />
               </div>
             </div>
             <div className="col-12 col-md-6 px-4 px-sm-2">
               <div className="field w-100  my-3">
                 <label className='fw-500 fs-7 mb-2'>Email <i className="text-danger ">*</i></label>
-                <input value={contactEmail} onChange={e => SetContactEmail(e.target.value)} type='email' placeholder='Enter Email' />
+                <input value={emergencyContactDetails.emergencyemail} onChange={(e) => emergencyhandlechange(e)} onBlur={(e)=> validateemergencycontactInfo(e)} type='email' name="emergencyemail" placeholder='Enter Email' />
+                <div className="text-danger mt-1">{email_err}</div>
               </div>
             </div>
             <div className="col-12 col-md-6 px-4 px-sm-2">
-              <div class="field w-100  my-3">
+              <div className="field w-100  my-3">
                 <label className='fw-500 fs-7 mb-2'>Phone Number <i className="text-danger ">*</i></label>
                 {/* <input value={contactPhone} onChange={e=>SetContactPhone(e.target.value)} className="noCounterNumber" type='number' placeholder='Enter Phone Number' /> */}
-                <Input value={contactPhone} onChange={e => SetContactPhone(e.target.value)} className="noCounterNumber" type="number" placeholder="Enter Mobile Number"
+                <Input value={emergencyContactDetails.emergencyphoneno} onChange={(e) => emergencyhandlechange(e)} className="noCounterNumber" onBlur={(e)=> validateemergencycontactInfo(e)} type="number" name="emergencyphoneno" placeholder="Enter Mobile Number"
                   label={<Dropdown defaultValue='+91' search options={countriecodes} />}
                   labelPosition='left' />
+                  <div className="text-danger mt-1">{[phone_err]}</div>
               </div>
             </div>
             <div className="col-12">
-              <a onClick={e => addEmergencyContact(e)} className="text-success fs-7 px-4 px-sm-2 cursor-pointer">
+              <a onClick={(e) => addEmergencyContact(e)} className="text-success fs-7 px-4 px-sm-2 cursor-pointer">
                 <svg xmlns="http://www.w3.org/2000/svg" width="15" height="18" viewBox="0 0 27.505 27.5">
                   <path id="floating" d="M577.346,2164.47h1.719c.468.061.939.108,1.4.186a13.8,13.8,0,0,1,11.276,11.2c.089.5.142,1.006.211,1.51v1.719c-.04.327-.075.656-.122.981a13.749,13.749,0,1,1-23.4-11.494,13.464,13.464,0,0,1,7.4-3.886C576.337,2164.593,576.843,2164.539,577.346,2164.47Zm2,14.892h4.82a1.14,1.14,0,1,0,.027-2.278c-1.5-.009-3.007,0-4.51,0h-.336v-4.813a1.118,1.118,0,0,0-.693-1.111,1.131,1.131,0,0,0-1.588,1.07c-.01,1.5,0,3.007,0,4.51v.344h-4.806a1.141,1.141,0,1,0-.055,2.28c1.512.011,3.025,0,4.537,0h.323v.364c0,1.477,0,2.953,0,4.43a1.141,1.141,0,1,0,2.28.068c.012-1.5,0-3.007,0-4.51Z" transform="translate(-564.451 -2164.47)" fill="#328128" />
                 </svg><span className="veritical-align-text-top ml-1">Add more</span>
@@ -264,18 +452,18 @@ export default function TenantDetails() {
         <div className="col-12 px-sm-2" id="EmergencyContactDiv">
           {
             contactaccordian.map((data, index) => (
-              <TenantDetailEmergengyContactAccordian removefunction={removeEmergencyContact} index={index} contactLength={data.contactaccordianLength} firtName={data.firname} lastName={data.lastname} email={data.email} phone={data.phone} />
+              <TenantDetailEmergengyContactAccordian key={index} removefunction={removeEmergencyContact} index={index} contactLength={data.contactaccordianLength} name={data.name} lname={data.lname} email={data.email} phone={data.phone} />
             ))
           }
         </div>
 
       </div>
       <div className="ui container text-center my-5">
-        <button onClick={() => navigate('/preBooking/addOns')} class="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">BACK</button>
-        <button onClick={() => SetCreditCheckModal({ open: true, dimmer: 'blurring' })} class="ui button bg-success-dark   fs-7 fw-400 text-white px-5">NEXT</button>
+        <button onClick={() => navigate('/preBooking/addOns')} className="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">BACK</button>
+
+
+        <button onClick={e => tenantInfoFinal(e)} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">NEXT</button>
       </div>
-
-
 
 
       <Modal

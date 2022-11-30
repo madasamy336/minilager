@@ -2,19 +2,19 @@ import React, { Component } from 'react'
 import { Accordion } from 'semantic-ui-react'
 
 export default class TenantDetailEmergengyContactAccordian extends Component {
-  
+
   state = { activeIndex: 0 }
 
   handleClick = (e, titleProps) => {
-    const { index } = titleProps
-    const { activeIndex } = this.state
-    const newIndex = activeIndex === index ? -1 : index
+    const { index } = titleProps;
+    const { activeIndex } = this.state;
+    const newIndex = activeIndex === index ? -1 : index;
 
     this.setState({ activeIndex: newIndex })
   }
 
   render() {
-    const { activeIndex } = this.state
+    const { activeIndex } = this.state;
 
     return (
  
@@ -39,7 +39,7 @@ export default class TenantDetailEmergengyContactAccordian extends Component {
             <tbody>
                 <tr>
                     <td className='fw-600'>Name</td>
-                    <td>{this.props.firtName} {this.props.lastName}</td>
+                    <td>{this.props.name} {this.props.lname}</td>
                 </tr>
                 <tr>
                     <td className='fw-600'>Email</td>
