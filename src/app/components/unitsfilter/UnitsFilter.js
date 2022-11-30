@@ -237,7 +237,7 @@ const AccordionExampleStyled = (selectedStorageType) => {
           <ul>
             {typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof UnitTypeDimension !== 'undefined' && UnitTypeDimension !== null && UnitTypeDimension !== "" ?
               Object.keys(UnitTypeDimension).map(data => {
-                console.log('check dimension')
+                
                 return UnitTypeDimension[data].map(dimension => {
                   return <li key={dimension.key}><input value={dimension.unitTypeId} className='mr-1 mb-1' type="checkbox" onChange={onFilterChange} />{dimension.unitMeasurement}</li>
                 })

@@ -11,7 +11,7 @@ const Card = (props) => {
       useEffect(() => {
         dispatch(fetchAppConfig())
     }, [])
-    console.log(facilityDetailResponse.facilitydetails);
+   
     const { t } = useTranslation();
     // facilityDetailResponse.facilitydetails.map(response => {
     //     console.log(response)
