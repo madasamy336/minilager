@@ -103,7 +103,7 @@ export default function EsignPayment() {
           </div>
           <div className='row'>
             <div className='col-12 col-md-7 pr-1 pr-sm-0 mb-3'>
-              <div className='bg-white card-boxShadow px-0 py-2 border-radius-15'>
+              <div className='bg-white card-boxShadow px-0 py-2 border-radius-15 mb-2'>
                 <h6 className='card-border-bottom text-dark fw-500 fs-6 px-4 py-2 px-sm-2'>
                   <svg id="E-sign" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 39.948 40.031">
                     <path id="Path_15973" data-name="Path 15973" d="M0,20.026V2.192A1.994,1.994,0,0,1,2.155,0q13.151,0,26.3,0A1.966,1.966,0,0,1,30.664,2.2q.006,5.91,0,11.819c0,.494.143,1.137-.642,1.145-.827.008-.7-.681-.7-1.185-.015-3.754-.008-7.506-.008-11.26,0-.232.067-.513-.038-.687A2.071,2.071,0,0,0,28.6,1.4c-.134-.084-.364-.02-.551-.02H2.587c-1.162,0-1.211.05-1.211,1.236v34.83c0,1.136.055,1.19,1.183,1.19H28.093c1.133,0,1.218-.087,1.22-1.241q0-2.658,0-5.316c0-.232.017-.466.031-.7.027-.436.241-.722.7-.7s.629.32.628.761c-.007,1.445,0,2.891,0,4.336,0,.79.017,1.582-.011,2.372a2.1,2.1,0,0,1-2.112,1.884c-8.79-.041-17.581-.024-26.373-.024A1.983,1.983,0,0,1,0,37.86Q0,28.944,0,20.026Z" transform="translate(0 -0.003)" fill="#328128" />
@@ -162,32 +162,25 @@ export default function EsignPayment() {
                     </div>
                   </div>
                 </div>
-                {esignMethod && (
+              </div>
+              {esignMethod && (
+                <div className='bg-white showbankid-div card-boxShadow border-radius-15'>
                   <div className='mt-1'>
-                    <h5 className='fw-600 text-success-dark pb-2 card-border-bottom px-3'>SELECT E-SIGNATURE METHOD TO SIGN THE DOCUMENTS</h5>
-                    <div className='py-4 px-3'>
-                      <div className='card-border bank-div border-radius-5 d-flex align-items-center position-relative mb-3'>
-                        <div className='bank-img px-2 border-right w-25'>
-                          <img className='w-100 h-100' src="/assets/images/bankid.png" alt="Norwegian BankID" />
-                        </div>
-                        <div className='bank-title pl-3'>
-                          <p>Norwegian BankID</p>
-                        </div>
-                        <img className='bankid-img position-absolute r-2' src="/assets/images/arrow-down.png" alt="Arrow" />
+                    <h5 className='fw-600 dashed-bottom text-center px-3 py-1'>
+                      <div className='d-flex justify-content-center align-items-center'>
+                        <img src="/assets/images/bankid.png" alt="Norwegian BankID" />
+                        <p className='ml-1'>Sign with Norweigan BankID</p>
                       </div>
-                      <div className='card-border bank-div border-radius-5 d-flex align-items-center position-relative'>
-                        <div className='bank-img px-2 border-right w-25'>
-                          <img className='w-100 h-100' src="/assets/images/BankNorway.png" alt="Norwegian BankID" />
-                        </div>
-                        <div className='bank-title pl-3'>
-                          <p>Norwegian BankID on Mobile</p>
-                        </div>
-                        <img className='bankid-img position-absolute r-2' src="/assets/images/arrow-down.png" alt="Arrow" />
+                    </h5>
+                    <div className='py-4 px-3'>
+                      <p>Karthick Ram, you will sign with a Norwegian BankID. Once you have signed, your signature will be registered by the e-signature service Signicat.</p>
+                      <div className='text-center my-2'>
+                        <button onClick={() => navigate('/successfulMovein')} className='ui button bg-success-dark fs-7 text-white fw-400 px-4'>SIGN</button>
                       </div>
                     </div>
                   </div>
-                )}
-              </div>
+                </div>
+              )}
               <div className='bg-white card-boxshadow px-0 py-2 border-radius-15 mb-3 mt-2'>
                 <h6 className='text-dark fw-500 fs-6 px-4 py-2 px-sm-2 card-border-bottom fw-600 text-success-dark'>
                   <span className='veritical-align-text-top ml-1'>CHOOSE PAYMENT TYPE</span></h6>
