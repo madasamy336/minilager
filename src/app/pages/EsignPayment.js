@@ -158,7 +158,8 @@ export default function EsignPayment() {
                       <button className="ui button text-success-dark bg-white card-border fs-7 fw-400 text-dark px-1 mr-2 mt-md-1">View Document</button>
                     </div>
                     <div className='pt-4 d-flex justify-content-center flex-wrap'>
-                        <button className="ui button bg-success-dark d-flex align-items-center border-radius-5 fs-6 fw-100 text-white px-5 px-md-2 mb-sm-1"><img src='/assets/images/executed-payment.svg' alt='Pay Now' /><span className='ml-1'>Pay Now</span></button>
+                        <button className="ui button bg-success-dark d-flex align-items-center border-radius-5 fs-6 fw-100 text-white px-5 px-md-2 mx-1 mb-sm-1"><img src='/assets/images/executed-payment.svg' alt='Pay Now' /><span className='ml-1'>Pay Now</span></button>
+                        <button className="ui button bg-white d-flex align-items-center border-radius-5 fs-6 fw-100 text-dark card-border px-5 px-md-2 mx-1 mb-sm-1"><img src='/assets/images/paylater.svg' alt='Pay Now' /><span className='ml-1'>Pay Later</span></button>
                     </div>
                   </div>
                 </div>
@@ -175,7 +176,7 @@ export default function EsignPayment() {
                     <div className='py-4 px-3'>
                       <p>Karthick Ram, you will sign with a Norwegian BankID. Once you have signed, your signature will be registered by the e-signature service Signicat.</p>
                       <div className='text-center my-2'>
-                        <button onClick={() => navigate('/successfulMovein')} className='ui button bg-success-dark fs-7 text-white fw-400 px-4'>SIGN</button>
+                        <button onClick={() => navigate('/preBooking/thankyou')} className='ui button bg-success-dark fs-7 text-white fw-400 px-4'>SIGN</button>
                       </div>
                     </div>
                   </div>
