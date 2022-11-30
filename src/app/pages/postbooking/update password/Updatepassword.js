@@ -1,7 +1,113 @@
-import React from "react";
 import UpdatePasswordForm from "../../../components/updatepasswordform/UpdatePasswordForm";
+import { Button, Message, Icon, Transition } from 'semantic-ui-react'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import React, { useState, useEffect } from "react";
+import instance from '../../../services/instance';
+import requests from '../../../services/request';
+import Helper from "../../../helper";
+
 
 export default function Updatepassword() {
+  let helper = new Helper();
+
+  const [password, updatePassword] = useState({
+    currentPassword: "",
+    newPassword: "",
+    conformNewPassword: "",
+    currentPasswordErr: false,
+    newPasswordErr: false,
+    conformNewPasswordErr: false,
+  })
+  const [loadingButton, setLoadingButton] = useState(false);
+  const [isDisabled, setButtonDisabled] = useState(false);
+
+
+  const handleOnChange = (e) => {
+    const { name, value } = e.target
+    console.log(name, value)
+    updatePassword({ ...password, [name]: value });
+  }
+
+  const handleOnSubmit = (e) => {
+    setLoadingButton(true);
+    setButtonDisabled(true)
+    e.preventDefault();
+    let config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    let userId = "15a56797-2da9-4650-a92c-edf06c512484"
+    const [html] = document.getElementsByTagName("html")
+    const lang = html.getAttribute("lang");
+    let password_details = {
+      'currentPassword': password.currentPassword,
+      'newPassword': password.newPassword,
+      'conformNewPassword': password.conformNewPassword,
+      'userId': userId,
+      'content-language': lang
+    }
+
+    instance
+      .post(requests.update_user_password + "/" + userId + "/update", password_details, config)
+      .then((response) => {
+        console.log("response", response)
+        const res = response.data;
+        console.log("res", res)
+        if (res.isSuccess === true && res.returnCode === "SUCCESS") {
+          setLoadingButton(false);
+          setButtonDisabled(false)
+          toast.success('Password Updated Successfully',{
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          })
+          updatePassword({currentPassword:'',newPassword:'', conformNewPassword:''})
+
+          // updatePassword({ ...password, ['currentPassword']: '' });
+          // updatePassword({ ...password, ['newPassword']: '' });
+          // updatePassword({ ...password, ['conformNewPassword']: '' });
+        } else {
+          toast.error(res.returnMessage, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          })
+          updatePassword({currentPassword:'',newPassword:'', conformNewPassword:''})
+          setButtonDisabled(false)
+          setLoadingButton(false);
+        }
+      })
+      .catch((err) => {
+        setButtonDisabled(false)
+        setLoadingButton(false);
+        console.log(err);
+      });
+  }
+
+  const clearOnSumbit = (e) => {
+    setLoadingButton(true);
+    setButtonDisabled(true)
+    e.preventDefault();
+    updatePassword({ ...password, ['currentPassword']: '' });
+    updatePassword({ ...password, ['newPassword']: '' });
+    updatePassword({ ...password, ['conformNewPassword']: '' });
+    setLoadingButton(false);
+    setButtonDisabled(false)
+
+  }
+
   return (
     <div className="mx-2 mx-sm-1">
       <div>
@@ -18,13 +124,28 @@ export default function Updatepassword() {
             </div>
           </div>
           <div className="py-4 px-3">
-              <UpdatePasswordForm placeholdertext="Old Password" />
-              <UpdatePasswordForm placeholdertext="New Password" />
-              <UpdatePasswordForm placeholdertext="Confirm Password" />
-              <div className="mt-2 text-left">
-                  <button className="ui button text-dark fs-7 fw-400 px-5 mx-1 mb-sm-1 px-sm-3">Cancel</button>
-                  <button className="ui button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-sm-1 px-sm-3">Update</button>
-              </div>
+            <UpdatePasswordForm placeholder="Old Password" id="currentPassword" name="currentPassword" value={password.currentPassword} onChange={handleOnChange} />
+            {password.currentPasswordErr && <span className="errorMessage">Please Enter the current Password</span>}
+            <UpdatePasswordForm placeholder="New Password" id="newPassword" name="newPassword" value={password.newPassword} onChange={handleOnChange} />
+            {password.newPasswordErr && <span className="errorMessage">Please Enter the current Password</span>}
+            <UpdatePasswordForm placeholder="Confirm Password" id="conformNewPassword" name="conformNewPassword" value={password.conformNewPassword} onChange={handleOnChange} />
+            {password.conformNewPasswordErr && <span className="errorMessage">Please Enter the current Password</span>}
+
+            <div className="mt-2 text-left">
+              <Button className="ui button text-dark fs-7 fw-400 px-5 mx-1 mb-sm-1 px-sm-3" onClick={clearOnSumbit} disabled={isDisabled || password.currentPassword.length == 0 || password.conformNewPassword.length == 0 || password.newPassword.length == 0}>Cancel</Button>
+              <Button className="ui Button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-sm-1 px-sm-3" disabled={isDisabled || loadingButton || password.currentPassword.length == 0 || password.conformNewPassword.length == 0 || password.newPassword.length == 0} onClick={handleOnSubmit} loading={loadingButton}>Update</Button>
+            </div>
+
+            <ToastContainer />
+            {/* {ErrorMessage.length !== 0 && <Message className="mt-2" compact attached='bottom' warning>
+              {ErrorMessage}
+            </Message>}
+            <Transition.Group animation='fly left' duration='500'> {SuccessMessage.length !== 0 && <Message className="mt-2" compact attached='bottom' success>
+              {SuccessMessage}
+            </Message>}
+            </Transition.Group> */}
+
+
           </div>
         </div>
       </div>

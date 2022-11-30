@@ -1,44 +1,146 @@
-import React, {useState} from "react"
+import React, { useState, useEffect } from "react"
 import { Dropdown, Input } from 'semantic-ui-react';
 import SemanticDatepicker from 'react-semantic-ui-datepickers';
+import 'react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css';
 import countriecodes from '../../../components/CountryCode';
+import instance from '../../../services/instance';
+import request from '../../../services/request';
+import Helper from "../../../helper";
+// import { format } from 'date-fns'
+
+
+let helper = new Helper();
+
 
 export default function Profile() {
-  const [profileImageSrc,setprofileImageSrc]=useState({
-    img:'/assets/images/post-tenant-img.png'
+  const [profileImageSrc, setprofileImageSrc] = useState({
+    img: '/assets/images/post-tenant-img.png'
   })
-  const[contactPhone,SetContactPhone]=useState();
-  const[tenantDetails, setTenantDetails] = useState(true);
-  const[tenantaddress, setTenantAddress] = useState(true);
+  // const [contactPhone, SetContactPhone] = useState();
+  const [isEdit, editTenantDetails] = useState(true);
+  const [isTenantaddress, showTenantAddress] = useState(true);
+
+  const [tenantDetails, setTenantDetails] = useState({
+    ssn: '',
+    firstName: '',
+    userId: '',
+    lastName: '',
+    email: '',
+    birthDate: null,
+    phoneNumber: '',
+    AddressLine1: '',
+    AddressLine2: '',
+    city: '',
+    country: '',
+  });
+
   const EditTenantDetailsHandler = () => {
-    setTenantDetails(false);
+    editTenantDetails(false);
   }
   const EditTenantAddressHandler = () => {
-    setTenantAddress(false);
+    showTenantAddress(false);
   }
 
+  useEffect(() => {
+    fetchTenantDetails();
+  }, []);
 
-  const profileImageUpload=(e)=>{
+
+  function fetchTenantDetails() {
+    let config = {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    };
+
+    let userID = "15a56797-2da9-4650-a92c-edf06c512484"
+    console.log(userID)
+
+
+    // const [html] = document.getElementsByTagName("html")
+    // const lang = html.getAttribute("lang");
+    instance.get(request.get_user_info + '/' + userID, config).then((response) => {
+      const userInfoResponse = response.data;
+      if (typeof userInfoResponse !== 'undefined' && userInfoResponse !== null && userInfoResponse !== '' && userInfoResponse.isSuccess === true) {
+        let data = userInfoResponse.result;
+        localStorage.setItem("UserInfo", JSON.stringify(data));
+        console.log("UserData", data);
+        setTenantDetails(data)
+      } else {
+        editTenantDetails(false)
+        console.log('No records found');
+      }
+    }).catch((err) => {
+      console.log(err);
+    })
+
+  }
+
+  const onChangePersonalInfo = (e) => {
+    console.log(e)
+    // event.preventDefault();
+    e.persist();
+    const { name, value } = e.target
+    setTenantDetails({ ...tenantDetails, [name]: value });
+  }
+
+  const profileImageUpload = (e) => {
     debugger;
     e.preventDefault();
-    let img=e.target.files[0];
+    let img = e.target.files[0];
     if (!img.name.match(/\.(jpg|jpeg|png|svg)$/)) {
-    alert('Please check the your file format,only jpg,jpeg,png,svg formats are supported')
+      alert('Please check the your file format,only jpg,jpeg,png,svg formats are supported')
       return false;
     }
-    if(img.size>	1000000 ){
-      alert('Please make sure the file size is less than 1mb and try again')
+    if (img.size > 1000000) {
+      alert('Please make sure the file size showTenantaddress less than 1mb and try again')
       return false;
     }
-    console.log({img:URL.createObjectURL(img)})
-  if(e.target.files && e.target.files[0]){
-  setprofileImageSrc({img:URL.createObjectURL(img)}); 
+    console.log({ img: URL.createObjectURL(img) })
+    if (e.target.files && e.target.files[0]) {
+      // setprofileImageSrc({ img: URL.createObjectURL(img) });
+    }
   }
-   }
-   const savetenantDetails=(e)=>{
-    e.preventDefault();
-    setTenantDetails(true)
-   }
+
+  function updateTenantInfo() {
+    // setTenantDetails({ ...tenantDetails, type : event.target.value });
+    let config = {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    };
+
+    let userID = "15a56797-2da9-4650-a92c-edf06c512484"
+
+
+    const [html] = document.getElementsByTagName("html")
+    const lang = html.getAttribute("lang");
+
+    tenantDetails['content-language'] = lang;
+
+    delete tenantDetails.email;
+    console.log(tenantDetails)
+    instance.post(request.update_user_info + '/' + userID, tenantDetails, config).then((response) => {
+      console.log(response)
+
+      const userUpdateResponse = response.data.data;
+      console.log(userUpdateResponse)
+      if (userUpdateResponse.isSuccess === true && userUpdateResponse.returnCode === "SUCCESS") {
+        console.log("Hello")
+      }
+    })
+  }
+
+  function handleChange(event, data) {
+    event.preventDefault()
+    console.log(event.target.value);
+    console.log(data.value);
+
+  }
+
+  const SetContactPhone = (e) => {
+    console.log(e);
+  }
 
   return (
     <>
@@ -53,7 +155,7 @@ export default function Profile() {
               </svg>
                 <span className="veritical-align-text-top ml-1">Tenant Details</span></h6>
             </div>
-            {tenantDetails && <div className="col-lg-6 col-md-6 col-sm-6 text-right cursor-pointer" onClick={EditTenantDetailsHandler}>
+            {isEdit && <div className="col-lg-6 col-md-6 col-sm-6 text-right cursor-pointer" onClick={EditTenantDetailsHandler}>
               <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 28.419 28.276">
                 <g id="edit_copy" data-name="edit copy" opacity="0.55">
                   <path id="Path" d="M26.23,14.991a.708.708,0,0,0-.708.708v6.284A2.125,2.125,0,0,1,23.4,24.106H3.539a2.125,2.125,0,0,1-2.123-2.123V3.539A2.126,2.126,0,0,1,3.539,1.416H9.823A.708.708,0,1,0,9.823,0H3.539A3.543,3.543,0,0,0,0,3.539V21.983a3.543,3.543,0,0,0,3.539,3.539H23.4a3.543,3.543,0,0,0,3.539-3.539V15.7A.708.708,0,0,0,26.23,14.991Z" transform="translate(0 2.754)" fill="#393939" />
@@ -63,25 +165,25 @@ export default function Profile() {
             </div>}
           </div>
           <div className="py-4 px-3">
-            {!tenantDetails && <div className="ui form w-100">
+            {!isEdit && <div className="ui form w-100">
               <div className="row reverse-sm">
                 <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                   <div className="field my-3">
                     <label className="text-dark fs-7 fw-500">First Name<span className="error">*</span></label>
-                    <input type="text" />
+                    <input type="text" value={tenantDetails.firstName} name="firstName" onChange={onChangePersonalInfo} />
                   </div>
                   <div className="field my-3">
                     <label className="text-dark fs-7 fw-500">Last Name</label>
-                    <input type="text" />
+                    <input type="text" value={tenantDetails.lastName} name="lastName" onChange={onChangePersonalInfo} />
                   </div>
                 </div>
                 <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                   <div className="edit-profile-img position-relative">
-                    <img src={profileImageSrc.img} className="ui medium circular image object-fit-cover TenantDetailsProfileImage mx-auto" alt="Profile" />
+                    <img src={tenantDetails.photoPath !== null ? tenantDetails.photoPath : '/assets/images/profile_.png'} className="ui medium circular image object-fit-cover TenantDetailsProfileImage mx-auto" alt="Profile" />
                     <div className="edit-icon position-absolute text-center l-18 r-0 t-1">
-                      <label className="cursor-pointer" for='profileImageUpload'>
+                      <label className="cursor-pointer" htmlFor='profileImageUpload'>
                         <img width='50' height='50' className="" src="/assets/images/edit-photo.svg" alt="Edit" />
-                      </label>  
+                      </label>
                       <input id="profileImageUpload" onChange={(e) => profileImageUpload(e)} hidden type='file' />
                     </div>
                   </div>
@@ -91,11 +193,11 @@ export default function Profile() {
                 <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                   <div className="field w-100 datePicker my-3">
                     <label className="text-dark fs-7 fw-500">Date of Birth<span className="error">*</span></label>
-                    <SemanticDatepicker placeholder='Select date' className='w-100' />
+                    <SemanticDatepicker name="birthDate" placeholder='Select date' format="DD-MM-YYYY" value={new Date(tenantDetails.birthDate)} className='w-100' onChange={handleChange} />
                   </div>
                   <div className="field my-3">
                     <label className="text-dark fs-7 fw-500">Phone Number<span className="error">*</span></label>
-                    <Input value={contactPhone} onChange={e => SetContactPhone(e.target.value)} className="noCounterNumber" type="text" placeholder="Enter Mobile Number"
+                    <Input name="phoneNumber" value={tenantDetails.phoneNumber} onChange={e => SetContactPhone(e.target.value)} className="noCounterNumber" type="text" placeholder="Enter Mobile Number"
                       label={<Dropdown defaultValue='+91' search options={countriecodes} />}
                       labelPosition='left' />
                   </div>
@@ -103,69 +205,70 @@ export default function Profile() {
                 <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                   <div className="field my-3">
                     <label className="text-dark fs-7 fw-500">Email<span className="error">*</span></label>
-                    <input type="text" />
+                    <input name="email" type="text" disabled value={tenantDetails.email} onChange={onChangePersonalInfo} />
                   </div>
                   <div className="field my-3">
                     <label className="text-dark fs-7 fw-500">Social Security Number</label>
-                    <input type="text" />
+                    <input type="text" value={tenantDetails.ssn} name="ssn" onChange={e => onChangePersonalInfo(e)} />
                   </div>
                 </div>
               </div>
               <div className="mt-2 text-center">
-                <button className="ui button text-dark fs-7 fw-400 px-5 mx-1 mb-sm-1" onClick={setTenantDetails}>CANCEL</button>
-                <button className="ui button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-sm-1" onClick={(e)=>savetenantDetails(e)}>SAVE</button>
+                <button className="ui button text-dark fs-7 fw-400 px-5 mx-1 mb-sm-1" onClick={editTenantDetails}>CANCEL</button>
+                <button className="ui button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-sm-1" onClick={() => updateTenantInfo(tenantDetails)}>SAVE</button>
               </div>
             </div>}
 
-            {tenantDetails && <div className="row reverse-sm">
+            {isEdit && <div className="row reverse-sm">
               <div className="col-lg-9 col-md-9 col-sm-12">
                 <div className="row">
                   <div className="col-lg-4 col-md-4 col-sm-4">
                     <p className="fs-7 fw-500 text-dark mb-2">Name</p>
                   </div>
                   <div className="col-lg-8 col-md-8 col-sm-8">
-                    <p className="fs-7 mb-2">Peter John</p>
+                    <p className="fs-7 mb-2">{tenantDetails.firstName}</p>
                   </div>
 
                   <div className="col-lg-4 col-md-4 col-sm-4">
                     <p className="fs-7 fw-500 text-dark mb-2">Date of Birth</p>
                   </div>
                   <div className="col-lg-8 col-md-8 col-sm-8">
-                    <p className="fs-7 mb-2">18-08-2022</p>
+                    <p className="fs-7 mb-2">{helper.displayDate(tenantDetails.birthDate)}</p>
                   </div>
 
                   <div className="col-lg-4 col-md-4 col-sm-4">
                     <p className="fs-7 fw-500 text-dark mb-2">Email</p>
                   </div>
                   <div className="col-lg-8 col-md-8 col-sm-8">
-                    <p className="fs-7 mb-2">peterjohn@yopmail.com</p>
+                    <p className="fs-7 mb-2">{tenantDetails.email}</p>
+
                   </div>
 
                   <div className="col-lg-4 col-md-4 col-sm-4">
                     <p className="fs-7 fw-500 text-dark mb-2">Phone Number</p>
                   </div>
                   <div className="col-lg-8 col-md-8 col-sm-8">
-                    <p className="fs-7 mb-2">+47 123456780</p>
+                    <p className="fs-7 mb-2">{tenantDetails.phoneNumber}</p>
                   </div>
 
                   <div className="col-lg-4 col-md-4 col-sm-4">
                     <p className="fs-7 fw-500 text-dark mb-2">Social Security Number</p>
                   </div>
                   <div className="col-lg-8 col-md-8 col-sm-8">
-                    <p className="fs-7 mb-2">12346789090</p>
+                    <p className="fs-7 mb-2">{tenantDetails.ssn}</p>
                   </div>
-
-                  <div className="col-lg-4 col-md-4 col-sm-4">
+                  {/* Need to bind business Companty Resgitration Value */}
+                  {tenantDetails.businessUser && <div><div className="col-lg-4 col-md-4 col-sm-4">
                     <p className="fs-7 fw-500 text-dark">Company Registration Number</p>
                   </div>
-                  <div className="col-lg-8 col-md-8 col-sm-8">
-                    <p className="fs-7">34567890</p>
-                  </div>
+                    <div className="col-lg-8 col-md-8 col-sm-8">
+                      <p className="fs-7">4646464</p>
+                    </div></div>}
                 </div>
               </div>
               <div className="col-lg-3 col-md-3 col-sm-12 mb-2">
                 <div className="post-tenant-img">
-                  <img src={profileImageSrc.img} className="ui medium circular object-fit-cover image TenantDetailsProfileImage mx-auto" alt="Profile" />
+                  <img src={tenantDetails.photoPath !== null ? tenantDetails.photoPath : '/assets/images/profile_.png'} className="ui medium circular object-fit-cover image TenantDetailsProfileImage mx-auto" alt="Profile" />
                 </div>
                 <p className="text-center mt-1"> <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 12.426 18.378">
                   <g id="owner" transform="translate(0)">
@@ -174,7 +277,7 @@ export default function Profile() {
                     <path id="Path_14953" data-name="Path 14953" d="M2077.969-231.344c.167,0,.334-.009.5,0a.622.622,0,0,1,.5.956c-.569.751-.4.909-.334,1.7a4.1,4.1,0,0,0,.069.551,1.054,1.054,0,0,1-.083.643c-.112.277-.21.557-.311.839a.368.368,0,0,1-.371.279.363.363,0,0,1-.371-.276c-.13-.359-.264-.717-.391-1.077a.522.522,0,0,1-.023-.21c.037-.452.074-.905.129-1.356a1.125,1.125,0,0,0-.184-.783c-.055-.085-.115-.167-.168-.254a.647.647,0,0,1,.513-1.011C2077.621-231.355,2077.8-231.344,2077.969-231.344Z" transform="translate(-2071.693 240.273)" fill="#328128" />
                   </g>
                 </svg>
-                  <span className="text-success-dark ml-1 fw-500">Personal User</span></p>
+                  <span className="text-success-dark ml-1 fw-500"> {tenantDetails.businessUser ? "Business User" : "Personal User"}</span></p>
               </div>
             </div>}
           </div>
@@ -194,7 +297,7 @@ export default function Profile() {
               </svg>
                 <span className="veritical-align-text-top ml-1">Address</span></h6>
             </div>
-            {tenantaddress && <div className="col-lg-6 col-md-6 col-sm-6 text-right cursor-pointer" onClick={EditTenantAddressHandler}>
+            {isTenantaddress && <div className="col-lg-6 col-md-6 col-sm-6 text-right cursor-pointer" onClick={EditTenantAddressHandler}>
               <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 28.419 28.276">
                 <g id="edit_copy" data-name="edit copy" opacity="0.55">
                   <path id="Path" d="M26.23,14.991a.708.708,0,0,0-.708.708v6.284A2.125,2.125,0,0,1,23.4,24.106H3.539a2.125,2.125,0,0,1-2.123-2.123V3.539A2.126,2.126,0,0,1,3.539,1.416H9.823A.708.708,0,1,0,9.823,0H3.539A3.543,3.543,0,0,0,0,3.539V21.983a3.543,3.543,0,0,0,3.539,3.539H23.4a3.543,3.543,0,0,0,3.539-3.539V15.7A.708.708,0,0,0,26.23,14.991Z" transform="translate(0 2.754)" fill="#393939" />
@@ -204,7 +307,7 @@ export default function Profile() {
             </div>}
           </div>
           <div className="py-4 px-3">
-            {!tenantaddress && <div className="ui form w-100">
+            {!isTenantaddress && <div className="ui form w-100">
               <div className="row">
                 <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                   <div className="field my-2">
@@ -238,47 +341,47 @@ export default function Profile() {
                 </div>
               </div>
               <div className="mt-2 text-center">
-                <button className="ui button text-dark fs-7 fw-400 px-5 mx-1 mb-sm-1" onClick={setTenantAddress}>CANCEL</button>
+                <button className="ui button text-dark fs-7 fw-400 px-5 mx-1 mb-sm-1" onClick={showTenantAddress}>CANCEL</button>
                 <button className="ui button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-sm-1 ">SAVE</button>
               </div>
             </div>}
 
-            {tenantaddress && <div className="row reverse-sm">
+            {isTenantaddress && <div className="row reverse-sm">
               <div className="col-lg-9 col-md-9 col-sm-12">
                 <div className="row">
                   <div className="col-lg-4 col-md-4 col-sm-4">
                     <p className="fs-7 fw-500 text-dark mb-2">Address Line 1</p>
                   </div>
                   <div className="col-lg-8 col-md-8 col-sm-8">
-                    <p className="fs-7 mb-2">Address Line 1</p>
+                    <p className="fs-7 mb-2">{tenantDetails.addressLineOne}</p>
                   </div>
 
                   <div className="col-lg-4 col-md-4 col-sm-4">
                     <p className="fs-7 fw-500 text-dark mb-2">Address Line 2</p>
                   </div>
                   <div className="col-lg-8 col-md-8 col-sm-8">
-                    <p className="fs-7 mb-2">Dummy Addresss</p>
+                    <p className="fs-7 mb-2">{tenantDetails.addressLineTwo}</p>
                   </div>
 
                   <div className="col-lg-4 col-md-4 col-sm-4">
                     <p className="fs-7 fw-500 text-dark mb-2">City</p>
                   </div>
                   <div className="col-lg-8 col-md-8 col-sm-8">
-                    <p className="fs-7 mb-2">Dummy</p>
+                    <p className="fs-7 mb-2">{tenantDetails.city}</p>
                   </div>
 
                   <div className="col-lg-4 col-md-4 col-sm-4">
                     <p className="fs-7 fw-500 text-dark mb-2">State/Province</p>
                   </div>
                   <div className="col-lg-8 col-md-8 col-sm-8">
-                    <p className="fs-7 mb-2">Dummy</p>
+                    <p className="fs-7 mb-2">{tenantDetails.state}</p>
                   </div>
 
                   <div className="col-lg-4 col-md-4 col-sm-4">
                     <p className="fs-7 fw-500 text-dark">Zip/Postal Code</p>
                   </div>
                   <div className="col-lg-8 col-md-8 col-sm-8">
-                    <p className="fs-7">1234678</p>
+                    <p className="fs-7">{tenantDetails.zipCode}</p>
                   </div>
                 </div>
               </div>

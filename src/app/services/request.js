@@ -6,7 +6,11 @@ const requests = {
     user_login:"v1/user/login",
     forgot_password:"v1/user/password/forgot",
     user_signup :"v1/user/signup",
-    user_search: "v1/unit/type/price"
+    user_search: "v1/unit/type/price",
+    lease_search: "v1/movein/lease",
+    get_user_info: "v1/user",
+    update_user_info: "v1/user/updateprofile",
+    update_user_password: "v1/user/password",
 }
 
 
