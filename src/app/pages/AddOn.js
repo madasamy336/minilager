@@ -459,7 +459,7 @@ export default function AddOn() {
                 </div>)}
               </div>
 
-              <div className={`${typeof addOnsResponse !== 'undefined' && addOnsResponse !== null && addOnsResponse.services !== 'undefined' && addOnsResponse.services !== null && addOnsResponse.length === 0 && `d-none`}`}>
+              <div className={`${typeof addOnsResponse !== 'undefined' && addOnsResponse !== null && addOnsResponse.services !== 'undefined' && addOnsResponse.services == null && `d-none`}`}>
                 <div className='bg-white card-boxshadow px-0 py-2 border-radius-15 mb-3'>
                   <h6 className='text-dark fw-500 fs-6 px-4 py-2 px-sm-2 card-border-bottom'>
                     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 41.477 41.085">
@@ -468,7 +468,7 @@ export default function AddOn() {
                     <span className='veritical-align-text-top ml-1'>Services</span></h6>
 
                   <div className="row services p-3">
-                    {typeof addOnsResponse !== 'undefined' && addOnsResponse !== null && addOnsResponse.services !== 'undefined' && addOnsResponse.services !== null ?
+                    {typeof addOnsResponse !== 'undefined' && addOnsResponse !== null && typeof addOnsResponse.services !== 'undefined' && addOnsResponse.services !== null ?
                       addOnsResponse.services.map((item) => {
                         if (item.isMandatory == true) {
                           servicesArray.indexOf(item.id) === -1 ? servicesArray.push(item.id) : '';
