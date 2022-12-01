@@ -16,6 +16,8 @@ const requests = {
     validate_promocode: "v1/unit/discount/promocode",
     check_addons: "v1/moveIn/rent/rentDetails",
     tenant_details :"v1/user",
+    lease_documents : "/v1/movein/lease/documents/",
+    user_log_out : "/v1/movein/lease/documents"
 }
 
 export default requests; 
