@@ -26,6 +26,7 @@ export default function AddOn() {
   let serviceSessionValue = JSON.parse(sessionStorage.getItem('servicedetail'));
   let VehicleSessionValue = JSON.parse(sessionStorage.getItem('vehicleDetail'));
   let merchandiseSessionvalue = JSON.parse(sessionStorage.getItem('merchandiseItem'));
+  let userid = localStorage.getItem('userid');
   const rentDetails = useSelector(state => state.rentdetail.renDetails);
   const [activePlan, SetactivePlan] = useState('');
   const [addOnsResponse, setAddOnsResponse] = useState(null);
@@ -165,9 +166,14 @@ export default function AddOn() {
       if (vehicleaccordian !== 0) {
         sessionStorage.setItem('vehicleDetail', JSON.stringify(vehicleaccordian));
       }
+      if(userid !== null & typeof userid !== 'undefined'){
+        navigate('/preBooking/TenantDetails')
+      }else{
+        navigate('/preBooking/sign-in')
+      }
 
-      navigate('/preBooking/TenantDetails')
-      // navigate('/preBooking/TenantDetails')
+      
+      //
     }
 
 

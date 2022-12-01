@@ -46,7 +46,8 @@ function App() {
                     <Routes>
                         <Route exact path='/' element={<RentNow />} />
                         <Route exact path='/home' element={<RentNow />} />
-                        <Route path='/login' element={<PostLoginForm />} />
+                        <Route path='/login' element={<PostLoginForm callingfrom="postbooking" />} />
+                        <Route path='/preBooking/sign-in' element={<PostLoginForm callingfrom='prebooking'  />} />
                         <Route path='/forgotpassword' element={<ForgotPassword />} />
                         <Route path='/signup' element={<PostSignupForm />} />
                         <Route path='/preBooking/units' element={<Units />} />
