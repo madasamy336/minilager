@@ -8,7 +8,10 @@ import request from '../services/request';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { fetchLoginSuccess, fetchLoginFailure, fetchLoginRequest } from '../redux/actions/login/loginAction';
-const PostLoginForm = () => {
+const PostLoginForm = (props) => {
+    let localusername = localStorage.getItem('username');
+    let localpassword = localStorage.getItem('password');
+    let userid = localStorage.getItem('userid');
     // const { t } = useTranslation(); 
     // const loading = useSelector(state => state.login.loading);
     // const error = useSelector(state => state.login.error);
@@ -26,20 +29,27 @@ const PostLoginForm = () => {
     })
 
     let { username, password, rememberPassword } = values;
-    let localusername = localStorage.getItem('username');
-    let localpassword = localStorage.getItem('password');
+   
+
+    if (userid !== null && typeof userid !== "undefined" && userid !== '') {
+
+        const navigate = useNavigate();
+        if(props.callingfrom === 'prebooking'){
+            navigate('/preBooking/TenantDetails')
+
+        }else{
+            navigate('/postBooking/Profile');
+        }
+        
+       
+        // setValues({...values,username:username })
+    }
 
     // if (localpassword !== null && typeof localpassword !== "undefined" && localpassword !== '') {
     //     // setValues({...values, password:localpassword })
     //     password = localpassword;
     // }
 
-    if (localusername !== null && typeof localusername !== "undefined" && localusername !== '' && localpassword !== null && typeof localpassword !== "undefined" && localpassword !== "") {
-
-        const navigate = useNavigate();
-        navigate('/postBooking/Profile');
-        // setValues({...values,username:username })
-    }
 
     const validateOne = (e) => {
 
@@ -136,7 +146,13 @@ const PostLoginForm = () => {
                         }
                         let userid = localStorage.getItem('userid');
                         if (userid !== null && typeof userid !== 'undefined' && userid !== '') {
-                            navigate('/postBooking/Profile');
+                            if(props.callingfrom === 'prebooking'){
+                                navigate('/preBooking/TenantDetails')
+
+                            }else{
+                                navigate('/postBooking/Profile');
+                            }
+                           
                         }
                     }
 
@@ -556,7 +572,13 @@ const PostLoginForm = () => {
                             <button className="ui button w-100 fw-100" onClick={e => ValidateSignin(e)}>Sign In</button>
                         </form>
                         <div className="signup-div text-center">
-                            <p>Don't have an account? <Link to={'/signup'}>Signup Now</Link></p>
+                            {
+                                props.callingfrom === 'prebooking'? 
+                                <p>Don't have an account? <Link to={'/preBooking/signup'}>Signup Now</Link></p>: 
+                                <p>Don't have an account? <Link to={'/signup'}>Signup Now</Link></p>
+
+                            }
+                           
                         </div>
                     </div>
                 </div>

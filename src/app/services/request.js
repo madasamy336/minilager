@@ -17,7 +17,7 @@ const requests = {
     check_addons: "v1/moveIn/rent/rentDetails",
     tenant_details :"v1/user",
     lease_documents : "/v1/movein/lease/documents/",
-    user_log_out : "/v1/movein/lease/documents"
+    custom_Fields: "v2/common/custom-fields"
 }
 
 export default requests; 
