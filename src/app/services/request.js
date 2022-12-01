@@ -16,6 +16,7 @@ const requests = {
     validate_promocode: "v1/unit/discount/promocode",
     check_addons: "v1/moveIn/rent/rentDetails",
     tenant_details :"v1/user",
+    custom_Fields: "v2/common/custom-fields"
 }
 
 export default requests; 
