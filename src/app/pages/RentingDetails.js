@@ -5,164 +5,42 @@ import { Dropdown, Modal } from 'semantic-ui-react';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import Pricesummary from '../components/pricesummary/pricesummary';
+import {forwardRef, useImperativeHandle, useRef} from 'react';
 // import { useTranslation } from "react-i18next";
 import instance from '../services/instance';
 import request from '../services/request';
 import Helper from "../helper";
 let helper = new Helper();
 
-let invoiceTypedata;
-let recurringTypedata;
 
+
+
+let customValues;
+let unitid = localStorage.getItem('unitid');
 export default function RentingDetails() {
-
+  const childRef = useRef(null);
   const [invoice, setInvoice] = useState();
+  const [invoiceDefault, setInvoiceDefault] = useState();
   const [recurring, setRecurring] = useState();
-  const [unitInfoDetails, setUnitInfoDetails] = useState();
-  const [invoiceselect, setInvoiceSelect] = useState();
-  const [recurringselect, setRecurringselect] = useState();
-  const [invoicedefaultOpen, setInvoicedefaultopen] = useState();
-  const [movindate, setMovindate] = useState(new Date());
-  const [invoiceState, setinvoiceState] = useState(false);
-  const [PromoDiscount, setPromoDiscount] = useState();
-  const [promoValidate, setPromoValidate] = useState('');
-  const [unitDetailnetAmount, setUnitDetailNetAmount] = useState();
-  const [unitDetailGrossAmount, setUnitDetailGrossAmount] = useState();
-  const [discountVal, setDiscountVal] = useState();
-
-
-  let unitid = localStorage.getItem('unitid');
-  const visibility = 1;
-
-  const movindateOnchange = (e, item) => {
-    setMovindate(item.value);
-  }
-  const invoiceOnchange = (e, items) => {
-    setInvoiceSelect(items.value);
-    unitinfodetails();
-  }
-  const recurringOnchange = (e, item) => {
-    setRecurringselect(item.value);
-    unitinfodetails();
-  }
-
-  const navigate = useNavigate()
-  const [applyDiscountModal, SetApplyDiscountModal] = useState({
-    open: false,
-    dimmer: undefined,
-  })
-
-  const autoApplybtn =(promos)=>{
-    setPromoValidate(promos);
-
-    SetApplyDiscountModal({ open: false })
-  }
-
-  const navigateAddon = (e) => {
-    e.preventDefault();
-    navigate('/preBooking/addOns')
-
-  }
-
-  
-
-  useEffect(() => {
-    unitinfodetails();
-    promocodeRender();
-  }, []);
-
-
-  /**  Validate Promocode Discount Start **/
-
-  
-  
-
-  const applyCoupon = () => {
-
-    let config = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-
-    let validate_Promocodedata;
-
-    validate_Promocodedata = {
-      storageTypeId: "26cd6029-22b2-44b8-a88b-5d4d16af55d8",
-      locationId: "",
-      tenantTypeId: 3,
-      promocode: promoValidate,
-      period: invoiceTypedata,
-      visibility: visibility,
-      additionalMonths: 0
-    }
-
-    instance
-
-      .post(request.validate_promocode, validate_Promocodedata, config)
-      .then((response) => {
-       const validatePromoMessgae = response.data;
-       if (typeof validatePromoMessgae !=="undefined" && validatePromoMessgae !== null && validatePromoMessgae !== "" && validatePromoMessgae.returnMessage ==="SUCCESS") {
-        toast.success('Promo Code Applied Successfully', {
-          position: "top-right",
-          autoClose: 3000,
-          duration:100,
-          hideProgressBar: false,
-          closeOnClick: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-          });
-
-       } else{
-
-        toast.error('Invalid Promo Code', {
-          position: "top-right",
-          autoClose: 3000,
-          duration:100,
-          hideProgressBar: false,
-          closeOnClick: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-          });
-
-       }
-
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-
-
-      unitinfodetails();
-
-
-  }
-
-  /** Validate Promocode Discount End  **/
-
-
-    /** Unit Details Page Start **/
-
-  const unitinfodetails = () => {
-
-    const clientDataconfig = JSON.parse(sessionStorage.getItem("configdata"));
+  const [movinDate, setMovinDate] = useState(new Date());
+  const [customFieldAccess, SetCustomFieldAccess] = useState();
+  const [customFieldsData, setCustomFieldsData] = useState([]);
+  const clientDataconfig = JSON.parse(sessionStorage.getItem("configdata"));
+  const recurringDefaultValue = clientDataconfig.recurringTypes[0].recurringTypeId;
+  const PricesummaryData = () => {
     if (clientDataconfig !== null && typeof clientDataconfig !== "undefined") {
-
       const invoiceperiodval = clientDataconfig.invoicePeriods !== null && typeof clientDataconfig.invoicePeriods !== "undefined" && clientDataconfig.invoicePeriods.length > 0 ?
-
         clientDataconfig.invoicePeriods.map(item => {
-          if (item.preferred) {
-            const defaultseleect = item.invoicePeriodId;
-            invoiceTypedata = item.invoicePeriodId;
-            setInvoicedefaultopen(defaultseleect);
+          if(item.preferred){
+            setInvoiceDefault(item.invoicePeriodId);
           }
           return {
             key: item.invoicePeriodId,
             text: item.invoicePeriod,
             value: item.invoicePeriodId,
+            default:item.preferred,
+
           }
         }) : '';
 
@@ -176,127 +54,103 @@ export default function RentingDetails() {
           }
 
         }) : "";
-
-      recurringTypedata = clientDataconfig.recurringTypes[0].recurringTypeId;
       setInvoice(invoiceperiodval);
       setRecurring(recurringtype);
 
     }
-
-    let config = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-
-    let unitdetailsdata;
-
-    if (invoiceState === false) {
-
-      unitdetailsdata = {
-        units: [
-          {
-            commodity: {
-              services: [],
-              insurance: [],
-              merchandise: []
-            },
-            id: unitid
-          }
-        ],
-        moveInDate: movindate,
-        additionalMonths: 0,
-        recurringPeriodId: invoiceTypedata,
-        recurringTypeId: recurringTypedata,
-        promocode: promoValidate
-      }
-    } else {
-      unitdetailsdata = {
-        units: [
-          {
-            commodity: {
-              services: [],
-              insurance: [],
-              merchandise: []
-            },
-            id: unitid
-          }
-        ],
-        moveInDate: movindate,
-        additionalMonths: 0,
-        recurringPeriodId: invoiceselect,
-        recurringTypeId: recurringselect,
-        promocode: promoValidate
-      }
-    }
-
-    instance
-      .post(request.unit_info_by_id, unitdetailsdata, config)
-      .then((response) => {
-        const unit_infodetails = response.data.result;
-        const net_Amount =  response.data.result.netAmount;
-        const gross_Amount = response.data.result.grossAmount;
-        const discount_Amount = response.data.result.discount;
-        setUnitDetailNetAmount(net_Amount);
-        setUnitDetailGrossAmount(gross_Amount);
-        setDiscountVal(discount_Amount);
-        const units_info = response.data.result.units;
-        if (typeof unit_infodetails !== "undefined" && unit_infodetails !== null && unit_infodetails !== "") {
-          if (typeof units_info !== "undefined" && units_info !== null && units_info.length > 0) {
-            setUnitInfoDetails(units_info);
-          }
-        }
-
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-
   }
 
-   /** Unit Details Page End **/
-
-  
-   /** Promo Code Discount Start */
-
-  const promocodeRender = () => {
-    let config = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-
-    let promodiscountdata;
-
-    promodiscountdata = {
-      tenantTypeId: 3,
-      unitIds: ["69509b5c-9a75-483d-bb54-7ba4ac74545b"],
-      period: invoiceTypedata,
-      visibility: visibility,
-      additionalMonths: 0,
-      discountType: "PROMO",
-      storageTypeId: "26cd6029-22b2-44b8-a88b-5d4d16af55d8",
-      locationId: ""
-    }
-
-    instance
-
-      .post(request.promo_discount, promodiscountdata, config)
-      .then((response) => {
-        const promoDiscounts = response.data.result;
-        setPromoDiscount(promoDiscounts);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-
+  if(typeof invoiceDefault!=="undefined" && invoiceDefault!== null && invoiceDefault !==""){
+    sessionStorage.setItem("invoiceData", (invoiceDefault));
   }
-
-  /** Promo Code Discount End */
-
+  if(typeof recurringDefaultValue!=="undefined" && recurringDefaultValue!== null && recurringDefaultValue !==""){
+    sessionStorage.setItem("recurringData", (recurringDefaultValue));
+  }
  
 
+  const movindateOnchange = (e, item) => {
+    setMovinDate(item.value);
+    childRef.current.unitInfodetailscall();
+  }
+  const invoiceOnchange = (e, item) => {
+    sessionStorage.setItem("invoiceData", (item.value));
+    childRef.current.unitInfodetailscall();
+    
+  }
+  const recurringOnchange = (e, item) => {
+    sessionStorage.setItem("recurringData", (item.value));
+    childRef.current.unitInfodetailscall();
+    
+  }
 
+  const customhandlechange = (e) => {
+    customValues = {
+      value: e.target.value,
+      unitId: e.target.dataset.unitid,
+      fieldId: e.target.dataset.fieldid
+    }
+
+    setCustomFieldsData([...customFieldsData, customValues]);
+
+  }
+
+
+  const customfleldvalidate = (e) => {
+    const fieldId = e.target.dataset.fieldid;
+    const value = e.target.value;
+    const isMandatory = e.target.dataset.required;
+    if (!value && isMandatory === "true") {
+      document.getElementById(fieldId).style.display = 'block';
+    } else if (!value && isMandatory === "false") {
+      document.getElementById(fieldId).style.display = 'none';
+    } else {
+      document.getElementById(fieldId).style.display = 'none';
+    }
+  }
+
+  const navigate = useNavigate()
+  const [applyDiscountModal, SetApplyDiscountModal] = useState({
+    open: false,
+    dimmer: undefined,
+  })
+
+
+  const navigateAddon = (e) => {
+    e.preventDefault();
+    localStorage.setItem("customFieldValues", JSON.stringify(customFieldsData));
+    navigate('/preBooking/addOns')
+
+  }
+
+  useEffect(() => {
+    customFieldsSettings();
+    PricesummaryData();
+  }, []);
+
+  const customFieldsSettings = () => {
+    let config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    instance
+      .get(request.custom_Fields, config)
+      .then((response) => {
+        const custom_fields = response.data;
+        if (typeof custom_fields !== "undefined" && custom_fields !== null && custom_fields !== "") {
+          const custom_field_result = response.data.result;
+          if (typeof custom_field_result !== "undefined" && custom_field_result !== null && custom_field_result !== "") {
+            SetCustomFieldAccess(custom_field_result);
+            localStorage.setItem("CustomFieldsSetting", JSON.stringify(custom_field_result));
+          }
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }
+  
   return (
     <>
       <div>
@@ -332,22 +186,98 @@ export default function RentingDetails() {
                 <div className="ui form px-4 px-sm-2">
                   <div className="field w-100 datePicker my-3">
                     <label className='fw-500 fs-7 mb-2' >Move-In Date</label>
-                    <SemanticDatepicker placeholder='Select date' className='w-100' value={movindate} onChange={movindateOnchange} />
+                    <SemanticDatepicker placeholder='Select date' className='w-100' value={movinDate} defaultValue={new Date(movinDate)}  onChange={movindateOnchange} />
                   </div>
-                  {typeof invoice !== "undefined" && invoice !== null ?
+                  {typeof invoice !== "undefined" && invoice !== null && invoice.length > 0 ?
                     <div className="field w-100  my-3">
                       <label className='fw-500 fs-7 mb-2'>Invoice Period</label>
-                      <Dropdown placeholder='Select Invoice Period' clearable fluid search selection options={invoice} value={invoiceselect} defaultValue={invoicedefaultOpen} onChange={invoiceOnchange} />
+                      <Dropdown placeholder='Select Invoice Period' clearable fluid search selection options={invoice} value={invoice.value} defaultValue={invoiceDefault}  onChange={invoiceOnchange} />
                     </div> : ""}
-                  {typeof recurring !== "undefined" && recurring !== null ?
+                  {typeof recurring !== "undefined" && recurring !== null && recurring.length > 0 ?
                     <div className="field w-100  my-3">
                       <label className='fw-500 fs-7 mb-2'>Invoice Recurring</label>
-                      <Dropdown placeholder='Select Invoice Recurring' clearable fluid search selection options={recurring} value={recurringselect} defaultValue={recurring[0].value} onChange={recurringOnchange} />
+                      <Dropdown placeholder='Select Invoice Recurring' clearable fluid search selection options={recurring} value={recurring.value} defaultValue={recurringDefaultValue} onChange={recurringOnchange} />
                     </div> : ""}
                   <div className="field w-100 datePicker my-3">
                     <label className='fw-500 fs-7 mb-2' >Desired Move Out date</label>
                     <SemanticDatepicker placeholder='Select date' className='w-100' />
                   </div>
+
+                  {typeof customFieldAccess !== "undefined" && customFieldAccess !== null && customFieldAccess !== "" && customFieldAccess.length > 0 ?
+                    customFieldAccess.map((item, index) => {
+                      if (item.matadata.displayOn === "Unit specific details" && item.matadata.type === "textbox") {
+
+                        return <div key={item.fieldId} className="field w-100 my-2 ">
+                          <label className='fw-500 fs-7 mb-2'>{item.fieldName}
+                          </label>
+                          <input type='text' placeholder={item.fieldName} value={customFieldsData.forEach((data) => {
+                            if (data.fieldId === item.fieldId) {
+                              return data.value;
+                            }
+                          })} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
+                          <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
+                        </div>
+
+                      }
+
+                      // else if (item.matadata.displayOn === "Unit specific details" && item.matadata.type === "date") {
+
+                      //   return <div key={item.fieldId} className='row'>
+                      //     <div className="col-12">
+                      //       <div className="field w-100 datePicker my-2">
+                      //         <label className='fw-500 fs-7 mb-2'>{item.fieldName}</label>
+                      //         <SemanticDatepicker placeholder={item.fieldName} className='w-100' value={customFieldsAllvalues.value}  data-fieldId ={item.fieldId} data-unitId ={unitid} onChange={(e) => customhandlechange(e)} />
+                      //       </div>
+                      //     </div>
+                      //   </div>
+
+                      // } 
+
+                      // else if (item.matadata.displayOn === "Unit specific details" && item.matadata.type === "checkboxes") {
+                      //   return <div key={item.fieldId} className="col-12  col-md-6 my-2">
+                      //     <span>{item.fieldName}
+                      //       <span className="mx-2">
+                      //         <input className="mr-1" type="checkbox" onChange={(e) => customhandlechange(e)} />
+                      //         <label>{item.options[0].option}</label>
+                      //       </span>
+                      //       <span>
+                      //         <input className="mr-1" type="checkbox"  onChange={(e) => customhandlechange(e)} />
+                      //         <label>{item.options[1].option}</label>
+                      //       </span>
+                      //     </span>
+                      //   </div>
+                      // } 
+
+                      // else if (item.matadata.displayOn === "Unit specific details" && item.matadata.type === "textarea") {
+
+                      //   return <div key={item.fieldId} className='row'>
+                      //     <div className="col-12">
+                      //       <div className="field w-100 my-2">
+                      //         <label className='fw-500 fs-7 mb-2'>{item.fieldName}</label>
+                      //         <textarea placeholder={item.fieldName} rows="3" value={customFieldsAllvalues.value}  data-fieldId ={item.fieldId} data-unitId ={unitid} onChange={(e) => customhandlechange(e)}></textarea>
+                      //       </div>
+                      //     </div>
+                      //   </div>
+                      // } 
+
+
+                      // else if(item.matadata.displayOn === "Unit specific details" && item.matadata.type === "checkbox"){
+
+                      //   return <div key={item.fieldId} className='row mt-2'>    
+                      //   <div className="col-12">
+                      //   <span>
+                      //     <span className="mx-0">
+                      //       <input className="mr-1" type="checkbox" />
+                      //       <label>{item.fieldName}</label>
+                      //     </span>
+                      //   </span>
+                      // </div>
+                      // </div>
+
+                      // }
+
+                    }) : ''}
+
                 </div>
               </div>
 
@@ -355,69 +285,7 @@ export default function RentingDetails() {
 
             <ToastContainer />
 
-            {typeof unitInfoDetails !== "undefined" && unitInfoDetails !== null && unitInfoDetails.length > 0 ?
-              unitInfoDetails.map((item) => {
-                return (<div key={item.unitInfo.id} className='col-12 col-md-5 pl-1 pl-sm-0 mb-3'>
-                  <div className='bg-white px-0 py-2 border-radius-15 border-top-success-4 card-boxshadow'>
-                    <h6 className='text-success-dark fw-600 fs-6 px-4 pt-2 mb-1  px-sm-2'>Invoice Details</h6>
-                    <p className='px-4 mb-2 px-sm-2 fw-400 text-light-gray'>Please see the breakdown below</p>
-                    <div className='px-4  px-sm-2'>
-                      <div className="py-2 card-border-secondary border-radius-10 mb-2">
-                        <div className="content">
-                          <p className='text-success-dark mb-1 fw-600 fs-6 px-1'>{item.unitInfo.storageType.name} - {item.unitInfo.unitNumber} ({item.unitInfo.unitMeasurement} {helper.measurementDisplayFormat(item.unitInfo.measurementType)}) </p>
-                          <div className="text-dark fw-500 mb-2 px-1">Payment Period: ({item.estimation.startsOn} to {item.estimation.endsOn})</div>
-                          <div className='mb-2 d-flex px-1 justify-content-between text-light-gray fw-500'>
-                            <span>Rent for the payment period</span><span>{helper.displayCurrency(item.estimation.rentAmount)}</span>
-                          </div>
-                          <div className='mb-2 d-flex px-1 justify-content-between text-light-gray fw-500'>
-                            <span>Tax {(helper.displayPercent(item.unitInfo.taxPercentage))}</span><span >{helper.displayCurrency(item.estimation.taxAmount)}</span>
-                          </div>
-                          <div className='mb-2 d-flex px-1 justify-content-between text-light-gray fw-500'>
-                            <span>Total rent for the payment period</span><span >{helper.displayCurrency(item.estimation.netAmount)}</span>
-                          </div>
-                          <div className='mb-2 d-flex px-1 justify-content-between text-light-gray fw-500'>
-                            <span>Total Due</span><span >{helper.displayCurrency(item.estimation.grossAmount)}</span>
-                          </div>
-                          <p></p>
-                          <div className="field w-100 px-1 mt-3 mb-2">
-                            <label className='fs-6 fw-500'>Promo Code</label>
-                            <div className='row mt-1'>
-                              <div className='col-9 ui input'>
-                                <input placeholder='Enter the code' className='border-bottom-only border-radius-0' value={promoValidate} onChange={e => setPromoValidate(e.target.value)} />
-                              </div>
-                              <div className='col-3 d-flex align-items-end justify-content-center'>
-                                <button className='ui button bg-success-dark fs-8 fw-400 text-white py-1 px-2' onClick={applyCoupon}>Apply</button>
-                              </div>
-                            </div>
-                          </div>
-                          <p className='text-success mb-3 px-1'>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 22 22.938">
-                              <g id="offer" transform="translate(-0.012 -0.021)">
-                                <path id="Path_16041" data-name="Path 16041" d="M11.235,22.959h-.448A2.634,2.634,0,0,1,9.309,22.1c-.338-.348-.7-.674-1.044-1.014a.752.752,0,0,0-.674-.22c-.568.083-1.138.159-1.706.247A2,2,0,0,1,3.47,19.438q-.17-.844-.3-1.7a.893.893,0,0,0-.521-.725c-.507-.252-1.006-.523-1.5-.793a2,2,0,0,1-.9-2.763c.25-.525.5-1.048.768-1.566a.834.834,0,0,0,0-.811C.754,10.572.5,10.055.256,9.537a2.008,2.008,0,0,1,.915-2.793c.506-.272,1.011-.545,1.523-.805a.832.832,0,0,0,.472-.66q.133-.828.283-1.653A2,2,0,0,1,5.8,1.864c.571.065,1.139.151,1.706.244A.844.844,0,0,0,8.3,1.863c.411-.412.834-.814,1.255-1.216a2,2,0,0,1,2.906,0q.648.619,1.288,1.246a.772.772,0,0,0,.695.224c.568-.084,1.137-.163,1.705-.249a2,2,0,0,1,2.4,1.669c.116.569.212,1.144.3,1.719a.864.864,0,0,0,.495.693c.5.25.99.521,1.483.784a2.013,2.013,0,0,1,.919,2.842c-.241.5-.478.995-.73,1.485a.865.865,0,0,0,0,.852c.261.511.511,1.028.758,1.546a2,2,0,0,1-.9,2.764c-.511.278-1.024.553-1.543.815a.834.834,0,0,0-.476.657c-.089.552-.185,1.1-.283,1.653A2.009,2.009,0,0,1,16.2,21.115c-.57-.07-1.139-.153-1.706-.245a.827.827,0,0,0-.774.242c-.332.334-.684.646-1.011.984a2.631,2.631,0,0,1-1.477.862Zm4.851-15.8a.739.739,0,0,0-.72-.693.759.759,0,0,0-.541.275L6.258,15.307a1.225,1.225,0,0,0-.149.166.658.658,0,0,0,.525,1.038.793.793,0,0,0,.6-.306q3.775-3.778,7.552-7.553c.338-.338.684-.667,1.009-1.017a2.8,2.8,0,0,0,.295-.476ZM13.65,12.6A2.423,2.423,0,1,0,16.079,15,2.42,2.42,0,0,0,13.65,12.6ZM8.372,10.382A2.424,2.424,0,1,0,5.944,7.974a2.424,2.424,0,0,0,2.429,2.408Z" transform="translate(0 0)" fill="#67be5c" />
-                                <path id="Path_16042" data-name="Path 16042" d="M224.734,249.857a1.093,1.093,0,0,1-1.106-1.082,1.1,1.1,0,1,1,2.2-.015A1.1,1.1,0,0,1,224.734,249.857Z" transform="translate(-211.069 -233.745)" fill="#67be5c" />
-                                <path id="Path_16043" data-name="Path 16043" d="M131.451,123.107a1.1,1.1,0,1,1-2.2.006,1.1,1.1,0,0,1,2.2-.006Z" transform="translate(-121.987 -115.154)" fill="#67be5c" />
-                              </g>
-                            </svg>
-                            <span className='veritical-align-text-bottom ml-1 cursor-pointer' onClick={() => SetApplyDiscountModal({ open: true, dimmer: 'blurring' })}>Use Promocode</span></p>
-                            <div className='mb-2 d-flex px-1 justify-content-between text-light-gray fw-500'>
-                            <span>Net Amount</span><span >{helper.displayCurrency(unitDetailnetAmount)}</span>
-                          </div>
-                        
-                        {discountVal > 0 ? (
-                          <div className='mb-2 d-flex px-1 justify-content-between text-light-gray fw-500'>
-                            <span>Discount</span><span >{helper.displayCurrency(discountVal)}</span>
-                          </div>) : "" }
-
-                          <div className='fw-700 px-1 d-flex justify-content-between'>
-                            <span>Total</span><span >{helper.displayCurrency(unitDetailGrossAmount)}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>);
-
-              }) : ""}
+            <Pricesummary ref={childRef} />
 
           </div>
           <div className='row'>
@@ -428,40 +296,6 @@ export default function RentingDetails() {
           </div>
         </div>
       </div>
-
-      <Modal
-        dimmer={applyDiscountModal.dimmer}
-        open={applyDiscountModal.open}
-        onClose={() => SetApplyDiscountModal({ open: false })} >
-        <Modal.Header className='bg-success-dark text-white text-center fs-6 py-2 fw-400 position-relative'>PROMO CODES
-
-          <svg onClick={() => SetApplyDiscountModal({ open: false })} className='r-3 cursor-pointer position-absolute' xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 17.473 17.47">
-            <path id="wrong-5" d="M978.609-438.353l-2.052-2.043-4.37-4.366a1.33,1.33,0,0,1-.4-1.425,1.3,1.3,0,0,1,.833-.843,1.3,1.3,0,0,1,1.171.183,3.019,3.019,0,0,1,.353.321q3.009,3,6.009,6.01c.088.088.159.193.254.309.127-.118.217-.2.3-.281l6.156-6.156a1.332,1.332,0,0,1,1.325-.431,1.3,1.3,0,0,1,.927.828,1.3,1.3,0,0,1-.188,1.228,3.412,3.412,0,0,1-.325.35q-3,3.009-6.011,6.009a3.233,3.233,0,0,1-.317.244c.132.14.213.23.3.316q3.052,3.053,6.108,6.1a1.36,1.36,0,0,1,.441,1.387,1.305,1.305,0,0,1-2.205.564c-.59-.568-1.163-1.157-1.74-1.736l-4.487-4.491a2.068,2.068,0,0,1-.183-.248l-.142-.051a1.52,1.52,0,0,1-.191.325q-3.047,3.059-6.1,6.111a1.341,1.341,0,0,1-1.45.419,1.3,1.3,0,0,1-.851-.866,1.3,1.3,0,0,1,.235-1.19,3.215,3.215,0,0,1,.257-.274l6.034-6.033C978.386-438.167,978.484-438.245,978.609-438.353Z" transform="translate(-971.716 447.116)" fill="#fff" />
-          </svg>
-
-
-        </Modal.Header>
-        <Modal.Content className='mh-400 overflow-y-auto'>
-          <div className='row'>
-            {typeof PromoDiscount !== "undefined" && PromoDiscount !== null && PromoDiscount.length > 0 ?
-              PromoDiscount.map((item) => {
-                return <div key={item.id} className='col-12 col-md-6 mb-3 px-1'>
-                  <div className='card-border-secondary-dashed p-2 border-radius-10'>
-                    <div className='row'>
-                      <div className='col-sm-12 col-md-9 mb-1'>
-                        <h5 className='fw-600 mb-1'>{item.name}</h5>
-                        <p className='fs-7'>{item.description}</p>
-                      </div>
-                      <div className='col-sm-12 col-md-3 d-flex align-items-center justify-content-center'>
-                        <button className="ui button text-success bg-white border-success-1  fs-7 fw-400 py-1 px-3" onClick={()=>autoApplybtn(item.promotionalDiscount.promoCode)}>Add</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              }) : ""}
-          </div>
-        </Modal.Content>
-      </Modal>
     </>
   )
 }

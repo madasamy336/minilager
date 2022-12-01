@@ -47,7 +47,7 @@ export default function MyLeases() {
     <Menu secondary className="myLeaseUnitMenu overflow-x-auto pb-1">
       {
         ['#18b','#19A','#20C','#21A','30A','22S','24C','25N','26M'].map((unitnumber)=>(
-          <Menu.Item className="py-1 px-4"
+          <Menu.Item key={unitnumber} className="py-1 px-4"
           name={unitnumber}
           active={activeUnit === unitnumber}
           onClick={()=>SetActiveUnit(unitnumber)}
