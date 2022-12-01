@@ -572,7 +572,13 @@ const PostLoginForm = (props) => {
                             <button className="ui button w-100 fw-100" onClick={e => ValidateSignin(e)}>Sign In</button>
                         </form>
                         <div className="signup-div text-center">
-                            <p>Don't have an account? <Link to={'/signup'}>Signup Now</Link></p>
+                            {
+                                props.callingfrom === 'prebooking'? 
+                                <p>Don't have an account? <Link to={'/preBooking/signup'}>Signup Now</Link></p>: 
+                                <p>Don't have an account? <Link to={'/signup'}>Signup Now</Link></p>
+
+                            }
+                           
                         </div>
                     </div>
                 </div>

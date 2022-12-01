@@ -49,7 +49,8 @@ function App() {
                         <Route path='/login' element={<PostLoginForm callingfrom="postbooking" />} />
                         <Route path='/preBooking/sign-in' element={<PostLoginForm callingfrom='prebooking'  />} />
                         <Route path='/forgotpassword' element={<ForgotPassword />} />
-                        <Route path='/signup' element={<PostSignupForm />} />
+                        <Route path='/signup' element={<PostSignupForm  callingfrom ="postbooking"/>} />
+                        <Route path='/preBooking/signup' element={<PostSignupForm callingfrom ="prebooking" />} />
                         <Route path='/preBooking/units' element={<Units />} />
                         <Route path='/preBooking/rentingDetails' element={<RentingDetails />} />
                         <Route path='/preBooking/addOns' element={<AddOn />} />
