@@ -52,14 +52,10 @@ export default function Profile() {
         "Content-Type": "application/json"
       }
     };
-
-    let userID = "15a56797-2da9-4650-a92c-edf06c512484"
-    console.log(userID)
-
-
-    // const [html] = document.getElementsByTagName("html")
-    // const lang = html.getAttribute("lang");
-    instance.get(request.get_user_info + '/' + userID, config).then((response) => {
+    let userId = localStorage.getItem('userid');
+    const [html] = document.getElementsByTagName("html")
+    const lang = html.getAttribute("lang");
+    instance.get(request.get_user_info + '/' + userId, config).then((response) => {
       const userInfoResponse = response.data;
       if (typeof userInfoResponse !== 'undefined' && userInfoResponse !== null && userInfoResponse !== '' && userInfoResponse.isSuccess === true) {
         let data = userInfoResponse.result;
@@ -110,17 +106,14 @@ export default function Profile() {
       }
     };
 
-    let userID = "15a56797-2da9-4650-a92c-edf06c512484"
-
-
+    let userid = localStorage.getItem('userid');
     const [html] = document.getElementsByTagName("html")
     const lang = html.getAttribute("lang");
-
     tenantDetails['content-language'] = lang;
 
     delete tenantDetails.email;
     console.log(tenantDetails)
-    instance.post(request.update_user_info + '/' + userID, tenantDetails, config).then((response) => {
+    instance.post(request.update_user_info + '/' + userid, tenantDetails, config).then((response) => {
       console.log(response)
 
       const userUpdateResponse = response.data.data;

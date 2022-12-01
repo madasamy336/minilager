@@ -1,62 +1,69 @@
 import React from "react";
-import { NavLink } from 'react-router-dom'
+import { Navigate, NavLink } from 'react-router-dom';
+
 import {
   Menu,
   Sidebar,
 } from 'semantic-ui-react'
 export default function SidebarPostBooking(props) {
 
-  return (
-   <>    
-          <Sidebar id='postBookingSidebar' className={`pt-3 ${props.width<980 ? 't-9':'t-10'}`}
-            as={Menu}
-            animation={props.width>980 ?'push': 'overlay'}
-            // icon='labeled'
-            inverted
-            onHide={() => props.showSidebar(false)}
-            vertical
-            visible={props.width>980 ? true: 
-              props.sidebar 
 
-            }
-          >
-            {
-               props.width <980 &&
-            <div className='item disablBefore  position-relative p-0'>
-            <svg onClick={()=>props.showSidebar(false)} className='r-2 t-n1 cursor-pointer position-absolute' xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 17.473 17.47">
-              <path id="wrong-5" d="M978.609-438.353l-2.052-2.043-4.37-4.366a1.33,1.33,0,0,1-.4-1.425,1.3,1.3,0,0,1,.833-.843,1.3,1.3,0,0,1,1.171.183,3.019,3.019,0,0,1,.353.321q3.009,3,6.009,6.01c.088.088.159.193.254.309.127-.118.217-.2.3-.281l6.156-6.156a1.332,1.332,0,0,1,1.325-.431,1.3,1.3,0,0,1,.927.828,1.3,1.3,0,0,1-.188,1.228,3.412,3.412,0,0,1-.325.35q-3,3.009-6.011,6.009a3.233,3.233,0,0,1-.317.244c.132.14.213.23.3.316q3.052,3.053,6.108,6.1a1.36,1.36,0,0,1,.441,1.387,1.305,1.305,0,0,1-2.205.564c-.59-.568-1.163-1.157-1.74-1.736l-4.487-4.491a2.068,2.068,0,0,1-.183-.248l-.142-.051a1.52,1.52,0,0,1-.191.325q-3.047,3.059-6.1,6.111a1.341,1.341,0,0,1-1.45.419,1.3,1.3,0,0,1-.851-.866,1.3,1.3,0,0,1,.235-1.19,3.215,3.215,0,0,1,.257-.274l6.034-6.033C978.386-438.167,978.484-438.245,978.609-438.353Z" transform="translate(-971.716 447.116)" fill="#fff"/>
-           </svg>
-            </div>
-            }
-  
-            <NavLink to={'/postBooking/Profile'} className='item disablBefore fs-7 my-1' >
-            <svg className='mr-1' height='12' width='12'  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18.023 21.404">
-                <g fill="none" className='strokeSvg' stroke="#fff"strokeWidth="1" data-name="Group 12" transform="translate(.5 .5)" >
-                  <path d="M4.908 8.389a4.755 4.755 0 01-1.44-3.474 4.753 4.753 0 011.44-3.475A4.753 4.753 0 018.383 0a4.758 4.758 0 013.474 1.439 4.756 4.756 0 011.44 3.475 4.755 4.755 0 01-1.44 3.475 4.752 4.752 0 01-3.474 1.439 4.758 4.758 0 01-3.475-1.439z"></path>
-                  <path d="M3.6 20.404a3.623 3.623 0 01-2.594-.948A3.39 3.39 0 010 16.895c0-.41.014-.816.041-1.205a12.144 12.144 0 01.165-1.29 10.232 10.232 0 01.318-1.3 6.369 6.369 0 01.533-1.209 4.529 4.529 0 01.8-1.047 3.534 3.534 0 011.157-.721 3.974 3.974 0 011.473-.267 1.5 1.5 0 01.8.339c.243.158.523.339.832.536a4.755 4.755 0 001.076.474 4.293 4.293 0 001.317.213 4.285 4.285 0 001.316-.212 4.747 4.747 0 001.072-.475c.313-.2.593-.38.832-.536a1.494 1.494 0 01.8-.339 3.981 3.981 0 011.474.267 3.531 3.531 0 011.154.725 4.55 4.55 0 01.8 1.047 6.443 6.443 0 01.54 1.209 10.1 10.1 0 01.317 1.3 12.206 12.206 0 01.165 1.289c.028.389.041.794.041 1.205a3.387 3.387 0 01-1.006 2.558 3.623 3.623 0 01-2.593.946z"
-                    data-name="Shape"
-                  ></path>
-                </g>
-              </svg>
-             Profile
-            </NavLink>
-            <NavLink to={'/postBooking/myLeases'}  className='item disablBefore fs-7 my-1 '>
-            <svg  className='mr-1' height='12' width='12' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 21.754 21.751">
-              <g fill="#fff"><path d="M15.847 0a3.476 3.476 0 01.538.162A1.656 1.656 0 0117.4 1.707c.018 1.183.005 2.367 0 3.551a.208.208 0 01-.029.113q-.616.882-1.236 1.761a.234.234 0 01-.04.03v-.128-4.405a1.3 1.3 0 00-1.111-1.309 1.394 1.394 0 00-.232-.013H2.645a1.3 1.3 0 00-1.338 1.337v16.457a1.3 1.3 0 001.343 1.343h12.1a1.3 1.3 0 001.348-1.349v-4.638a.374.374 0 01.064-.2c.4-.58.81-1.157 1.229-1.753 0 .045.01.07.01.1v7.424a1.729 1.729 0 01-1.732 1.728H1.742A1.732 1.732 0 01.02 20.27.665.665 0 000 20.2V1.554c.007-.028.016-.054.021-.084A1.72 1.72 0 011.232.076c.1-.035.214-.052.321-.076z"
-                  data-name="Path 16033"
-                ></path>
-                <path d="M514.857 212.77l2.377 1.665-7.266 10.373-2.377-1.664 7.266-10.374zm-.083 1.714l-5.579 7.962.2.139 5.579-7.962-.2-.14zm-4.65 8.6l5.565-7.944-.189-.14-5.565 7.944z" data-name="Path 16034"transform="translate(-496.313 -208.043)" ></path>
-                <path  d="M137.15 318.565v-1.025h11.306v1.025z"  data-name="Path 16035" transform="translate(-134.103 -310.485)" ></path>
-                <path d="M137.25 195.236v-1.026h11.3v1.026z"data-name="Path 16036"  transform="translate(-134.201 -189.895)" ></path>
-                <path d="M148.534 440.81c-.242.344-.473.673-.706 1a.133.133 0 01-.074.036.333.333 0 01-.077 0H137.32v-1.036h11.214z"  data-name="Path 16037" transform="translate(-134.269 -431.017)" ></path>
-                <path  d="M167.835 687.912a1.653 1.653 0 11-1.64-1.653 1.657 1.657 0 011.64 1.653z"  data-name="Path 16038"transform="translate(-160.874 -671.013)"></path>
-                <path d="M846.281 157.177l-2.37-1.659c.017-.029.03-.054.046-.078.148-.212.293-.426.446-.635a.72.72 0 01.987-.186c.422.28.836.571 1.245.87a.68.68 0 01.172.922c-.161.26-.345.506-.525.766z"  data-name="Path 16039" transform="translate(-825.161 -151.066)"></path>
-                <path d="M499.98 693.212v-2.552l2.391 1.672-2.391.88z" data-name="Path 16040" transform="translate(-488.872 -675.316)"></path>
-              </g>
-           </svg>
-            My Leases
-            </NavLink>
-            <NavLink to={'/postBooking/myInvoices'}  className='item disablBefore fs-7 my-1'>
+  function logout() {
+    localStorage.clear();
+    <Navigate to="/login" />
+  }
+
+  return (
+    <>
+      <Sidebar id='postBookingSidebar' className={`pt-3 ${props.width < 980 ? 't-9' : 't-10'}`}
+        as={Menu}
+        animation={props.width > 980 ? 'push' : 'overlay'}
+        // icon='labeled'
+        inverted
+        onHide={() => props.showSidebar(false)}
+        vertical
+        visible={props.width > 980 ? true :
+          props.sidebar
+
+        }
+      >
+        {
+          props.width < 980 &&
+          <div className='item disablBefore  position-relative p-0'>
+            <svg onClick={() => props.showSidebar(false)} className='r-2 t-n1 cursor-pointer position-absolute' xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 17.473 17.47">
+              <path id="wrong-5" d="M978.609-438.353l-2.052-2.043-4.37-4.366a1.33,1.33,0,0,1-.4-1.425,1.3,1.3,0,0,1,.833-.843,1.3,1.3,0,0,1,1.171.183,3.019,3.019,0,0,1,.353.321q3.009,3,6.009,6.01c.088.088.159.193.254.309.127-.118.217-.2.3-.281l6.156-6.156a1.332,1.332,0,0,1,1.325-.431,1.3,1.3,0,0,1,.927.828,1.3,1.3,0,0,1-.188,1.228,3.412,3.412,0,0,1-.325.35q-3,3.009-6.011,6.009a3.233,3.233,0,0,1-.317.244c.132.14.213.23.3.316q3.052,3.053,6.108,6.1a1.36,1.36,0,0,1,.441,1.387,1.305,1.305,0,0,1-2.205.564c-.59-.568-1.163-1.157-1.74-1.736l-4.487-4.491a2.068,2.068,0,0,1-.183-.248l-.142-.051a1.52,1.52,0,0,1-.191.325q-3.047,3.059-6.1,6.111a1.341,1.341,0,0,1-1.45.419,1.3,1.3,0,0,1-.851-.866,1.3,1.3,0,0,1,.235-1.19,3.215,3.215,0,0,1,.257-.274l6.034-6.033C978.386-438.167,978.484-438.245,978.609-438.353Z" transform="translate(-971.716 447.116)" fill="#fff" />
+            </svg>
+          </div>
+        }
+
+        <NavLink to={'/postBooking/Profile'} className='item disablBefore fs-7 my-1' >
+          <svg className='mr-1' height='12' width='12' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18.023 21.404">
+            <g fill="none" className='strokeSvg' stroke="#fff" strokeWidth="1" data-name="Group 12" transform="translate(.5 .5)" >
+              <path d="M4.908 8.389a4.755 4.755 0 01-1.44-3.474 4.753 4.753 0 011.44-3.475A4.753 4.753 0 018.383 0a4.758 4.758 0 013.474 1.439 4.756 4.756 0 011.44 3.475 4.755 4.755 0 01-1.44 3.475 4.752 4.752 0 01-3.474 1.439 4.758 4.758 0 01-3.475-1.439z"></path>
+              <path d="M3.6 20.404a3.623 3.623 0 01-2.594-.948A3.39 3.39 0 010 16.895c0-.41.014-.816.041-1.205a12.144 12.144 0 01.165-1.29 10.232 10.232 0 01.318-1.3 6.369 6.369 0 01.533-1.209 4.529 4.529 0 01.8-1.047 3.534 3.534 0 011.157-.721 3.974 3.974 0 011.473-.267 1.5 1.5 0 01.8.339c.243.158.523.339.832.536a4.755 4.755 0 001.076.474 4.293 4.293 0 001.317.213 4.285 4.285 0 001.316-.212 4.747 4.747 0 001.072-.475c.313-.2.593-.38.832-.536a1.494 1.494 0 01.8-.339 3.981 3.981 0 011.474.267 3.531 3.531 0 011.154.725 4.55 4.55 0 01.8 1.047 6.443 6.443 0 01.54 1.209 10.1 10.1 0 01.317 1.3 12.206 12.206 0 01.165 1.289c.028.389.041.794.041 1.205a3.387 3.387 0 01-1.006 2.558 3.623 3.623 0 01-2.593.946z"
+                data-name="Shape"
+              ></path>
+            </g>
+          </svg>
+          Profile
+        </NavLink>
+        <NavLink to={'/postBooking/myLeases'} className='item disablBefore fs-7 my-1 '>
+          <svg className='mr-1' height='12' width='12' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 21.754 21.751">
+            <g fill="#fff"><path d="M15.847 0a3.476 3.476 0 01.538.162A1.656 1.656 0 0117.4 1.707c.018 1.183.005 2.367 0 3.551a.208.208 0 01-.029.113q-.616.882-1.236 1.761a.234.234 0 01-.04.03v-.128-4.405a1.3 1.3 0 00-1.111-1.309 1.394 1.394 0 00-.232-.013H2.645a1.3 1.3 0 00-1.338 1.337v16.457a1.3 1.3 0 001.343 1.343h12.1a1.3 1.3 0 001.348-1.349v-4.638a.374.374 0 01.064-.2c.4-.58.81-1.157 1.229-1.753 0 .045.01.07.01.1v7.424a1.729 1.729 0 01-1.732 1.728H1.742A1.732 1.732 0 01.02 20.27.665.665 0 000 20.2V1.554c.007-.028.016-.054.021-.084A1.72 1.72 0 011.232.076c.1-.035.214-.052.321-.076z"
+              data-name="Path 16033"
+            ></path>
+              <path d="M514.857 212.77l2.377 1.665-7.266 10.373-2.377-1.664 7.266-10.374zm-.083 1.714l-5.579 7.962.2.139 5.579-7.962-.2-.14zm-4.65 8.6l5.565-7.944-.189-.14-5.565 7.944z" data-name="Path 16034" transform="translate(-496.313 -208.043)" ></path>
+              <path d="M137.15 318.565v-1.025h11.306v1.025z" data-name="Path 16035" transform="translate(-134.103 -310.485)" ></path>
+              <path d="M137.25 195.236v-1.026h11.3v1.026z" data-name="Path 16036" transform="translate(-134.201 -189.895)" ></path>
+              <path d="M148.534 440.81c-.242.344-.473.673-.706 1a.133.133 0 01-.074.036.333.333 0 01-.077 0H137.32v-1.036h11.214z" data-name="Path 16037" transform="translate(-134.269 -431.017)" ></path>
+              <path d="M167.835 687.912a1.653 1.653 0 11-1.64-1.653 1.657 1.657 0 011.64 1.653z" data-name="Path 16038" transform="translate(-160.874 -671.013)"></path>
+              <path d="M846.281 157.177l-2.37-1.659c.017-.029.03-.054.046-.078.148-.212.293-.426.446-.635a.72.72 0 01.987-.186c.422.28.836.571 1.245.87a.68.68 0 01.172.922c-.161.26-.345.506-.525.766z" data-name="Path 16039" transform="translate(-825.161 -151.066)"></path>
+              <path d="M499.98 693.212v-2.552l2.391 1.672-2.391.88z" data-name="Path 16040" transform="translate(-488.872 -675.316)"></path>
+            </g>
+          </svg>
+          My Leases
+        </NavLink>
+        <NavLink to={'/postBooking/myInvoices'} className='item disablBefore fs-7 my-1'>
           <svg className='mr-1' height='12' width='12' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16.981 21.707" >
             <g fill="#fff" transform="translate(.03 .008)">
               <path
@@ -91,9 +98,9 @@ export default function SidebarPostBooking(props) {
               ></path>
             </g>
           </svg>
-            My Invoices
-            </NavLink>
-            <NavLink  to={'/postBooking/payment'} className='item disablBefore fs-7 my-1'>
+          My Invoices
+        </NavLink>
+        <NavLink to={'/postBooking/payment'} className='item disablBefore fs-7 my-1'>
           <svg className='mr-1' height='12' width='12' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24.004 16.009">
             <g fill="#fff" transform="translate(.02 -.02)">
               <path
@@ -113,9 +120,9 @@ export default function SidebarPostBooking(props) {
               ></path>
             </g>
           </svg>
-            Payment
-            </NavLink>
-            <NavLink to={'/postBooking/updatePassword'} className='item disablBefore fs-7 my-1'>
+          Payment
+        </NavLink>
+        <NavLink to={'/postBooking/updatePassword'} className='item disablBefore fs-7 my-1'>
           <svg className='mr-1' height='12' width='12' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18.646 27.078" >
             <g fill="#fff" opacity="0.58" transform="translate(-31.62)">
               <path
@@ -129,9 +136,9 @@ export default function SidebarPostBooking(props) {
               ></path>
             </g>
           </svg>
-            Update Password
-            </NavLink>
-            <a href="/"  className='item disablBefore fs-7 my-1'>
+          Update Password
+        </NavLink>
+        <a type="button" className='item disablBefore fs-7 my-1' onClick={logout}>
           <svg className='mr-1' height='12' width='12'
             xmlns="http://www.w3.org/2000/svg"
             data-name="log-out (1)"
@@ -165,11 +172,11 @@ export default function SidebarPostBooking(props) {
               transform="translate(19 6.002)"
             ></path>
           </svg>
-            Log Out
-            </a>
-          </Sidebar>
+          Log Out
+        </a>
+      </Sidebar>
 
-   </>
+    </>
   )
 }
 
