@@ -150,7 +150,12 @@ export default function RentingDetails() {
         console.log(error);
       })
   }
-  
+
+  /** Promo Code Discount End */
+
+ 
+
+
   return (
     <>
       <div>

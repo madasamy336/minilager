@@ -117,16 +117,9 @@ class Helper {
     }
 
     //DIsplay Date In Localised Format
-    displayDate(date) {
-
-
-        //let dateFormat = '';
-        let returnFormat = moment(date).format(this.convertMomentDateFormat(this.dateFormat));// new Intl.DateTimeFormat(this.culture).format(date);
-        // if (typeof this.cultureInfo !== 'undefined' && this.cultureInfo !== null) {
-        //     //new Intl.DateTimeFormat(this.cultureInfo.culture).format(date)
-        //     dateFormat = this.cultureInfo.shortDate.replace("d", "D").replace("d", "D");
-        // }
-        return returnFormat;
+    displayDate(date) {      
+        const momentDate = moment(date).format(this.convertMomentDateFormat(this.dateFormat));
+        return momentDate;
     }
 
     //Read Date From Localised Format

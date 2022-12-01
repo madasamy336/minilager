@@ -1,14 +1,15 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
+import { Label } from 'semantic-ui-react'
 
 const UpdatePasswordForm = (props) => {
-    const[toggle, setToggle] = useState(true);
+    const [toggle, setToggle] = useState(true);
     const showPasswordHandler = () => {
-      setToggle(!toggle);
+        setToggle(!toggle);
     }
     return (
         <div className="ui form w-50 w-sm-100">
             <div className="field my-3 position-relative">
-                <input type={toggle ? "password" : "text"} placeholder={props.placeholdertext} />
+                <input type={toggle ? "password" : "text"} placeholder={props.placeholder} value={props.value} name={props.name} onChange={(e) => props.onChange(e)} />
                 {!toggle && <div onClick={showPasswordHandler}>
                     <svg className="eyeopen position-absolute r-2 t-1" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 31.937 21.446">
                         <g id="Group_56" data-name="Group 56" transform="translate(0 0)" opacity="0.65">
@@ -19,7 +20,7 @@ const UpdatePasswordForm = (props) => {
                         </g>
                     </svg>
                 </div>}
-        
+
                 {toggle && <div onClick={showPasswordHandler}>
                     <svg className="eyeclose position-absolute r-2 t-1" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 31.937 25.414">
                         <g id="Group_56" data-name="Group 56" transform="translate(0 0.707)" opacity="0.59">

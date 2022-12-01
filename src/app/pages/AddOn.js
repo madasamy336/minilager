@@ -1,18 +1,63 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import PreBookingBreadcrumb from '../components/prebooking breadcrumb/PreBookingBreadcrumb'
 import SemanticDatepicker from 'react-semantic-ui-datepickers';
-import { Dropdown, Modal } from 'semantic-ui-react';
+import { Grid, Placeholder, Segment } from "semantic-ui-react";
+import { Modal } from 'semantic-ui-react';
 import { useNavigate } from 'react-router-dom';
 import AddOnAccordion from '../components/addonaccordion/AddOnAccordion';
 import AddonCard from '../components/AddonCard/AddonCard';
+import instance from '../services/instance';
+import request from '../services/request';
+import { useSelector, useDispatch } from 'react-redux';
+import Helper from "../helper";
+import { json } from 'react-router-dom';
+let helper = new Helper();
+let saveThirdPartyInsuranceDetailsValues = [];
+let ownInsuranceArray = [];
+let servicesArray = [];
+let merchandiseId = [];
+let merchandiseItem = [];
 
 export default function AddOn() {
   const navigate = useNavigate();
-  const [activePlan,SetactivePlan]=useState('');
+  let unitid = localStorage.getItem('unitid');
+  let rentDetailsvalue = JSON.parse(sessionStorage.getItem(`rentDetails`));
+  let insuranceSessionValue = JSON.parse(sessionStorage.getItem('insurancedetail'));
+  let serviceSessionValue = JSON.parse(sessionStorage.getItem('servicedetail'));
+  let VehicleSessionValue = JSON.parse(sessionStorage.getItem('vehicleDetail'));
+  let merchandiseSessionvalue = JSON.parse(sessionStorage.getItem('merchandiseItem'));
+  const rentDetails = useSelector(state => state.rentdetail.renDetails);
+  const [activePlan, SetactivePlan] = useState('');
+  const [addOnsResponse, setAddOnsResponse] = useState(null);
   const [ownInsurance, setOwnInsurance] = useState(false);
+  const [startDate, setStartDate] = useState(new Date());
+
   const ownInsuranceHandler = (e) => {
+    SetactivePlan('Own Insurance')
     e.preventDefault()
     setOwnInsurance(true);
+  }
+  const selectAdminInsurance = (planname, id) => {
+    SetactivePlan(planname);
+    ownInsuranceArray.push(
+      {
+        planname: planname,
+        unitId: unitid,
+        insurancePlans: id
+      }
+    )
+
+  }
+
+  const serviceSelected = (e) => {
+    if (e.target.checked === true) {
+      servicesArray.push(e.target.value)
+    } else {
+      let index = servicesArray.indexOf(e.target.value);
+      if (index > -1) {
+        servicesArray.splice(index, 1)
+      }
+    }
   }
   const cancelInsuranceHandler = () => {
     setOwnInsurance(false);
@@ -21,28 +66,208 @@ export default function AddOn() {
     open: false,
     dimmer: undefined,
   })
+
+  useEffect(() => {
+    if (rentDetailsvalue === null) {
+      FetchAddOns(rentDetails);
+    } else {
+      FetchAddOns(rentDetailsvalue);
+    }
+    if (insuranceSessionValue !== null && typeof insuranceSessionValue !== 'undefined') {
+      SetactivePlan(insuranceSessionValue[0].planname);
+    }
+    if (VehicleSessionValue !== null) {
+      SetVehicleAccordian(VehicleSessionValue);
+
+    }
+
+    if (merchandiseSessionvalue !== null) {
+      merchandiseSessionvalue.forEach((merchandiseItem) => {
+        merchandiseItem.merchandise.forEach((item) => {
+          let merchandiseValue = document.querySelector(`.merchandise_${item.itemId}`)
+          if (merchandiseValue !== null && typeof merchandiseValue !== 'undefined') {
+            merchandiseValue.value = item.qnty;
+          }
+        })
+
+      });
+    }
+
+
+
+
+
+  }, []);
   const navigateTenantDEtails = (e) => {
     e.preventDefault();
-    navigate('/preBooking/TenantDetails')
-  }
-  const vehicleBrandSelectOption = [
-    {
-      key: 1,
-      text: 'Monthly',
-      value: 'Monthly'
-    },
-    {
-      key: 2,
-      text: 'Semi-Annually',
-      value: 'Semi-Annually',
-    },
-    {
-      key: 3,
-      text: 'Annually',
-      value: 'Annually',
-    },
-  ]
+    let errorcount = 0;
+    if (ownInsurance === true) {
+      let policyProvider = document.querySelector('.six-storage-effective-provider-name');
+      //provider
+      let insuranceValue = {
+        provider_name: policeProvide !== '' ? policeProvide : '',
+        policy_number: policyNumber !== '' ? policyNumber : '',
+        effective_to_date: effectiveToDate !== '' ? effectiveToDate : '',
+        effective_from_date: effectiveFromDate !== '' ? effectiveFromDate : ''
+      }
+      Object.entries(insuranceValue).forEach(([key, value]) => {
+        if (value === '') {
+          document.querySelector(`.${key}`).classList.remove("d-none");
+          errorcount = errorcount + 1;
+          return
+        } else {
+          document.querySelector(`.${key}`).classList.add("d-none");
+        }
 
+      });
+      if (errorcount === 0) {
+        saveThirdPartyInsuranceDetailsValues.push({
+          "unitId": unitid,
+          "insuranceInfo": {
+            "isThirdParty": true,
+            "providerName": policeProvide,
+            "policyNumber": policyNumber,
+            "effectiveFrom": effectiveFromDate,
+            "effectiveTill": effectiveToDate
+
+          }
+
+        });
+        navigate('/preBooking/TenantDetails')
+      }
+
+
+    } else {
+      if (ownInsuranceArray.length !== 0) {
+        sessionStorage.setItem('insurancedetail', JSON.stringify(ownInsuranceArray))
+        navigate('/preBooking/TenantDetails')
+
+      }
+      if (servicesArray.length !== 0) {
+        let sessionServices = [];
+        servicesArray.forEach((id) => {
+          sessionServices.push({ unitId: unitid, servicedId: id })
+        })
+        sessionStorage.setItem('servicedetail', JSON.stringify(sessionServices))
+      }
+      if (merchandiseId.length !== 0) {
+        merchandiseId.forEach((id) => {
+          let merchandisevalue = document.querySelector(`.merchandise_${id}`)
+          if (merchandisevalue !== null && typeof merchandisevalue !== 'undefined') {
+            setMerchandiseAddcard(unitid, id, merchandisevalue.value);
+
+          }
+        })
+        sessionStorage.setItem('merchandiseItem', JSON.stringify(merchandiseItem));
+
+
+      }
+      if (vehicleaccordian !== 0) {
+        sessionStorage.setItem('vehicleDetail', JSON.stringify(vehicleaccordian));
+      }
+
+      navigate('/preBooking/TenantDetails')
+      // navigate('/preBooking/TenantDetails')
+    }
+
+
+  }
+
+  const setMerchandiseAddcard = (unitId, itemId, count) => {
+    let obj = {
+      itemId: itemId,
+      qnty: parseInt(count),
+    };
+    let pos = -1;
+    if (merchandiseItem.length > 0) {
+      pos = merchandiseItem
+        .map(function (e) {
+          return e.unitId;
+        })
+        .indexOf(unitId);
+    }
+    if (pos > -1) {
+      let addedMerch = merchandiseItem[pos];
+      let addedItemPos = addedMerch.merchandise
+        .map(function (e) {
+          return e.itemId;
+        })
+        .indexOf(itemId);
+      if (addedItemPos > -1) {
+        if (obj.qnty > 0) {
+          merchandiseItem[pos].merchandise[addedItemPos].qnty = obj.qnty;
+        } else {
+          merchandiseItem[pos].merchandise.splice(addedItemPos, 1);
+          if (merchandiseItem[pos].merchandise.length <= 0) {
+            merchandiseItem.splice(pos, 1);
+          }
+        }
+      } else {
+        merchandiseItem[pos].merchandise.push(obj);
+      }
+    } else {
+      if (obj.qnty > 0) {
+        merchandiseItem.push({
+          unitId: unitId,
+          merchandise: [obj]
+        });
+      }
+    }
+    if (merchandiseItem.length > 0) {
+      pos = merchandiseItem
+        .map(function (e) {
+          return e.unitId;
+        })
+        .indexOf(unitId);
+    }
+  }
+
+  const FetchAddOns = (rentDetails) => {
+
+    let config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    let requestbody = {
+      unitId: [unitid],
+      moveInDate: rentDetails.movindate,
+      additionalMonths: 0,
+      recurringPeriodId: rentDetails.invoiceTypedata,
+      recurringTypeId: rentDetails.recurringTypedata,
+      isBusinessUser: false
+
+
+
+    }
+    instance
+      .post(request.check_addons, requestbody, config)
+      .then(response => {
+        if (response.data.result !== null && response.data.result !== 'undefined') {
+          ownInsuranceArray = [];
+          setAddOnsResponse(response.data.result[0].addOns);
+          sessionStorage.setItem('addonsResponse', JSON.stringify(response.data.result[0].addOns));
+          if (serviceSessionValue !== null && typeof serviceSessionValue !== 'undefined') {
+            serviceSessionValue.forEach((e) => {
+              let servicesChecked = document.getElementById(`services_${e}`);
+              if (servicesChecked !== null && typeof servicesChecked !== 'undefined') {
+                document.getElementById(`services_${e}`).checked = true
+              }
+              //
+            })
+          }
+
+
+        }
+
+
+      })
+      .catch(error => {
+
+      })
+
+  }
 
   const [vehicleaccordian, SetVehicleAccordian] = useState([]);
   const [vehicleType, setVehicleType] = useState("");
@@ -53,6 +278,11 @@ export default function AddOn() {
   const [vehicleState, setVehicleState] = useState("");
   const [registrationNo, setRegistrationNo] = useState("");
   const [licenseNo, setLicenseNo] = useState("");
+  //insurance
+  const [policeProvide, setPolicyProvider] = useState("");
+  const [policyNumber, setPolicyNumber] = useState("");
+  const [effectiveFromDate, setEffectiveFromDate] = useState("");
+  const [effectiveToDate, setEffectiveToDate] = useState("");
 
   const VehicleFormSubmitHandler = (e) => {
     e.preventDefault();
@@ -70,17 +300,26 @@ export default function AddOn() {
         VehicleAccordianLength: vehicleaccordian.length + 1
       }
     ])
-  }
+    setYear('');
+    setBrand('');
+    setModel('');
+    setColor('');
+    setRegistrationNo('');
+    setLicenseNo('');
+    setVehicleState('');
+    setVehicleType('');
 
+
+  }
   const removeVehicleForm = (index) => {
     const list = [...vehicleaccordian]
     list.splice(index, 1);
     SetVehicleAccordian(list)
   }
-
   return (
     <>
       <div>
+
         <PreBookingBreadcrumb activeStep='12' />
         <div className='ui container responsive addon-container'>
           <div className='row'>
@@ -102,41 +341,98 @@ export default function AddOn() {
                   </svg>
                   <span className='veritical-align-text-top ml-1'>Insurance</span></h6>
                 {!ownInsurance && (
-                  <div className="row p-3 AddonsInsurance">
-                    {
-                      [
-                        { plane: 'GOLD PLAN', amount: '$5000', monthpay: '$200', ownInsurance: 0 },
-                        { plane: 'SILVER PLAN', amount: '$2000', monthpay: '$150', ownInsurance: 0 },
-                        { plane: 'FLOATER PLAN', amount: '$2000', monthpay: '$100', ownInsurance: 0 },
-                        { plane: 'I HAVE A', amount: 'OWN INSURANCE', ownInsurance: 1 }
-                      ].map(({ plane, amount, monthpay, ownInsurance }) => (
-                        <div key={``} className='col-lg-3 col-md-6 col-sm-12 px-1 mb-1'>
-                          <div className={`card changePlanCard cursor-pointer  border-radius-10 text-center p-2 ${activePlan === plane && 'active'}`} onClick={ownInsurance === 0 ? (e) => SetactivePlan(plane) : (e) => ownInsuranceHandler(e)}>
-                            <p className=' fs-7 fw-500 pb-1 mt-1'>{plane}</p>
-                            <h4 className={` fs-6 fw-500 pb-2 ${activePlan === plane ? 'text-white' : 'text-success-dark'}`}>{amount}</h4>
-                            {monthpay && <span className='fs-8 fw-600 d-block mb-1'>{monthpay} Per Month</span>}
+                  <div className=" p-3 AddonsInsurance">
+
+                    {typeof addOnsResponse !== 'undefined' && addOnsResponse !== null && addOnsResponse.insurance !== 'undefined' && addOnsResponse.insurance !== null ?
+
+                      <div className='row'>
+                        {
+                          addOnsResponse.insurance.map(item => {
+                            return <div key={item.id} className='col-lg-3 col-md-6 col-sm-12 px-1 mb-1'>
+                              <div className={`card changePlanCard cursor-pointer  border-radius-10 text-center p-2 ${activePlan === item.planName && 'active'}`} onClick={(e) => selectAdminInsurance(item.planName, item.id)}>
+                                <p className=' fs-7 fw-500 pb-1 mt-1'>{item.planName}</p>
+                                <h4 className={` fs-6 fw-500 pb-2 ${activePlan === item.planName ? 'text-white' : 'text-success-dark'}`}>{helper.displayCurrency(item.coverage)}</h4>
+                                <span className='fs-8 fw-600 d-block mb-1'>{helper.displayCurrency(item.premium.domestic.netAmount)} Per Month</span>
+                              </div>
+                            </div>
+
+                          }
+
+                          )
+                        }
+                        <div className='col-lg-3 col-md-6 col-sm-12 px-1 mb-1'>
+                          <div className={`card changePlanCard cursor-pointer  border-radius-10 text-center p-2  ${activePlan === 'Own Insurance' && 'active'}`} onClick={(e) => ownInsuranceHandler(e)} >
+                            <p className=' fs-7 fw-500 pb-1 mt-1'>I HAVE A</p>
+                            <h4 className={` fs-6 fw-500 pb-2 ${activePlan === 'Own Insurance' ? 'text-white' : 'text-success-dark'}`}>OWN INSURANCE</h4>
+
                           </div>
                         </div>
-                      ))
+
+                      </div>
+
+
+
+                      : <Grid columns={3} stackable>
+                        <Grid.Column>
+                          <Segment raised>
+                            <Placeholder>
+                              <Placeholder.Header image>
+                                <Placeholder.Line />
+                                <Placeholder.Line />
+                              </Placeholder.Header>
+                            </Placeholder>
+                          </Segment>
+                        </Grid.Column>
+
+                        <Grid.Column>
+                          <Segment raised>
+                            <Placeholder>
+                              <Placeholder.Header image>
+                                <Placeholder.Line />
+                                <Placeholder.Line />
+                              </Placeholder.Header>
+                            </Placeholder>
+                          </Segment>
+                        </Grid.Column>
+
+                        <Grid.Column>
+                          <Segment raised>
+                            <Placeholder>
+                              <Placeholder.Header image>
+                                <Placeholder.Line />
+                                <Placeholder.Line />
+                              </Placeholder.Header>
+                            </Placeholder>
+                          </Segment>
+                        </Grid.Column>
+                      </Grid>
+
+
                     }
-                 </div>
+
+
+                  </div>
                 )}
                 {ownInsurance && (<div className="ui form px-4 px-sm-2">
                   <div className="field w-100 datePicker my-3">
                     <label className='fw-500 fs-7 mb-2'>Policy Provider Name</label>
-                    <input placeholder='Policy Provider Name' />
+                    <input placeholder='Policy Provider Name' onChange={(e) => { setPolicyProvider(e.target.value) }} />
+                    <p className="error py-1 provider_name d-none">Please Enter Policy Provider Name</p>
                   </div>
                   <div className="field w-100 datePicker my-3">
                     <label className='fw-500 fs-7 mb-2'>Policy Number</label>
-                    <input placeholder='Policy Number' />
+                    <input placeholder='Policy Number' onChange={(e) => { setPolicyNumber(e.target.value) }} />
+                    <p className="error py-1 policy_number d-none">Please Enter Policy Number</p>
                   </div>
                   <div className="field w-100 datePicker my-3">
                     <label className='fw-500 fs-7 mb-2' >Effective From Date</label>
-                    <SemanticDatepicker placeholder='Effective From Date' className='w-100' />
+                    <SemanticDatepicker placeholder='Effective From Date' className='w-100' onChange={(e, item) => setEffectiveFromDate(item.value)} />
+                    <p className="error py-1 effective_from_date  d-none">Please Enter Effective From Date</p>
                   </div>
                   <div className="field w-100 datePicker my-3">
                     <label className='fw-500 fs-7 mb-2' >Effective To Date</label>
-                    <SemanticDatepicker placeholder='Effective To Date' className='w-100' />
+                    <SemanticDatepicker placeholder='Effective To Date' className='w-100' onChange={(e, item) => setEffectiveToDate(item.value)} />
+                    <p className="error py-1 effective_to_date d-none">Please Enter Effective To Date</p>
                   </div>
                   <div className="field w-100 datePicker my-3">
                     <label className='fw-500 fs-7 mb-2'>Document Upload</label>
@@ -156,179 +452,132 @@ export default function AddOn() {
                   </div>
                 </div>)}
               </div>
-              <div className='bg-white card-boxshadow px-0 py-2 border-radius-15 mb-3'>
-                <h6 className='text-dark fw-500 fs-6 px-4 py-2 px-sm-2 card-border-bottom'>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 41.477 41.085">
-                    <path id="servicess" d="M5.542,39.707H.989c-.77,0-.979-.206-.979-.964V29.626c0-.772.2-.981.962-.982h4.57c0-.251-.009-.463,0-.674a.674.674,0,0,1,.713-.7q2.743-.014,5.487,0a.675.675,0,0,1,.707.711c.01.187,0,.374,0,.561v.6l1.358-.331V20.346c-.626,0-1.241,0-1.855,0-.779,0-1.07-.465-.726-1.161.838-1.688,1.7-3.364,2.514-5.062a1,1,0,0,1,1.138-.694,2.429,2.429,0,0,0,.32,0c0-.595.035-1.154-.009-1.708a2.257,2.257,0,0,0-.823-1.423,6.18,6.18,0,0,1,.252-9.185,7.9,7.9,0,0,1,1.6-1c.593-.3,1.061.029,1.065.7.007,1.426.009,2.852,0,4.278a.552.552,0,0,0,.3.557c.372.214.728.636,1.091.637s.719-.421,1.092-.634a.546.546,0,0,0,.3-.555c-.013-1.4-.008-2.794-.006-4.192,0-.8.455-1.084,1.189-.758a6.175,6.175,0,0,1,1.926,9.911,3.737,3.737,0,0,0-1,3.369c1.266,0,2.531.032,3.792-.025.268-.013.521-.348.781-.536l-.037-.13c-.331,0-.663,0-.993,0-.563-.009-.812-.257-.816-.824q-.009-1.253,0-2.506c0-.565.255-.809.822-.817.325,0,.651,0,1.081,0-.313-.313-.559-.547-.793-.794A.7.7,0,0,1,26,6.7q.9-.93,1.833-1.833a.707.707,0,0,1,1.13.017c.236.227.459.469.775.8,0-.47-.008-.822,0-1.172a.689.689,0,0,1,.756-.751q1.317-.016,2.635,0a.689.689,0,0,1,.752.755,5.755,5.755,0,0,0,.09,1.1c.219-.235.431-.477.658-.7A.723.723,0,0,1,35.826,4.9q.894.878,1.771,1.772a.716.716,0,0,1-.013,1.163c-.226.234-.459.459-.762.762.447,0,.787-.007,1.127,0a.7.7,0,0,1,.775.777q.014,1.3,0,2.592a.7.7,0,0,1-.775.777c-.34.008-.681,0-1.1,0,.364.391.6.763,1.167.717a.838.838,0,0,1,.637.4c.934,1.8,1.839,3.616,2.735,5.435a.69.69,0,0,1-.677,1.057c-.644.012-1.289,0-1.956,0v7.515a2.064,2.064,0,0,0,.234.075,2.753,2.753,0,0,1,.886,5.117c-1.774,1.04-3.56,2.062-5.342,3.091-2.006,1.158-4.018,2.307-6.016,3.477a5.581,5.581,0,0,1-2.916.785c-3.2-.015-6.395-.022-9.591,0a6.085,6.085,0,0,1-3.069-.721c-.113-.062-.233-.114-.35-.167a.6.6,0,0,0-.133-.01c0,.283.009.565,0,.846a.682.682,0,0,1-.733.73q-2.722.012-5.443,0a.682.682,0,0,1-.733-.73c-.009-.2,0-.4,0-.649Zm6.913-9.14v.507c0,2.059.017,4.119-.013,6.178a.853.853,0,0,0,.576.938,6.26,6.26,0,0,0,2.6.832c3.4-.017,6.8.013,10.2-.025a3.645,3.645,0,0,0,1.688-.422c3.906-2.211,7.786-4.465,11.669-6.716a1.367,1.367,0,0,0,.528-1.9,1.384,1.384,0,0,0-1.885-.49q-3.374,1.924-6.726,3.885a.522.522,0,0,0-.211.366A2.749,2.749,0,0,1,27.3,36.331c-2.668-.7-5.332-1.426-8-2.143-.523-.141-.747-.467-.628-.9.111-.4.474-.567.972-.434q2.229.593,4.458,1.191c1.194.32,2.385.652,3.582.961a1.38,1.38,0,0,0,1.79-1.522,1.455,1.455,0,0,0-1.251-1.2c-3-.8-6-1.611-9-2.41a5.329,5.329,0,0,0-2.626-.335c-1.371.323-2.735.676-4.146,1.029ZM37.345,20.346h-.522c-2.5,0-5.01-.01-7.513.008a.969.969,0,0,1-1.006-.631c-.348-.757-.739-1.494-1.115-2.239-.045-.089-.107-.168-.2-.306V30.512c1.2.426,2.594.389,3.378,1.6a.945.945,0,0,0,.158-.051q3.308-1.908,6.608-3.826a.558.558,0,0,0,.2-.408c.02-.748.009-1.5.009-2.246V20.346Zm-11.77-3.083-.069-.033c-.417.83-.85,1.652-1.243,2.492a.971.971,0,0,1-1.006.631c-2.52-.018-5.04-.008-7.561-.008h-.461v8.087c.173-.039.325-.067.472-.108a5.47,5.47,0,0,1,3.023-.016c1.33.371,2.664.722,4,1.078.939.251,1.88.5,2.847.754V17.262ZM21.443,1.855v.5c0,1.095-.009,2.188,0,3.283a.925.925,0,0,1-.457.863q-.925.595-1.832,1.22a.761.761,0,0,1-.955,0c-.6-.416-1.213-.826-1.832-1.22a.949.949,0,0,1-.464-.9c.016-1.122.007-2.246,0-3.369a3.2,3.2,0,0,0-.036-.331,4.792,4.792,0,0,0-.537,7.405A3.737,3.737,0,0,1,16.6,12.3c-.015.369,0,.737,0,1.1h1.383c0-.636,0-1.24,0-1.843,0-.573.264-.9.707-.887.427.01.672.325.674.877,0,.615,0,1.229,0,1.858h1.383c0-.326.016-.627,0-.925a3.923,3.923,0,0,1,1.322-3.23,4.584,4.584,0,0,0,1.339-4.427,4.711,4.711,0,0,0-1.966-2.969Zm-10.4,37.832V28.677h-4.1V39.687ZM25.16,14.814c-3.387,0-6.685,0-9.983.013a.537.537,0,0,0-.358.28c-.478.918-.936,1.848-1.4,2.776-.171.343-.336.688-.527,1.081h.533c2.809,0,5.618-.053,8.425.029a1.6,1.6,0,0,0,1.816-1.141c.408-1.022.966-1.983,1.491-3.037Zm14.493,4.149c-.068-.162-.111-.281-.166-.393-.566-1.133-1.144-2.258-1.693-3.4a.551.551,0,0,0-.586-.364c-3.125.012-6.251.007-9.376.008-.121,0-.243.013-.417.023.641,1.28,1.266,2.508,1.865,3.748a.582.582,0,0,0,.618.384c3.1-.013,6.193-.008,9.29-.008h.464ZM5.509,38.305V30.061H1.415v8.244H5.509ZM31.122,5.152c0,.514-.012.987,0,1.461a.823.823,0,0,1-.583.854.848.848,0,0,1-1.1-.142c-.33-.362-.677-.705-.978-1.015l-1.038.949c.335.336.638.666.97.963a.89.89,0,0,1,.226,1.156.89.89,0,0,1-.974.6c-.441-.021-.885,0-1.342,0v1.383c.513,0,1,.006,1.487,0a.758.758,0,0,1,.778.5c.294.672.277.789-.248,1.327a3,3,0,0,0-.195.253h3.033a2.917,2.917,0,0,1-2.089-3.172,2.762,2.762,0,0,1,5.442-.139c.3,1.432-.447,2.606-2.106,3.286h3.1c-.136-.145-.224-.256-.327-.345A.831.831,0,0,1,35,11.978a.86.86,0,0,1,.913-.624c.469.02.939,0,1.4,0V9.975c-.507,0-.982-.01-1.456,0a.824.824,0,0,1-.847-.592.843.843,0,0,1,.151-1.092c.362-.326.705-.673,1.065-1.016l-1.01-1.009c-.347.354-.7.691-1.025,1.051a.847.847,0,0,1-1.093.153.825.825,0,0,1-.593-.846c.014-.485,0-.97,0-1.472H31.125Zm.7,4.133A1.38,1.38,0,1,0,33.2,10.667a1.386,1.386,0,0,0-1.369-1.381Z" transform="translate(-0.01 -0.007)" fill="#328128" />
-                  </svg>
-                  <span className='veritical-align-text-top ml-1'>Services</span></h6>
-                <div className="row services p-3">
-                  <div className='col-lg-6 col-md-6 col-sm-12 px-1 mb-3'>
-                    <div className='card card-border-secondary border-radius-10 p-2'>
-                      <div className='row'>
-                        <div className='col-lg-8 col-md-8 col-sm-8'>
-                          <div className='d-flex align-items-center'>
-                            <input type="checkbox" />
-                            <div className='ml-2'>
-                              <p>$10</p>
-                              <p>Admin Fee</p>
-                            </div>
-                          </div>
-                        </div>
-                        <div className='col-lg-4 col-md-4 col-sm-4 text-right'>
-                          <div className='services-img'>
-                            <img src="/assets/images/services.png" alt="Services" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className='col-lg-6 col-md-6 col-sm-12 px-1 mb-3'>
-                    <div className='card card-border-secondary border-radius-10 p-2'>
-                      <div className='row'>
-                        <div className='col-lg-8 col-md-8 col-sm-8'>
-                          <div className='d-flex align-items-center'>
-                            <input type="checkbox" />
-                            <div className='ml-2'>
-                              <p>$10</p>
-                              <p>Propane refill</p>
-                            </div>
-                          </div>
-                        </div>
-                        <div className='col-lg-4 col-md-4 col-sm-4 text-right'>
-                          <div className='services-img'>
-                            <img src="/assets/images/services.png" alt="Services" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
 
-                  <div className='col-lg-6 col-md-6 col-sm-12 px-1 mb-3'>
-                    <div className='card card-border-secondary border-radius-10 p-2'>
-                      <div className='row'>
-                        <div className='col-lg-8 col-md-8 col-sm-8'>
-                          <div className='d-flex align-items-center'>
-                            <input type="checkbox" />
-                            <div className='ml-2'>
-                              <p>$10</p>
-                              <p>Electricity</p>
-                            </div>
-                          </div>
-                        </div>
-                        <div className='col-lg-4 col-md-4 col-sm-4 text-right'>
-                          <div className='services-img'>
-                            <img src="/assets/images/shift-units.png" alt="Services" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className='col-lg-6 col-md-6 col-sm-12 px-1 mb-3'>
-                    <div className='card card-border-secondary border-radius-10 p-2'>
-                      <div className='row'>
-                        <div className='col-lg-8 col-md-8 col-sm-8'>
-                          <div className='d-flex align-items-center'>
-                            <input type="checkbox" />
-                            <div className='ml-2'>
-                              <p>$10</p>
-                              <p>Shift units</p>
-                            </div>
-                          </div>
-                        </div>
-                        <div className='col-lg-4 col-md-4 col-sm-4 text-right'>
-                          <div className='services-img'>
-                            <img src="/assets/images/shift-units.png" alt="Services" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className='col-lg-6 col-md-6 col-sm-12 px-1 mb-3'>
-                    <div className='card card-border-secondary border-radius-10 p-2'>
-                      <div className='row'>
-                        <div className='col-lg-8 col-md-8 col-sm-8'>
-                          <div className='d-flex align-items-center'>
-                            <input type="checkbox" />
-                            <div className='ml-2'>
-                              <p>$10</p>
-                              <p>Door step moving</p>
-                            </div>
-                          </div>
-                        </div>
-                        <div className='col-lg-4 col-md-4 col-sm-4 text-right'>
-                          <div className='services-img'>
-                            <img src="/assets/images/door-step1.png" alt="Services" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className='col-lg-6 col-md-6 col-sm-12 px-1 mb-3'>
-                    <div className='card card-border-secondary border-radius-10 p-2'>
-                      <div className='row'>
-                        <div className='col-lg-8 col-md-8 col-sm-8'>
-                          <div className='d-flex align-items-center'>
-                            <input type="checkbox" />
-                            <div className='ml-2'>
-                              <p>$10</p>
-                              <p>Door step moving</p>
-                            </div>
-                          </div>
-                        </div>
-                        <div className='col-lg-4 col-md-4 col-sm-4 text-right'>
-                          <div className='services-img'>
-                            <img src="/assets/images/door-step2.png" alt="Services" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                </div>
-              </div>
-              <div className='bg-white card-boxshadow px-0 py-2 border-radius-15 mb-3'>
-                <div className='d-flex justify-content-between card-border-bottom'>
-                  <h6 className='text-dark fw-500 fs-6 px-4 py-2 px-sm-2'>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 38.513 38.4">
-                      <g id="vehicle-information" transform="translate(-0.005 0)">
-                        <path id="Path_19735" data-name="Path 19735" d="M10.824,55.255h-.6q-3.112,0-6.223,0c-1.2,0-1.59-.4-1.59-1.6v-25.7c0-1.193.393-1.582,1.6-1.584.661,0,1.323,0,1.976,0v-2.4c-.734,0-1.434,0-2.134,0A3.611,3.611,0,0,0,.007,27.834q0,12.976,0,25.952a3.612,3.612,0,0,0,3.852,3.867q3.211.008,6.424,0c.176,0,.352-.014.541-.023V55.255Z" transform="translate(0 -21.561)" fill="#328128" />
-                        <path id="Path_19736" data-name="Path 19736" d="M69.1,119.849q-2.007,0-4.013,0c-1.3,0-2.609-.011-3.912.018a1.165,1.165,0,0,0-1.152,1.157,1.2,1.2,0,0,0,1.054,1.205,3.316,3.316,0,0,0,.5.027q7.474,0,14.948,0a2.82,2.82,0,0,0,.695-.069,1.185,1.185,0,0,0-.145-2.309,4.682,4.682,0,0,0-.65-.028q-3.662,0-7.323,0Z" transform="translate(-53.989 -107.819)" fill="#328128" />
-                        <path id="Path_19737" data-name="Path 19737" d="M245.925,36.234c0-2.925.048-5.8-.019-8.677a3.336,3.336,0,0,0-2.813-3.219,20.758,20.758,0,0,0-3.177-.03c0,.593,0,1.208,0,1.824,0,.147.013.294.024.5.7,0,1.384,0,2.065,0,1.1,0,1.522.419,1.523,1.509q0,3.764,0,7.528v.565h2.4Z" transform="translate(-215.83 -21.823)" fill="#328128" />
-                        <path id="Path_19738" data-name="Path 19738" d="M195.491,3.623c0-.6.01-1.2,0-1.806a1.8,1.8,0,1,0-3.606,0q-.02,1.781,0,3.561a1.8,1.8,0,1,0,3.606,0c.012-.585,0-1.17,0-1.755Z" transform="translate(-172.61 0)" fill="#328128" />
-                        <path id="Path_19739" data-name="Path 19739" d="M75.5,3.642c0-.6.007-1.2,0-1.806A1.8,1.8,0,1,0,71.888,1.8q-.029,1.805,0,3.611a1.8,1.8,0,1,0,3.6-.014c.012-.585,0-1.17,0-1.755Z" transform="translate(-64.655)" fill="#328128" />
-                        <path id="Path_19740" data-name="Path 19740" d="M120.12,26.685h5.973V24.36H120.12Z" transform="translate(-108.059 -21.915)" fill="#328128" />
-                        <path id="Path_19741" data-name="Path 19741" d="M62.986,206.126v0c.6,0,1.2.02,1.806-.005a1.2,1.2,0,1,0-.017-2.392c-1.153-.022-2.308-.02-3.462,0a1.2,1.2,0,0,0-1.295,1.179,1.224,1.224,0,0,0,1.312,1.219c.551.017,1.1,0,1.655,0Z" transform="translate(-53.99 -183.264)" fill="#328128" />
-                        <path id="Path_19742" data-name="Path 19742" d="M152.363,185.555c.005,2.826.011,5.566.014,8.3,0,.217-.006.436-.026.651-.094,1.01-.334,1.259-1.332,1.285-.9.023-1.8.015-2.706-.009a.966.966,0,0,1-1.017-.959c-.043-.415-.046-.834-.059-1.252-.009-.266-.118-.374-.4-.374q-5.87.011-11.74,0a.375.375,0,0,0-.437.356c-.109.574-.238,1.144-.359,1.715-.061.291-.214.5-.532.5-1.134.02-2.268.024-3.4.044a.752.752,0,0,1-.813-.719,11.718,11.718,0,0,1-.189-1.84c.005-2.375.048-4.75.076-7.124,0-.183,0-.365,0-.579a9.08,9.08,0,0,0-1.02-.282c-.376-.06-.405-.291-.366-.58a1.994,1.994,0,0,1,2.056-1.851c.451-.007.608-.311.73-.638a29.055,29.055,0,0,0,1.1-3.116,4.609,4.609,0,0,1,3.916-3.586,23.052,23.052,0,0,1,11.5.455,2.81,2.81,0,0,1,1.955,1.849c.5,1.38,1.014,2.758,1.511,4.14.2.559.458.932,1.171.914a1.929,1.929,0,0,1,1.714,1.945.647.647,0,0,1-.34.443A7.542,7.542,0,0,1,152.363,185.555Zm-19.932-2.317a39.465,39.465,0,0,0,16.784,0c-.439-1.389-.855-2.71-1.274-4.031a2.162,2.162,0,0,0-2.3-1.775c-2.541-.086-5.083-.193-7.624-.2a12.642,12.642,0,0,0-2.862.419,1.483,1.483,0,0,0-.921.739c-.644,1.575-1.2,3.186-1.807,4.842Zm1.34,6.216a5.891,5.891,0,0,0,1.215-.2c.283-.111.72-.425.7-.593a1.217,1.217,0,0,0-.607-.808c-.982-.456-2-.843-3.016-1.209-.811-.291-1.234-.013-1.387.838a3.036,3.036,0,0,0-.04.549,1,1,0,0,0,.933,1.153C132.319,189.316,133.087,189.374,133.771,189.454Zm14.527-.014c.607-.084,1.368-.17,2.121-.3a.777.777,0,0,0,.678-.764,5.321,5.321,0,0,0-.067-1.192.644.644,0,0,0-.955-.548c-1.2.439-2.4.906-3.589,1.369-.294.114-.6.312-.464.652a1.114,1.114,0,0,0,.633.59,10.763,10.763,0,0,0,1.643.2Z" transform="translate(-115.184 -157.423)" fill="#328128" />
-                        <path id="Path_19743" data-name="Path 19743" d="M10.824,55.26v2.376c-.19.008-.365.023-.541.023q-3.211,0-6.424,0A3.612,3.612,0,0,1,.007,53.79q0-12.975,0-25.951a3.61,3.61,0,0,1,3.85-3.867c.7,0,1.4,0,2.134,0v2.4H4.014c-1.208,0-1.6.39-1.6,1.584v25.7c0,1.2.394,1.6,1.59,1.6q3.112,0,6.223,0h.6Z" transform="translate(0 -21.566)" fill="#328128" />
-                        <path id="Path_19744" data-name="Path 19744" d="M69.086,119.858h7.323a4.682,4.682,0,0,1,.65.028A1.185,1.185,0,0,1,77.2,122.2a2.819,2.819,0,0,1-.695.069q-7.474.006-14.948,0a3.325,3.325,0,0,1-.5-.027,1.194,1.194,0,0,1-1.054-1.205,1.163,1.163,0,0,1,1.152-1.157c1.3-.029,2.608-.016,3.912-.018q2.007,0,4.013,0Z" transform="translate(-53.98 -107.828)" fill="#328128" />
-                        <path id="Path_19745" data-name="Path 19745" d="M245.93,36.243h-2.4V28.15c0-1.09-.42-1.5-1.523-1.509-.681,0-1.362,0-2.065,0-.01-.206-.023-.352-.024-.5,0-.615,0-1.231,0-1.824a20.758,20.758,0,0,1,3.177.03,3.336,3.336,0,0,1,2.813,3.219c.066,2.875.019,5.751.019,8.677Z" transform="translate(-215.835 -21.832)" fill="#328128" />
-                        <path id="Path_19746" data-name="Path 19746" d="M195.491,3.623c0,.585.01,1.17,0,1.755a1.8,1.8,0,1,1-3.606,0q-.02-1.781,0-3.561a1.8,1.8,0,1,1,3.606-.005c.013.6,0,1.2,0,1.806Z" transform="translate(-172.61 0)" fill="#328128" />
-                        <path id="Path_19747" data-name="Path 19747" d="M75.506,3.642c0,.585.009,1.17,0,1.755a1.8,1.8,0,1,1-3.6.014q-.032-1.805,0-3.611a1.8,1.8,0,1,1,3.6.036c.009.6,0,1.2,0,1.806Z" transform="translate(-64.666 0)" fill="#328128" />
-                        <path id="Path_19748" data-name="Path 19748" d="M120.12,26.685V24.36h5.973v2.325Z" transform="translate(-108.059 -21.915)" fill="#328128" />
-                        <path id="Path_19749" data-name="Path 19749" d="M63,206.135c-.552,0-1.1.014-1.655,0a1.225,1.225,0,0,1-1.312-1.219,1.2,1.2,0,0,1,1.295-1.179c1.153-.018,2.308-.02,3.462,0a1.2,1.2,0,1,1,.017,2.392c-.6.025-1.2.005-1.806.005v0Z" transform="translate(-53.999 -183.273)" fill="#328128" />
-                      </g>
+              <div className={`${typeof addOnsResponse !== 'undefined' && addOnsResponse !== null && addOnsResponse.services !== 'undefined' && addOnsResponse.services !== null && addOnsResponse.length === 0 && `d-none`}`}>
+                <div className='bg-white card-boxshadow px-0 py-2 border-radius-15 mb-3'>
+                  <h6 className='text-dark fw-500 fs-6 px-4 py-2 px-sm-2 card-border-bottom'>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 41.477 41.085">
+                      <path id="servicess" d="M5.542,39.707H.989c-.77,0-.979-.206-.979-.964V29.626c0-.772.2-.981.962-.982h4.57c0-.251-.009-.463,0-.674a.674.674,0,0,1,.713-.7q2.743-.014,5.487,0a.675.675,0,0,1,.707.711c.01.187,0,.374,0,.561v.6l1.358-.331V20.346c-.626,0-1.241,0-1.855,0-.779,0-1.07-.465-.726-1.161.838-1.688,1.7-3.364,2.514-5.062a1,1,0,0,1,1.138-.694,2.429,2.429,0,0,0,.32,0c0-.595.035-1.154-.009-1.708a2.257,2.257,0,0,0-.823-1.423,6.18,6.18,0,0,1,.252-9.185,7.9,7.9,0,0,1,1.6-1c.593-.3,1.061.029,1.065.7.007,1.426.009,2.852,0,4.278a.552.552,0,0,0,.3.557c.372.214.728.636,1.091.637s.719-.421,1.092-.634a.546.546,0,0,0,.3-.555c-.013-1.4-.008-2.794-.006-4.192,0-.8.455-1.084,1.189-.758a6.175,6.175,0,0,1,1.926,9.911,3.737,3.737,0,0,0-1,3.369c1.266,0,2.531.032,3.792-.025.268-.013.521-.348.781-.536l-.037-.13c-.331,0-.663,0-.993,0-.563-.009-.812-.257-.816-.824q-.009-1.253,0-2.506c0-.565.255-.809.822-.817.325,0,.651,0,1.081,0-.313-.313-.559-.547-.793-.794A.7.7,0,0,1,26,6.7q.9-.93,1.833-1.833a.707.707,0,0,1,1.13.017c.236.227.459.469.775.8,0-.47-.008-.822,0-1.172a.689.689,0,0,1,.756-.751q1.317-.016,2.635,0a.689.689,0,0,1,.752.755,5.755,5.755,0,0,0,.09,1.1c.219-.235.431-.477.658-.7A.723.723,0,0,1,35.826,4.9q.894.878,1.771,1.772a.716.716,0,0,1-.013,1.163c-.226.234-.459.459-.762.762.447,0,.787-.007,1.127,0a.7.7,0,0,1,.775.777q.014,1.3,0,2.592a.7.7,0,0,1-.775.777c-.34.008-.681,0-1.1,0,.364.391.6.763,1.167.717a.838.838,0,0,1,.637.4c.934,1.8,1.839,3.616,2.735,5.435a.69.69,0,0,1-.677,1.057c-.644.012-1.289,0-1.956,0v7.515a2.064,2.064,0,0,0,.234.075,2.753,2.753,0,0,1,.886,5.117c-1.774,1.04-3.56,2.062-5.342,3.091-2.006,1.158-4.018,2.307-6.016,3.477a5.581,5.581,0,0,1-2.916.785c-3.2-.015-6.395-.022-9.591,0a6.085,6.085,0,0,1-3.069-.721c-.113-.062-.233-.114-.35-.167a.6.6,0,0,0-.133-.01c0,.283.009.565,0,.846a.682.682,0,0,1-.733.73q-2.722.012-5.443,0a.682.682,0,0,1-.733-.73c-.009-.2,0-.4,0-.649Zm6.913-9.14v.507c0,2.059.017,4.119-.013,6.178a.853.853,0,0,0,.576.938,6.26,6.26,0,0,0,2.6.832c3.4-.017,6.8.013,10.2-.025a3.645,3.645,0,0,0,1.688-.422c3.906-2.211,7.786-4.465,11.669-6.716a1.367,1.367,0,0,0,.528-1.9,1.384,1.384,0,0,0-1.885-.49q-3.374,1.924-6.726,3.885a.522.522,0,0,0-.211.366A2.749,2.749,0,0,1,27.3,36.331c-2.668-.7-5.332-1.426-8-2.143-.523-.141-.747-.467-.628-.9.111-.4.474-.567.972-.434q2.229.593,4.458,1.191c1.194.32,2.385.652,3.582.961a1.38,1.38,0,0,0,1.79-1.522,1.455,1.455,0,0,0-1.251-1.2c-3-.8-6-1.611-9-2.41a5.329,5.329,0,0,0-2.626-.335c-1.371.323-2.735.676-4.146,1.029ZM37.345,20.346h-.522c-2.5,0-5.01-.01-7.513.008a.969.969,0,0,1-1.006-.631c-.348-.757-.739-1.494-1.115-2.239-.045-.089-.107-.168-.2-.306V30.512c1.2.426,2.594.389,3.378,1.6a.945.945,0,0,0,.158-.051q3.308-1.908,6.608-3.826a.558.558,0,0,0,.2-.408c.02-.748.009-1.5.009-2.246V20.346Zm-11.77-3.083-.069-.033c-.417.83-.85,1.652-1.243,2.492a.971.971,0,0,1-1.006.631c-2.52-.018-5.04-.008-7.561-.008h-.461v8.087c.173-.039.325-.067.472-.108a5.47,5.47,0,0,1,3.023-.016c1.33.371,2.664.722,4,1.078.939.251,1.88.5,2.847.754V17.262ZM21.443,1.855v.5c0,1.095-.009,2.188,0,3.283a.925.925,0,0,1-.457.863q-.925.595-1.832,1.22a.761.761,0,0,1-.955,0c-.6-.416-1.213-.826-1.832-1.22a.949.949,0,0,1-.464-.9c.016-1.122.007-2.246,0-3.369a3.2,3.2,0,0,0-.036-.331,4.792,4.792,0,0,0-.537,7.405A3.737,3.737,0,0,1,16.6,12.3c-.015.369,0,.737,0,1.1h1.383c0-.636,0-1.24,0-1.843,0-.573.264-.9.707-.887.427.01.672.325.674.877,0,.615,0,1.229,0,1.858h1.383c0-.326.016-.627,0-.925a3.923,3.923,0,0,1,1.322-3.23,4.584,4.584,0,0,0,1.339-4.427,4.711,4.711,0,0,0-1.966-2.969Zm-10.4,37.832V28.677h-4.1V39.687ZM25.16,14.814c-3.387,0-6.685,0-9.983.013a.537.537,0,0,0-.358.28c-.478.918-.936,1.848-1.4,2.776-.171.343-.336.688-.527,1.081h.533c2.809,0,5.618-.053,8.425.029a1.6,1.6,0,0,0,1.816-1.141c.408-1.022.966-1.983,1.491-3.037Zm14.493,4.149c-.068-.162-.111-.281-.166-.393-.566-1.133-1.144-2.258-1.693-3.4a.551.551,0,0,0-.586-.364c-3.125.012-6.251.007-9.376.008-.121,0-.243.013-.417.023.641,1.28,1.266,2.508,1.865,3.748a.582.582,0,0,0,.618.384c3.1-.013,6.193-.008,9.29-.008h.464ZM5.509,38.305V30.061H1.415v8.244H5.509ZM31.122,5.152c0,.514-.012.987,0,1.461a.823.823,0,0,1-.583.854.848.848,0,0,1-1.1-.142c-.33-.362-.677-.705-.978-1.015l-1.038.949c.335.336.638.666.97.963a.89.89,0,0,1,.226,1.156.89.89,0,0,1-.974.6c-.441-.021-.885,0-1.342,0v1.383c.513,0,1,.006,1.487,0a.758.758,0,0,1,.778.5c.294.672.277.789-.248,1.327a3,3,0,0,0-.195.253h3.033a2.917,2.917,0,0,1-2.089-3.172,2.762,2.762,0,0,1,5.442-.139c.3,1.432-.447,2.606-2.106,3.286h3.1c-.136-.145-.224-.256-.327-.345A.831.831,0,0,1,35,11.978a.86.86,0,0,1,.913-.624c.469.02.939,0,1.4,0V9.975c-.507,0-.982-.01-1.456,0a.824.824,0,0,1-.847-.592.843.843,0,0,1,.151-1.092c.362-.326.705-.673,1.065-1.016l-1.01-1.009c-.347.354-.7.691-1.025,1.051a.847.847,0,0,1-1.093.153.825.825,0,0,1-.593-.846c.014-.485,0-.97,0-1.472H31.125Zm.7,4.133A1.38,1.38,0,1,0,33.2,10.667a1.386,1.386,0,0,0-1.369-1.381Z" transform="translate(-0.01 -0.007)" fill="#328128" />
                     </svg>
-                    <span className='veritical-align-text-top ml-1'>Merchandise</span></h6>
-                  <div className='text-dark fw-500 fs-6 px-4 py-2 px-sm-2'>
-                    <a href="/">                  <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 33.547 31.336">
-                      <g id="add-to-cart_1_" data-name="add-to-cart (1)" transform="translate(0.062 -0.009)">
-                        <path id="Path_19728" data-name="Path 19728" d="M640.452-514.489H630.419a2.728,2.728,0,0,1,.467,2.233,2.862,2.862,0,0,1-1.318,1.859,2.75,2.75,0,0,1-3.3-.374,2.876,2.876,0,0,1-.383-3.7c-.093-.01-.181-.027-.265-.028-.654,0-1.308.008-1.963,0a2.15,2.15,0,0,1-2.176-1.921,2.12,2.12,0,0,1,1.489-2.327c.834-.291,1.677-.561,2.514-.841.142-.048.28-.1.445-.16l-1.047-3.889-3.7-13.755c-.135-.5-.266-.6-.782-.606h-2.168c-.45,0-.693-.2-.685-.561s.242-.541.67-.543c.781,0,1.563-.006,2.343,0a1.657,1.657,0,0,1,1.647,1.26c.245.874.475,1.751.72,2.656H635.5a8.073,8.073,0,0,0,3.165,7.663,8.12,8.12,0,0,0,8.16,1.327c-.124.986-.242,1.93-.363,2.873-.041.324-.068.654-.132.969a2.759,2.759,0,0,1-2.76,2.26c-2.8.008-5.6.042-8.393-.008a25.473,25.473,0,0,0-9.217,1.525c-.853.308-1.721.578-2.583.862a1.044,1.044,0,0,0-.8.912,1.085,1.085,0,0,0,.241.8,1.084,1.084,0,0,0,.737.391c.15.015.3.008.454.008h18.534a2.718,2.718,0,0,1,2.788,1.85,2.849,2.849,0,0,1-.977,3.219,2.8,2.8,0,0,1-3.353-.084,2.853,2.853,0,0,1-.872-3.247C640.215-514.067,640.33-514.255,640.452-514.489Z" transform="translate(-617.61 541.358)" fill="#328128" />
-                        <path id="Path_19729" data-name="Path 19729" d="M828.489-548.606a7.066,7.066,0,0,1-7.234-7.324,7.229,7.229,0,0,1,7.29-7.171,7.231,7.231,0,0,1,7.218,7.21A7.066,7.066,0,0,1,828.489-548.606Zm.584-7.79v-2.7a.576.576,0,0,0-.569-.654c-.341,0-.554.251-.561.663,0,.489,0,.978,0,1.467v1.225h-2.7c-.406,0-.654.226-.654.567s.252.555.662.561c.489,0,.978,0,1.467,0h1.226v2.7c0,.4.226.654.567.654s.555-.253.561-.663c0-.489,0-.978,0-1.467v-1.225h.432c.768,0,1.537.007,2.306,0a.549.549,0,0,0,.515-.856.81.81,0,0,0-.561-.258c-.878-.029-1.761-.014-2.688-.014Z" transform="translate(-802.278 563.11)" fill="#328128" />
-                      </g>
-                    </svg></a>
+                    <span className='veritical-align-text-top ml-1'>Services</span></h6>
+
+                  <div className="row services p-3">
+                    {typeof addOnsResponse !== 'undefined' && addOnsResponse !== null && addOnsResponse.services !== 'undefined' && addOnsResponse.services !== null ?
+                      addOnsResponse.services.map((item) => {
+                        if (item.isMandatory == true) {
+                          servicesArray.indexOf(item.id) === -1 ? servicesArray.push(item.id) : '';
+                        }
+                        return <div key={item.id} className='col-lg-6 col-md-6 col-sm-12 px-1 mb-3'>
+                          <div className='card card-border-secondary border-radius-10 p-2'>
+                            <div className='row'>
+                              <div className='col-lg-8 col-md-8 col-sm-8'>
+                                <div className='d-flex align-items-center'>
+                                  {item.isMandatory == true ?
+                                    <input type="checkbox" value={item.id} checked disabled /> :
+                                    <input type="checkbox" id={`services_${item.id}`} value={item.id} onChange={(e) => { serviceSelected(e) }} />
+
+                                  }
+                                  {
+                                    serviceSessionValue !== null && serviceSessionValue.forEach((e) => {
+                                      let checkbox = document.getElementById(`services_${e.servicedId}`)
+                                      if (checkbox !== null) {
+                                        checkbox.checked = true
+                                      }
+                                    })
+
+                                  }
+
+                                  <div className='ml-2'>
+                                    <p>{helper.displayCurrency(item.serviceCharge.netAmount)}</p>
+                                    <p>{item.serviceName}</p>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className='col-lg-4 col-md-4 col-sm-4 text-righ d-none'>
+                                <div className='services-img'>
+                                  <img src="/assets/images/services.png" alt="Services" />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      })
+
+                      :
+                      <Grid rows={1} stackable>
+                        <Grid.Column>
+                          <Segment raised>
+                            <Placeholder>
+                              <Placeholder.Header image>
+                                <Placeholder.Line />
+                                <Placeholder.Line />
+                              </Placeholder.Header>
+
+                            </Placeholder>
+                          </Segment>
+                        </Grid.Column>
+
+                        
+
+                      </Grid>
+                    }
                   </div>
                 </div>
-                <div className="row p-3 merchandise">
-                  <AddonCard decrementBy={1} incrementBy={1} />
-                  <AddonCard decrementBy={1} incrementBy={1} />
-                  <AddonCard decrementBy={1} incrementBy={1} />
-                  <AddonCard decrementBy={1} incrementBy={1} />
-                  <AddonCard decrementBy={1} incrementBy={1} />
-                  <AddonCard decrementBy={1} incrementBy={1} />
-                </div>
               </div>
+              {typeof addOnsResponse !== 'undefined' && addOnsResponse !== null && addOnsResponse.merchandise !== 'undefined' && addOnsResponse.merchandise !== null ?
+                <div className={`bg-white card-boxshadow px-0 py-2 border-radius-15 mb-3 $ `}>
+                  <div className='d-flex justify-content-between card-border-bottom'>
+                    <h6 className='text-dark fw-500 fs-6 px-4 py-2 px-sm-2'>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 38.513 38.4">
+                        <g id="vehicle-information" transform="translate(-0.005 0)">
+                          <path id="Path_19735" data-name="Path 19735" d="M10.824,55.255h-.6q-3.112,0-6.223,0c-1.2,0-1.59-.4-1.59-1.6v-25.7c0-1.193.393-1.582,1.6-1.584.661,0,1.323,0,1.976,0v-2.4c-.734,0-1.434,0-2.134,0A3.611,3.611,0,0,0,.007,27.834q0,12.976,0,25.952a3.612,3.612,0,0,0,3.852,3.867q3.211.008,6.424,0c.176,0,.352-.014.541-.023V55.255Z" transform="translate(0 -21.561)" fill="#328128" />
+                          <path id="Path_19736" data-name="Path 19736" d="M69.1,119.849q-2.007,0-4.013,0c-1.3,0-2.609-.011-3.912.018a1.165,1.165,0,0,0-1.152,1.157,1.2,1.2,0,0,0,1.054,1.205,3.316,3.316,0,0,0,.5.027q7.474,0,14.948,0a2.82,2.82,0,0,0,.695-.069,1.185,1.185,0,0,0-.145-2.309,4.682,4.682,0,0,0-.65-.028q-3.662,0-7.323,0Z" transform="translate(-53.989 -107.819)" fill="#328128" />
+                          <path id="Path_19737" data-name="Path 19737" d="M245.925,36.234c0-2.925.048-5.8-.019-8.677a3.336,3.336,0,0,0-2.813-3.219,20.758,20.758,0,0,0-3.177-.03c0,.593,0,1.208,0,1.824,0,.147.013.294.024.5.7,0,1.384,0,2.065,0,1.1,0,1.522.419,1.523,1.509q0,3.764,0,7.528v.565h2.4Z" transform="translate(-215.83 -21.823)" fill="#328128" />
+                          <path id="Path_19738" data-name="Path 19738" d="M195.491,3.623c0-.6.01-1.2,0-1.806a1.8,1.8,0,1,0-3.606,0q-.02,1.781,0,3.561a1.8,1.8,0,1,0,3.606,0c.012-.585,0-1.17,0-1.755Z" transform="translate(-172.61 0)" fill="#328128" />
+                          <path id="Path_19739" data-name="Path 19739" d="M75.5,3.642c0-.6.007-1.2,0-1.806A1.8,1.8,0,1,0,71.888,1.8q-.029,1.805,0,3.611a1.8,1.8,0,1,0,3.6-.014c.012-.585,0-1.17,0-1.755Z" transform="translate(-64.655)" fill="#328128" />
+                          <path id="Path_19740" data-name="Path 19740" d="M120.12,26.685h5.973V24.36H120.12Z" transform="translate(-108.059 -21.915)" fill="#328128" />
+                          <path id="Path_19741" data-name="Path 19741" d="M62.986,206.126v0c.6,0,1.2.02,1.806-.005a1.2,1.2,0,1,0-.017-2.392c-1.153-.022-2.308-.02-3.462,0a1.2,1.2,0,0,0-1.295,1.179,1.224,1.224,0,0,0,1.312,1.219c.551.017,1.1,0,1.655,0Z" transform="translate(-53.99 -183.264)" fill="#328128" />
+                          <path id="Path_19742" data-name="Path 19742" d="M152.363,185.555c.005,2.826.011,5.566.014,8.3,0,.217-.006.436-.026.651-.094,1.01-.334,1.259-1.332,1.285-.9.023-1.8.015-2.706-.009a.966.966,0,0,1-1.017-.959c-.043-.415-.046-.834-.059-1.252-.009-.266-.118-.374-.4-.374q-5.87.011-11.74,0a.375.375,0,0,0-.437.356c-.109.574-.238,1.144-.359,1.715-.061.291-.214.5-.532.5-1.134.02-2.268.024-3.4.044a.752.752,0,0,1-.813-.719,11.718,11.718,0,0,1-.189-1.84c.005-2.375.048-4.75.076-7.124,0-.183,0-.365,0-.579a9.08,9.08,0,0,0-1.02-.282c-.376-.06-.405-.291-.366-.58a1.994,1.994,0,0,1,2.056-1.851c.451-.007.608-.311.73-.638a29.055,29.055,0,0,0,1.1-3.116,4.609,4.609,0,0,1,3.916-3.586,23.052,23.052,0,0,1,11.5.455,2.81,2.81,0,0,1,1.955,1.849c.5,1.38,1.014,2.758,1.511,4.14.2.559.458.932,1.171.914a1.929,1.929,0,0,1,1.714,1.945.647.647,0,0,1-.34.443A7.542,7.542,0,0,1,152.363,185.555Zm-19.932-2.317a39.465,39.465,0,0,0,16.784,0c-.439-1.389-.855-2.71-1.274-4.031a2.162,2.162,0,0,0-2.3-1.775c-2.541-.086-5.083-.193-7.624-.2a12.642,12.642,0,0,0-2.862.419,1.483,1.483,0,0,0-.921.739c-.644,1.575-1.2,3.186-1.807,4.842Zm1.34,6.216a5.891,5.891,0,0,0,1.215-.2c.283-.111.72-.425.7-.593a1.217,1.217,0,0,0-.607-.808c-.982-.456-2-.843-3.016-1.209-.811-.291-1.234-.013-1.387.838a3.036,3.036,0,0,0-.04.549,1,1,0,0,0,.933,1.153C132.319,189.316,133.087,189.374,133.771,189.454Zm14.527-.014c.607-.084,1.368-.17,2.121-.3a.777.777,0,0,0,.678-.764,5.321,5.321,0,0,0-.067-1.192.644.644,0,0,0-.955-.548c-1.2.439-2.4.906-3.589,1.369-.294.114-.6.312-.464.652a1.114,1.114,0,0,0,.633.59,10.763,10.763,0,0,0,1.643.2Z" transform="translate(-115.184 -157.423)" fill="#328128" />
+                          <path id="Path_19743" data-name="Path 19743" d="M10.824,55.26v2.376c-.19.008-.365.023-.541.023q-3.211,0-6.424,0A3.612,3.612,0,0,1,.007,53.79q0-12.975,0-25.951a3.61,3.61,0,0,1,3.85-3.867c.7,0,1.4,0,2.134,0v2.4H4.014c-1.208,0-1.6.39-1.6,1.584v25.7c0,1.2.394,1.6,1.59,1.6q3.112,0,6.223,0h.6Z" transform="translate(0 -21.566)" fill="#328128" />
+                          <path id="Path_19744" data-name="Path 19744" d="M69.086,119.858h7.323a4.682,4.682,0,0,1,.65.028A1.185,1.185,0,0,1,77.2,122.2a2.819,2.819,0,0,1-.695.069q-7.474.006-14.948,0a3.325,3.325,0,0,1-.5-.027,1.194,1.194,0,0,1-1.054-1.205,1.163,1.163,0,0,1,1.152-1.157c1.3-.029,2.608-.016,3.912-.018q2.007,0,4.013,0Z" transform="translate(-53.98 -107.828)" fill="#328128" />
+                          <path id="Path_19745" data-name="Path 19745" d="M245.93,36.243h-2.4V28.15c0-1.09-.42-1.5-1.523-1.509-.681,0-1.362,0-2.065,0-.01-.206-.023-.352-.024-.5,0-.615,0-1.231,0-1.824a20.758,20.758,0,0,1,3.177.03,3.336,3.336,0,0,1,2.813,3.219c.066,2.875.019,5.751.019,8.677Z" transform="translate(-215.835 -21.832)" fill="#328128" />
+                          <path id="Path_19746" data-name="Path 19746" d="M195.491,3.623c0,.585.01,1.17,0,1.755a1.8,1.8,0,1,1-3.606,0q-.02-1.781,0-3.561a1.8,1.8,0,1,1,3.606-.005c.013.6,0,1.2,0,1.806Z" transform="translate(-172.61 0)" fill="#328128" />
+                          <path id="Path_19747" data-name="Path 19747" d="M75.506,3.642c0,.585.009,1.17,0,1.755a1.8,1.8,0,1,1-3.6.014q-.032-1.805,0-3.611a1.8,1.8,0,1,1,3.6.036c.009.6,0,1.2,0,1.806Z" transform="translate(-64.666 0)" fill="#328128" />
+                          <path id="Path_19748" data-name="Path 19748" d="M120.12,26.685V24.36h5.973v2.325Z" transform="translate(-108.059 -21.915)" fill="#328128" />
+                          <path id="Path_19749" data-name="Path 19749" d="M63,206.135c-.552,0-1.1.014-1.655,0a1.225,1.225,0,0,1-1.312-1.219,1.2,1.2,0,0,1,1.295-1.179c1.153-.018,2.308-.02,3.462,0a1.2,1.2,0,1,1,.017,2.392c-.6.025-1.2.005-1.806.005v0Z" transform="translate(-53.999 -183.273)" fill="#328128" />
+                        </g>
+                      </svg>
+                      <span className='veritical-align-text-top ml-1'>Merchandise</span></h6>
+                    <div className='text-dark fw-500 fs-6 px-4 py-2 px-sm-2'>
+                      <a href="/">                  <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 33.547 31.336">
+                        <g id="add-to-cart_1_" data-name="add-to-cart (1)" transform="translate(0.062 -0.009)">
+                          <path id="Path_19728" data-name="Path 19728" d="M640.452-514.489H630.419a2.728,2.728,0,0,1,.467,2.233,2.862,2.862,0,0,1-1.318,1.859,2.75,2.75,0,0,1-3.3-.374,2.876,2.876,0,0,1-.383-3.7c-.093-.01-.181-.027-.265-.028-.654,0-1.308.008-1.963,0a2.15,2.15,0,0,1-2.176-1.921,2.12,2.12,0,0,1,1.489-2.327c.834-.291,1.677-.561,2.514-.841.142-.048.28-.1.445-.16l-1.047-3.889-3.7-13.755c-.135-.5-.266-.6-.782-.606h-2.168c-.45,0-.693-.2-.685-.561s.242-.541.67-.543c.781,0,1.563-.006,2.343,0a1.657,1.657,0,0,1,1.647,1.26c.245.874.475,1.751.72,2.656H635.5a8.073,8.073,0,0,0,3.165,7.663,8.12,8.12,0,0,0,8.16,1.327c-.124.986-.242,1.93-.363,2.873-.041.324-.068.654-.132.969a2.759,2.759,0,0,1-2.76,2.26c-2.8.008-5.6.042-8.393-.008a25.473,25.473,0,0,0-9.217,1.525c-.853.308-1.721.578-2.583.862a1.044,1.044,0,0,0-.8.912,1.085,1.085,0,0,0,.241.8,1.084,1.084,0,0,0,.737.391c.15.015.3.008.454.008h18.534a2.718,2.718,0,0,1,2.788,1.85,2.849,2.849,0,0,1-.977,3.219,2.8,2.8,0,0,1-3.353-.084,2.853,2.853,0,0,1-.872-3.247C640.215-514.067,640.33-514.255,640.452-514.489Z" transform="translate(-617.61 541.358)" fill="#328128" />
+                          <path id="Path_19729" data-name="Path 19729" d="M828.489-548.606a7.066,7.066,0,0,1-7.234-7.324,7.229,7.229,0,0,1,7.29-7.171,7.231,7.231,0,0,1,7.218,7.21A7.066,7.066,0,0,1,828.489-548.606Zm.584-7.79v-2.7a.576.576,0,0,0-.569-.654c-.341,0-.554.251-.561.663,0,.489,0,.978,0,1.467v1.225h-2.7c-.406,0-.654.226-.654.567s.252.555.662.561c.489,0,.978,0,1.467,0h1.226v2.7c0,.4.226.654.567.654s.555-.253.561-.663c0-.489,0-.978,0-1.467v-1.225h.432c.768,0,1.537.007,2.306,0a.549.549,0,0,0,.515-.856.81.81,0,0,0-.561-.258c-.878-.029-1.761-.014-2.688-.014Z" transform="translate(-802.278 563.11)" fill="#328128" />
+                        </g>
+                      </svg></a>
+                    </div>
+                  </div>
+                  <div className="row p-3 merchandise">
+                    {typeof addOnsResponse !== 'undefined' && addOnsResponse !== null && addOnsResponse.merchandise !== 'undefined' && addOnsResponse.merchandise !== null ?
+
+                      addOnsResponse.merchandise.map(e => {
+                        merchandiseId.indexOf(e.id) === -1 ? merchandiseId.push(e.id) : '';
+                        return <AddonCard key={e.id} response={e} decrementBy={1} incrementBy={1} />
+
+                      })
+
+
+                      : ''}
+
+                    {/* // <AddonCard decrementBy={1} incrementBy={1} />
+                  // <AddonCard decrementBy={1} incrementBy={1} />
+                  // <AddonCard decrementBy={1} incrementBy={1} />
+                  // <AddonCard decrementBy={1} incrementBy={1} />
+                  // <AddonCard decrementBy={1} incrementBy={1} /> */}
+                  </div>
+                </div>
+                : ''
+              }
               <div className='bg-white card-boxshadow px-0 py-2 border-radius-15 mb-3'>
                 <h6 className='text-dark fw-500 fs-6 px-4 py-2 px-sm-2 card-border-bottom'>
                   <svg
@@ -357,40 +606,42 @@ export default function AddOn() {
                   </svg><span className='veritical-align-text-top ml-1'>Vehicle Details</span></h6>
 
                 {vehicleaccordian.length < 3 && (
-                  <div className="ui form px-4 px-sm-2">
+                  <div className="ui form px-4 px-sm-2 vehicledetail">
                     <div className="field w-100 datePicker my-3">
                       <label className='fw-500 fs-7 mb-2'>Vehicle Type</label>
-                      <input placeholder='Vehicle Type' onChange={(e) => setVehicleType(e.target.value)} />
+                      <input placeholder='Vehicle Type' value={vehicleType} onChange={(e) => setVehicleType(e.target.value)} />
                     </div>
                     <div className="field w-100 datePicker my-3">
                       <label className='fw-500 fs-7 mb-2'>Year</label>
-                      <input placeholder='Year' className='w-100' onChange={(e) => setYear(e.target.value)} />
+
+                      {/* <SemanticDatepicker placeholder='Year' formatOptions="yyyy" type='date' className='w-100' /> */}
+                      <input placeholder='Year' className='w-100' value={year} onChange={(e) => setYear(e.target.value)} />
                     </div>
                     <div className="field w-100 datePicker my-3">
                       <label className='fw-500 fs-7 mb-2'>Brand</label>
-                      <Dropdown placeholder='Brand' clearable fluid search selection options={vehicleBrandSelectOption} onChange={(e) => setBrand(e.target.innerText)} />
+                      <input placeholder='Brand' value={brand} onChange={(e) => setBrand(e.target.value)} />
                     </div>
                     <div className="field w-100 datePicker my-3">
                       <label className='fw-500 fs-7 mb-2'>Model</label>
-                      <input placeholder='Model' onChange={(e) => setModel(e.target.value)} />
+                      <input placeholder='Model' value={model} onChange={(e) => setModel(e.target.value)} />
                     </div>
                     <div className="field w-100 datePicker my-3">
                       <label className='fw-500 fs-7 mb-2'>Color</label>
-                      <input placeholder='Color' onChange={(e) => setColor(e.target.value)} />
+                      <input placeholder='Color' value={color} onChange={(e) => setColor(e.target.value)} />
                     </div>
                     <div className="field w-100 datePicker my-3">
                       <label className='fw-500 fs-7 mb-2'>Vehicle State</label>
-                      <input placeholder='Vehicle State' onChange={(e) => setVehicleState(e.target.value)} />
+                      <input placeholder='Vehicle State' value={vehicleState} onChange={(e) => setVehicleState(e.target.value)} />
                     </div>
                     <div className="field w-100 datePicker my-3">
                       <label className='fw-500 fs-7 mb-2'>Registration No</label>
-                      <input placeholder='Registration No' onChange={(e) => setRegistrationNo(e.target.value)} />
+                      <input placeholder='Registration No' value={registrationNo} onChange={(e) => setRegistrationNo(e.target.value)} />
                     </div>
                     <div className="field w-100 datePicker my-3">
                       <label className='fw-500 fs-7 mb-2'>License No</label>
-                      <input placeholder='License No' onChange={(e) => setLicenseNo(e.target.value)} />
+                      <input placeholder='License No' value={licenseNo} onChange={(e) => setLicenseNo(e.target.value)} />
                     </div>
-                    <div className='text-success-dark mb-2'>
+                    <div className={`text-success-dark mb-2 ${(vehicleType === '' && year === '' && brand === '' && color === '' && vehicleState === '' && registrationNo === '' && licenseNo === '') && `d-none`}`}>
                       <a onClick={e => VehicleFormSubmitHandler(e)} href="/" className='text-success fs-7 cursor-pointer'> <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 27.505 27.5">
                         <path id="floating" d="M577.346,2164.47h1.719c.468.061.939.108,1.4.186a13.8,13.8,0,0,1,11.276,11.2c.089.5.142,1.006.211,1.51v1.719c-.04.327-.075.656-.122.981a13.749,13.749,0,1,1-23.4-11.494,13.464,13.464,0,0,1,7.4-3.886C576.337,2164.593,576.843,2164.539,577.346,2164.47Zm2,14.892h4.82a1.14,1.14,0,1,0,.027-2.278c-1.5-.009-3.007,0-4.51,0h-.336v-4.813a1.118,1.118,0,0,0-.693-1.111,1.131,1.131,0,0,0-1.588,1.07c-.01,1.5,0,3.007,0,4.51v.344h-4.806a1.141,1.141,0,1,0-.055,2.28c1.512.011,3.025,0,4.537,0h.323v.364c0,1.477,0,2.953,0,4.43a1.141,1.141,0,1,0,2.28.068c.012-1.5,0-3.007,0-4.51Z" transform="translate(-564.451 -2164.47)" fill="#328128" />
                       </svg>
@@ -463,10 +714,10 @@ export default function AddOn() {
             </div>
           </div>
           <div className='row'>
-          <div className='text-center col-12 my-2'>
-                <button onClick={() => navigate('/preBooking/rentingDetails')} className="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">BACK</button>
-                <button className="ui button bg-success-dark   fs-7 fw-400 text-white px-5" onClick={e => navigateTenantDEtails(e)}>NEXT</button>
-              </div>
+            <div className='text-center col-12 my-2'>
+              <button onClick={() => navigate('/preBooking/rentingDetails')} className="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">BACK</button>
+              <button className="ui button bg-success-dark   fs-7 fw-400 text-white px-5" onClick={e => navigateTenantDEtails(e)}>NEXT</button>
+            </div>
           </div>
         </div>
       </div>
@@ -501,4 +752,5 @@ export default function AddOn() {
       </Modal>
     </>
   )
+
 }
