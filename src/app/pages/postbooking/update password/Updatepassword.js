@@ -38,7 +38,8 @@ export default function Updatepassword() {
         "Content-Type": "application/json",
       },
     };
-    let userId = "15a56797-2da9-4650-a92c-edf06c512484"
+    let userId = localStorage.getItem('userid');
+
     const [html] = document.getElementsByTagName("html")
     const lang = html.getAttribute("lang");
     let password_details = {

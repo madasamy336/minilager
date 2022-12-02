@@ -69,6 +69,8 @@ export default function RentingDetails() {
  
 
   const movindateOnchange = (e, item) => {
+   console.log(helper.readDate(item.value));
+    console.log(item.value)
     setMovinDate(item.value);
     childRef.current.unitInfodetailscall();
   }
@@ -193,7 +195,7 @@ export default function RentingDetails() {
                 <div className="ui form px-4 px-sm-2">
                   <div className="field w-100 datePicker my-3">
                     <label className='fw-500 fs-7 mb-2' >Move-In Date</label>
-                    <SemanticDatepicker placeholder='Select date' className='w-100' value={movinDate} defaultValue={new Date(movinDate)}  onChange={movindateOnchange} />
+                    <SemanticDatepicker placeholder='Select date' className='w-100' value={movinDate}   onChange={movindateOnchange} />
                   </div>
                   {typeof invoice !== "undefined" && invoice !== null && invoice.length > 0 ?
                     <div className="field w-100  my-3">
@@ -311,7 +313,7 @@ export default function RentingDetails() {
 
             <ToastContainer />
 
-            <Pricesummary ref={childRef} />
+            <Pricesummary ref={childRef} movinDate={movinDate} />
 
           </div>
           <div className='row'>

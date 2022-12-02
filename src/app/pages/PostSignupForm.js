@@ -11,13 +11,12 @@ import 'react-toastify/dist/ReactToastify.css';
 
 
 
-export default function PostSignupForm() {
+export default function PostSignupForm(props) {
         
     const navigate = useNavigate();
     const dispatch = useDispatch();
     // getting culture 
     // let culture = JSON.parse(sessionStorage.getItem('culture')).culture;
-
     // console.log(culture);
     function sixStorageCheckPhoneNumber(event) {
         let inputValue = event.target.value;
@@ -44,8 +43,6 @@ export default function PostSignupForm() {
         password: '',
         confirmPassword: '',
     });
-
-
 
     let { firstName, lastName, email, UserName, phoneNumber, password, confirmPassword } = values;
     const validateOne = (e) => {
@@ -138,7 +135,15 @@ export default function PostSignupForm() {
                 if (configData.result !== null && typeof configData.result !== 'undefined' && configData.result !== '') {
 
                   if (configData.returnCode === 'SUCCESS') {
+                       console.log(configData);
+                       if(props.callingfrom === 'prebooking'){
+                        localStorage.setItem('userid',response.data.result);
+                         navigate('/preBooking/TenantDetails')
+                       }else{
+
                         navigate('/login');
+                       }
+                        // 
                     } else if (configData.returnCode === 'FAILED' &&  configData.returnMessage === "Username/email already exists.") {
 
                         toast.error('Username / email already exists', {
