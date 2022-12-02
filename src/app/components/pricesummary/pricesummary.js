@@ -69,7 +69,7 @@ const Pricesummary = forwardRef((props, ref) => {
           id: unitid
         }
       ],
-      moveInDate: movinDate,
+      moveInDate: helper.readDate(props.movinDate),
       additionalMonths: 0,
       recurringPeriodId: invoiceData,
       recurringTypeId: recurringData,
