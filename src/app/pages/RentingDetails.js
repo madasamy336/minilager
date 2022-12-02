@@ -86,8 +86,10 @@ export default function RentingDetails() {
   const customhandlechange = (e) => {
     customValues = {
       value: e.target.value,
+      checked: e.target.checked,
       unitId: e.target.dataset.unitid,
-      fieldId: e.target.dataset.fieldid
+      fieldId: e.target.dataset.fieldid,
+
     }
 
     setCustomFieldsData([...customFieldsData, customValues]);
@@ -225,45 +227,64 @@ export default function RentingDetails() {
 
                       }
 
-                      // else if (item.matadata.displayOn === "Unit specific details" && item.matadata.type === "date") {
+                      else if (item.matadata.displayOn === "Unit specific details" && item.matadata.type === "date") {
 
-                      //   return <div key={item.fieldId} className='row'>
-                      //     <div className="col-12">
-                      //       <div className="field w-100 datePicker my-2">
-                      //         <label className='fw-500 fs-7 mb-2'>{item.fieldName}</label>
-                      //         <SemanticDatepicker placeholder={item.fieldName} className='w-100' value={customFieldsAllvalues.value}  data-fieldId ={item.fieldId} data-unitId ={unitid} onChange={(e) => customhandlechange(e)} />
-                      //       </div>
-                      //     </div>
-                      //   </div>
+                        return <div key={item.fieldId} className='row'>
+                          <div className="col-12">
+                            <div className="field w-100 datePicker my-2">
+                              <label className='fw-500 fs-7 mb-2'>{item.fieldName}</label>
+                              <SemanticDatepicker placeholder={item.fieldName} className='w-100' value={customFieldsData.forEach((data)=>{
+                                if(data.fieldId === item.fieldId){
+                                 return data.value;
+                                }
+                              })}  data-fieldId ={item.fieldId} data-unitId ={unitid} data-required ={item.matadata.isMandatory} onChange={(e) => customhandlechange(e)} />
+                           
+                            <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
+                            </div>
+                          </div>
+                        </div>
 
-                      // } 
+                      } 
 
-                      // else if (item.matadata.displayOn === "Unit specific details" && item.matadata.type === "checkboxes") {
-                      //   return <div key={item.fieldId} className="col-12  col-md-6 my-2">
-                      //     <span>{item.fieldName}
-                      //       <span className="mx-2">
-                      //         <input className="mr-1" type="checkbox" onChange={(e) => customhandlechange(e)} />
-                      //         <label>{item.options[0].option}</label>
-                      //       </span>
-                      //       <span>
-                      //         <input className="mr-1" type="checkbox"  onChange={(e) => customhandlechange(e)} />
-                      //         <label>{item.options[1].option}</label>
-                      //       </span>
-                      //     </span>
-                      //   </div>
-                      // } 
+                      else if (item.matadata.displayOn === "Unit specific details" && item.matadata.type === "checkboxes") {
+                        return <div key={item.fieldId} className="col-12  col-md-6 my-2">
+                          <span>{item.fieldName}
+                            <span className="mx-2">
+                              <input className="mr-1" type="checkbox" data-fieldId ={item.fieldId} data-unitId ={unitid} data-required ={item.matadata.isMandatory} value ={customFieldsData.forEach((data)=>{
+                                if(data.fieldId === item.fieldId){
+                                  return data.value;
+                                }
+                              })} onChange={(e) => customhandlechange(e)} />
+                              <label>{item.options[0].option}</label>
+                            </span>
+                            <span>
+                              <input className="mr-1" type="checkbox" data-fieldId ={item.fieldId} data-unitId={unitid} data-required = {item.matadata.isMandatory} value={customFieldsData.forEach((data)=>{
+                                if(data.fieldId === item.fieldId){
+                                  return data.value;
+                                }
+                              })}  onChange={(e) => customhandlechange(e)} />
+                              <label>{item.options[1].option}</label>
+                            </span>
+                          </span>
+                        </div>
+                      } 
 
-                      // else if (item.matadata.displayOn === "Unit specific details" && item.matadata.type === "textarea") {
+                      else if (item.matadata.displayOn === "Unit specific details" && item.matadata.type === "textarea") {
 
-                      //   return <div key={item.fieldId} className='row'>
-                      //     <div className="col-12">
-                      //       <div className="field w-100 my-2">
-                      //         <label className='fw-500 fs-7 mb-2'>{item.fieldName}</label>
-                      //         <textarea placeholder={item.fieldName} rows="3" value={customFieldsAllvalues.value}  data-fieldId ={item.fieldId} data-unitId ={unitid} onChange={(e) => customhandlechange(e)}></textarea>
-                      //       </div>
-                      //     </div>
-                      //   </div>
-                      // } 
+                        return <div key={item.fieldId} className='row'>
+                          <div className="col-12">
+                            <div className="field w-100 my-2">
+                              <label className='fw-500 fs-7 mb-2'>{item.fieldName}</label>
+                              <textarea placeholder={item.fieldName} rows="3" value={customFieldsData.forEach((data)=>{
+                                if(data.fieldId === item.fieldId){
+                                  return data.value;
+                                }
+                              })}  data-fieldId ={item.fieldId} data-unitId={unitid} data-required = {item.matadata.isMandatory} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)}></textarea>
+                             <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
+                            </div>
+                          </div>
+                        </div>
+                      } 
 
 
                       // else if(item.matadata.displayOn === "Unit specific details" && item.matadata.type === "checkbox"){
