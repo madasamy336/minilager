@@ -12,10 +12,6 @@ import instance from '../services/instance';
 import request from '../services/request';
 import Helper from "../helper";
 let helper = new Helper();
-
-
-
-
 let customValues;
 let unitid = localStorage.getItem('unitid');
 export default function RentingDetails() {
@@ -30,9 +26,11 @@ export default function RentingDetails() {
   const recurringDefaultValue = clientDataconfig.recurringTypes[0].recurringTypeId;
   const PricesummaryData = () => {
     if (clientDataconfig !== null && typeof clientDataconfig !== "undefined") {
+     
       const invoiceperiodval = clientDataconfig.invoicePeriods !== null && typeof clientDataconfig.invoicePeriods !== "undefined" && clientDataconfig.invoicePeriods.length > 0 ?
         clientDataconfig.invoicePeriods.map(item => {
           if(item.preferred){
+            sessionStorage.setItem("invoiceData", (item.invoicePeriodId));
             setInvoiceDefault(item.invoicePeriodId);
           }
           return {
@@ -69,8 +67,6 @@ export default function RentingDetails() {
  
 
   const movindateOnchange = (e, item) => {
-   console.log(helper.readDate(item.value));
-    console.log(item.value)
     setMovinDate(item.value);
     childRef.current.unitInfodetailscall();
   }
@@ -125,8 +121,9 @@ export default function RentingDetails() {
   }
 
   useEffect(() => {
-    customFieldsSettings();
-    PricesummaryData();
+
+     PricesummaryData();
+     customFieldsSettings();
   }, []);
 
   const customFieldsSettings = () => {
@@ -155,8 +152,7 @@ export default function RentingDetails() {
 
   /** Promo Code Discount End */
 
- 
-
+ console.log(invoiceDefault);
 
   return (
     <>

@@ -125,12 +125,14 @@ class Helper {
     //Read Date From Localised Format
     readDate(date) {
 
-        // let dateFormat = '';
+        let dateFormat = '';
         // if (typeof this.cultureInfo !== 'undefined' && this.cultureInfo !== null) {
         //     dateFormat = this.convertMomentDateFormat(this.cultureInfo.shortDate);//.replace("d", "D").replace("d", "D");
         // }
+        if(date !== null && typeof date !== 'undefined' && date !== ''){
         const momentDate = moment(date, this.convertMomentDateFormat(this.dateFormat));
         return `${momentDate.year()}-${momentDate.month() + 1}-${momentDate.date()}`;
+        }
     }
 
     //Display Float In Localised Currency
@@ -226,7 +228,9 @@ class Helper {
     }
 
     convertMomentDateFormat(inputstring) {
+        if(inputstring !== null && typeof inputstring !== 'undefined'){
         return inputstring.toUpperCase();
+        }
     }
 
 

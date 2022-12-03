@@ -1,10 +1,49 @@
 import React, {useState} from 'react'
-import { useNavigate } from 'react-router-dom';
-import PreBookingBreadcrumb from '../components/prebooking breadcrumb/PreBookingBreadcrumb'
+import { useEffect } from 'react';
+import { json, useNavigate } from 'react-router-dom';
+import PreBookingBreadcrumb from '../components/prebooking breadcrumb/PreBookingBreadcrumb';
+import instance from '../services/instance';
+import request from '../services/request';
 
 export default function EsignPayment() {
-  const navigate = useNavigate();
+  let unitid = localStorage.getItem('unitid');
+  let insuranceArray = [];
+  let merchandiseArray = [];
+  let servicesArray = [];
+  let getMoveindate = sessionStorage.getItem('moveindate');
+  let getRecurringPeriodId = sessionStorage.getItem('invoiceData');
+  let getRecurringTypeid = sessionStorage.getItem('recurringData');
+  let insuranceDetail = JSON.parse(sessionStorage.getItem('insurancedetail'));
+  let merchandiseItem = JSON.parse(sessionStorage.getItem('merchandiseItem'));
+  let servicesDetail = JSON.parse(sessionStorage.getItem('servicedetail'));
 
+   
+  if(insuranceDetail.length > 0){
+    insuranceDetail.forEach(element => {
+    insuranceArray.push(element.insurancePlans)
+   });
+
+   }
+
+   if(merchandiseItem.length > 0){
+    merchandiseItem.forEach((element)=> {
+      element.merchandise.forEach((element)=> {
+        if(element.qnty > 0){
+         merchandiseArray.push({id:element.itemId, quantity:element.qnty})
+        }
+      })
+    }) 
+  }
+ if(servicesDetail.length > 0){
+ 
+  servicesDetail.forEach((element)=> {
+    servicesArray.push(element.servicedId)
+    console.log(element.unitId);
+    console.log(element.servicedId)
+  })
+ }
+
+  const navigate = useNavigate();
   const[esignMethod, setEsignMethod] = useState(false);
   const esignMethodHandler = () => {
     setEsignMethod(!esignMethod);
@@ -13,6 +52,51 @@ export default function EsignPayment() {
     e.preventDefault();
     navigate('/preBooking/thankyou')
   }
+
+  useEffect(() => {
+    unitinfodetails(true);
+ 
+  }, []);
+  const unitinfodetails = (initialCall) => {
+    let config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    let unitdetailsdata;
+    unitdetailsdata = {
+      units: [
+        {
+          commodity: {
+            services: servicesArray,
+            insurance: insuranceArray,
+            merchandise:merchandiseArray
+          },
+          id: unitid
+        }
+      ],
+      moveInDate: getMoveindate,
+      additionalMonths: 0,
+      recurringPeriodId: getRecurringPeriodId,
+      recurringTypeId: getRecurringTypeid,
+      promocode: ""
+    }
+    instance
+      .post(request.unit_info_by_id, unitdetailsdata, config)
+      .then((response) => {
+        const unit_info_data = response.data;
+        if (typeof unit_info_data !== "undefined" && unit_info_data !== null && unit_info_data !== "") {
+        //  console.log(unit_info_data);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+  }
+
+  
   return (
     <>
       <PreBookingBreadcrumb activeStep='1234' />

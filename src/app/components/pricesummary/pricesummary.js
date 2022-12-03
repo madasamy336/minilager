@@ -12,16 +12,23 @@ import { composeInitialProps } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useRef } from 'react';
 let helper = new Helper();
 
+
 let storageTypeId;
 
 const Pricesummary = forwardRef((props, ref) => {
-  let invoiceData = JSON.parse(sessionStorage.getItem("invoiceData"));
+ let invoiceData = JSON.parse(sessionStorage.getItem("invoiceData"));
+ let recurringData = JSON.parse(sessionStorage.getItem("recurringData"));
+ console.log(invoiceData);
+  
   useImperativeHandle(ref, () => ({
     unitInfodetailscall() {
-      unitinfodetails();
+    
+        unitinfodetails();
+  
+      
     }
-  }));
 
+  }));
 
   const [PromoDiscount, setPromoDiscount] = useState();
   const [promoValidate, setPromoValidate] = useState('');
@@ -40,17 +47,14 @@ const Pricesummary = forwardRef((props, ref) => {
 
   useEffect(() => {
     unitinfodetails(true);
+ 
   }, []);
 
 
   /** Unit Details Page Start **/
 
   const unitinfodetails = (initialCall) => {
-    let invoiceData = JSON.parse(sessionStorage.getItem("invoiceData"));
-    let recurringData = JSON.parse(sessionStorage.getItem("recurringData"));
-
-
-
+    sessionStorage.setItem("moveindate",  helper.readDate(props.movinDate));
     let config = {
       headers: {
         "Content-Type": "application/json",
