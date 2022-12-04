@@ -17,20 +17,28 @@ class Helper {
     sixStorageOverrideCultureCurrency;
 
     constructor() {
-        if(sessionStorage.getItem("culture") !== null){
+        if (sessionStorage.getItem("culture") !== null) {
             this.culture = JSON.parse(sessionStorage.getItem("culture")).culture;
-            this.currency =JSON.parse(sessionStorage.getItem("culture")).currency;
-            this.dateFormat =JSON.parse(sessionStorage.getItem("culture")).dateFormat
+            this.currency = JSON.parse(sessionStorage.getItem("culture")).currency;
+            this.dateFormat = JSON.parse(sessionStorage.getItem("culture")).dateFormat
 
         }
 
-       
+
     }
 
     checkPhoneNumber(event) {
         let inputValue = event.target.value;
         let numbers = inputValue.replace(/[^0-9]/g, '');
         event.target.value = numbers;
+    }
+
+    show_date_format2(date) {
+
+        let options = { day: 'numeric', month: 'long', year: 'numeric' };
+        let today = new Date(date);
+
+        return today.toLocaleDateString("en-US", options);
     }
 
     checkNumber(event) {
@@ -117,7 +125,7 @@ class Helper {
     }
 
     //DIsplay Date In Localised Format
-    displayDate(date) {      
+    displayDate(date) {
         const momentDate = moment(date).format(this.convertMomentDateFormat(this.dateFormat));
         return momentDate;
     }
@@ -129,9 +137,9 @@ class Helper {
         // if (typeof this.cultureInfo !== 'undefined' && this.cultureInfo !== null) {
         //     dateFormat = this.convertMomentDateFormat(this.cultureInfo.shortDate);//.replace("d", "D").replace("d", "D");
         // }
-        if(date !== null && typeof date !== 'undefined' && date !== ''){
-        const momentDate = moment(date, this.convertMomentDateFormat(this.dateFormat));
-        return `${momentDate.year()}-${momentDate.month() + 1}-${momentDate.date()}`;
+        if (date !== null && typeof date !== 'undefined' && date !== '') {
+            const momentDate = moment(date, this.convertMomentDateFormat(this.dateFormat));
+            return `${momentDate.year()}-${momentDate.month() + 1}-${momentDate.date()}`;
         }
     }
 
@@ -228,8 +236,8 @@ class Helper {
     }
 
     convertMomentDateFormat(inputstring) {
-        if(inputstring !== null && typeof inputstring !== 'undefined'){
-        return inputstring.toUpperCase();
+        if (inputstring !== null && typeof inputstring !== 'undefined') {
+            return inputstring.toUpperCase();
         }
     }
 
