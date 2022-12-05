@@ -8,17 +8,18 @@ import { fetchAppConfig } from '../../redux/actions/appConfig/appConfigAction';
 const Card = (props) => {
     const facilityDetailResponse = props;
     const dispatch = useDispatch()
-      useEffect(() => {
+    useEffect(() => {
         dispatch(fetchAppConfig())
     }, [])
-   
+
     const { t } = useTranslation();
     // facilityDetailResponse.facilitydetails.map(response => {
     //     console.log(response)
     // })
     const navigate = useNavigate()
-    const navigateUnits = (e, id) => {
+    const navigateUnits = (e, id, address) => {
         dispatch(GetFacilityId(id));
+        sessionStorage.setItem('facilityaddress', JSON.stringify(address))
         e.preventDefault();
         navigate('/preBooking/units')
     }
@@ -26,7 +27,8 @@ const Card = (props) => {
         <>
             {typeof facilityDetailResponse.facilitydetails !== 'undefined' && facilityDetailResponse.facilitydetails !== null ? (
                 <div className='rentNow-container'>
-                    {facilityDetailResponse.facilitydetails.map( details => {
+                    {facilityDetailResponse.facilitydetails.map(details => {
+                        let facilityaddress = details.address;
                         return <div key={""} className='rentNow-card bg-white'>
                             <div className='row'>
                                 <div className='col-lg-3 col-md-3 col-sm-12'>
@@ -83,7 +85,7 @@ const Card = (props) => {
                                 </div>
                                 <div className='col-lg-2 col-md-2 col-sm-12'>
                                     <div className='rentNow-card-action d-flex justify-content-center align-items-center h-100'>
-                                        <button className="ui button btn-success" onClick={e => navigateUnits(e,details.locationId)}> {t("View Units")}</button>
+                                        <button className="ui button btn-success" onClick={e => navigateUnits(e, details.locationId, details.address)}> {t("View Units")}</button>
                                     </div>
                                 </div>
                             </div>

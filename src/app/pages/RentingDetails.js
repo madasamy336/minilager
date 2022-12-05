@@ -35,6 +35,7 @@ export default function RentingDetails() {
   const recurringDefaultValue = clientDataconfig.recurringTypes[0].recurringTypeId;
   const PricesummaryData = () => {
     if (clientDataconfig !== null && typeof clientDataconfig !== "undefined") {
+     
       const invoiceperiodval = clientDataconfig.invoicePeriods !== null && typeof clientDataconfig.invoicePeriods !== "undefined" && clientDataconfig.invoicePeriods.length > 0 ?
         clientDataconfig.invoicePeriods.map(item => {
           if (item.preferred) {
@@ -201,7 +202,6 @@ export default function RentingDetails() {
         console.log(error);
       })
   }
-
 
 
   return (

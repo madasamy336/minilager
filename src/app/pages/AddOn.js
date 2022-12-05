@@ -22,6 +22,9 @@ export default function AddOn() {
   const navigate = useNavigate();
   let unitid = localStorage.getItem('unitid');
   let rentDetailsvalue = JSON.parse(sessionStorage.getItem(`rentDetails`));
+  let getMoveindate = sessionStorage.getItem('moveindate');
+  let getRecurringPeriodId = sessionStorage.getItem('invoiceData');
+  let getRecurringTypeid = sessionStorage.getItem('recurringData');
   let insuranceSessionValue = JSON.parse(sessionStorage.getItem('insurancedetail'));
   let serviceSessionValue = JSON.parse(sessionStorage.getItem('servicedetail'));
   let VehicleSessionValue = JSON.parse(sessionStorage.getItem('vehicleDetail'));
@@ -238,10 +241,10 @@ export default function AddOn() {
 
     let requestbody = {
       unitId: [unitid],
-      moveInDate: rentDetails.movindate,
+      moveInDate: getMoveindate,
       additionalMonths: 0,
-      recurringPeriodId: rentDetails.invoiceTypedata,
-      recurringTypeId: rentDetails.recurringTypedata,
+      recurringPeriodId: getRecurringPeriodId,
+      recurringTypeId: getRecurringTypeid,
       isBusinessUser: false
 
 
