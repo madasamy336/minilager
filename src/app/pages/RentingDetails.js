@@ -1,27 +1,36 @@
 import React, { useState, useEffect } from 'react'
 import PreBookingBreadcrumb from '../components/prebooking breadcrumb/PreBookingBreadcrumb'
 import SemanticDatepicker from 'react-semantic-ui-datepickers';
-import { Dropdown, Modal } from 'semantic-ui-react';
+import { Dropdown, Modal, Radio } from 'semantic-ui-react';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Pricesummary from '../components/pricesummary/pricesummary';
-import {forwardRef, useImperativeHandle, useRef} from 'react';
+import { forwardRef, useImperativeHandle, useRef } from 'react';
 // import { useTranslation } from "react-i18next";
 import instance from '../services/instance';
 import request from '../services/request';
 import Helper from "../helper";
 let helper = new Helper();
+
+let fid;
+let Sdetails;
+let cusomfieldPhone;
+let customFull;
+let newArray;
+let customInputFieldValue;
+let customFieldsData;
 let customValues;
 let unitid = localStorage.getItem('unitid');
+
 export default function RentingDetails() {
   const childRef = useRef(null);
+  const [TestT, SetCustomS] = useState();
   const [invoice, setInvoice] = useState();
   const [invoiceDefault, setInvoiceDefault] = useState();
   const [recurring, setRecurring] = useState();
   const [movinDate, setMovinDate] = useState(new Date());
   const [customFieldAccess, SetCustomFieldAccess] = useState();
-  const [customFieldsData, setCustomFieldsData] = useState([]);
   const clientDataconfig = JSON.parse(sessionStorage.getItem("configdata"));
   const recurringDefaultValue = clientDataconfig.recurringTypes[0].recurringTypeId;
   const PricesummaryData = () => {
@@ -29,15 +38,14 @@ export default function RentingDetails() {
      
       const invoiceperiodval = clientDataconfig.invoicePeriods !== null && typeof clientDataconfig.invoicePeriods !== "undefined" && clientDataconfig.invoicePeriods.length > 0 ?
         clientDataconfig.invoicePeriods.map(item => {
-          if(item.preferred){
-            sessionStorage.setItem("invoiceData", (item.invoicePeriodId));
+          if (item.preferred) {
             setInvoiceDefault(item.invoicePeriodId);
           }
           return {
             key: item.invoicePeriodId,
             text: item.invoicePeriod,
             value: item.invoicePeriodId,
-            default:item.preferred,
+            default: item.preferred,
 
           }
         }) : '';
@@ -58,13 +66,13 @@ export default function RentingDetails() {
     }
   }
 
-  if(typeof invoiceDefault!=="undefined" && invoiceDefault!== null && invoiceDefault !==""){
+  if (typeof invoiceDefault !== "undefined" && invoiceDefault !== null && invoiceDefault !== "") {
     sessionStorage.setItem("invoiceData", (invoiceDefault));
   }
-  if(typeof recurringDefaultValue!=="undefined" && recurringDefaultValue!== null && recurringDefaultValue !==""){
+  if (typeof recurringDefaultValue !== "undefined" && recurringDefaultValue !== null && recurringDefaultValue !== "") {
     sessionStorage.setItem("recurringData", (recurringDefaultValue));
   }
- 
+
 
   const movindateOnchange = (e, item) => {
     setMovinDate(item.value);
@@ -73,27 +81,58 @@ export default function RentingDetails() {
   const invoiceOnchange = (e, item) => {
     sessionStorage.setItem("invoiceData", (item.value));
     childRef.current.unitInfodetailscall();
-    
+
   }
   const recurringOnchange = (e, item) => {
     sessionStorage.setItem("recurringData", (item.value));
     childRef.current.unitInfodetailscall();
-    
+
   }
 
   const customhandlechange = (e) => {
     customValues = {
       value: e.target.value,
-      checked: e.target.checked,
       unitId: e.target.dataset.unitid,
       fieldId: e.target.dataset.fieldid,
+    }
+
+    SetCustomS({ ...TestT, [e.target.dataset.fieldid]: customValues });
+
+
+    const fieldId = e.target.dataset.fieldid;
+    const checked = e.target.checked;
+    const isMandatory = e.target.dataset.required;
+
+    sessionStorage.setItem ("fieldid", (fieldId));
+
+    if (e.target.value && e.target.dataset.datatype) {
+      let letters = /^[A-Za-z]+$/;
+      if (!e.target.value.match(letters)) {
+        document.getElementById("Alphabet").style.display = 'block';
+      } else {
+        document.getElementById("Alphabet").style.display = 'none';
+      }
+    } else {
+      document.getElementById("Alphabet").style.display = 'none';
+    }
+
+
+    if (!checked && isMandatory === "true") {
+      let field_getId = document.getElementById(fieldId);
+      if (field_getId !== null && typeof field_getId !== 'undefined') {
+        field_getId.style.display = 'block';
+      }
+    }
+    else {
+      let field_getId = document.getElementById(fieldId);
+      if (field_getId !== null && typeof field_getId !== 'undefined') {
+        field_getId.style.display = 'none';
+      }
 
     }
 
-    setCustomFieldsData([...customFieldsData, customValues]);
 
   }
-
 
   const customfleldvalidate = (e) => {
     const fieldId = e.target.dataset.fieldid;
@@ -116,17 +155,29 @@ export default function RentingDetails() {
 
 
   const navigateAddon = (e) => {
-    e.preventDefault();
-    localStorage.setItem("customFieldValues", JSON.stringify(customFieldsData));
-    navigate('/preBooking/addOns')
 
+  
+    newArray = [];
+    newArray.push({
+      value: TestT,
+    });
+
+    let fieldidData = sessionStorage.getItem("fieldid");
+    fid = fieldidData;
+    if(typeof newArray[0].value !== "undefined"){
+      sessionStorage.setItem("cusomFieldValues", JSON.stringify(newArray));
+    }
+    Sdetails = JSON.parse(sessionStorage.getItem("cusomFieldValues"));
+  
+    navigate('/preBooking/addOns'); 
+   
   }
 
   useEffect(() => {
+    customFieldsSettings();
+    PricesummaryData();
+  }, [newArray]);
 
-     PricesummaryData();
-     customFieldsSettings();
-  }, []);
 
   const customFieldsSettings = () => {
     let config = {
@@ -152,9 +203,6 @@ export default function RentingDetails() {
       })
   }
 
-  /** Promo Code Discount End */
-
- console.log(invoiceDefault);
 
   return (
     <>
@@ -191,12 +239,12 @@ export default function RentingDetails() {
                 <div className="ui form px-4 px-sm-2">
                   <div className="field w-100 datePicker my-3">
                     <label className='fw-500 fs-7 mb-2' >Move-In Date</label>
-                    <SemanticDatepicker placeholder='Select date' className='w-100' value={movinDate}   onChange={movindateOnchange} />
+                    <SemanticDatepicker placeholder='Select date' className='w-100' value={movinDate} onChange={movindateOnchange} />
                   </div>
                   {typeof invoice !== "undefined" && invoice !== null && invoice.length > 0 ?
                     <div className="field w-100  my-3">
                       <label className='fw-500 fs-7 mb-2'>Invoice Period</label>
-                      <Dropdown placeholder='Select Invoice Period' clearable fluid search selection options={invoice} value={invoice.value} defaultValue={invoiceDefault}  onChange={invoiceOnchange} />
+                      <Dropdown placeholder='Select Invoice Period' clearable fluid search selection options={invoice} value={invoice.value} defaultValue={invoiceDefault} onChange={invoiceOnchange} />
                     </div> : ""}
                   {typeof recurring !== "undefined" && recurring !== null && recurring.length > 0 ?
                     <div className="field w-100  my-3">
@@ -208,64 +256,75 @@ export default function RentingDetails() {
                     <SemanticDatepicker placeholder='Select date' className='w-100' />
                   </div>
 
+
+
+
                   {typeof customFieldAccess !== "undefined" && customFieldAccess !== null && customFieldAccess !== "" && customFieldAccess.length > 0 ?
                     customFieldAccess.map((item, index) => {
-                      if (item.matadata.displayOn === "Unit specific details" && item.matadata.type === "textbox") {
+                      {
+                       
+                        typeof Sdetails !== "undefined" && Sdetails !== null && Sdetails !== "" && Sdetails.length > 0 ?
+                        Sdetails.forEach((data) => {
+                          console.log(data);
+                          cusomfieldPhone = data.value.fid;
+                          console.log(cusomfieldPhone);
+                          // if(data.value.PhoneNo.fieldId === item.fieldId){
+                          //    cusomfieldPhone = data.value;
+                          //    console.log(cusomfieldPhone);
+                          // }
+                        }) : ""
+                      }
+
+
+                      if (item.matadata.displayOn === "Unit specific details" && item.matadata.type === "textbox" && item.matadata.dataType === "Alphabet") {
+                        return <div key={item.fieldId} className="field w-100 my-2 ">
+                          <label className='fw-500 fs-7 mb-2'>{item.fieldName}
+                          </label>
+                          <input type='text' placeholder={item.fieldName} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-datatype={item.matadata.dataType} data-type = {item.matadata.type} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
+                          <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
+                          <div className="text-danger mt-1" id={item.matadata.dataType} style={{ display: 'none' }}>It should allow Alphabet Only</div>
+                        </div>
+
+                      } else if (item.matadata.displayOn === "Unit specific details" && item.matadata.type === "textbox" && item.matadata.dataType === "Alphanumeric") {
 
                         return <div key={item.fieldId} className="field w-100 my-2 ">
                           <label className='fw-500 fs-7 mb-2'>{item.fieldName}
                           </label>
-                          <input type='text' placeholder={item.fieldName} value={customFieldsData.forEach((data) => {
-                            if (data.fieldId === item.fieldId) {
-                              return data.value;
-                            }
-                          })} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
+                          <input type='text' placeholder={item.fieldName} value={customInputFieldValue} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type = {item.matadata.type}  onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
                           <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
                         </div>
 
                       }
 
                       else if (item.matadata.displayOn === "Unit specific details" && item.matadata.type === "date") {
-
                         return <div key={item.fieldId} className='row'>
                           <div className="col-12">
                             <div className="field w-100 datePicker my-2">
                               <label className='fw-500 fs-7 mb-2'>{item.fieldName}</label>
-                              <SemanticDatepicker placeholder={item.fieldName} className='w-100' value={customFieldsData.forEach((data)=>{
-                                if(data.fieldId === item.fieldId){
-                                 return data.value;
-                                }
-                              })}  data-fieldId ={item.fieldId} data-unitId ={unitid} data-required ={item.matadata.isMandatory} onChange={(e) => customhandlechange(e)} />
-                           
-                            <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
+                              <SemanticDatepicker placeholder={item.fieldName} className='w-100' data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} onChange={(e) => customhandlechange(e)} />
+
+                              <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
                             </div>
                           </div>
                         </div>
 
-                      } 
+                      }
 
                       else if (item.matadata.displayOn === "Unit specific details" && item.matadata.type === "checkboxes") {
-                        return <div key={item.fieldId} className="col-12  col-md-6 my-2">
+                        return <div key={item.fieldId} className="col-12 my-2">
                           <span>{item.fieldName}
                             <span className="mx-2">
-                              <input className="mr-1" type="checkbox" data-fieldId ={item.fieldId} data-unitId ={unitid} data-required ={item.matadata.isMandatory} value ={customFieldsData.forEach((data)=>{
-                                if(data.fieldId === item.fieldId){
-                                  return data.value;
-                                }
-                              })} onChange={(e) => customhandlechange(e)} />
+                              <input className="mr-1" type="checkbox" name={item.fieldName} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type = {item.matadata.type} value={item.options[0].option} onChange={(e) => customhandlechange(e)} />
                               <label>{item.options[0].option}</label>
                             </span>
                             <span>
-                              <input className="mr-1" type="checkbox" data-fieldId ={item.fieldId} data-unitId={unitid} data-required = {item.matadata.isMandatory} value={customFieldsData.forEach((data)=>{
-                                if(data.fieldId === item.fieldId){
-                                  return data.value;
-                                }
-                              })}  onChange={(e) => customhandlechange(e)} />
+                              <input className="mr-1" type="checkbox" name={item.fieldName} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type = {item.matadata.type} value={item.options[1].option} onChange={(e) => customhandlechange(e)} />
                               <label>{item.options[1].option}</label>
                             </span>
                           </span>
+                          <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
                         </div>
-                      } 
+                      }
 
                       else if (item.matadata.displayOn === "Unit specific details" && item.matadata.type === "textarea") {
 
@@ -273,32 +332,53 @@ export default function RentingDetails() {
                           <div className="col-12">
                             <div className="field w-100 my-2">
                               <label className='fw-500 fs-7 mb-2'>{item.fieldName}</label>
-                              <textarea placeholder={item.fieldName} rows="3" value={customFieldsData.forEach((data)=>{
-                                if(data.fieldId === item.fieldId){
-                                  return data.value;
-                                }
-                              })}  data-fieldId ={item.fieldId} data-unitId={unitid} data-required = {item.matadata.isMandatory} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)}></textarea>
-                             <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
+                              <textarea placeholder={item.fieldName} data-name={item.fieldName} data-type = {item.matadata.type} value={customInputFieldValue} rows="3" data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)}></textarea>
+                              <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
                             </div>
                           </div>
                         </div>
-                      } 
+                      }
 
 
-                      // else if(item.matadata.displayOn === "Unit specific details" && item.matadata.type === "checkbox"){
+                      else if (item.matadata.displayOn === "Unit specific details" && item.matadata.type === "checkbox") {
 
-                      //   return <div key={item.fieldId} className='row mt-2'>    
-                      //   <div className="col-12">
-                      //   <span>
-                      //     <span className="mx-0">
-                      //       <input className="mr-1" type="checkbox" />
-                      //       <label>{item.fieldName}</label>
-                      //     </span>
-                      //   </span>
-                      // </div>
-                      // </div>
+                        return <div key={item.fieldId} className='row mt-2'>
+                          <div className="col-12">
+                            <span>
+                              <span className="mx-0">
+                                <input className="mr-1" type="checkbox" name={item.fieldName} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type = {item.matadata.type} value={item.fieldName} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
+                                <label>{item.fieldName}</label>
+                              </span>
+                            </span>
+                            <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
+                          </div>
+                        </div>
 
-                      // }
+                      } else if (item.matadata.displayOn === "Unit specific details" && item.matadata.type === "textbox" && item.matadata.dataType === "Digits (0-9)") {
+
+                        return <div key={item.fieldId} className="field w-100 my-2 ">
+                          <label className='fw-500 fs-7 mb-2'>{item.fieldName}
+                          </label>
+                          <input type='number' name={item.fieldId} placeholder={item.fieldName} value={cusomfieldPhone} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type = {item.matadata.type} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
+                          <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
+                        </div>
+
+                      } else if (item.matadata.displayOn === "Unit specific details" && item.matadata.type === "radio") {
+                        return <div key={item.fieldId} className="col-12 my-2">
+                          <span>{item.fieldName}
+                            <span className="mx-2">
+                              <input className="mr-1" type="radio" name={item.fieldName} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type = {item.matadata.type} value={item.options[0].option} onChange={(e) => customhandlechange(e)} />
+                              <label>{item.options[0].option}</label>
+                            </span>
+                            <span>
+                              <input className="mr-1" type="radio" name={item.fieldName} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type = {item.matadata.type} value={item.options[1].option} onChange={(e) => customhandlechange(e)} />
+                              <label>{item.options[1].option}</label>
+                            </span>
+                          </span>
+                          <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
+                        </div>
+                      }
+
 
                     }) : ''}
 
