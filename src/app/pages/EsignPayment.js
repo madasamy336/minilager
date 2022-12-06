@@ -5,14 +5,20 @@ import PreBookingBreadcrumb from '../components/prebooking breadcrumb/PreBooking
 import instance from '../services/instance';
 import request from '../services/request';
 import Helper from "../helper";
+import PDFMerger from 'pdf-merger-js/browser';
+import ModalComponent from '../components/modal/ModalComponent';
+import { Modal } from 'semantic-ui-react';
+import parse from "html-react-parser";
 let helper = new Helper();
 
 export default function EsignPayment() {
   const [unitdetail, setUnitdetail] = useState();
   let unitid = localStorage.getItem('unitid');
+  let userid = localStorage.getItem('userid');
   let insuranceArray = [];
   let merchandiseArray = [];
   let servicesArray = [];
+  let taxpecentage
   let getMoveindate = sessionStorage.getItem('moveindate');
   let getRecurringPeriodId = sessionStorage.getItem('invoiceData');
   let getRecurringTypeid = sessionStorage.getItem('recurringData');
@@ -20,6 +26,14 @@ export default function EsignPayment() {
   let merchandiseItem = JSON.parse(sessionStorage.getItem('merchandiseItem'));
   let servicesDetail = JSON.parse(sessionStorage.getItem('servicedetail'));
   let facilityaddress = JSON.parse(sessionStorage.getItem('facilityaddress'));
+  let checkPaymentModes = JSON.parse(sessionStorage.getItem('configdata')).paymentModes;
+
+  const [saveAgreement, setSaveAgreement] = useState();
+  const [PaymentModal, setpaymentModal] = useState({ open: false, dimmer: undefined, })
+  const [mondelcontent, setModelcontent] = useState(``);
+  const [totalAmount, settotalAmount] = useState(0);
+  const[paylaterButton,setPaylaterButton] = useState(false);
+
 
   if (insuranceDetail !== null && insuranceDetail.length > 0) {
     insuranceDetail.forEach(element => {
@@ -54,11 +68,15 @@ export default function EsignPayment() {
     navigate('/preBooking/thankyou')
   }
 
+
+
   useEffect(() => {
-    unitinfodetails(true);
+    unitinfodetails();
 
   }, []);
-  const unitinfodetails = (initialCall) => {
+
+  //get Unit detail
+  const unitinfodetails = () => {
     let config = {
       headers: {
         "Content-Type": "application/json",
@@ -89,6 +107,8 @@ export default function EsignPayment() {
         const unit_info_data = response.data;
         if (typeof unit_info_data !== "undefined" && unit_info_data !== null && unit_info_data !== "") {
           setUnitdetail(unit_info_data.result);
+          settotalAmount(unit_info_data.result.grossAmount);
+          previewLeaseAgreement('cb5695ba-e692-4b42-8b92-56d17699afcb', unit_info_data.result);
         }
       })
       .catch((error) => {
@@ -97,7 +117,71 @@ export default function EsignPayment() {
 
   }
 
-  console.log(facilityaddress);
+  //preview Leaseagreement
+  function previewLeaseAgreement(leaseProfileId, unitinfo) {
+
+    let config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    let data = {
+      units: unitinfo,
+    }
+
+    instance
+      .post(request.lease_agreement + `/${leaseProfileId}`, unitinfo, config)
+      .then((response) => {
+        if (response.data.result) {
+          setSaveAgreement(response.data.result);
+
+
+        }
+
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+
+  }
+
+  const loadPaymentForm = (id, leaseProfileId) => {
+    debugger
+
+    let config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    let paymentFormRequest = {
+      chargeableAmount: totalAmount,
+      paymentModeId: id
+    }
+    instance
+      .post(request.movein_paymentform + `/${leaseProfileId}`, paymentFormRequest, config)
+      .then((response) => {
+        debugger
+        if (response.data.result) {
+          console.log(response.data.result);
+          setModelcontent(`
+        <div className='row'>
+        <div className='col-12 col-md-12 mb-3 px-1 min-h-400'>
+          <iframe id="iframePreviewLicense"  scrolling="auto" type='application/pdf' loading="lazy" src="${response.data.result}" style="width:100%;height:100%;"></iframe>
+        </div>
+        </div>`)
+
+        setpaymentModal({ open: true });
+        }
+
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+  }
 
   return (
     <>
@@ -119,6 +203,9 @@ export default function EsignPayment() {
                 let location = item.unitInfo.location.name;
                 let building = item.unitInfo.building.name;
                 let amenitiy = item.unitInfo.amenityInfoList;
+                item.unitInfo.taxes !== null && item.unitInfo.taxes.length > 0 && item.unitInfo.taxes.forEach((i) => {
+                  taxpecentage = i.value
+                })
                 return <div key='' className="row">
                   <div className="col-lg-3 col-md-3 col-12 px-1">
                     <div className="card-img h-100">
@@ -199,13 +286,20 @@ export default function EsignPayment() {
                   <span className='veritical-align-text-top ml-1'>Rental Agreement</span>
                 </h6>
                 <div className='p-3 px-sm-1'>
-                  <div className='card-bg-secondary w-100 px-2 py-2'>
-                    <iframe height="250" title='Documents' />
-                    <div className="text-center mt-4">
-                      <button className="ui button bg-white text-success-dark border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2 mb-sm-1">Preview</button>
-                      <button className="ui button bg-white text-success-dark border-success-dark-1 fs-7 fw-400 text-dark px-5">Download</button>
-                    </div>
-                  </div>
+                  {saveAgreement && saveAgreement.previewLease ?
+                    saveAgreement.previewLease.map((item) => {
+                      return item.leaseFilePath.map((url) => {
+                        return < div key="" className='card-bg-secondary w-100 px-2 py-2 mb-6' >
+                          <iframe key="" src={url} style={{ width: "100%" }} />
+                          <div className="text-center mt-4">
+                            <a className="ui button bg-white text-success-dark border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2 mb-sm-1" href={url} target="_blank" rel="noreferrer" >Preview</a>
+                          </div>
+                        </div>
+                      });
+                    })
+                    : 'loading'
+
+                  }
                   <div className='row mt-2'>
                     <div className='col-lg-6 col-md-12 col-sm-12'>
                       <div className='card-border border-radius-5 mr-2 mr-md-0 mb-md-1'>
@@ -237,7 +331,7 @@ export default function EsignPayment() {
                     </div>
                     <div className='pt-4 d-flex justify-content-center flex-wrap'>
                       <button className="ui button bg-success-dark d-flex align-items-center border-radius-5 fs-6 fw-100 text-white px-5 px-md-2 mb-sm-1"><img src='/assets/images/executed-payment.svg' alt='Pay Now' /><span className='ml-1'>Pay Now</span></button>
-                      <button className="ui button bg-white d-flex align-items-center border-radius-5 card-border fs-6 fw-400 text-dark px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1"><img src='/assets/images/pay.svg' alt='Pay Later' /><span className='ml-1'>Pay Later</span></button>
+                      <button className="ui button bg-white d-flex align-items-center border-radius-5 card-border fs-6 fw-400 text-dark px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1"><img src='/assets/images/pay.svg' alt='Pay Later'  /><span className='ml-1'>Pay Later</span></button>
                     </div>
                   </div>
                 </div>
@@ -271,24 +365,24 @@ export default function EsignPayment() {
                 <h6 className='text-dark fw-500 fs-6 px-4 py-2 px-sm-2 card-border-bottom fw-600 text-success-dark'>
                   <span className='veritical-align-text-top ml-1'>CHOOSE PAYMENT TYPE</span></h6>
                 <div className='py-4 px-3'>
-                  <div className='card-border bank-div border-radius-5 d-flex align-items-center position-relative mb-3' onClick={e => ThankYou(e)}>
-                    <div className='bank-img px-2'>
-                      <img className='w-100 h-100' src="/assets/images/direct-debit.svg" alt="Debit card" />
-                    </div>
-                    <div className='bank-title'>
-                      <p>Direct Debit</p>
-                    </div>
-                    <img className='bankid-img position-absolute r-2' src="/assets/images/arrow-down.png" alt="Arrow" />
-                  </div>
-                  <div className='card-border bank-div border-radius-5 d-flex align-items-center position-relative' onClick={e => ThankYou(e)}>
-                    <div className='bank-img px-2'>
-                      <img className='w-100 h-100' src="/assets/images/credit-payment.svg" alt="Credit card" />
-                    </div>
-                    <div className='bank-title'>
-                      <p>Credit Card</p>
-                    </div>
-                    <img className='bankid-img position-absolute r-2' src="/assets/images/arrow-down.png" alt="Arrow" />
-                  </div>
+                  {checkPaymentModes && checkPaymentModes.length > 0 ?
+                    checkPaymentModes.filter(i => i.value !== "PayLater").map((e) => {
+                      return <div key={e.id} className='card-border bank-div border-radius-5 d-flex align-items-center position-relative mb-3' onClick={() => loadPaymentForm(e.id, 'cb5695ba-e692-4b42-8b92-56d17699afcb')}>
+                        <div className='bank-img px-2'>
+                          {e.value === 'CreditCard' ?
+                            <img className='w-100 h-100' src="/assets/images/credit-payment.svg" alt="Credit card" />
+                            : <img className='w-100 h-100' src="/assets/images/direct-debit.svg" alt="Debit card" />
+                          }
+                        </div>
+                        <div className='bank-title'>
+                          <p>{e.text}</p>
+                        </div>
+                        <img className='bankid-img position-absolute r-2' src="/assets/images/arrow-down.png" alt="Arrow" />
+                      </div>
+
+                    })
+                    : ""
+                  }
                 </div>
               </div>
               <div className="text-center mt-4">
@@ -306,38 +400,113 @@ export default function EsignPayment() {
                     </div>
                   </div>
                   <div className='col-lg-6 col-md-12 col-sm-12 mb-1 px-2'>
-                    <div className='card-border-primary text-center p-1'>
-                      <p>Billing Period</p>
-                      <p className='fw-500 text-success-dark'>18-06-2021 to 17-06-2022</p>
-                    </div>
+                    {unitdetail !== null && typeof unitdetail !== 'undefined' ?
+                      <div className='card-border-primary text-center p-1'>
+                        <p>Billing Period</p>
+                        <p className='fw-500 text-success-dark'>{unitdetail.startsOn} to {unitdetail.endsOn}</p>
+                      </div>
+                      :
+                      'loading'
+                    }
                   </div>
                 </div>
                 <h6 className='text-dark text-center fw-500 fs-6 px-4 pt-2 mb-1 px-sm-2'>Recurring charges</h6>
                 <p className='text-dark text-center px-4 mb-2 px-sm-2'>This will be your recurring charges until you decide to move out.</p>
-                <div className='mt-2 card-border border-radius-5 py-2 m-2'>
-                  <h6 className='fw-600 fs-6 mb-1 px-2'>Total Amount</h6>
-                  <div className='d-flex justify-content-between dashed-bottom py-1 px-2'>
-                    <p>Storage Unit - 5'x10'</p>
-                    <p>$90</p>
+                {unitdetail !== null && typeof unitdetail !== 'undefined' ?
+                  <div className='mt-2 card-border border-radius-5 py-2 m-2'>
+                    <h6 className='fw-600 fs-6 mb-1 px-2'>Total Amount</h6>
+                    {unitdetail.rentAmount !== null && unitdetail.rentAmount > 0
+                      ? <div className='d-flex justify-content-between dashed-bottom py-1 px-2'>
+                        <p>Rent Amount</p>
+                        <p>{helper.displayCurrency(unitdetail.rentAmount)}</p>
+                      </div>
+                      : "loading"
+                    }
+                    {unitdetail.serviceCharges !== null && unitdetail.serviceCharges > 0 ?
+                      <div className='d-flex justify-content-between dashed-bottom py-1 px-2'>
+                        <p>Service:</p>
+                        <p>{helper.displayCurrency(unitdetail.serviceCharges)}</p>
+                      </div>
+                      :
+                      ""
+                    }
+                    {unitdetail.insuranceCharges !== null && unitdetail.insuranceCharges > 0 ?
+                      <div className='d-flex justify-content-between dashed-bottom py-1 px-2'>
+                        <p>Protection Plan:</p>
+                        <p>{helper.displayCurrency(unitdetail.insuranceCharges)}</p>
+                      </div>
+                      : ""
+                    }
+                    {unitdetail.merchandise !== null && unitdetail.merchandise > 0 ?
+                      <div className='d-flex justify-content-between dashed-bottom py-1 px-2'>
+                        <p>Merchandise:</p>
+                        <p>{helper.displayCurrency(unitdetail.merchandise)}</p>
+                      </div>
+
+                      : ""
+
+                    }
+                    {
+                      unitdetail.taxAmount !== null && unitdetail.taxAmount > 0
+                        ?
+                        taxpecentage !== null && taxpecentage > 0
+                          ?
+                          <div className='d-flex justify-content-between py-1 px-2'>
+                            <p>{`Tax(${helper.displayPercent(taxpecentage)})`}</p>
+                            <p>{helper.displayCurrency(unitdetail.taxAmount)}</p>
+                          </div>
+                          : <div className='d-flex justify-content-between py-1 px-2'>
+                            <p>{`Tax`}</p>
+                            <p>{helper.displayCurrency(unitdetail.taxAmount)}</p>
+                          </div>
+
+                        :
+                        ""
+                    }
+                    {unitdetail.discount !== null && unitdetail.discount > 0 ?
+                      <div className='d-flex justify-content-between  py-1 px-2'>
+                        <p>Discount:</p>
+                        <p>{helper.displayCurrency(unitdetail.discount)}</p>
+                      </div>
+
+                      : ""
+
+                    }{unitdetail.grossAmount !== null && unitdetail.grossAmount > 0
+                      ?
+                      <div className='d-flex justify-content-between border-top pt-1 px-2'>
+                        <p className='fw-600'>Net Amount</p>
+                        <p className='fw-600'>{helper.displayCurrency(unitdetail.grossAmount)}</p>
+                      </div>
+
+                      :
+                      ""
+                    }
+
                   </div>
-                  <div className='d-flex justify-content-between dashed-bottom py-1 px-2'>
-                    <p>Protection Plan: Standard</p>
-                    <p>$5</p>
-                  </div>
-                  <div className='d-flex justify-content-between py-1 px-2'>
-                    <p>NB HST (15%)</p>
-                    <p>$14.25</p>
-                  </div>
-                  <div className='d-flex justify-content-between border-top pt-1 px-2'>
-                    <p className='fw-600'>Net Amount</p>
-                    <p className='fw-600'>$109.25</p>
-                  </div>
-                </div>
+                  : 'loading'
+                }
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      <Modal
+        dimmer={PaymentModal.dimmer}
+        open={PaymentModal.open}
+        closeOnEscape={false}
+        closeOnDimmerClick={false}
+        onClose={() => setpaymentModal({ open: false })}>
+          <Modal.Header className={`bg-success-dark text-white text-center fs-6 py-2 fw-400 position-relative `}>
+                <svg onClick={() => setpaymentModal({ open: false })} className='r-3 cursor-pointer position-absolute' xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 17.473 17.47">
+                    <path id="wrong-5" d="M978.609-438.353l-2.052-2.043-4.37-4.366a1.33,1.33,0,0,1-.4-1.425,1.3,1.3,0,0,1,.833-.843,1.3,1.3,0,0,1,1.171.183,3.019,3.019,0,0,1,.353.321q3.009,3,6.009,6.01c.088.088.159.193.254.309.127-.118.217-.2.3-.281l6.156-6.156a1.332,1.332,0,0,1,1.325-.431,1.3,1.3,0,0,1,.927.828,1.3,1.3,0,0,1-.188,1.228,3.412,3.412,0,0,1-.325.35q-3,3.009-6.011,6.009a3.233,3.233,0,0,1-.317.244c.132.14.213.23.3.316q3.052,3.053,6.108,6.1a1.36,1.36,0,0,1,.441,1.387,1.305,1.305,0,0,1-2.205.564c-.59-.568-1.163-1.157-1.74-1.736l-4.487-4.491a2.068,2.068,0,0,1-.183-.248l-.142-.051a1.52,1.52,0,0,1-.191.325q-3.047,3.059-6.1,6.111a1.341,1.341,0,0,1-1.45.419,1.3,1.3,0,0,1-.851-.866,1.3,1.3,0,0,1,.235-1.19,3.215,3.215,0,0,1,.257-.274l6.034-6.033C978.386-438.167,978.484-438.245,978.609-438.353Z" transform="translate(-971.716 447.116)" fill="#fff" />
+                </svg>
+            </Modal.Header>
+        <Modal.Content className=' overflow-y-auto'>
+          {parse(mondelcontent)}
+        </Modal.Content>
+      </Modal>
+
     </>
   )
 }
