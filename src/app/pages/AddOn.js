@@ -5,6 +5,8 @@ import { Grid, Placeholder, Segment } from "semantic-ui-react";
 import { Modal } from 'semantic-ui-react';
 import { useNavigate } from 'react-router-dom';
 import AddOnAccordion from '../components/addonaccordion/AddOnAccordion';
+import Pricesummary from '../components/pricesummary/pricesummary';
+import { useRef } from 'react';
 import AddonCard from '../components/AddonCard/AddonCard';
 import instance from '../services/instance';
 import request from '../services/request';
@@ -19,6 +21,7 @@ let merchandiseId = [];
 let merchandiseItem = [];
 
 export default function AddOn() {
+  const childRef = useRef(null);
   const navigate = useNavigate();
   let unitid = localStorage.getItem('unitid');
   let rentDetailsvalue = JSON.parse(sessionStorage.getItem(`rentDetails`));
@@ -241,7 +244,7 @@ export default function AddOn() {
 
     let requestbody = {
       unitId: [unitid],
-      moveInDate: getMoveindate,
+      moveInDate:  new Date(getMoveindate),
       additionalMonths: 0,
       recurringPeriodId: getRecurringPeriodId,
       recurringTypeId: getRecurringTypeid,
@@ -255,8 +258,14 @@ export default function AddOn() {
       .then(response => {
         if (response.data.result !== null && response.data.result !== 'undefined') {
           ownInsuranceArray = [];
+          let preferredStorage = {
+            storageTypeId:response.data.result[0].unitInfo.storageType.id,
+            locationId:response.data.result[0].unitInfo.location.id,
+            unitTypeId:response.data.result[0].unitInfo.unitType.id
+          }
+          console.log(preferredStorage);
           setAddOnsResponse(response.data.result[0].addOns);
-          sessionStorage.setItem('addonsResponse', JSON.stringify(response.data.result[0].addOns));
+          sessionStorage.setItem('preferredStorage',  JSON.stringify(preferredStorage));
           if (serviceSessionValue !== null && typeof serviceSessionValue !== 'undefined') {
             serviceSessionValue.forEach((e) => {
               let servicesChecked = document.getElementById(`services_${e}`);
@@ -665,8 +674,9 @@ export default function AddOn() {
                 </div>
               </div>
             </div>
+            <Pricesummary ref={childRef} movinDate={getMoveindate} />
             <div className='col-12 col-md-5 pl-1 pl-sm-0 mb-3'>
-              <div className='bg-white card-boxshadow px-0 py-2 border-radius-15 border-top-success-4'>
+              <div className='bg-white card-boxshadow px-0 py-2 border-radius-15 border-top-success-4 d-none'>
                 <h6 className='text-success-dark fw-600 fs-6 px-4 pt-2 mb-1  px-sm-2'>Invoice Details</h6>
                 <p className='px-4 mb-2 px-sm-2 fw-400 text-light-gray'>Please see the breakdown below</p>
                 <div className='px-4 px-sm-2'>
@@ -720,6 +730,7 @@ export default function AddOn() {
                   </div>
                 </div>
               </div>
+             
             </div>
           </div>
           <div className='row'>

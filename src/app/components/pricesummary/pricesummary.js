@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import PreBookingBreadcrumb from '../prebooking breadcrumb/PreBookingBreadcrumb'
 import { Dropdown, Modal } from 'semantic-ui-react';
-import { useNavigate } from 'react-router-dom';
+import { json, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 // import { useTranslation } from "react-i18next";
@@ -18,6 +18,7 @@ let storageTypeId;
 const Pricesummary = forwardRef((props, ref) => {
  let invoiceData = JSON.parse(sessionStorage.getItem("invoiceData"));
  let recurringData = JSON.parse(sessionStorage.getItem("recurringData"));
+ let promoAppliedsession = sessionStorage.getItem("applypromo");
  console.log(invoiceData);
   
   useImperativeHandle(ref, () => ({
@@ -47,6 +48,7 @@ const Pricesummary = forwardRef((props, ref) => {
 
   useEffect(() => {
     unitinfodetails(true);
+    
  
   }, []);
 
@@ -54,7 +56,12 @@ const Pricesummary = forwardRef((props, ref) => {
   /** Unit Details Page Start **/
 
   const unitinfodetails = (initialCall) => {
-    sessionStorage.setItem("moveindate",  helper.readDate(props.movinDate));
+    sessionStorage.setItem("moveindate",  props.movinDate);
+    if(promoAppliedsession){
+      setPromoValidate(promoAppliedsession);
+      // applyCoupon();
+      
+    }
     let config = {
       headers: {
         "Content-Type": "application/json",
@@ -73,7 +80,7 @@ const Pricesummary = forwardRef((props, ref) => {
           id: unitid
         }
       ],
-      moveInDate: helper.readDate(props.movinDate),
+      moveInDate:  helper.readDate(new Date(props.movinDate)),
       additionalMonths: 0,
       recurringPeriodId: invoiceData,
       recurringTypeId: recurringData,
@@ -152,6 +159,8 @@ const Pricesummary = forwardRef((props, ref) => {
 
   /** Promo Code Discount End */
   const autoApplybtn = (promos) => {
+    sessionStorage.setItem('applypromo', promos);
+    console.log(promos)
     setPromoValidate(promos);
     SetApplyDiscountModal({ open: false })
   }

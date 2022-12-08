@@ -19,7 +19,9 @@ const requests = {
     lease_documents : "/v1/movein/lease/documents/",
     custom_Fields: "v2/common/custom-fields",
     lease_agreement: "v1/moveIn/preview",
-    movein_paymentform: "v1/moveIn/paymentform"
+    movein_paymentform: "v1/moveIn/paymentform",
+    lease_profile:"v1/moveIn/leaseProfile",
+    save_move:"v1/moveIn"
 
 }
 

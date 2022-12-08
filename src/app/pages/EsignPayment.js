@@ -7,14 +7,15 @@ import request from '../services/request';
 import Helper from "../helper";
 import PDFMerger from 'pdf-merger-js/browser';
 import ModalComponent from '../components/modal/ModalComponent';
-import { Modal } from 'semantic-ui-react';
+import { Modal, Button } from 'semantic-ui-react';
 import parse from "html-react-parser";
 let helper = new Helper();
-
+let unitDetailRespones = {};
 export default function EsignPayment() {
   const [unitdetail, setUnitdetail] = useState();
   let unitid = localStorage.getItem('unitid');
   let userid = localStorage.getItem('userid');
+  let leaseProfileIdValue = sessionStorage.getItem('leaseProfileid');
   let insuranceArray = [];
   let merchandiseArray = [];
   let servicesArray = [];
@@ -32,7 +33,8 @@ export default function EsignPayment() {
   const [PaymentModal, setpaymentModal] = useState({ open: false, dimmer: undefined, })
   const [mondelcontent, setModelcontent] = useState(``);
   const [totalAmount, settotalAmount] = useState(0);
-  const[paylaterButton,setPaylaterButton] = useState(false);
+  const [paylaterButton, setPaylaterButton] = useState(false);
+  const [OpenPaylaterModal, setPayLaterModal] = useState(false);
 
 
   if (insuranceDetail !== null && insuranceDetail.length > 0) {
@@ -72,6 +74,18 @@ export default function EsignPayment() {
 
   useEffect(() => {
     unitinfodetails();
+    const ReceiveIframeResponse = (event) => {
+      if (event.data.message !== null && typeof event.data.message !== 'undefined') {
+        const data = JSON.parse(event.data.message);
+        if (typeof data !== 'undefined' && data !== null && data !== '') {
+          onPaymentProcessed(data)
+        }
+      }
+    };
+    window.addEventListener("message", ReceiveIframeResponse);
+
+    return () => window.removeEventListener("message", ReceiveIframeResponse);
+
 
   }, []);
 
@@ -95,7 +109,7 @@ export default function EsignPayment() {
           id: unitid
         }
       ],
-      moveInDate: getMoveindate,
+      moveInDate:new Date(getMoveindate),
       additionalMonths: 0,
       recurringPeriodId: getRecurringPeriodId,
       recurringTypeId: getRecurringTypeid,
@@ -106,9 +120,10 @@ export default function EsignPayment() {
       .then((response) => {
         const unit_info_data = response.data;
         if (typeof unit_info_data !== "undefined" && unit_info_data !== null && unit_info_data !== "") {
+          unitDetailRespones = unit_info_data.result;
           setUnitdetail(unit_info_data.result);
           settotalAmount(unit_info_data.result.grossAmount);
-          previewLeaseAgreement('cb5695ba-e692-4b42-8b92-56d17699afcb', unit_info_data.result);
+          previewLeaseAgreement(leaseProfileIdValue, unit_info_data.result);
         }
       })
       .catch((error) => {
@@ -136,7 +151,6 @@ export default function EsignPayment() {
         if (response.data.result) {
           setSaveAgreement(response.data.result);
 
-
         }
 
       })
@@ -144,11 +158,17 @@ export default function EsignPayment() {
         console.log(error);
       });
 
+  }
+
+  function onPaymentProcessed(paymentresponse) {
+    if (typeof paymentresponse !== 'undefined' && paymentresponse !== null && paymentresponse !== '' && typeof paymentresponse.paymentStatus !== 'undefined' && paymentresponse.paymentStatus !== '' && paymentresponse.paymentStatus !== null && paymentresponse.paymentStatus.toUpperCase() === "SUCCESS") {
+
+      saveMoveinDetails(paymentresponse, leaseProfileIdValue, false)
+    }
 
   }
 
   const loadPaymentForm = (id, leaseProfileId) => {
-    debugger
 
     let config = {
       headers: {
@@ -163,9 +183,7 @@ export default function EsignPayment() {
     instance
       .post(request.movein_paymentform + `/${leaseProfileId}`, paymentFormRequest, config)
       .then((response) => {
-        debugger
         if (response.data.result) {
-          console.log(response.data.result);
           setModelcontent(`
         <div className='row'>
         <div className='col-12 col-md-12 mb-3 px-1 min-h-400'>
@@ -173,7 +191,7 @@ export default function EsignPayment() {
         </div>
         </div>`)
 
-        setpaymentModal({ open: true });
+          setpaymentModal({ open: true });
         }
 
       })
@@ -181,6 +199,48 @@ export default function EsignPayment() {
         console.log(error);
       });
 
+  }
+  const saveMoveinDetails = (cardResponse, leaseprofileid, paylater) => {
+
+    let config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    unitDetailRespones['userId'] = userid;
+    if (typeof cardResponse !== 'undefined' && cardResponse !== null && cardResponse !== '') {
+      unitDetailRespones['paymentTransactionResponse'] = cardResponse;
+    }
+    unitDetailRespones['isBusinessUser'] = true;
+    unitDetailRespones['payLater'] = paylater;
+    instance
+      .post(request.save_move + `/${leaseprofileid}`, unitDetailRespones, config)
+      .then((response) => {
+        console.log(response);
+        if (response.data.isSuccess) {
+
+          navigate('/preBooking/thankyou')
+        } else {
+          alert('something went wrong')
+        }
+
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+
+  }
+
+  const payLater = (value) => {
+    setPaylaterButton(true);
+    setPayLaterModal(true);
+
+  }
+
+  const payNow = (value) => {
+    console.log('test')
+    setPaylaterButton(false)
   }
 
   return (
@@ -330,8 +390,21 @@ export default function EsignPayment() {
                       <button className="ui button text-success-dark bg-white card-border fs-7 fw-400 text-dark px-1 mr-2 mt-md-1">View Document</button>
                     </div>
                     <div className='pt-4 d-flex justify-content-center flex-wrap'>
-                      <button className="ui button bg-success-dark d-flex align-items-center border-radius-5 fs-6 fw-100 text-white px-5 px-md-2 mb-sm-1"><img src='/assets/images/executed-payment.svg' alt='Pay Now' /><span className='ml-1'>Pay Now</span></button>
-                      <button className="ui button bg-white d-flex align-items-center border-radius-5 card-border fs-6 fw-400 text-dark px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1"><img src='/assets/images/pay.svg' alt='Pay Later'  /><span className='ml-1'>Pay Later</span></button>
+
+                      {paylaterButton === true ?
+                        <button className="ui button bg-white d-flex align-items-center border-radius-5 card-border fs-6 fw-400 text-dark px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1" onClick={(e) => payNow(e)} ><img src='/assets/images/executed-payment.svg' alt='Pay Now' id="paynow" /><span className='ml-1' onClick={(e) => payNow(e)}>Pay Now</span></button>
+                        :
+                        <button className="ui button bg-success-dark d-flex align-items-center border-radius-5 fs-6 fw-100 text-white px-5 px-md-2 mb-sm-1" onClick={(e) => payNow(e)}><img className='executed-img' src='/assets/images/executed-payment.svg' alt='Pay Now' id="paynow" /><span className='ml-1' onClick={(e) => payNow(e)} >Pay Now</span></button>
+
+                      }
+                      {paylaterButton ?
+                        <button className="ui button bg-success-dark d-flex align-items-center border-radius-5 card-border fs-6 fw-400 text-white px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1" onClick={(e) => payLater(e)} ><img src='/assets/images/pay.svg' alt='Pay Later' id="paylater" /><span className='ml-1' onClick={(e) => payLater(e)}>Pay Later</span></button>
+                        :
+                        <button className="ui button bg-white d-flex align-items-center border-radius-5 card-border fs-6 fw-400 text-dark px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1" onClick={(e) => payLater(e)} ><img src='/assets/images/pay.svg' alt='Pay Later' id="paylater" /><span className='ml-1' onClick={(e) => payLater()}>Pay Later</span></button>
+
+                      }
+
+
                     </div>
                   </div>
                 </div>
@@ -361,30 +434,35 @@ export default function EsignPayment() {
                   </div>
                 )}
               </div>
+              { !paylaterButton ?
               <div className='bg-white card-boxshadow px-0 py-2 border-radius-15 mb-3 mt-2'>
-                <h6 className='text-dark fw-500 fs-6 px-4 py-2 px-sm-2 card-border-bottom fw-600 text-success-dark'>
-                  <span className='veritical-align-text-top ml-1'>CHOOSE PAYMENT TYPE</span></h6>
-                <div className='py-4 px-3'>
-                  {checkPaymentModes && checkPaymentModes.length > 0 ?
-                    checkPaymentModes.filter(i => i.value !== "PayLater").map((e) => {
-                      return <div key={e.id} className='card-border bank-div border-radius-5 d-flex align-items-center position-relative mb-3' onClick={() => loadPaymentForm(e.id, 'cb5695ba-e692-4b42-8b92-56d17699afcb')}>
-                        <div className='bank-img px-2'>
-                          {e.value === 'CreditCard' ?
-                            <img className='w-100 h-100' src="/assets/images/credit-payment.svg" alt="Credit card" />
-                            : <img className='w-100 h-100' src="/assets/images/direct-debit.svg" alt="Debit card" />
-                          }
-                        </div>
-                        <div className='bank-title'>
-                          <p>{e.text}</p>
-                        </div>
-                        <img className='bankid-img position-absolute r-2' src="/assets/images/arrow-down.png" alt="Arrow" />
+              <h6 className='text-dark fw-500 fs-6 px-4 py-2 px-sm-2 card-border-bottom fw-600 text-success-dark'>
+                <span className='veritical-align-text-top ml-1'>CHOOSE PAYMENT TYPE</span></h6>
+              <div className='py-4 px-3'>
+                {checkPaymentModes && checkPaymentModes.length > 0 ?
+                  checkPaymentModes.filter(i => i.value !== "PayLater").map((e) => {
+                    return <div key={e.id} className='card-border bank-div border-radius-5 d-flex align-items-center position-relative mb-3' onClick={() => loadPaymentForm(e.id, leaseProfileIdValue)}>
+                      <div className='bank-img px-2'>
+                        {e.value === 'CreditCard' ?
+                          <img className='w-100 h-100' src="/assets/images/credit-payment.svg" alt="Credit card" />
+                          : <img className='w-100 h-100' src="/assets/images/direct-debit.svg" alt="Debit card" />
+                        }
                       </div>
+                      <div className='bank-title'>
+                        <p>{e.text}</p>
+                      </div>
+                      <img className='bankid-img position-absolute r-2' src="/assets/images/arrow-down.png" alt="Arrow" />
+                    </div>
 
-                    })
-                    : ""
-                  }
-                </div>
+                  })
+                  : ""
+                }
               </div>
+            </div>: ""
+
+
+              }
+              
               <div className="text-center mt-4">
                 <button onClick={() => navigate('/preBooking/TenantDetails')} className="ui button bg-white text-success-dark border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">BACK</button>
               </div>
@@ -491,20 +569,44 @@ export default function EsignPayment() {
         </div>
       </div>
 
+      {/* Payment Modal */}
       <Modal
         dimmer={PaymentModal.dimmer}
         open={PaymentModal.open}
         closeOnEscape={false}
         closeOnDimmerClick={false}
         onClose={() => setpaymentModal({ open: false })}>
-          <Modal.Header className={`bg-success-dark text-white text-center fs-6 py-2 fw-400 position-relative `}>
-                <svg onClick={() => setpaymentModal({ open: false })} className='r-3 cursor-pointer position-absolute' xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 17.473 17.47">
-                    <path id="wrong-5" d="M978.609-438.353l-2.052-2.043-4.37-4.366a1.33,1.33,0,0,1-.4-1.425,1.3,1.3,0,0,1,.833-.843,1.3,1.3,0,0,1,1.171.183,3.019,3.019,0,0,1,.353.321q3.009,3,6.009,6.01c.088.088.159.193.254.309.127-.118.217-.2.3-.281l6.156-6.156a1.332,1.332,0,0,1,1.325-.431,1.3,1.3,0,0,1,.927.828,1.3,1.3,0,0,1-.188,1.228,3.412,3.412,0,0,1-.325.35q-3,3.009-6.011,6.009a3.233,3.233,0,0,1-.317.244c.132.14.213.23.3.316q3.052,3.053,6.108,6.1a1.36,1.36,0,0,1,.441,1.387,1.305,1.305,0,0,1-2.205.564c-.59-.568-1.163-1.157-1.74-1.736l-4.487-4.491a2.068,2.068,0,0,1-.183-.248l-.142-.051a1.52,1.52,0,0,1-.191.325q-3.047,3.059-6.1,6.111a1.341,1.341,0,0,1-1.45.419,1.3,1.3,0,0,1-.851-.866,1.3,1.3,0,0,1,.235-1.19,3.215,3.215,0,0,1,.257-.274l6.034-6.033C978.386-438.167,978.484-438.245,978.609-438.353Z" transform="translate(-971.716 447.116)" fill="#fff" />
-                </svg>
-            </Modal.Header>
+        <Modal.Header className={`bg-success-dark text-white text-center fs-6 py-2 fw-400 position-relative `}>
+          <svg onClick={() => setpaymentModal({ open: false })} className='r-3 cursor-pointer position-absolute' xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 17.473 17.47">
+            <path id="wrong-5" d="M978.609-438.353l-2.052-2.043-4.37-4.366a1.33,1.33,0,0,1-.4-1.425,1.3,1.3,0,0,1,.833-.843,1.3,1.3,0,0,1,1.171.183,3.019,3.019,0,0,1,.353.321q3.009,3,6.009,6.01c.088.088.159.193.254.309.127-.118.217-.2.3-.281l6.156-6.156a1.332,1.332,0,0,1,1.325-.431,1.3,1.3,0,0,1,.927.828,1.3,1.3,0,0,1-.188,1.228,3.412,3.412,0,0,1-.325.35q-3,3.009-6.011,6.009a3.233,3.233,0,0,1-.317.244c.132.14.213.23.3.316q3.052,3.053,6.108,6.1a1.36,1.36,0,0,1,.441,1.387,1.305,1.305,0,0,1-2.205.564c-.59-.568-1.163-1.157-1.74-1.736l-4.487-4.491a2.068,2.068,0,0,1-.183-.248l-.142-.051a1.52,1.52,0,0,1-.191.325q-3.047,3.059-6.1,6.111a1.341,1.341,0,0,1-1.45.419,1.3,1.3,0,0,1-.851-.866,1.3,1.3,0,0,1,.235-1.19,3.215,3.215,0,0,1,.257-.274l6.034-6.033C978.386-438.167,978.484-438.245,978.609-438.353Z" transform="translate(-971.716 447.116)" fill="#fff" />
+          </svg>
+        </Modal.Header>
         <Modal.Content className=' overflow-y-auto'>
           {parse(mondelcontent)}
         </Modal.Content>
+      </Modal>
+
+      {/* pay later modal */}
+
+      <Modal
+        centered={false}
+        open={OpenPaylaterModal}
+        onClose={() => setPayLaterModal(false)}
+        onOpen={() => setPayLaterModal(true)}
+        
+      >
+        <Modal.Header>Confirm Movein </Modal.Header>
+        <Modal.Content>
+        <p>Are you sure you want to do payLater?</p>
+        </Modal.Content>
+        <Modal.Actions>
+          <Button onClick={() => setPayLaterModal(false)} negative>
+            No
+          </Button>
+          <Button onClick={() => saveMoveinDetails('', leaseProfileIdValue,true)} positive>
+            Yes
+          </Button>
+        </Modal.Actions>
       </Modal>
 
     </>
