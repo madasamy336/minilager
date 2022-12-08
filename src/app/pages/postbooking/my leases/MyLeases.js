@@ -1,14 +1,13 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import SemanticDatepicker from "react-semantic-ui-datepickers";
-import { Menu, Modal, Tab, Loader, Placeholder } from "semantic-ui-react";
+import { Menu, Modal, Tab, Loader, Placeholder, TextArea, Button } from "semantic-ui-react";
 import InsuranceTabContent from "../../../components/postbooking/myleasestabs/InsuranceTabContent";
 import MerchandiseTabContent from "../../../components/postbooking/myleasestabs/MerchandiseTabContent";
 import ServicesTabContent from "../../../components/postbooking/myleasestabs/ServicesTabContent";
 import instance from '../../../services/instance';
 import request from '../../../services/request';
 import Helper from "../../../helper";
-import PDFViewer from 'pdf-viewer-reactjs'
 
 const helper = new Helper()
 export default function MyLeases() {
@@ -17,14 +16,30 @@ export default function MyLeases() {
     open: false,
     dimmer: undefined,
   })
+  const [cancelScheduleMoveOutMOdal, CancelScheduleMoveOutMOdal] = useState({
+    open: false,
+    dimmer: undefined,
+  })
+
+  const [ScheduleMoveOut, SetScheduleMoveOut] = useState({
+    date: "",
+    reason: "",
+  })
+
+  const [cancelscheduleMoveOut, CancelScheduleMoveOut] = useState({
+    date: "",
+    reason: "",
+  })
 
   const [leaseResponse, setLeaseResponse] = useState([]);
   const [leaseInfoById, setLeaseInfoById] = useState([]);
-  const [selectedUnitLeasedocument, setselectedUnitLeasedocument] = useState(false);
+  const [selectedUnitLeasedocument, setselectedUnitLeasedocument] = useState('');
+  const [selectedUnitInsurancedocument, setselectedUnitInsuranceDocument] = useState('');
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
 
   const [isLoading, setLoading] = useState(true);
+  const [isButtonLoading, setButtonLoading] = useState(false);
 
 
   const panes = [
@@ -42,18 +57,24 @@ export default function MyLeases() {
     },
   ]
   const [ScheduleMovedOut, SetScheduleMovedOut] = useState(false)
-  const [ScheduleMoveOutDate, SetScheduleMoveOutDate] = useState('')
-  const ScheduleMOveOut = (e) => {
-    e.preventDefault();
-    SetScheduleMovedOut(true);
-    SetScheduleMoveOutMOdal(({
-      open: false,
-    }))
-  }
+  // const [ScheduleMoveOutDate, SetScheduleMoveOutDate] = useState('')
+  // const ScheduleMOveOut = (e) => {
+  //   e.preventDefault();
+  //   SetScheduleMovedOut(true);
+  //   SetScheduleMoveOutMOdal(({
+  //     open: false,
+  //   }))
+  // }
 
   const CancelScheduleMOveOut = (e) => {
     e.preventDefault();
     SetScheduleMovedOut(false)
+    CancelScheduleMoveOut({
+      reason: ''
+    })
+    CancelScheduleMoveOutMOdal(({
+      open: true,
+    }))
   }
   // setLoading(true);
 
@@ -70,7 +91,7 @@ export default function MyLeases() {
     }
     let userId = localStorage.getItem('userid');
 
-    instance.post(request.lease_search + "/" + {userId}, requestbody, config)
+    instance.post(request.lease_search + "/" + userId, requestbody, config)
       .then(response => {
         return response;
       })
@@ -78,9 +99,12 @@ export default function MyLeases() {
         const leases = data.data;
         if (typeof leases !== 'undefined' && leases !== null && leases !== '' && leases.isSuccess === true) {
           setLeaseResponse(leases.result);
+          localStorage.setItem("leases", JSON.stringify(leases.result));
           let loadDefaultUnit = leases.result.filter(x => x.unitInfo.id === leases.result[0].unitInfo.id);
           setLeaseInfoById(loadDefaultUnit);
           setactive(leases.result[0].unitInfo.id);
+          SetScheduleMoveOut({ ...ScheduleMoveOut, ["date"]: leases.result[0].leaseInfo.moveOutScheduledOn })
+          sixStorageLeaseagreement(leases.result[0].leaseInfo.id)
           setLoading(false);
         }
       }).catch(err => {
@@ -106,12 +130,97 @@ export default function MyLeases() {
     // }
   }
 
+  function addScheduleMOveOutDate(data) {
+    setButtonLoading(true)
+    console.log(ScheduleMoveOut.date);
+    // console.log(leaseId)
+    let config = {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }
+    let userId = localStorage.getItem('userid');
+    const requestbody = {
+      unitNumber: data.unitInfo.unitNumber,
+      scheduleDate: ScheduleMoveOut.date,
+      reason: ScheduleMoveOut.reason,
+      tenantId: userId
+    }
+    console.log(requestbody)
+    instance.post(request.move_out + data.leaseInfo.id, requestbody, config)
+      .then(response => {
+        return response;
+      })
+      .then(data => {
+        const res = data.data;
+        console.log("sixStorageScheduleMoveOut", res);
+        if (res.isSuccess !== false && res.isSuccess === true && res.returnCode === 'SUCCESS') {
+          setTimeout(function () {
+            SetScheduleMoveOutMOdal(({
+              open: false,
+            }))
+            SetScheduleMoveOut({
+              reason: ''
+            })
+            CancelScheduleMoveOut({
+              reason: ''
+            })
+            fetchLeaseDetails()
+            setButtonLoading(false);
+          }, 2000)
+        }
+      }).catch(err => {
+        console.log(err)
+      })
+  }
+
+  function cancelScheduleMOveOutDate(data) {
+    setButtonLoading(true)
+    console.log(ScheduleMoveOut.date);
+    // console.log(leaseId)
+    let config = {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }
+    let userId = localStorage.getItem('userid');
+    const requestbody = {
+      unitNumber: data.unitInfo.unitNumber,
+      scheduleDate: ScheduleMoveOut.date,
+      reason: ScheduleMoveOut.reason,
+      tenantId: userId
+    }
+    console.log(requestbody)
+    instance.post(request.cancel_move_out + data.leaseInfo.id + `/${userId}`, requestbody, config)
+      .then(response => {
+        return response;
+      })
+      .then(data => {
+        const res = data.data;
+        console.log("sixStorageScheduleMoveOut", res);
+        if (res.isSuccess !== false && res.isSuccess === true && res.returnCode === 'SUCCESS') {
+          setTimeout(function () {
+            CancelScheduleMoveOutMOdal(({
+              open: false,
+            }))
+            CancelScheduleMoveOut({
+              reason: ''
+            })
+            fetchLeaseDetails()
+            setButtonLoading(false);
+          }, 2000)
+        }
+      }).catch(err => {
+        console.log(err)
+      })
+  }
+
   function sixStorageViewLeaseInfo(lease) {
     let showUnitLeasevalue = leaseResponse.filter(x => x.unitInfo.id === lease.unitInfo.id);
     console.log(showUnitLeasevalue[0].unitInfo.unitNumber)
     setactive(showUnitLeasevalue[0].unitInfo.id);
     setLeaseInfoById(showUnitLeasevalue);
-    sixStorageLeaseagreement(showUnitLeasevalue[0].unitInfo.id);
+    sixStorageLeaseagreement(showUnitLeasevalue[0].leaseInfo.id);
   }
 
 
@@ -122,35 +231,80 @@ export default function MyLeases() {
       },
     };
     let userId = localStorage.getItem('userid');
-
-    const [html] = document.getElementsByTagName("html")
-    const lang = html.getAttribute("lang");
     const data = {
       "ContractId": contract_id,
-      "tenantId": {userId},
-      'content-language': lang
+      "tenantId": userId
     }
     instance
       .post(request.lease_documents, data, config)
       .then((response) => {
-        let responseValue = response.data.data;
-        if (response.data.data.returnCode === 'NO_RECORDS_FOUND') {
-          setselectedUnitLeasedocument(response.data.data.returnCode);
+        let responseValue = response.data;
+        console.log(response);
+        if (responseValue.returnCode === 'NO_RECORDS_FOUND') {
+          setselectedUnitLeasedocument(responseValue.returnCode);
         } else {
           responseValue.result.map(val => {
             if (val.documentName === 'Leaseagreement') {
               setselectedUnitLeasedocument(val.documentPath);
             }
-            //  else {
-            //   setselectedUnitInsuranceDocument(val.documentPath);
-            // }
+            else {
+              setselectedUnitInsuranceDocument(val.documentPath);
+            }
           });
-          //setselectedUnitLeasedocument(response.data.data.result[0].documentPath);
+          setselectedUnitLeasedocument(response.data.data.result[0].documentPath);
         }
       }).catch((err) => {
         // setModal(false);
         console.log(err);
       });
+  }
+
+  // function download_file(fileURL, fileName) {
+  //   // for non-IE
+  //   if (!window.ActiveXObject) {
+  //     var save = document.createElement('a');
+  //     save.href = fileURL;
+  //     save.target = '_blank';
+  //     var filename = fileURL.substring(fileURL.lastIndexOf('/') + 1);
+  //     save.download = fileName || filename;
+  //     if (navigator.userAgent.toLowerCase().match(/(ipad|iphone|safari)/) && navigator.userAgent.search("Chrome") < 0) {
+  //       document.location = save.href;
+  //       // window event not working here
+  //     } else {
+  //       var evt = new MouseEvent('click', {
+  //         'view': window,
+  //         'bubbles': true,
+  //         'cancelable': false
+  //       });
+  //       save.dispatchEvent(evt);
+  //       (window.URL || window.webkitURL).revokeObjectURL(save.href);
+  //     }
+  //   }
+  // }
+
+  const download = (path, filename) => {
+    // Create a new link
+    const anchor = document.createElement('a');
+    anchor.href = path;
+    anchor.download = filename;
+
+    // Append to the DOM
+    document.body.appendChild(anchor);
+
+    // Trigger `click` event
+    anchor.click();
+
+    // Remove element from DOM
+    document.body.removeChild(anchor);
+  };
+
+  function sixStorageChangeReason(e) {
+    console.log(e.target.value)
+  }
+
+  function handleChange(e, data) {
+    console.log(data);
+    SetScheduleMoveOut({ ...ScheduleMoveOut, [data.name]: data.value })
   }
 
 
@@ -191,21 +345,19 @@ export default function MyLeases() {
             </svg>
               <span className="veritical-align-text-top ml-1">Unit Details</span></h6>
           </div>
-          {!ScheduleMovedOut &&
-            <div className="col-6 text-right">
-              <button onClick={() => SetScheduleMoveOutMOdal({ open: true, dimmer: 'blurring' })} className="ui button basic box-shadow-none border-success-dark-light-1 fs-7 fw-400  px-1">
-                <img height="16" width="16" src="/assets/images/calendar.svg" alt="calendar" />
-                <span className="text-success ml-1 veritical-align-text-top fw-600" >Schedule Move-Out</span></button>
-            </div>
-          }
-          {
-            ScheduleMovedOut &&
-            <div className="col-12 col-md-6 text-right">
-              <span className="text-secondary fw-500">Schedule Move-Out date:<span className="mx-1 text-success">{leaseInfoById[0].unitInfo.unitNumber}</span></span>
-              <button className="ui button bg-success-dark   fs-7 fw-400 text-white px-3 py-1" onClick={e => CancelScheduleMOveOut(e)}>Cancel</button>
-            </div>
-          }
         </div>
+        {console.log(leaseResponse[0])}
+        {leaseInfoById[0].leaseInfo.moveOutScheduledOn == null || typeof leaseInfoById[0].leaseInfo.moveOutScheduledOn == 'undefined' || leaseInfoById[0].leaseInfo.moveOutScheduledOn == '' || leaseInfoById[0].leaseInfo.moveOutScheduledOn.length == 0 ?
+          <div className="col-6 text-right" >
+            <button onClick={() => SetScheduleMoveOutMOdal({ open: true, dimmer: 'blurring' })} className="ui button basic box-shadow-none border-success-dark-light-1 fs-7 fw-400  px-1">
+              <img height="16" width="16" src="/assets/images/calendar.svg" alt="calendar" />
+              <span className="text-success ml-1 veritical-align-text-top fw-600" >Schedule Move-Out</span></button>
+          </div> :
+          <div className="col-12 col-md-6 text-right" >
+            <span className="text-secondary fw-500">Schedule Move-Out date:<span className="mx-1 text-success">{leaseInfoById[0].leaseInfo.moveOutScheduledOn}</span></span>
+            <button className="ui button bg-success-dark   fs-7 fw-400 text-white px-3 py-1" onClick={e => CancelScheduleMOveOut(e)}>Cancel</button>
+          </div>
+        }
         <div className="py-4 px-3">
           <div className="row">
             <div className="col-lg-5 col-md-5 col-12 px-1">
@@ -219,9 +371,18 @@ export default function MyLeases() {
                   {leaseInfoById[0].unitInfo.dueAmount > 0 ? (<span className={`success-label-leases veritical-align-super py-1 px-2 fw-500`}>
                     Good Standing
                   </span>) :
-                    <span className={`danger-label-leases veritical-align-super py-1 px-2 fw-500`}>
+                    <span className={`danger-label-leases veritical-align-super py-1 px-2 fw-500 mr-2`}>
                       Poor Standing
                     </span>}
+                  {leaseInfoById[0].leaseInfo.gateStatus.descreption == 'Denied' && <span className={`danger-label-leases veritical-align-super py-1 px-2 fw-500`}>
+                    Access Denied
+                  </span>}
+                  {leaseInfoById[0].leaseInfo.gateStatus.descreption == 'Active' && <span className={`success-label-leases veritical-align-super py-1 px-2 fw-500`}>
+                    Active
+                  </span>}
+                  {leaseInfoById[0].leaseInfo.gateStatus.descreption == 'Overlocked' && <span className={`danger-label-leases veritical-align-super py-1 px-2 fw-500`}>
+                    Overlocked
+                  </span>}
 
                   {/* the code i have commented below is for overlock danger label */}
                   {/* <span className="danger-label-leases veritical-align-super py-1 px-2 fw-500">
@@ -232,7 +393,6 @@ export default function MyLeases() {
                 <div className='d-flex align-items-center'><img width='18' height='18' src='/assets/images/location-new.svg' alt='Self Storage' /><span className='ml-1'>{leaseInfoById[0].unitInfo.building.name}, {leaseInfoById[0].unitInfo.location.name}</span></div>
                 {leaseInfoById[0].unitInfo.amenityInfoList !== "undefined" && leaseInfoById[0].unitInfo.amenityInfoList !== null && leaseInfoById[0].unitInfo.amenityInfoList.length > 0 ? (<div className='d-flex flex-wrap esign-amenitiy mt-2'>
                   {leaseInfoById[0].unitInfo.amenityInfoList.map((amenities) => {
-                    console.log(amenities);
                     return <div className='d-flex align-items-center my-2 mr-2' key={amenities.unitId}>
                       <img src={amenities.imageUrl} style={{ width: 15, height: 15 }} />
                       {/* <svg id="Fully_automated" data-name="Fully automated" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 16.723 16.437">
@@ -291,15 +451,12 @@ export default function MyLeases() {
             <div className=' overflow-auto'>
               <div className="rentalAgreementContainer">
                 {/* for document preview */}
-            <PDFViewer
-            document={{
-                url: 'https://arxiv.org/pdf/quant-ph/0410100.pdf',
-            }}
-        />              
-      </div>
+                <iframe src={selectedUnitLeasedocument} width="100%" height="900px" frameBorder="0"></iframe>
+              </div>
             </div>
             <div className='text-center'>
-              <button className="ui button basic box-shadow-none border-success-dark-light-1 fs-8 px-2 py-1 my-2" ><span className='text-success'>Download</span></button>
+              {/* <button className="ui button basic box-shadow-none border-success-dark-light-1 fs-8 px-2 py-1 my-2" onClick={() => download(selectedUnitLeasedocument, "LeaseAgreement")}><a className='text-success'>Download</a></button> */}
+              <button className="ui button basic box-shadow-none border-success-dark-light-1 fs-8 px-2 py-1 my-2"><a className='text-success' download={selectedUnitLeasedocument}>Download</a></button>
             </div>
 
           </div>
@@ -313,22 +470,51 @@ export default function MyLeases() {
       >
         <Modal.Header className='bg-success-dark text-white text-center fs-6 py-2 fw-400 position-relative'>Schedule Move-Out
 
-          <svg onClick={() => SetScheduleMoveOutMOdal({ open: false })} className='r-3 cursor-pointer position-absolute' xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 17.473 17.47">
+          {!isButtonLoading && <svg onClick={() => SetScheduleMoveOutMOdal({ open: false })} className='r-3 cursor-pointer position-absolute' xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 17.473 17.47">
             <path id="wrong-5" d="M978.609-438.353l-2.052-2.043-4.37-4.366a1.33,1.33,0,0,1-.4-1.425,1.3,1.3,0,0,1,.833-.843,1.3,1.3,0,0,1,1.171.183,3.019,3.019,0,0,1,.353.321q3.009,3,6.009,6.01c.088.088.159.193.254.309.127-.118.217-.2.3-.281l6.156-6.156a1.332,1.332,0,0,1,1.325-.431,1.3,1.3,0,0,1,.927.828,1.3,1.3,0,0,1-.188,1.228,3.412,3.412,0,0,1-.325.35q-3,3.009-6.011,6.009a3.233,3.233,0,0,1-.317.244c.132.14.213.23.3.316q3.052,3.053,6.108,6.1a1.36,1.36,0,0,1,.441,1.387,1.305,1.305,0,0,1-2.205.564c-.59-.568-1.163-1.157-1.74-1.736l-4.487-4.491a2.068,2.068,0,0,1-.183-.248l-.142-.051a1.52,1.52,0,0,1-.191.325q-3.047,3.059-6.1,6.111a1.341,1.341,0,0,1-1.45.419,1.3,1.3,0,0,1-.851-.866,1.3,1.3,0,0,1,.235-1.19,3.215,3.215,0,0,1,.257-.274l6.034-6.033C978.386-438.167,978.484-438.245,978.609-438.353Z" transform="translate(-971.716 447.116)" fill="#fff" />
-          </svg>
+          </svg>}
         </Modal.Header>
         <Modal.Content className=' p-1'>
           <div className="ui form px-4 px-sm-2">
             <div className="field w-100 datePicker my-3">
               <label className='fw-500 fs-7 mb-1' >Schedule Move-Out Date</label>
-              <SemanticDatepicker value={ScheduleMoveOutDate} onChange={(e, data) => SetScheduleMoveOutDate(data.value)} placeholder='Select date' className='w-100' />
+              <SemanticDatepicker disabled={isButtonLoading} value={new Date(ScheduleMoveOut.date)} name="date" onChange={(e, data) => handleChange(e, data)} placeholder='Select date' className='w-100' />
             </div>
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-1' >Reason</label>
-              <textarea rows='5'></textarea>
+              <TextArea disabled={isButtonLoading} placeholder='Please tell us reason' name="reason" value={ScheduleMoveOut.reason} onChange={(e, data) => handleChange(e, data)} />
             </div>
             <div className='text-center my-2'>
-              <button className="ui button bg-success-dark   fs-7 fw-400 text-white px-3 py-1" onClick={e => ScheduleMOveOut(e)}>Schedule</button>
+              <Button className="ui button bg-success-dark fs-7 fw-400 text-white px-3 py-1" disabled={isButtonLoading} loading={isButtonLoading} onClick={() => addScheduleMOveOutDate(leaseInfoById[0])}>Schedule</Button>
+            </div>
+          </div>
+        </Modal.Content>
+      </Modal>
+
+      <Modal
+        dimmer={cancelScheduleMoveOutMOdal.dimmer}
+        open={cancelScheduleMoveOutMOdal.open}
+        size='tiny'
+        onClose={() => CancelScheduleMoveOutMOdal({ open: false })}
+      >
+        <Modal.Header className='bg-success-dark text-white text-center fs-6 py-2 fw-400 position-relative'>Cancel Schedule Move-Out
+
+          {!isButtonLoading && <svg onClick={() => CancelScheduleMoveOutMOdal({ open: false })} className='r-3 cursor-pointer position-absolute' xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 17.473 17.47">
+            <path id="wrong-5" d="M978.609-438.353l-2.052-2.043-4.37-4.366a1.33,1.33,0,0,1-.4-1.425,1.3,1.3,0,0,1,.833-.843,1.3,1.3,0,0,1,1.171.183,3.019,3.019,0,0,1,.353.321q3.009,3,6.009,6.01c.088.088.159.193.254.309.127-.118.217-.2.3-.281l6.156-6.156a1.332,1.332,0,0,1,1.325-.431,1.3,1.3,0,0,1,.927.828,1.3,1.3,0,0,1-.188,1.228,3.412,3.412,0,0,1-.325.35q-3,3.009-6.011,6.009a3.233,3.233,0,0,1-.317.244c.132.14.213.23.3.316q3.052,3.053,6.108,6.1a1.36,1.36,0,0,1,.441,1.387,1.305,1.305,0,0,1-2.205.564c-.59-.568-1.163-1.157-1.74-1.736l-4.487-4.491a2.068,2.068,0,0,1-.183-.248l-.142-.051a1.52,1.52,0,0,1-.191.325q-3.047,3.059-6.1,6.111a1.341,1.341,0,0,1-1.45.419,1.3,1.3,0,0,1-.851-.866,1.3,1.3,0,0,1,.235-1.19,3.215,3.215,0,0,1,.257-.274l6.034-6.033C978.386-438.167,978.484-438.245,978.609-438.353Z" transform="translate(-971.716 447.116)" fill="#fff" />
+          </svg>}
+        </Modal.Header>
+        <Modal.Content className=' p-1'>
+          <div className="ui form px-4 px-sm-2">
+            <div className="field w-100 datePicker my-3">
+              <label className='fw-500 fs-7 mb-1' >Schedule Move-Out Date</label>
+              <SemanticDatepicker disabled={isButtonLoading} value={new Date(leaseInfoById[0].leaseInfo.moveOutScheduledOn)} name="date" onChange={(e, data) => handleChange(e, data)} placeholder='Select date' className='w-100' />
+            </div>
+            <div className="field w-100  my-3">
+              <label className='fw-500 fs-7 mb-1' >Reason</label>
+              <TextArea disabled={isButtonLoading} required placeholder='Please tell us reason' name="reason" value={ScheduleMoveOut.reason} onChange={(e, data) => handleChange(e, data)} />
+            </div>
+            <div className='text-center my-2'>
+              <Button className="ui button bg-success-dark fs-7 fw-400 text-white px-3 py-1" disabled={isButtonLoading} loading={isButtonLoading} onClick={() => cancelScheduleMOveOutDate(leaseInfoById[0])}>Schedule</Button>
             </div>
           </div>
         </Modal.Content>

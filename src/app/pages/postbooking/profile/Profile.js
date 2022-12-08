@@ -11,11 +11,10 @@ import Helper from "../../../helper";
 
 let helper = new Helper();
 
-
 export default function Profile() {
-  const [profileImageSrc, setprofileImageSrc] = useState({
-    img: '/assets/images/post-tenant-img.png'
-  })
+
+  const [profileImageSrc, setprofileImageSrc] = useState('')
+
   // const [contactPhone, SetContactPhone] = useState();
   const [isEdit, editTenantDetails] = useState(true);
   const [isTenantaddress, showTenantAddress] = useState(true);
@@ -53,15 +52,13 @@ export default function Profile() {
       }
     };
     let userId = localStorage.getItem('userid');
-    const [html] = document.getElementsByTagName("html")
-    const lang = html.getAttribute("lang");
     instance.get(request.get_user_info + '/' + userId, config).then((response) => {
       const userInfoResponse = response.data;
       if (typeof userInfoResponse !== 'undefined' && userInfoResponse !== null && userInfoResponse !== '' && userInfoResponse.isSuccess === true) {
         let data = userInfoResponse.result;
         localStorage.setItem("UserInfo", JSON.stringify(data));
-        console.log("UserData", data);
         setTenantDetails(data)
+        setprofileImageSrc(data.photoPath)
       } else {
         editTenantDetails(false)
         console.log('No records found');
@@ -69,58 +66,120 @@ export default function Profile() {
     }).catch((err) => {
       console.log(err);
     })
-
   }
 
   const onChangePersonalInfo = (e) => {
     console.log(e)
-    // event.preventDefault();
-    e.persist();
     const { name, value } = e.target
     setTenantDetails({ ...tenantDetails, [name]: value });
   }
 
+  // const profileImageUpload = (e) => {
+  //   e.preventDefault();
+  //   let img = e.target.files[0];
+  //   if (!img.name.match(/\.(jpg|jpeg|png|svg)$/)) {
+  //     alert('Please check the your file format,only jpg,jpeg,png,svg formats are supported')
+  //     return false;
+  //   }
+  //   if (img.size > 1000000) {
+  //     alert('Please make sure the file size showTenantaddress less than 1mb and try again')
+  //     return false;
+  //   }
+  //   setprofileImageSrc(this.convertBase64(img))
+  //   console.log("profileImageSrc", profileImageSrc);
+  // }
+
   const profileImageUpload = (e) => {
-    debugger;
     e.preventDefault();
-    let img = e.target.files[0];
-    if (!img.name.match(/\.(jpg|jpeg|png|svg)$/)) {
-      alert('Please check the your file format,only jpg,jpeg,png,svg formats are supported')
-      return false;
+    let file = e.target.files[0];
+    const reader = new FileReader();
+    reader.addEventListener("load", () => {
+      // convert image file to base64 string
+      // preview.src = reader.result;
+      setprofileImageSrc(reader.result);
+    }, false);
+    if (file) {
+      reader.readAsDataURL(file);
     }
-    if (img.size > 1000000) {
-      alert('Please make sure the file size showTenantaddress less than 1mb and try again')
-      return false;
-    }
-    console.log({ img: URL.createObjectURL(img) })
-    if (e.target.files && e.target.files[0]) {
-      // setprofileImageSrc({ img: URL.createObjectURL(img) });
-    }
+    console.log("setprofileImageSrc", profileImageSrc);
   }
 
-  function updateTenantInfo() {
-    // setTenantDetails({ ...tenantDetails, type : event.target.value });
+
+  function saveTenantPhoto() {
+    // let image = document.getElementById('tenantProfileImage').src
+    // console.log(image);
     let config = {
       headers: {
         "Content-Type": "application/json"
       }
     };
+    let userId = localStorage.getItem('userid');
+    let imagedata = new File([profileImageSrc], `${userId}_.png`, { type: "image/png" });
+    console.log("file", imagedata);
+    let timestamp = new Date().getTime();
 
-    let userid = localStorage.getItem('userid');
-    const [html] = document.getElementsByTagName("html")
-    const lang = html.getAttribute("lang");
-    tenantDetails['content-language'] = lang;
+    let fileName = `${userId}_${timestamp}.png`;
 
-    delete tenantDetails.email;
-    console.log(tenantDetails)
-    instance.post(request.update_user_info + '/' + userid, tenantDetails, config).then((response) => {
-      console.log(response)
+    const formData = new FormData();
 
-      const userUpdateResponse = response.data.data;
-      console.log(userUpdateResponse)
-      if (userUpdateResponse.isSuccess === true && userUpdateResponse.returnCode === "SUCCESS") {
-        console.log("Hello")
+    formData.append("FileName", fileName);
+    formData.append("FileData", imagedata);
+    console.log(profileImageSrc)
+    console.log("requestBody", formData)
+    instance.post(request.add_profile_picture + userId, formData, config).then(response => {
+      return response;
+    }).then(data => {
+      console.log()
+        const profileResponse = data;
+        console.log(profileResponse);
+      }).catch((err) => {
+        console.log(err);
+      })
+
+  }
+
+  // function saveTenantPhoto() {
+  //   let image = document.getElementById('tenantProfileImage').src
+  //   console.log(image);
+  //   let config = {
+  //     headers: {
+  //       "Content-Type": "application/json"
+  //     }
+  //   };
+  //   let userId = localStorage.getItem('userid');
+  //   const formData = new FormData();
+
+  //   formData.append("FileName", "Profile");
+  //   formData.append("FileData", profileImageSrc);
+  //   console.log(profileImageSrc)
+  //   // let requestBody = {
+  //   //   FileName: "Profile",
+  //   //   FileData: profileImageSrc
+
+  //   // }
+  //   console.log("requestBody", formData)
+  //   instance.post(request.add_profile_picture + userId, formData, config).then((response) => {
+  //     const profileResponse = response.data;
+  //     console.log(profileResponse);
+  //   }).catch((err) => {
+  //     console.log(err);
+  //   })
+  // }
+
+  function updateTenantInfo() {
+    let config = {
+      headers: {
+        "Content-Type": "application/json"
       }
+    };
+    let userid = localStorage.getItem('userid');
+    instance.post(request.update_user_info + '/' + userid, tenantDetails, config).then((response) => {
+      const userUpdateResponse = response.data;
+      if (userUpdateResponse.isSuccess === true && userUpdateResponse.returnCode === "SUCCESS") {
+        // console.log("response.data", response.data)
+      }
+    }).then(() => {
+      saveTenantPhoto()
     })
   }
 
@@ -172,7 +231,7 @@ export default function Profile() {
                 </div>
                 <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                   <div className="edit-profile-img position-relative">
-                    <img src={tenantDetails.photoPath !== null ? tenantDetails.photoPath : '/assets/images/profile_.png'} className="ui medium circular image object-fit-cover TenantDetailsProfileImage mx-auto" alt="Profile" />
+                    <img src={profileImageSrc.length > 0 ? profileImageSrc : '/assets/images/profile_.png'} className="ui medium circular image object-fit-cover TenantDetailsProfileImage mx-auto" id="tenantProfileImage" alt="Profile" />
                     <div className="edit-icon position-absolute text-center l-18 r-0 t-1">
                       <label className="cursor-pointer" htmlFor='profileImageUpload'>
                         <img width='50' height='50' className="" src="/assets/images/edit-photo.svg" alt="Edit" />
@@ -226,7 +285,8 @@ export default function Profile() {
                     <p className="fs-7 fw-500 text-dark mb-2">Date of Birth</p>
                   </div>
                   <div className="col-lg-8 col-md-8 col-sm-8">
-                    <p className="fs-7 mb-2">{helper.displayDate(tenantDetails.birthDate)}</p>
+                    {/* <p className="fs-7 mb-2">{helper.displayDate(tenantDetails.birthDate)}</p> */}
+                    <p className="fs-7 mb-2">{tenantDetails.birthDate}</p>
                   </div>
 
                   <div className="col-lg-4 col-md-4 col-sm-4">

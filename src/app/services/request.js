@@ -18,11 +18,18 @@ const requests = {
     tenant_details :"v1/user",
     lease_documents : "/v1/movein/lease/documents/",
     custom_Fields: "v2/common/custom-fields",
+    move_out: "v1/moveout/schedulemoveout/",
+    cancel_move_out: "v1/moveout/cancel/",
+    user_payment_form:"/v1/user/paymentform/",
+    user_card_details:"/v1/cards/details/",
+    card_make_default:"/v1/cards/makedefault/",
+    //Add Card Form
+    add_card_form: '/v1/cards/add/form/',
+    add_profile_picture: '/v1/user/profile/picture/',
     lease_agreement: "v1/moveIn/preview",
     movein_paymentform: "v1/moveIn/paymentform",
     lease_profile:"v1/moveIn/leaseProfile",
     save_move:"v1/moveIn"
-
 }
 
 export default requests; 

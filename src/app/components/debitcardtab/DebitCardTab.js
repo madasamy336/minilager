@@ -1,8 +1,8 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { Dropdown, Image } from 'semantic-ui-react';
 
 const DebitCardTab = () => {
-    const[showtable, setShowTable] = useState(false);
+    const [showtable, setShowTable] = useState(false);
     const showTableHandler = () => {
         setShowTable(true);
     }
@@ -11,18 +11,19 @@ const DebitCardTab = () => {
     }
     const trigger = (
         <span>
-          <Image avatar src="/assets/images/black-menu.svg" />
+            <Image avatar src="/assets/images/black-menu.svg" />
         </span>
-      )
-      
-      const CardOptions = [
-        { key: 'Make as primary', text: 'Make as primary', value: 'Make as primary', image: { src: '/assets/images/credit-cardd.svg' } },
-        { key: 'Delete', text: 'Delete', value: 'Delete', image: { src: '/assets/images/delete.svg' }, },
-      ]
+    )
 
-    return(
+    // const CardOptions = [
+    //     { key: 'Make as primary', text: 'Make as primary', value: 'Make as primary', image: { src: '/assets/images/credit-cardd.svg' } },
+    //     { key: 'Delete', text: 'Delete', value: 'Delete', image: { src: '/assets/images/delete.svg' }, },
+    // ]
+
+    return (
         <div className="debitCardtab py-4 px-3 px-sm-1">
-            {showtable && <div className="ml-2 text-right">
+            <iframe />
+            {/* {showtable && <div className="ml-2 text-right">
                 <button className="ui button bg-success-dark text-white fs-7 fw-400 px-2 mb-2" onClick={showCardHandler}>Add New Card</button>
             </div> }
             {!showtable && <div className="ui form w-50 w-sm-100">
@@ -64,7 +65,7 @@ const DebitCardTab = () => {
                         </tr>
                     </tbody>
                 </table>
-            </div>}
+            </div>} */}
         </div>
     )
 }
