@@ -26,6 +26,10 @@ const requests = {
     //Add Card Form
     add_card_form: '/v1/cards/add/form/',
     add_profile_picture: '/v1/user/profile/picture/',
+    lease_agreement: "v1/moveIn/preview",
+    movein_paymentform: "v1/moveIn/paymentform",
+    lease_profile:"v1/moveIn/leaseProfile",
+    save_move:"v1/moveIn"
 }
 
 export default requests; 
