@@ -17,7 +17,15 @@ const requests = {
     check_addons: "v1/moveIn/rent/rentDetails",
     tenant_details :"v1/user",
     lease_documents : "/v1/movein/lease/documents/",
-    custom_Fields: "v2/common/custom-fields"
+    custom_Fields: "v2/common/custom-fields",
+    move_out: "v1/moveout/schedulemoveout/",
+    cancel_move_out: "v1/moveout/cancel/",
+    user_payment_form:"/v1/user/paymentform/",
+    user_card_details:"/v1/cards/details/",
+    card_make_default:"/v1/cards/makedefault/",
+    //Add Card Form
+    add_card_form: '/v1/cards/add/form/',
+    add_profile_picture: '/v1/user/profile/picture/',
 }
 
 export default requests; 
