@@ -318,7 +318,7 @@ const Pricesummary = forwardRef((props, ref) => {
             </div>
           </div>);
 
-        }) : ""}
+        }) : <div className="ui active pricesummaryLoader centered inline loader"></div>}
 
 
 
