@@ -8,29 +8,39 @@ import request from '../../../services/request';
 import Helper from "../../../helper";
 
 export default function Payment() {
-  const [paymentForm, setPaymentFormUrl] = useState({
-    Url: ""
-  });
-  const [cardDetails, setCardDetails] = useState([]);
+  const [paymentForm, setPaymentFormUrl] = useState();
+  const [creditCardDetails, setCreditCardDetails] = useState([]);
+  const [achCardDetails, setACHCardDetails] = useState([]);
   const [isLoading, setLoader] = useState(true);
   const canvasRef = useRef(null);
+
   useEffect(() => {
+    listCreditCards()
+    listACHCards()
     renderAddCardForm();
-    listCards()
+    const ReceiveIframeResponse = (event) => {
+      if (event.data.message !== null && typeof event.data.message !== 'undefined') {
+        const data = JSON.parse(event.data.message);
+        if (typeof data !== 'undefined' && data !== null && data !== '') {
+          listCreditCards()
+          listACHCards()
+        }
+      }
+    };
+    window.addEventListener("message", ReceiveIframeResponse);
+
+    return () => window.removeEventListener("message", ReceiveIframeResponse);
   }, []);
 
   function renderAddCardForm(id) {
-    //sixStoragePassingValue();
     let config = {
       headers: {
         "Content-Type": "application/json",
       },
     };
 
-    // let currentUrl = window.location.href;
     let userId = localStorage.getItem('userid');
     const data = {
-      // hostURL: currentUrl,
       platform: "WEB",
       paymentModeId: id
     };
@@ -38,14 +48,14 @@ export default function Payment() {
     instance
       .post(request.add_card_form + `${userId}`, data, config)
       .then((response) => {
-        // console.log(response);
         const res = response.data;
-        // console.log("res", res);
         if (res.isSuccess !== false && res.returnCode === "SUCCESS") {
-          // console.log(res.result);
           setLoader(false);
-          setPaymentFormUrl(res.result)
-
+          setPaymentFormUrl(res.result);
+          setPaymentFormUrl((paymentForm) => {
+            console.log("paymentForm", paymentForm);
+            return paymentForm;
+          });
         } else {
           setLoader(false);
 
@@ -57,39 +67,82 @@ export default function Payment() {
       });
   }
 
-  function listCards(id) {
+  function listCreditCards(tabName) {
+    console.log("listCard", tabName);
     let userId = localStorage.getItem('userid');
     let config = {
       headers: {
         "Content-Type": "application/json",
       },
     };
-
-    const requestBody = {
-    }
-
+    const requestBody = {};
     instance
-      .get(request.user_card_details + `${userId}`, requestBody, config)
+      .get(request.user_credit_card_details + `${userId}`, requestBody, config)
       .then(response => {
         return response;
       }).then(data => {
+        console.log(data);
         if (data.data.isSuccess !== false && data.data.returnCode === "SUCCESS") {
-          setCardDetails(data.data.result);
-          console.log(cardDetails);
+          setCreditCardDetails(data.data.result);
+          setCreditCardDetails((creditCardDetails) => {
+            console.log("ach", creditCardDetails);
+            return creditCardDetails;
+          });
         }
-      })
+      }).catch((err) => {
+        console.log(err);
+        // setLoadingButton(false);
+      });
   }
+
+  function listACHCards(tabName) {
+    console.log("listCard", tabName);
+    let userId = localStorage.getItem('userid');
+    let config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    // console.log(requestUrl);
+    const requestBody = {};
+    instance
+      .get(request.user_ach_card_details + `${userId}`, requestBody, config)
+      .then(response => {
+        return response;
+      }).then(data => {
+        console.log(data);
+        if (data.data.isSuccess !== false && data.data.returnCode === "SUCCESS") {
+          setACHCardDetails(data.data.result);
+          setACHCardDetails((achCardDetails) => {
+            console.log("ach", achCardDetails);
+            return achCardDetails;
+          });
+        }
+      }).catch((err) => {
+        console.log(err);
+        // setLoadingButton(false);
+      });
+  }
+
+  const handleTabChange = (e => {
+    console.log(e.target.innerText)
+    listCreditCards(e.target.innerText)
+    return e.target.innerText
+  })
+
+
 
   const clientDataconfig = JSON.parse(sessionStorage.getItem("configdata"));
 
   let testData = clientDataconfig.paymentModes.filter(paymentmode => paymentmode.value !== 'PayLater').map((filteredPaymentmode, i) => {
+    console.log("filteredPaymentmode", filteredPaymentmode.value);
     return {
       menuItem: (
         <Menu.Item key={filteredPaymentmode.value}>
           {filteredPaymentmode.value == 'CreditCard' ? <Image className="mr-1" src="/assets/images/credit-card.svg" /> : <Image className="mr-1" src="/assets/images/direct-debit-tab.svg" />}
           {filteredPaymentmode.value}
         </Menu.Item>
-      ), render: () => filteredPaymentmode.value == 'CreditCard' ? <Tab.Pane><CreditCardTab listCardFunction={listCards} cards={cardDetails} loading={isLoading} paymentFom={paymentForm.Url} getRef={ ref => canvasRef.current = ref.current } /></Tab.Pane> : <Tab.Pane><DebitCardTab cards={cardDetails} listCardFunction={listCards} loader={isLoading} cardForm={paymentForm.Url} /></Tab.Pane>
+      ), render: () => filteredPaymentmode.value == 'CreditCard' ? <Tab.Pane><CreditCardTab listCardFunction={() => listCreditCards()} cards={creditCardDetails} loading={isLoading} paymentFom={paymentForm} /></Tab.Pane> : <Tab.Pane><DebitCardTab cards={achCardDetails} listCardFunction={() => listACHCards()} loader={isLoading} cardForm={paymentForm} /></Tab.Pane>
     }
   });
 
@@ -101,7 +154,7 @@ export default function Payment() {
       </svg>You have made this card as default</span></p> */}
       <div className="bg-white card-boxShadow border-radius-15 pb-2 mb-2 overflow-hidden">
         <div className="payment-tabs">
-          <Tab panes={testData} />
+          <Tab panes={testData} onTabChange={(e) => handleTabChange(e)} />
         </div>
 
       </div>

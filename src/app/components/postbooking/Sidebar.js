@@ -1,5 +1,5 @@
 import React from "react";
-import { Navigate, NavLink } from 'react-router-dom';
+import { useNavigate, NavLink } from 'react-router-dom';
 
 import {
   Menu,
@@ -7,10 +7,15 @@ import {
 } from 'semantic-ui-react'
 export default function SidebarPostBooking(props) {
 
+  const Navigate = useNavigate();
 
   function logout() {
-    localStorage.clear();
-    <Navigate to="/login" />
+    const timer = setTimeout(() => {
+      console.log('This will run after 1 second!')
+      localStorage.clear();
+    Navigate('/login');
+    }, 2000);
+    return () => clearTimeout(timer);
   }
 
   return (

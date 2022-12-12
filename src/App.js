@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from 'react-router-dom'
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import SidebarPostBooking from './app/components/postbooking/Sidebar';
 import Header from './app/components/header/Header';
 import PostLoginForm from './app/pages/PostLoginForm';
@@ -8,7 +8,7 @@ import MyLeases from './app/pages/postbooking/my leases/MyLeases';
 import MYInvoices from './app/pages/postbooking/my invoices/MYInvoices';
 import Payment from './app/pages/postbooking/payment/Payment';
 import Updatepassword from './app/pages/postbooking/update password/Updatepassword';
-import { useEffect, useState,React } from 'react';
+import { useEffect, useState, React } from 'react';
 import PostSignupForm from './app/pages/PostSignupForm';
 import Units from './app/pages/Units';
 import RentingDetails from './app/pages/RentingDetails';
@@ -29,14 +29,23 @@ function App() {
     // useEffect(() => {
     //     dispatch(fetchAppConfig())
     // }, [])
-
+    const Navigate = useNavigate();
     const windowWidth = window.innerWidth
     const [mobileWidth, SetmobileWidth] = useState();
-    const[sidebar,ShowSidebar]=useState(false)
+    const [isUserLoggedIn, SetUserLoggediIn] = useState(false);
+    const [sidebar, ShowSidebar] = useState(false)
     const location = useLocation()
     useEffect(() => {
+        const user = localStorage.getItem('userid');
+        if (!user) {
+            SetUserLoggediIn(false)
+            // Navigate('/login');
+        }else{
+            SetUserLoggediIn(true)
+        }
         SetmobileWidth(windowWidth)
     }, [mobileWidth])
+
     return (
         <>
 
@@ -57,13 +66,45 @@ function App() {
                         <Route path='/preBooking/esignPayment' element={<EsignPayment />} />
                         <Route path='/preBooking/thankyou' element={<SuccessfulMoveIn />} />
 
-                        <Route path='/postBooking/Profile' element={<Profile />} />
-                        <Route path='/postBooking/myLeases' element={<MyLeases />} />
-                        <Route path='/postBooking/myInvoices' element={<MYInvoices />} />
-                        <Route path='/postBooking/payment' element={<Payment />} />
-                        <Route path='/postBooking/updatePassword' element={<Updatepassword />} />
-                    </Routes>
-                </div>
+                  
+                    <Route path='/postBooking/Profile' element={<Profile />} />
+                    <Route path='/postBooking/myLeases' element={<MyLeases />} />
+                    <Route path='/postBooking/myInvoices' element={<MYInvoices />} />
+                    <Route path='/postBooking/payment' element={<Payment />} />
+                    <Route path='/postBooking/updatePassword' element={<Updatepassword />} />
+                    {/* <Route path='/postBooking/Profile'
+                            element={
+                                <Protected isLoggedIn={isUserLoggedIn}>
+                                    <Profile />
+                                </Protected>}
+                        />
+                        <Route path='/postBooking/myLeases'
+                            element={
+                                <Protected isLoggedIn={isUserLoggedIn}>
+                                    <MyLeases />
+                                </Protected>}
+                        />
+                        <Route path='/postBooking/myInvoices'
+                            element={
+                                <Protected isLoggedIn={isUserLoggedIn}>
+                                    <MYInvoices />
+                                </Protected>}
+                        />
+                        <Route path='/postBooking/payment'
+                            element={
+                                <Protected isLoggedIn={isUserLoggedIn}>
+                                    <Payment />
+                                </Protected>}
+                        />
+                        <Route path='/postBooking/updatePassword'
+                            element={
+                                <Protected isLoggedIn={isUserLoggedIn}>
+                                    <Updatepassword />
+                                </Protected>}
+                        />
+                    </Routes> */}
+                </Routes>
+            </div>
 
         </>
     );
