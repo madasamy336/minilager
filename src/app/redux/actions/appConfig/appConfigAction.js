@@ -14,7 +14,14 @@ export const fetchAppConfig = () => {
             .get(request.common_config, config)
             .then(response => {
                 const configData = response.data.result;
-                const culture =  response.data.result.culture;
+                const culture = response.data.result.culture;
+                configData.invoicePeriods.map((value) => {
+                    if (value.preferred) {
+                        sessionStorage.setItem("invoiceData", (value.invoicePeriodId));
+                    }
+                })
+                sessionStorage.setItem("recurringData", (configData.recurringTypes[0].recurringTypeId));
+
                 sessionStorage.setItem('configdata', JSON.stringify(configData));
                 sessionStorage.setItem('culture', JSON.stringify(culture));
                 dispatch(fetchAppConfigSuccess(configData));
@@ -23,7 +30,7 @@ export const fetchAppConfig = () => {
                 dispatch(fetchAppConfigFailure(error.message))
             })
     }
-    
+
 }
 
 export const fetchAppConfigRequest = () => {

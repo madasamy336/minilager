@@ -7,6 +7,9 @@ import { GetFacilityId } from '../../redux/actions/facility/faciltyAction'
 import { fetchAppConfig } from '../../redux/actions/appConfig/appConfigAction';
 const Card = (props) => {
     const facilityDetailResponse = props;
+    const clientDataconfig = JSON.parse(sessionStorage.getItem("configdata"));
+    // const recurringDefaultValue = clientDataconfig.recurringTypes[0].recurringTypeId;
+    // sessionStorage.setItem("recurringData", (recurringDefaultValue));
     const dispatch = useDispatch()
     useEffect(() => {
         dispatch(fetchAppConfig())

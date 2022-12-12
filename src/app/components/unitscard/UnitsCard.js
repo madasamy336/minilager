@@ -1,5 +1,5 @@
 import { useEffect, useState, React } from 'react';
-import { useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import PopupExampleInverted from '../unitstooltip/UnitsTooltip';
 import { useNavigate } from 'react-router-dom';
 import { Popup } from 'semantic-ui-react';
@@ -11,26 +11,21 @@ let helper = new Helper();
 const UnitsCard = (props) => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
-    let unicount = [1, 2, 3];
-    let unitList;
-    // useEffect(() => {
-    //     sixStorageLoadUnitList(props.storageTypevalue);
-    // },[props.storageTypevalue])
-
-    const rentNow = (e,unitid) => {
+    const clientDataconfig = JSON.parse(sessionStorage.getItem("configdata"));
+    const rentNow = (e, unitid) => {
         let unitdetailid = typeof unitid !== "undefined" && unitid !== null && unitid.length > 0 ? unitid[0] : null;
         localStorage.setItem('unitid', unitdetailid);
         e.preventDefault();
         navigate(`/preBooking/rentingDetails`);
     }
-    
-    
+
+
 
     return (
         <>
-         {/* <PlaceholderLoader key="" cardCount={} />   */}
+            {/* <PlaceholderLoader key="" cardCount={} />   */}
             {typeof props.UnitResponse !== 'undefined' && props.UnitResponse !== null &&
-            
+
                 props.UnitResponse.map(details => {
                     return <div key={details.unitTypeId} className='col-lg-4 col-md-6 col-sm-12 2 px-2 '>
                         <div key="" className='card my-2'>
@@ -113,7 +108,7 @@ const UnitsCard = (props) => {
                                 <div className='card-actions'>
                                     <div className='d-flex justify-content-between align-items-center'>
                                         <h2 className='fw-700'>{helper.displayCurrency(details.netAmount)} <PopupExampleInverted img={<img src='/assets/images/tooltip.png' alt='Price' />} tooltip={`Rent :${helper.displayCurrency(details.unitPrice)} Tax(${helper.displayPercent(details.taxPercentage)}): ${helper.displayCurrency(details.taxAmount)}`} /></h2>
-                                        <button className='ui button btn-success d-inline-flex align-items-center' onClick={e => rentNow(e,details.unitIds)}><img src='/assets/images/password-img.png' alt='Rent Now' /><span>Rent Now</span></button>
+                                        <button className='ui button btn-success d-inline-flex align-items-center' onClick={e => rentNow(e, details.unitIds)}><img src='/assets/images/password-img.png' alt='Rent Now' /><span>Rent Now</span></button>
                                     </div>
                                 </div>
                             </div>
@@ -123,13 +118,13 @@ const UnitsCard = (props) => {
                     </div>
                 })
             }
-              
-              {
-             
-              
-              }
-        
-            
+
+            {
+
+
+            }
+
+
         </>
     )
 }

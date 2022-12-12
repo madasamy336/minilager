@@ -16,17 +16,15 @@ let helper = new Helper();
 let storageTypeId;
 
 const Pricesummary = forwardRef((props, ref) => {
- let invoiceData = JSON.parse(sessionStorage.getItem("invoiceData"));
- let recurringData = JSON.parse(sessionStorage.getItem("recurringData"));
- let promoAppliedsession = sessionStorage.getItem("applypromo");
- console.log(invoiceData);
-  
+  let invoiceData = JSON.parse(sessionStorage.getItem("invoiceData"));
+  let recurringData = JSON.parse(sessionStorage.getItem("recurringData"));
+  let promoAppliedsession = sessionStorage.getItem("applypromo");
   useImperativeHandle(ref, () => ({
     unitInfodetailscall() {
-    
-        unitinfodetails();
-  
-      
+
+      unitinfodetails();
+
+
     }
 
   }));
@@ -48,19 +46,19 @@ const Pricesummary = forwardRef((props, ref) => {
 
   useEffect(() => {
     unitinfodetails(true);
-    
- 
+
+
   }, []);
 
 
   /** Unit Details Page Start **/
 
   const unitinfodetails = (initialCall) => {
-    sessionStorage.setItem("moveindate",  props.movinDate);
-    if(promoAppliedsession){
+    sessionStorage.setItem("moveindate", props.movinDate);
+    if (promoAppliedsession) {
       setPromoValidate(promoAppliedsession);
       // applyCoupon();
-      
+
     }
     let config = {
       headers: {
@@ -80,7 +78,7 @@ const Pricesummary = forwardRef((props, ref) => {
           id: unitid
         }
       ],
-      moveInDate:  helper.readDate(new Date(props.movinDate)),
+      moveInDate: helper.readDate(new Date(props.movinDate)),
       additionalMonths: 0,
       recurringPeriodId: invoiceData,
       recurringTypeId: recurringData,

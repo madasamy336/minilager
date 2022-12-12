@@ -33,9 +33,10 @@ export default function RentingDetails() {
   const [customFieldAccess, SetCustomFieldAccess] = useState();
   const clientDataconfig = JSON.parse(sessionStorage.getItem("configdata"));
   const recurringDefaultValue = clientDataconfig.recurringTypes[0].recurringTypeId;
+  const [recurringvalue, setRecurringValue] = useState(recurringDefaultValue);
   const PricesummaryData = () => {
     if (clientDataconfig !== null && typeof clientDataconfig !== "undefined") {
-     
+
       const invoiceperiodval = clientDataconfig.invoicePeriods !== null && typeof clientDataconfig.invoicePeriods !== "undefined" && clientDataconfig.invoicePeriods.length > 0 ?
         clientDataconfig.invoicePeriods.map(item => {
           if (item.preferred) {
@@ -85,6 +86,7 @@ export default function RentingDetails() {
   }
   const recurringOnchange = (e, item) => {
     sessionStorage.setItem("recurringData", (item.value));
+    setRecurringValue(item.value)
     childRef.current.unitInfodetailscall();
 
   }
@@ -103,7 +105,7 @@ export default function RentingDetails() {
     const checked = e.target.checked;
     const isMandatory = e.target.dataset.required;
 
-    sessionStorage.setItem ("fieldid", (fieldId));
+    sessionStorage.setItem("fieldid", (fieldId));
 
     if (e.target.value && e.target.dataset.datatype) {
       let letters = /^[A-Za-z]+$/;
@@ -156,7 +158,7 @@ export default function RentingDetails() {
 
   const navigateAddon = (e) => {
 
-  
+
     newArray = [];
     newArray.push({
       value: TestT,
@@ -164,13 +166,13 @@ export default function RentingDetails() {
 
     let fieldidData = sessionStorage.getItem("fieldid");
     fid = fieldidData;
-    if(typeof newArray[0].value !== "undefined"){
+    if (typeof newArray[0].value !== "undefined") {
       sessionStorage.setItem("cusomFieldValues", JSON.stringify(newArray));
     }
     Sdetails = JSON.parse(sessionStorage.getItem("cusomFieldValues"));
-  
-    navigate('/preBooking/addOns'); 
-   
+
+    navigate('/preBooking/addOns');
+
   }
 
   useEffect(() => {
@@ -262,17 +264,17 @@ export default function RentingDetails() {
                   {typeof customFieldAccess !== "undefined" && customFieldAccess !== null && customFieldAccess !== "" && customFieldAccess.length > 0 ?
                     customFieldAccess.map((item, index) => {
                       {
-                       
+
                         typeof Sdetails !== "undefined" && Sdetails !== null && Sdetails !== "" && Sdetails.length > 0 ?
-                        Sdetails.forEach((data) => {
-                          console.log(data);
-                          cusomfieldPhone = data.value.fid;
-                          console.log(cusomfieldPhone);
-                          // if(data.value.PhoneNo.fieldId === item.fieldId){
-                          //    cusomfieldPhone = data.value;
-                          //    console.log(cusomfieldPhone);
-                          // }
-                        }) : ""
+                          Sdetails.forEach((data) => {
+                            console.log(data);
+                            cusomfieldPhone = data.value.fid;
+                            console.log(cusomfieldPhone);
+                            // if(data.value.PhoneNo.fieldId === item.fieldId){
+                            //    cusomfieldPhone = data.value;
+                            //    console.log(cusomfieldPhone);
+                            // }
+                          }) : ""
                       }
 
 
@@ -280,7 +282,7 @@ export default function RentingDetails() {
                         return <div key={item.fieldId} className="field w-100 my-2 ">
                           <label className='fw-500 fs-7 mb-2'>{item.fieldName}
                           </label>
-                          <input type='text' placeholder={item.fieldName} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-datatype={item.matadata.dataType} data-type = {item.matadata.type} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
+                          <input type='text' placeholder={item.fieldName} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-datatype={item.matadata.dataType} data-type={item.matadata.type} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
                           <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
                           <div className="text-danger mt-1" id={item.matadata.dataType} style={{ display: 'none' }}>It should allow Alphabet Only</div>
                         </div>
@@ -290,7 +292,7 @@ export default function RentingDetails() {
                         return <div key={item.fieldId} className="field w-100 my-2 ">
                           <label className='fw-500 fs-7 mb-2'>{item.fieldName}
                           </label>
-                          <input type='text' placeholder={item.fieldName} value={customInputFieldValue} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type = {item.matadata.type}  onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
+                          <input type='text' placeholder={item.fieldName} value={customInputFieldValue} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
                           <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
                         </div>
 
@@ -314,11 +316,11 @@ export default function RentingDetails() {
                         return <div key={item.fieldId} className="col-12 my-2">
                           <span>{item.fieldName}
                             <span className="mx-2">
-                              <input className="mr-1" type="checkbox" name={item.fieldName} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type = {item.matadata.type} value={item.options[0].option} onChange={(e) => customhandlechange(e)} />
+                              <input className="mr-1" type="checkbox" name={item.fieldName} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.options[0].option} onChange={(e) => customhandlechange(e)} />
                               <label>{item.options[0].option}</label>
                             </span>
                             <span>
-                              <input className="mr-1" type="checkbox" name={item.fieldName} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type = {item.matadata.type} value={item.options[1].option} onChange={(e) => customhandlechange(e)} />
+                              <input className="mr-1" type="checkbox" name={item.fieldName} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.options[1].option} onChange={(e) => customhandlechange(e)} />
                               <label>{item.options[1].option}</label>
                             </span>
                           </span>
@@ -332,7 +334,7 @@ export default function RentingDetails() {
                           <div className="col-12">
                             <div className="field w-100 my-2">
                               <label className='fw-500 fs-7 mb-2'>{item.fieldName}</label>
-                              <textarea placeholder={item.fieldName} data-name={item.fieldName} data-type = {item.matadata.type} value={customInputFieldValue} rows="3" data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)}></textarea>
+                              <textarea placeholder={item.fieldName} data-name={item.fieldName} data-type={item.matadata.type} value={customInputFieldValue} rows="3" data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)}></textarea>
                               <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
                             </div>
                           </div>
@@ -346,7 +348,7 @@ export default function RentingDetails() {
                           <div className="col-12">
                             <span>
                               <span className="mx-0">
-                                <input className="mr-1" type="checkbox" name={item.fieldName} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type = {item.matadata.type} value={item.fieldName} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
+                                <input className="mr-1" type="checkbox" name={item.fieldName} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.fieldName} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
                                 <label>{item.fieldName}</label>
                               </span>
                             </span>
@@ -359,7 +361,7 @@ export default function RentingDetails() {
                         return <div key={item.fieldId} className="field w-100 my-2 ">
                           <label className='fw-500 fs-7 mb-2'>{item.fieldName}
                           </label>
-                          <input type='number' name={item.fieldId} placeholder={item.fieldName} value={cusomfieldPhone} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type = {item.matadata.type} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
+                          <input type='number' name={item.fieldId} placeholder={item.fieldName} value={cusomfieldPhone} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
                           <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
                         </div>
 
@@ -367,11 +369,11 @@ export default function RentingDetails() {
                         return <div key={item.fieldId} className="col-12 my-2">
                           <span>{item.fieldName}
                             <span className="mx-2">
-                              <input className="mr-1" type="radio" name={item.fieldName} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type = {item.matadata.type} value={item.options[0].option} onChange={(e) => customhandlechange(e)} />
+                              <input className="mr-1" type="radio" name={item.fieldName} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.options[0].option} onChange={(e) => customhandlechange(e)} />
                               <label>{item.options[0].option}</label>
                             </span>
                             <span>
-                              <input className="mr-1" type="radio" name={item.fieldName} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type = {item.matadata.type} value={item.options[1].option} onChange={(e) => customhandlechange(e)} />
+                              <input className="mr-1" type="radio" name={item.fieldName} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.options[1].option} onChange={(e) => customhandlechange(e)} />
                               <label>{item.options[1].option}</label>
                             </span>
                           </span>
@@ -389,7 +391,7 @@ export default function RentingDetails() {
 
             <ToastContainer />
 
-            <Pricesummary ref={childRef} movinDate={movinDate} />
+            <Pricesummary ref={childRef} movinDate={movinDate} recurringid={recurringvalue} />
 
           </div>
           <div className='row'>
