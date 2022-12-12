@@ -1,7 +1,6 @@
 import React, { Component, useState } from 'react'
 import { Accordion } from 'semantic-ui-react'
 import UnitsRangeSlider from '../unitsrangeslider/UnitsRangeSlider'
-import { useSelector, useDispatch } from 'react-redux';
 let Buildingfilter;
 let unitTypeFilter;
 let UnitTypeDimension = [];
@@ -14,8 +13,7 @@ let requestUnitTypeVal = [];
 let requestAmenitiesVal = [];
 const AccordionExampleStyled = (selectedStorageType) => {
 
-  const error = useSelector(state => state.unitFilter.error);
-  const filters = useSelector(state => state.unitFilter.filters);
+  const filters = JSON.parse(localStorage.getItem('Units'));
   const [activeIndex, setActiveIndex] = useState(0);
 
   const [filterSelectedName, setFilterSelectedName] = useState([]);
@@ -176,7 +174,10 @@ const AccordionExampleStyled = (selectedStorageType) => {
       </Accordion.Title>
       <Accordion.Content active={activeIndex === 1}>
         <div>
-          <h6 className='fw-600 mb-1'>Building</h6>
+          {/* <h6 className='fw-600 mb-1'>Building</h6> */}
+          <div className='text-success text-right'>
+            <a href="/">Select All</a> | <a href="/">Clear All</a>
+          </div>
           <ul>
             {typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof filters.building !== 'undefined' && filters.building !== null && filters.building !== "" && filters.building.length > 0 ?
               Buildingfilter.map(buildingVal => {
@@ -184,7 +185,7 @@ const AccordionExampleStyled = (selectedStorageType) => {
               })
               : ''}
           </ul>
-          {typeof filters.building !== 'undefined' && filters.building !== null && filters.building !== '' && filters.building.length > 5 ? (
+          {typeof Buildingfilter !== 'undefined' && Buildingfilter !== null && Buildingfilter !== '' && Buildingfilter.length > 5 ? (
             <a className='text-success text-right d-block' href='/'>MORE</a>
           ) : ''}
         </div>
@@ -204,7 +205,7 @@ const AccordionExampleStyled = (selectedStorageType) => {
       </Accordion.Title>
       <Accordion.Content active={activeIndex === 2}>
         <div>
-          <h6 className='fw-600 mb-1'>LARGE</h6>
+          {/* <h6 className='fw-600 mb-1'>LARGE</h6> */}
           <div className='text-success text-right'>
             <a href="/">Select All</a> | <a href="/">Clear All</a>
           </div>
@@ -212,14 +213,11 @@ const AccordionExampleStyled = (selectedStorageType) => {
             {typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof filters.unitType !== 'undefined' && filters.unitType !== null && filters.unitType !== "" && filters.unitType.length > 0 ?
               unitTypeFilter.map(unitTypeValue => {
                 return <li key={unitTypeValue.key}><input value={unitTypeValue.unitTypeId} className='mr-1 mb-1' type="checkbox" onChange={sixStorageOnChangeUnit} />{unitTypeValue.unitTypeName}</li>
-
               })
               : ''}
-
           </ul>
         </div>
       </Accordion.Content>
-
       <Accordion.Title className='d-flex justify-content-between align-items-center'
         active={activeIndex === 3}
         index={3}
@@ -234,18 +232,18 @@ const AccordionExampleStyled = (selectedStorageType) => {
       </Accordion.Title>
       <Accordion.Content active={activeIndex === 3}>
         <div>
+          <div className='text-success text-right'>
+            <a href="/">Select All</a> | <a href="/">Clear All</a>
+          </div>
           <ul>
+            {console.log(UnitTypeDimension)}
             {typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof UnitTypeDimension !== 'undefined' && UnitTypeDimension !== null && UnitTypeDimension !== "" ?
               Object.keys(UnitTypeDimension).map(data => {
-                
                 return UnitTypeDimension[data].map(dimension => {
                   return <li key={dimension.key}><input value={dimension.unitTypeId} className='mr-1 mb-1' type="checkbox" onChange={onFilterChange} />{dimension.unitMeasurement}</li>
                 })
-
-
               })
               : ''}
-
           </ul>
           {/* onClick={this.props.modal} */}
           <a href="javascript:void(0);" className='text-success text-right d-block' >MORE</a>
@@ -265,47 +263,37 @@ const AccordionExampleStyled = (selectedStorageType) => {
         </div>
       </Accordion.Title>
       <Accordion.Content active={activeIndex === 4}>
+        {console.log(NewPriceValue)}
         <div>
           <UnitsRangeSlider priceRange={NewPriceValue} />
         </div>
       </Accordion.Content>
-
-      <Accordion.Title className={`${ typeof AmenityFilter !== 'undefined' && AmenityFilter !== null && AmenityFilter !== "" && AmenityFilter.length == 0 && ` d-none `} d-flex justify-content-between align-items-center`}
-        active={activeIndex === 5}
-        index={5}
-        onClick={handleClick}
-      >
-        <div className={`d-flex justify-content-between align-items-center `}>
-          <img src="/assets/images/amenity.png" alt="" />Amenity
-        </div>
-        <div>
-          <img src="/assets/images/arrow-down.png" alt="" />
-        </div>
-      </Accordion.Title>
-      {
-      typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof AmenityFilter !== 'undefined' && AmenityFilter !== null && AmenityFilter !== "" && AmenityFilter.length > 0 ?
-      <Accordion.Content active={activeIndex === 5}>
-        <div>
-
-          <ul>
-            {typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof AmenityFilter !== 'undefined' && AmenityFilter !== null && AmenityFilter !== "" && AmenityFilter.length > 0 ?
-              AmenityFilter.map(amenityfilterValue => {
-                return <li key={amenityfilterValue.key}><input value={amenityfilterValue.id} className='mr-1 mb-1' type="checkbox" onChange={sixStorageOnChangeAmenity} />{amenityfilterValue.name}</li>
-
-
-              })
-              : ''}
-
-          </ul>
-          <a href="/" className='text-success text-right d-block'>MORE</a>
-        </div>
-      </Accordion.Content>
-      
-       : ''}
-
-      
-      
-
+      {typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof AmenityFilter !== 'undefined' && AmenityFilter !== null && AmenityFilter !== "" && AmenityFilter.length > 0 ?
+        <><Accordion.Title className={`d-flex justify-content-between align-items-center`}
+          active={activeIndex === 5}
+          index={5}
+          onClick={handleClick}
+        >
+          <div className={`d-flex justify-content-between align-items-center `}>
+            <img src="/assets/images/amenity.png" alt="" />Amenity
+          </div>
+          <div>
+            <img src="/assets/images/arrow-down.png" alt="" />
+          </div>
+        </Accordion.Title>
+          <Accordion.Content active={activeIndex === 5}>
+            <div>
+              <ul>
+                {typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof AmenityFilter !== 'undefined' && AmenityFilter !== null && AmenityFilter !== "" && AmenityFilter.length > 0 ?
+                  AmenityFilter.map(amenityfilterValue => {
+                    return <li key={amenityfilterValue.key}><input value={amenityfilterValue.id} className='mr-1 mb-1' type="checkbox" onChange={sixStorageOnChangeAmenity} />{amenityfilterValue.name}</li>
+                  })
+                  : ''}
+              </ul>
+              <a href="/" className='text-success text-right d-block'>MORE</a>
+            </div>
+          </Accordion.Content></>
+        : ''}
     </Accordion>
   )
 }

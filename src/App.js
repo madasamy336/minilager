@@ -45,7 +45,6 @@ function App() {
                 <div className={` pusher  ${location.pathname.startsWith('/postBooking') && `${mobileWidth>980 ? 'pusher-desktop ':'pt-120'}`} `} id='mainContent'>      
                     <Routes>
                         <Route exact path='/' element={<RentNow />} />
-                        <Route exact path='/home' element={<RentNow />} />
                         <Route path='/login' element={<PostLoginForm callingfrom="postbooking" />} />
                         <Route path='/preBooking/sign-in' element={<PostLoginForm callingfrom='prebooking'  />} />
                         <Route path='/forgotpassword' element={<ForgotPassword />} />
