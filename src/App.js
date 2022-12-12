@@ -49,23 +49,22 @@ function App() {
     return (
         <>
 
-            <Header width={mobileWidth} sidebar={sidebar} showSidebar={ShowSidebar} />
-            {location.pathname.startsWith('/postBooking') && <SidebarPostBooking width={mobileWidth} sidebar={sidebar} showSidebar={ShowSidebar} />}
-            <div className={` pusher  ${location.pathname.startsWith('/postBooking') && `${mobileWidth > 980 ? 'pusher-desktop ' : 'pt-120'}`} `} id='mainContent'>
-                <Routes>
-                    <Route exact path='/' element={<RentNow />} />
-                    <Route exact path='/home' element={<RentNow />} />
-                    <Route path='/login' element={<PostLoginForm callingfrom="postbooking" />} />
-                    <Route path='/preBooking/sign-in' element={<PostLoginForm callingfrom='prebooking' />} />
-                    <Route path='/forgotpassword' element={<ForgotPassword />} />
-                    <Route path='/signup' element={<PostSignupForm callingfrom="postbooking" />} />
-                    <Route path='/preBooking/signup' element={<PostSignupForm callingfrom="prebooking" />} />
-                    <Route path='/preBooking/units' element={<Units />} />
-                    <Route path='/preBooking/rentingDetails' element={<RentingDetails />} />
-                    <Route path='/preBooking/addOns' element={<AddOn />} />
-                    <Route path='/preBooking/TenantDetails' element={<TenantDetails />} />
-                    <Route path='/preBooking/esignPayment' element={<EsignPayment />} />
-                    <Route path='/preBooking/thankyou' element={<SuccessfulMoveIn />} />
+            <Header width={mobileWidth} sidebar={sidebar}  showSidebar={ShowSidebar} />
+            {location.pathname.startsWith('/postBooking') && <SidebarPostBooking width={mobileWidth} sidebar={sidebar} showSidebar={ShowSidebar}/>}
+                <div className={` pusher  ${location.pathname.startsWith('/postBooking') && `${mobileWidth>980 ? 'pusher-desktop ':'pt-120'}`} `} id='mainContent'>      
+                    <Routes>
+                        <Route exact path='/' element={<RentNow />} />
+                        <Route path='/login' element={<PostLoginForm callingfrom="postbooking" />} />
+                        <Route path='/preBooking/sign-in' element={<PostLoginForm callingfrom='prebooking'  />} />
+                        <Route path='/forgotpassword' element={<ForgotPassword />} />
+                        <Route path='/signup' element={<PostSignupForm  callingfrom ="postbooking"/>} />
+                        <Route path='/preBooking/signup' element={<PostSignupForm callingfrom ="prebooking" />} />
+                        <Route path='/preBooking/units' element={<Units />} />
+                        <Route path='/preBooking/rentingDetails' element={<RentingDetails />} />
+                        <Route path='/preBooking/addOns' element={<AddOn />} />
+                        <Route path='/preBooking/TenantDetails' element={<TenantDetails />} />
+                        <Route path='/preBooking/esignPayment' element={<EsignPayment />} />
+                        <Route path='/preBooking/thankyou' element={<SuccessfulMoveIn />} />
 
                   
                     <Route path='/postBooking/Profile' element={<Profile />} />
