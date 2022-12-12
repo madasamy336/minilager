@@ -163,7 +163,7 @@ const Units = () => {
                         </div>
                         <div className="col-lg-9 col-md-9 col-sm-12">
                             <div className="units-container-div">
-                                <p className='text-center error py-1'>Please Select Tenant Type</p>
+                                <p className='text-center error py-1 d-none'>Please Select Tenant Type</p>
                                 <div className='sort-div text-right py-1'>
                                     <Header as='h4'>
                                         <Header.Content>

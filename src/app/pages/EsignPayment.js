@@ -28,6 +28,7 @@ export default function EsignPayment() {
   let servicesDetail = JSON.parse(sessionStorage.getItem('servicedetail'));
   let facilityaddress = JSON.parse(sessionStorage.getItem('facilityaddress'));
   let checkPaymentModes = JSON.parse(sessionStorage.getItem('configdata')).paymentModes;
+  let promoAppliedsession = sessionStorage.getItem("applypromo");
 
   const [saveAgreement, setSaveAgreement] = useState();
   const [PaymentModal, setpaymentModal] = useState({ open: false, dimmer: undefined, })
@@ -113,7 +114,7 @@ export default function EsignPayment() {
       additionalMonths: 0,
       recurringPeriodId: getRecurringPeriodId,
       recurringTypeId: getRecurringTypeid,
-      promocode: ""
+      promocode: promoAppliedsession ? promoAppliedsession : ""
     }
     instance
       .post(request.unit_info_by_id, unitdetailsdata, config)
