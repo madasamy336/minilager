@@ -5,10 +5,12 @@ import instance from '../../services/instance';
 import request from '../../services/request';
 
 const CreditCardTab = (props) => {
-    console.log(props);
+    console.log("CreditCardTab props : ", props);
     const [showcard, setShowCard] = useState(true);
     const [isLoading, setLoading] = useState(false);
-    const [openAutopayDropdown, SetopenAutopayDropdown] = useState(false)
+    const [openAutopayDropdown, SetopenAutopayDropdown] = useState(false);
+    const userId = localStorage.getItem('userid');
+
     const showCardHandler = () => {
         setShowCard(true);
     }
@@ -25,24 +27,19 @@ const CreditCardTab = (props) => {
         { key: 'Delete', text: 'Delete', value: 'Delete', image: { src: '/assets/images/delete.svg' }, },
     ]
 
-
-
     useEffect(() => {
-        // // renderAddCardForm();
-        // console.log(props.loader)
-        setLoading(props.loader)
-    }, [props]);
+        // setLoading(props.loader)
+    },);
 
     function handleDropdownChange(_e, data, cardData) {
-        console.log(data.value);
+        // console.log(data.value);
         data.value == 'MakeAsPrimary' ? makeCardAsPrimary(cardData) : deleteCardDetail(cardData)
-
     }
 
     function makeCardAsPrimary(cardData) {
-        setLoading(true);
-        console.log("cardData", cardData)
-        let userId = localStorage.getItem('userid');
+        // setLoading(true);
+        // console.log("cardData", cardData)
+        // let userId = localStorage.getItem('userid');
         let config = {
             headers: {
                 "Content-Type": "application/json",
@@ -52,32 +49,51 @@ const CreditCardTab = (props) => {
             cardId: cardData.cardId,
             cardLastFour: cardData.cardNumber,
         };
-
-        instance
-            .post(request.card_make_default + userId + `/${cardData.id}`, data, config)
-
+        instance.post(request.card_make_default + userId + `/${cardData.id}`, data, config)
             .then((response) => {
-
-                console.log(response.data);
+                console.log("makeCardAsPrimary", response.data);
                 const res = response.data;
-                console.log(res)
                 if (res.isSuccess !== false && res.isSuccess === true && res.returnCode === "SUCCESS") {
-                    props.listCardFunction
-                    setLoading(false);
+                    props.listCardFunction(cardData.ca)
                 } else {
                     setLoading(false);
+                }
+            }).catch((err) => {
+                console.log(err);
+                // setLoadingButton(false);
+            });
+        // location.reload()
+    }
+
+    const deleteCardDetail = (cardData) => {
+
+        let config = {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        };
+        const data = {
+        };
+
+        instance
+            .post(request.delete_card + userId + `/${cardData.id}`, data, config)
+            .then(response => {
+                return response;
+            }).then(data => {
+                console.log(data);
+                const res = data.data.result;
+                if (res.isSuccess !== false && res.isSuccess === true && res.returnCode === "SUCCESS") {
+                    props.listCardFunction();
                 }
             })
             .catch((err) => {
                 console.log(err);
+                // setMsg(languages.something_wrong_contact_support);
                 // setLoadingButton(false);
+                // setOpenSnack(true);
+                // setSeverity("error");
             });
-        location.reload()
-    }
-
-    function deleteCardDetail(params) {
-
-    }
+    };
 
     return (
 
@@ -87,7 +103,7 @@ const CreditCardTab = (props) => {
             ) : (
                 <div>
                     {!showcard && <div className="ui form w-50 w-sm-100">
-                        <iframe src={props.url} width="100%" height="800px" />
+                        <iframe src={props.paymentFom} width="100%" height="800px" />
 
                         {/* <div className="field mb-3">
                             <label className="fw-500 mb-2">Name on the Card<i className="text-danger ">*</i></label>
@@ -128,42 +144,45 @@ const CreditCardTab = (props) => {
                         </div> */}
                     </div>}
 
-                    {showcard && <div className="row">
-                        {props.cards.map(card => {
-                            return <div className="col-lg-4 col-md-6 col-sm-12 px-1 mb-2" key={card.id}>
-                                <div className="card p-2 border-radius-20">
-                                    <div className="card-dropdown-div text-right mb-1">
-                                        {!card.isDefault && <Dropdown downward floating options={CardOptions} trigger={trigger} icon="null" onChange={(e, data) => handleDropdownChange(e, data, card)} />}
-
-                                        {card.isDefault && <Dropdown
-                                            icon='filter'
-                                            floating
-                                            className='icon'
-                                            simple={openAutopayDropdown}
-                                            onClick={() => trigger}
-                                            item
-                                            trigger={trigger}
-                                        >
-                                            <Dropdown.Menu onMouseLeave={() => SetopenAutopayDropdown(false)}>
-                                                <Dropdown.Item><Radio className="autopayToggle" toggle label='Autopay' /> </Dropdown.Item>
-                                            </Dropdown.Menu>
-                                        </Dropdown>}
-                                    </div>
-                                    <div className="card-title d-flex justify-content-between align-items-start mb-5">
-                                        {card.isDefault && <p className="fs-7 text-white-light">Primary Card</p>}
-                                        <div className="card-master-img mr-2">
-                                            <img src="/assets/images/Mastercard-img.png" alt="Master Card" />
+                    {showcard &&
+                        <div className="row">
+                            {props.cards.length !== 0 ? props.cards.map(card => {
+                                return <div className="col-lg-4 col-md-6 col-sm-12 px-1 mb-2" key={card.id}>
+                                    <div className="card p-2 border-radius-20">
+                                        <div className="card-dropdown-div text-right mb-1">
+                                            {!card.isDefault && <Dropdown downward="true" floating options={CardOptions} trigger={trigger} onChange={(e, data) => handleDropdownChange(e, data, card)} />}
+                                            {card.isDefault && <Dropdown
+                                                icon='filter'
+                                                floating
+                                                className='icon'
+                                                simple={openAutopayDropdown}
+                                                onClick={() => trigger}
+                                                item
+                                                trigger={trigger}
+                                            >
+                                                <Dropdown.Menu onMouseLeave={() => SetopenAutopayDropdown(false)}>
+                                                    <Dropdown.Item><Radio className="autopayToggle" toggle label='Autopay' /> </Dropdown.Item>
+                                                </Dropdown.Menu>
+                                            </Dropdown>}
+                                        </div>
+                                        <div className="card-title d-flex justify-content-between align-items-start mb-5">
+                                            {card.isDefault && <p className="fs-7 text-white-light">Primary Card</p>}
+                                            <div className="card-master-img mr-2">
+                                                <img src="/assets/images/Mastercard-img.png" alt="Master Card" />
+                                            </div>
+                                        </div>
+                                        <div className="card-details">
+                                            <p className="fs-7 text-white-light">{card.customerName}</p>
+                                            <p className="fs-7 text-white">{card.cardNumber}</p>
                                         </div>
                                     </div>
-                                    <div className="card-details">
-                                        <p className="fs-7 text-white-light">{card.customerName}</p>
-                                        <p className="fs-7 text-white">{card.cardNumber}</p>
-                                    </div>
                                 </div>
-                            </div>
-                        })}
-                        {/* Need To render ths belowe code based conditions */}
-                        {/* <div className="col-lg-4 col-md-6 col-sm-12 px-1 mb-2">
+                            }) : <div>No Records Found</div>}
+
+
+
+                            {/* Need To render ths belowe code based conditions */}
+                            {/* <div className="col-lg-4 col-md-6 col-sm-12 px-1 mb-2">
                     <div className="card p-2 border-radius-20">
                         <div className="card-autopay-dropdown-div text-right mb-1">
                             <Dropdown
@@ -193,15 +212,15 @@ const CreditCardTab = (props) => {
                         </div>
                     </div>
                 </div> */}
-                        <div className="col-lg-4 col-md-6 col-sm-12 px-1 mb-2">
-                            <div className="card bgImg-none card-border-secondary-dashed p-2 border-radius-20 d-flex justify-content-center align-items-center text-center">
-                                <div className="cursor-pointer" onClick={CreditFormHandler}>
-                                    <p className="fs-1 fw-500">+</p>
-                                    <p>Add New Card</p>
+                            <div className="col-lg-4 col-md-6 col-sm-12 px-1 mb-2">
+                                <div className="card bgImg-none card-border-secondary-dashed p-2 border-radius-20 d-flex justify-content-center align-items-center text-center">
+                                    <div className="cursor-pointer" onClick={CreditFormHandler}>
+                                        <p className="fs-1 fw-500">+</p>
+                                        <p>Add New Card</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>}
+                        </div>}
                 </div>)}
 
         </div>)

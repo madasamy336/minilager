@@ -21,8 +21,10 @@ const requests = {
     move_out: "v1/moveout/schedulemoveout/",
     cancel_move_out: "v1/moveout/cancel/",
     user_payment_form:"/v1/user/paymentform/",
-    user_card_details:"/v1/cards/details/",
+    user_credit_card_details:"/v1/cards/details/",
+    user_ach_card_details:"/v1/cards/ach-details/",
     card_make_default:"/v1/cards/makedefault/",
+    delete_card:"/v1/cards/delete/",
     //Add Card Form
     add_card_form: '/v1/cards/add/form/',
     add_profile_picture: '/v1/user/profile/picture/',
