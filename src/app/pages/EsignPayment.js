@@ -36,6 +36,7 @@ export default function EsignPayment() {
   const [totalAmount, settotalAmount] = useState(0);
   const [paylaterButton, setPaylaterButton] = useState(false);
   const [OpenPaylaterModal, setPayLaterModal] = useState(false);
+  const [paymentLoader, setPaymentLoader] = useState(false);
 
 
   if (insuranceDetail !== null && insuranceDetail.length > 0) {
@@ -110,7 +111,7 @@ export default function EsignPayment() {
           id: unitid
         }
       ],
-      moveInDate:new Date(getMoveindate),
+      moveInDate: new Date(getMoveindate),
       additionalMonths: 0,
       recurringPeriodId: getRecurringPeriodId,
       recurringTypeId: getRecurringTypeid,
@@ -185,6 +186,7 @@ export default function EsignPayment() {
       .post(request.movein_paymentform + `/${leaseProfileId}`, paymentFormRequest, config)
       .then((response) => {
         if (response.data.result) {
+          setPaymentLoader(true);
           setModelcontent(`
         <div className='row'>
         <div className='col-12 col-md-12 mb-3 px-1 min-h-400'>
@@ -240,7 +242,6 @@ export default function EsignPayment() {
   }
 
   const payNow = (value) => {
-    console.log('test')
     setPaylaterButton(false)
   }
 
@@ -325,7 +326,12 @@ export default function EsignPayment() {
 
               }
             </div>
-            : 'loader'
+            : <div className="bg-white card-boxShadow px-2 px-sm-1 py-3 border-radius-10 mb-4 min-h-150">
+              <div className="ui active centered inline loader"></div>
+
+            </div>
+
+
           }
           <div className='row'>
             <div className='col-12 col-md-7 pr-1 pr-sm-0 mb-3'>
@@ -358,7 +364,7 @@ export default function EsignPayment() {
                         </div>
                       });
                     })
-                    : 'loading'
+                    : <div className="ui active centered inline loader"></div>
 
                   }
                   <div className='row mt-2'>
@@ -435,35 +441,35 @@ export default function EsignPayment() {
                   </div>
                 )}
               </div>
-              { !paylaterButton ?
-              <div className='bg-white card-boxshadow px-0 py-2 border-radius-15 mb-3 mt-2'>
-              <h6 className='text-dark fw-500 fs-6 px-4 py-2 px-sm-2 card-border-bottom fw-600 text-success-dark'>
-                <span className='veritical-align-text-top ml-1'>CHOOSE PAYMENT TYPE</span></h6>
-              <div className='py-4 px-3'>
-                {checkPaymentModes && checkPaymentModes.length > 0 ?
-                  checkPaymentModes.filter(i => i.value !== "PayLater").map((e) => {
-                    return <div key={e.id} className='card-border bank-div border-radius-5 d-flex align-items-center position-relative mb-3' onClick={() => loadPaymentForm(e.id, leaseProfileIdValue)}>
-                      <div className='bank-img px-2'>
-                        {e.value === 'CreditCard' ?
-                          <img className='w-100 h-100' src="/assets/images/credit-payment.svg" alt="Credit card" />
-                          : <img className='w-100 h-100' src="/assets/images/direct-debit.svg" alt="Debit card" />
-                        }
-                      </div>
-                      <div className='bank-title'>
-                        <p>{e.text}</p>
-                      </div>
-                      <img className='bankid-img position-absolute r-2' src="/assets/images/arrow-down.png" alt="Arrow" />
-                    </div>
+              {!paylaterButton ?
+                <div className='bg-white card-boxshadow px-0 py-2 border-radius-15 mb-3 mt-2'>
+                  <h6 className='text-dark fw-500 fs-6 px-4 py-2 px-sm-2 card-border-bottom fw-600 text-success-dark'>
+                    <span className='veritical-align-text-top ml-1'>CHOOSE PAYMENT TYPE</span></h6>
+                  <div className='py-4 px-3'>
+                    {checkPaymentModes && checkPaymentModes.length > 0 ?
+                      checkPaymentModes.filter(i => i.value !== "PayLater").map((e) => {
+                        return <div key={e.id} className='card-border bank-div border-radius-5 d-flex align-items-center position-relative mb-3' onClick={() => loadPaymentForm(e.id, leaseProfileIdValue)}>
+                          <div className='bank-img px-2'>
+                            {e.value === 'CreditCard' ?
+                              <img className='w-100 h-100' src="/assets/images/credit-payment.svg" alt="Credit card" />
+                              : <img className='w-100 h-100' src="/assets/images/direct-debit.svg" alt="Debit card" />
+                            }
+                          </div>
+                          <div className='bank-title'>
+                            <p>{e.text}</p>
+                          </div>
+                          <img className='bankid-img position-absolute r-2' src="/assets/images/arrow-down.png" alt="Arrow" />
+                        </div>
 
-                  })
-                  : ""
-                }
-              </div>
-            </div>: ""
+                      })
+                      : ""
+                    }
+                  </div>
+                </div> : ""
 
 
               }
-              
+
               <div className="text-center mt-4">
                 <button onClick={() => navigate('/preBooking/TenantDetails')} className="ui button bg-white text-success-dark border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">BACK</button>
               </div>
@@ -485,7 +491,7 @@ export default function EsignPayment() {
                         <p className='fw-500 text-success-dark'>{unitdetail.startsOn} to {unitdetail.endsOn}</p>
                       </div>
                       :
-                      'loading'
+                      <div className="ui active centered inline loader"></div>
                     }
                   </div>
                 </div>
@@ -562,7 +568,7 @@ export default function EsignPayment() {
                     }
 
                   </div>
-                  : 'loading'
+                  : <div className="ui active centered inline loader"></div>
                 }
               </div>
             </div>
@@ -583,7 +589,9 @@ export default function EsignPayment() {
           </svg>
         </Modal.Header>
         <Modal.Content className=' overflow-y-auto'>
-          {parse(mondelcontent)}
+          {paymentLoader ?
+            parse(mondelcontent) : <div className="ui active centered inline loader"></div>
+          }
         </Modal.Content>
       </Modal>
 
@@ -594,17 +602,17 @@ export default function EsignPayment() {
         open={OpenPaylaterModal}
         onClose={() => setPayLaterModal(false)}
         onOpen={() => setPayLaterModal(true)}
-        
+
       >
         <Modal.Header>Confirm Movein </Modal.Header>
         <Modal.Content>
-        <p>Are you sure you want to do payLater?</p>
+          <p>Are you sure you want to do payLater?</p>
         </Modal.Content>
         <Modal.Actions>
           <Button onClick={() => setPayLaterModal(false)} negative>
             No
           </Button>
-          <Button onClick={() => saveMoveinDetails('', leaseProfileIdValue,true)} positive>
+          <Button onClick={() => saveMoveinDetails('', leaseProfileIdValue, true)} positive>
             Yes
           </Button>
         </Modal.Actions>

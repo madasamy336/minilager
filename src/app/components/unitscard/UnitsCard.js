@@ -119,11 +119,6 @@ const UnitsCard = (props) => {
                 })
             }
 
-            {
-
-
-            }
-
 
         </>
     )

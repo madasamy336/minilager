@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import { GetFacilityId } from '../../redux/actions/facility/faciltyAction'
 import { fetchAppConfig } from '../../redux/actions/appConfig/appConfigAction';
 const Card = (props) => {
-    const facilityDetailResponse = props;
+    let  facilityDetailResponse = props;
     const clientDataconfig = JSON.parse(sessionStorage.getItem("configdata"));
     // const recurringDefaultValue = clientDataconfig.recurringTypes[0].recurringTypeId;
     // sessionStorage.setItem("recurringData", (recurringDefaultValue));
@@ -48,7 +48,8 @@ const Card = (props) => {
                                         </h2>
                                         <p className='text-dark'>{details.address.addressLine1}</p>
                                         <p className='text-dark'>{details.address.addressLine2}</p>
-                                        <div className='d-flex flex-wrap unit-amenities-col'>
+                                        <p className='text-dark'>{details.address.state} {details.address.country} {details.address.zipCode}</p>
+                                        <div className='d-flex flex-wrap unit-amenities-col d-none'>
                                             <div className='d-flex align-items-end unit-amenity'>
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="14" viewBox="0 0 16 21">
                                                     <g id="Group_715" data-name="Group 715" transform="translate(-2.011 2.928)">
@@ -98,7 +99,7 @@ const Card = (props) => {
                 </div>
 
 
-            ) : ''
+            ) : <div className="ui active centered inline loader"></div>
             }
         </>
     )
