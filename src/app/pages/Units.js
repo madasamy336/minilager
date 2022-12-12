@@ -3,8 +3,6 @@ import AccordionExampleStyled from '../components/unitsfilter/UnitsFilter'
 import { Dropdown, Header, Pagination, Icon, Modal } from 'semantic-ui-react'
 import UnitsCard from '../components/unitscard/UnitsCard'
 import { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { fetchUnitFilter } from '../redux/actions/unitList/unitListAction';
 import PlaceholderLoader from "../components/placeholder/Placeholder";
 import instance from '../services/instance';
 import request from '../services/request';
@@ -20,21 +18,142 @@ const Units = () => {
         dimmer: undefined,
         size: undefined
     });
-    const loading = useSelector(state => state.unitFilter.loading);
-    const error = useSelector(state => state.unitFilter.error);
-    const filters = useSelector(state => state.unitFilter.filters);
+    const filters = JSON.parse(localStorage.getItem('Units'));
     let locationId = localStorage.getItem('locationid');
 
-    const dispatch = useDispatch()
+    useEffect(() => {
+        fetchUnitFilter(locationId);
+    }, [storageTypeValue]);
 
     useEffect(() => {
         sixStorageLoadUnitList(storageTypeValue);
-        if (filtercall === false) {
-            dispatch(fetchUnitFilter(locationId))
+    }, []);
+
+    const fetchUnitFilter = (loactionid) => {
+        let config = {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        };
+        instance
+            .get(request.unit_filters + `&LocationId=${loactionid} `, config)
+            .then(response => {
+                const unitFilterResponse = response.data;
+                if (typeof unitFilterResponse !== 'undefined' && unitFilterResponse !== null && unitFilterResponse !== '' && unitFilterResponse.isSuccess === true && unitFilterResponse.result.length > 0) {
+                    let data = constructFilterValues(unitFilterResponse.result);
+                    localStorage.setItem("Units", JSON.stringify(data));
+                    if (typeof data !== 'undefined' && data !== null && data !== '' && typeof data.storageType !== 'undefined' && data.storageType !== null && data.storageType !== "" && data.storageType.length > 0) {
+                        if (typeof storageTypeValue === "undefined" || storageTypeValue === null || storageTypeValue === "") {
+                            setStorageTypeValue(data.storageType[0].storageTypeId);
+                            sixStorageLoadUnitList(data.storageType[0].storageTypeId);
+                        } else {
+                            setStorageTypeValue(storageTypeValue);
+                            sixStorageLoadUnitList(storageTypeValue);
+                        }
+                    }
+                }
+            })
+            .catch(error => {
+
+            })
+    }
+
+    const constructFilterValues = (unitFilterResponse) => {
+        let storageTypeValues = [];
+        let storageFacilityValues = [];
+        let storageBuildingValues = [];
+        let storageUnitTypeValues = [];
+        let storageAmenityValues = [];
+        let storagePriceRangeValues = [];
+
+        unitFilterResponse.forEach(filtersResponse => {
+            storageTypeValues.push({
+                storageTypeId: filtersResponse.storageTypeId,
+                storageTypeName: filtersResponse.storageTypeName,
+            });
+
+            let storagefacility = filtersResponse.facilities;
+            let storageunitresponse = filtersResponse.unitTypes;
+
+            if (typeof storagefacility !== 'undefined' && storagefacility !== null && storagefacility !== "" && storagefacility.length > 0) {
+                storagefacility.forEach((locationresponse) => {
+                    storageFacilityValues.push({
+                        storageTypeId: filtersResponse.storageTypeId,
+                        locationId: locationresponse.locationId,
+                        locationName: locationresponse.locationName,
+                    });
+                    let storagebuilding = locationresponse.buildings;
+                    if (typeof storagebuilding !== "undefined" && storagebuilding !== null && storagebuilding !== "" && storagebuilding.length > 0) {
+                        storagebuilding.forEach((storagebuildingresponse) => {
+                            storageBuildingValues.push({
+                                locationId: locationresponse.locationId,
+                                storageTypeId: filtersResponse.storageTypeId,
+                                buildingId: storagebuildingresponse.buildingId,
+                                buildingName: storagebuildingresponse.buildingName
+                            });
+                        })
+                    }
+                });
+            }
+
+            if (typeof storageunitresponse !== 'undefined' && storageunitresponse !== null && storageunitresponse !== "" && storageunitresponse.length > 0) {
+                storageunitresponse.forEach((storageunitresponse) => {
+
+                    let amenities = storageunitresponse.amenities;
+                    let price = storageunitresponse.price;
+                    storageUnitTypeValues.push({
+                        storageTypeId: filtersResponse.storageTypeId,
+                        unitTypeId: storageunitresponse.unitTypeId,
+                        unitTypeName: storageunitresponse.unitTypeName,
+                        unitMeasurement: storageunitresponse.unitMeasurement,
+                        measurementType: storageunitresponse.measurementType
+                    });
+
+                    if (typeof amenities !== 'undefined' && amenities !== null && amenities !== "" && amenities.length > 0) {
+                        amenities.forEach((amenityresponse) => {
+                            storageAmenityValues.push({
+                                storageTypeId: filtersResponse.storageTypeId,
+                                id: amenityresponse.id,
+                                name: amenityresponse.name
+                            });
+                        })
+                    }
+
+                    if (typeof price === 'undefined' || price === null || price === "") {
+                        storagePriceRangeValues.push({
+                            storageTypeId: filtersResponse.storageTypeId,
+                            MinPrice: 0,
+                            MaxPrice: 0,
+                        });
+                    } else {
+                        storagePriceRangeValues.push({
+                            storageTypeId: filtersResponse.storageTypeId,
+                            MinPrice: price.minPrice,
+                            MaxPrice: price.maxPrice
+                        });
+                    }
+                });
+            }
+
+        })
+
+        const storageUnitDimensionValues = storageUnitTypeValues.reduce((groups, item) => ({
+            ...groups,
+            [item.unitTypeName]: [...(groups[item.unitTypeName] || []), item]
+        }), {});
+
+        let filteredFinalData = {
+            storageType: storageTypeValues,
+            location: storageFacilityValues,
+            building: storageBuildingValues,
+            unitType: storageUnitTypeValues,
+            amenityValue: storageAmenityValues,
+            priceRangeValue: storagePriceRangeValues,
+            unitDimensionValue: storageUnitDimensionValues,
         }
 
-
-    }, [storageTypeValue])
+        return filteredFinalData;
+    }
 
     const sixStorageLoadUnitList = (storageTypeid) => {
         setLoading(true);
@@ -97,10 +216,8 @@ const Units = () => {
     const changeStorageType = (e, data) => {
         setUnitResponse([]);
         setStorageTypeValue(data.value);
-       
-
     }
-    const filterValue =(data) =>{
+    const filterValue = (data) => {
         setFilterRequest(data);
 
     }
@@ -144,7 +261,7 @@ const Units = () => {
                             </div>
                             <div className='col-lg-6 col-md-6 col-sm-12'>
                                 {storageTypeOptions !== null && typeof storageTypeOptions !== 'undefined' && storageTypeOptions !== '' && typeof storageTypeOptions[0].value !== 'undefined' && storageTypeOptions[0].value !== null && storageTypeOptions[0].value !== '' ?
-                                    <Dropdown placeholder="Choose Storage Type" value={storageTypeValue} defaultOpen={storageTypeOptions[0].value} onChange={changeStorageType} fluid search selection options={storageTypeOptions} />
+                                    <Dropdown placeholder="Choose Storage Type" value={storageTypeValue} onChange={changeStorageType} fluid search selection options={storageTypeOptions} />
                                     : ''}
                             </div>
                         </div>
