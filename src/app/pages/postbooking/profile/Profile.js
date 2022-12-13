@@ -6,8 +6,6 @@ import countriecodes from '../../../components/CountryCode';
 import instance from '../../../services/instance';
 import request from '../../../services/request';
 import Helper from "../../../helper";
-import { ToastContainer, toast } from 'react-toastify';
-
 // import { format } from 'date-fns'
 
 
@@ -63,32 +61,10 @@ export default function Profile() {
         setTenantDetails(data)
         setprofileImageSrc(data.photoPath)
       } else {
-        toast.error('No records found', {
-          position: "top-right",
-          autoClose: 3000,
-          duration:100,
-          hideProgressBar: false,
-          closeOnClick: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-          toastId:"fetchTenantDetailsError"
-          });
         editTenantDetails(false)
         console.log('No records found');
       }
     }).catch((err) => {
-      toast.error(err, {
-        position: "top-right",
-        autoClose: 3000,
-        duration:100,
-        hideProgressBar: false,
-        closeOnClick: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-        toastId:"fetchTenantDetailsError2"
-        });
       console.log(err);
     })
   }
@@ -169,11 +145,11 @@ export default function Profile() {
       return response;
     }).then(data => {
       console.log()
-      const profileResponse = data;
-      console.log(profileResponse);
-    }).catch((err) => {
-      console.log(err);
-    })
+        const profileResponse = data;
+        console.log(profileResponse);
+      }).catch((err) => {
+        console.log(err);
+      })
 
   }
 
@@ -216,33 +192,17 @@ export default function Profile() {
       const userUpdateResponse = response.data;
       if (userUpdateResponse.isSuccess === true && userUpdateResponse.returnCode === "SUCCESS") {
         // console.log("response.data", response.data)
-        toast.success("Profile Updated Successfully", {
-          position: "top-right",
-          autoClose: 3000,
-          duration:100,
-          hideProgressBar: false,
-          closeOnClick: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-          toastId:"updateTenantInfoSuccess"
-          });
       }
     }).then(() => {
       saveTenantPhoto()
     })
   }
 
-  function handleChange(e, _data) {
-    console.log(e)
-    const { name, value } = e.target
-    setTenantDetails({ ...tenantDetails, [name]: value });
-  }
-
-  function handleDateChange(event, data) {
+  function handleChange(event, data) {
     event.preventDefault()
     console.log(event.target.value);
     console.log(data.value);
+
   }
 
   const SetContactPhone = (e) => {
@@ -252,7 +212,6 @@ export default function Profile() {
   return (
     <>
       <div className="mx-2 mx-sm-1">
-      <ToastContainer />       
         <div className="bg-white card-boxShadow border-radius-15 py-2 mb-2">
           <div className="row dashed-bottom px-3 py-2 px-sm-2">
             <div className="col-lg-6 col-md-6 col-sm-6">
@@ -301,7 +260,7 @@ export default function Profile() {
                 <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                   <div className="field w-100 datePicker my-3">
                     <label className="text-dark fs-7 fw-500">Date of Birth<span className="error">*</span></label>
-                    <SemanticDatepicker name="birthDate" placeholder='Select date' format="DD-MM-YYYY" value={new Date(tenantDetails.birthDate)} className='w-100' onChange={handleDateChange()} />
+                    <SemanticDatepicker name="birthDate" placeholder='Select date' format="DD-MM-YYYY" value={new Date(tenantDetails.birthDate)} className='w-100' onChange={handleChange} />
                   </div>
                   <div className="field my-3">
                     <label className="text-dark fs-7 fw-500">Phone Number<span className="error">*</span></label>
@@ -421,37 +380,37 @@ export default function Profile() {
                 <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                   <div className="field my-2">
                     <label className="text-dark fs-7 fw-500">Address Line 1<span className="error">*</span></label>
-                    <input type="text" name="addressLineOne" value={tenantDetails.addressLineOne} onChange={e => handleChange(e)} />
+                    <input type="text" />
                   </div>
                 </div>
                 <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                   <div className="field my-2">
                     <label className="text-dark fs-7 fw-500">Address Line 2<span className="error">*</span></label>
-                    <input type="text" name="addressLineTwo" value={tenantDetails.addressLineTwo} onChange={e => handleChange(e)} />
+                    <input type="text" />
                   </div>
                 </div>
                 <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                   <div className="field my-2">
                     <label className="text-dark fs-7 fw-500">City<span className="error">*</span></label>
-                    <input type="text" value={tenantDetails.city} onChange={e => handleChange(e)} />
+                    <input type="text" />
                   </div>
                 </div>
                 <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                   <div className="field my-2">
                     <label className="text-dark fs-7 fw-500">State/Province<span className="error">*</span></label>
-                    <input type="text" name="state" value={tenantDetails.state} onChange={e => handleChange(e)} />
+                    <input type="text" />
                   </div>
                 </div>
                 <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                   <div className="field my-2">
                     <label className="text-dark fs-7 fw-500">Zip/Postal Code<span className="error">*</span></label>
-                    <input type="text" name="zipCode" value={tenantDetails.zipCode} onChange={e => handleChange(e)} />
+                    <input type="text" />
                   </div>
                 </div>
               </div>
               <div className="mt-2 text-center">
                 <button className="ui button text-dark fs-7 fw-400 px-5 mx-1 mb-sm-1" onClick={showTenantAddress}>CANCEL</button>
-                <button className="ui button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-sm-1" onClick={updateTenantInfo(tenantDetails)}>SAVE</button>
+                <button className="ui button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-sm-1 ">SAVE</button>
               </div>
             </div>}
 
