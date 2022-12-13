@@ -590,7 +590,8 @@ export default function EsignPayment() {
         </Modal.Header>
         <Modal.Content className=' overflow-y-auto'>
           {paymentLoader ?
-            parse(mondelcontent) : <div className="ui active centered inline loader"></div>
+            parse(mondelcontent) : 
+           <div className="ui active centered inline loader"></div>
           }
         </Modal.Content>
       </Modal>
