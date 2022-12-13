@@ -20,6 +20,7 @@ export default function Profile() {
   // const [contactPhone, SetContactPhone] = useState();
   const [isEdit, editTenantDetails] = useState(true);
   const [isTenantaddress, showTenantAddress] = useState(true);
+  const [blobImage, setBlobImage] = useState(true);
 
   const [tenantDetails, setTenantDetails] = useState({
     ssn: '',
@@ -123,7 +124,10 @@ export default function Profile() {
       setprofileImageSrc(reader.result);
     }, false);
     if (file) {
+      const blob = new Blob([file],{type: 'image/png'});
+      setBlobImage(blob);
       reader.readAsDataURL(file);
+    
     }
     console.log("setprofileImageSrc", profileImageSrc);
   }
@@ -132,13 +136,21 @@ export default function Profile() {
   function saveTenantPhoto() {
     // let image = document.getElementById('tenantProfileImage').src
     // console.log(image);
-    let config = {
-      headers: {
-        "Content-Type": "application/json"
-      }
-    };
     let userId = localStorage.getItem('userid');
     let imagedata = new File([profileImageSrc], `${userId}_.png`, { type: "image/png" });
+    let config = {
+      headers: {
+        "Authorization": `Bearer  5Yu5sIUiF+HEB/Fg/kuJNZ7kgz78oTDmEogfTgTJH4+mXQdh/WoXJbZSX67yNf8Rr2ZFaEfPI/Ruw/lMiFtmTw==Xpto4oAFPkK+Huo5T+Z+sA==`,
+        "Content-Type": "multipart/form-data; boundary=----787208ea84637614785e28ded8a6a7b8",
+        "accept": "application/json",
+        "Content-Length": `int(13286)`,
+        "Pragma": `no-cache`,
+        "Cache-Control": `no-cache`,
+        "Accept-Language": `en-US,en;q=0.9`,
+        "Accept-Encoding": `gzip, deflate, br`
+      }
+    };
+    let file = new File([blobImage], `${userId}_.png`, { type: "image/png" });
     console.log("file", imagedata);
     let timestamp = new Date().getTime();
 
@@ -147,10 +159,13 @@ export default function Profile() {
     const formData = new FormData();
 
     formData.append("FileName", fileName);
-    formData.append("FileData", imagedata);
-    console.log(profileImageSrc)
-    console.log("requestBody", formData)
-    instance.post(request.add_profile_picture + userId, formData, config).then(response => {
+    formData.append("FileData", file);
+    
+    let uploadRequest = {
+      FileName: fileName,
+      FileData: file
+    }
+    instance.post(request.add_profile_picture + userId, uploadRequest, config).then(response => {
       return response;
     }).then(data => {
       console.log()
@@ -272,7 +287,7 @@ export default function Profile() {
                 </div>
                 <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                   <div className="edit-profile-img position-relative">
-                    <img src={profileImageSrc.length > 0 ? profileImageSrc : '/assets/images/profile_.png'} className="ui medium circular image object-fit-cover TenantDetailsProfileImage mx-auto" id="tenantProfileImage" alt="Profile" />
+                    <img src={profileImageSrc && profileImageSrc.length > 0 ? profileImageSrc : '/assets/images/profile_.png'} className="ui medium circular image object-fit-cover TenantDetailsProfileImage mx-auto" id="tenantProfileImage" alt="Profile" />
                     <div className="edit-icon position-absolute text-center l-18 r-0 t-1">
                       <label className="cursor-pointer" htmlFor='profileImageUpload'>
                         <img width='50' height='50' className="" src="/assets/images/edit-photo.svg" alt="Edit" />
