@@ -29,7 +29,8 @@ export default function EsignPayment() {
   let facilityaddress = JSON.parse(sessionStorage.getItem('facilityaddress'));
   let checkPaymentModes = JSON.parse(sessionStorage.getItem('configdata')).paymentModes;
   let promoAppliedsession = sessionStorage.getItem("applypromo");
-
+  let makeSavedCardMandatory = JSON.parse(sessionStorage.getItem('configdata')).culture.isSavedCardsByDefault; 
+  let tenantInfo = JSON.parse(sessionStorage.getItem('tenantIfo'));
   const [saveAgreement, setSaveAgreement] = useState();
   const [PaymentModal, setpaymentModal] = useState({ open: false, dimmer: undefined, })
   const [mondelcontent, setModelcontent] = useState(``);
@@ -37,7 +38,10 @@ export default function EsignPayment() {
   const [paylaterButton, setPaylaterButton] = useState(false);
   const [OpenPaylaterModal, setPayLaterModal] = useState(false);
   const [paymentLoader, setPaymentLoader] = useState(false);
-
+  const [saveCard, setSavecard] = useState(true);
+  const [autoPayEnabled, setAutopayEnabled] = useState(true);
+  const [iFrameResponse, setIframeRespones] = useState(false);
+  const [paymentModeId, setpaymentModeId] = useState('');
 
   if (insuranceDetail !== null && insuranceDetail.length > 0) {
     insuranceDetail.forEach(element => {
@@ -72,9 +76,15 @@ export default function EsignPayment() {
     navigate('/preBooking/thankyou')
   }
 
-
+  const ReceiveIframeResponseForRbn = (event) => {
+    if (event.data.message !== null && typeof event.data.message !== 'undefined') {
+      const data = JSON.parse(event.data.message);
+      setIframeRespones(data);
+    }
+  };
 
   useEffect(() => {
+    console.log(makeSavedCardMandatory);
     unitinfodetails();
     const ReceiveIframeResponse = (event) => {
       if (event.data.message !== null && typeof event.data.message !== 'undefined') {
@@ -84,12 +94,14 @@ export default function EsignPayment() {
         }
       }
     };
+
+
+    window.addEventListener("message", ReceiveIframeResponseForRbn);
     window.addEventListener("message", ReceiveIframeResponse);
 
-    return () => window.removeEventListener("message", ReceiveIframeResponse);
+    return () => window.removeEventListener("message", ReceiveIframeResponse)
 
-
-  }, []);
+  }, [window.removeEventListener("message", ReceiveIframeResponseForRbn)]);
 
   //get Unit detail
   const unitinfodetails = () => {
@@ -182,6 +194,7 @@ export default function EsignPayment() {
       chargeableAmount: totalAmount,
       paymentModeId: id
     }
+    setpaymentModeId(id);
     instance
       .post(request.movein_paymentform + `/${leaseProfileId}`, paymentFormRequest, config)
       .then((response) => {
@@ -196,7 +209,6 @@ export default function EsignPayment() {
 
           setpaymentModal({ open: true });
         }
-
       })
       .catch((error) => {
         console.log(error);
@@ -216,6 +228,11 @@ export default function EsignPayment() {
     }
     unitDetailRespones['isBusinessUser'] = true;
     unitDetailRespones['payLater'] = paylater;
+    unitDetailRespones['saveCard'] = saveCard;
+    unitDetailRespones['enableAutopay'] = autoPayEnabled;
+    if (paymentModeId !== '') {
+      unitDetailRespones['paymentModeId'] = paymentModeId;
+    }
     instance
       .post(request.save_move + `/${leaseprofileid}`, unitDetailRespones, config)
       .then((response) => {
@@ -239,6 +256,22 @@ export default function EsignPayment() {
     setPaylaterButton(true);
     setPayLaterModal(true);
 
+  }
+  const changeSavedCard = (e) => {
+    if (e.target.checked) {
+      setSavecard(true);
+    } else {
+      setSavecard(false);
+      setAutopayEnabled(false);
+    }
+  }
+  const changeAutoPayEnabled = (e) => {
+    if (e.target.checked) {
+      setAutopayEnabled(true);
+      setSavecard(true);
+    } else {
+      setAutopayEnabled(false);
+    }
   }
 
   const payNow = (value) => {
@@ -305,9 +338,9 @@ export default function EsignPayment() {
                     <div className="card-details">
                       <div className="mb-2">
                         <h6 className="fs-6 fw-400 text-success mb-1">Personal Details</h6>
-                        <p className="mb-1">Peter John</p>
-                        <p className="mb-1">peterjohn@gmail.com</p>
-                        <p className="mb-1">(987) 654 3210</p>
+                        <p className="mb-1">{tenantInfo.firstName} {tenantInfo.lastName}</p>
+                        <p className="mb-1">{tenantInfo.email}</p>
+                        <p className="mb-1">{tenantInfo.phoneNumber}</p>
                       </div>
                       {facilityaddress !== null && typeof facilityaddress !== 'undefined' ?
                         <div>
@@ -589,9 +622,36 @@ export default function EsignPayment() {
           </svg>
         </Modal.Header>
         <Modal.Content className=' overflow-y-auto'>
+          {iFrameResponse ?
+           makeSavedCardMandatory
+             ?
+             <div className='d-flex align-items-center justify-content-center error'> 
+              Note: The Card will be saved for auto payments
+             </div>
+             : <div>
+             <div className='d-flex align-items-center justify-content-center'>
+               <input type="checkbox" id="savedcard" checked={saveCard} onChange={(e) => { changeSavedCard(e) }} />
+               <div className='ml-2'>
+                 <p>Save this card for future transaction</p>
+               </div>
+             </div>
+             <div className='d-flex align-items-center justify-content-center'>
+               <input type="checkbox" id="autopayenabled" checked={autoPayEnabled} onChange={(e) => { changeAutoPayEnabled(e) }} />
+               <div className='ml-2'>
+                 <p>Use the saved card for future recurring payments </p>
+               </div>
+             </div>
+           </div>
+           
+             : ""
+          }
+
+
+
+
           {paymentLoader ?
-            parse(mondelcontent) : 
-           <div className="ui active centered inline loader"></div>
+            parse(mondelcontent) :
+            <div className="ui active centered inline loader"></div>
           }
         </Modal.Content>
       </Modal>

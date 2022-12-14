@@ -11,3 +11,16 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+ul.pagination {
+  display: flex;
+  justify-content: center;
+}
+ul.pagination .page-item {
+  width: auto;
+  display: block;
+  padding: 0 10px;
+}
+ul.pagination .page-item .page-link{
+  cursor: pointer;
+}

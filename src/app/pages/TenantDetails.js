@@ -20,6 +20,8 @@ export default function TenantDetails() {
   const [profileImageSrc, setprofileImageSrc] = useState({
     img: '/assets/images/userDemoProfile.svg'
   });
+  const [photoPath , setPhotopath] = useState(null);
+  const[blobImage, setblobImage] = useState();
   // <button onClick={e => tenantInfoFinal(e)} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">NEXT</button>
   // <button onClick={() => SetCreditCheckModal({ open: true, dimmer: 'blurring' })} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">NEXT</button>
   const [TenantInfoDetails, setTenantInfoDetails] = useState({
@@ -176,6 +178,7 @@ export default function TenantDetails() {
   }
   const profileImageUpload = (e) => {
     e.preventDefault();
+    setPhotopath(null);
     let img = e.target.files[0];
     if (!img.name.match(/\.(jpg|jpeg|png|svg)$/)) {
       alert('Please check the your file format,only jpg,jpeg,png,svg formats are supported')
@@ -188,9 +191,47 @@ export default function TenantDetails() {
 
     if (e.target.files && e.target.files[0]) {
       setprofileImageSrc({ img: URL.createObjectURL(img) });
+      const blob = new Blob([img],{type: 'image/png'});
+      setblobImage(blob);
       SetimguploadStatus(true);
 
     }
+    
+  }
+
+  function saveTenantPhoto() {
+    // let image = document.getElementById('tenantProfileImage').src
+    // console.log(image);
+    let userId = localStorage.getItem('userid');
+    let config = {
+      headers: {
+        "Authorization": `Bearer  5Yu5sIUiF+HEB/Fg/kuJNZ7kgz78oTDmEogfTgTJH4+mXQdh/WoXJbZSX67yNf8Rr2ZFaEfPI/Ruw/lMiFtmTw==Xpto4oAFPkK+Huo5T+Z+sA==`,
+        "Content-Type": "multipart/form-data; boundary=----787208ea84637614785e28ded8a6a7b8",
+        "accept": "application/json",
+        "Content-Length": `int(13286)`,
+        "Pragma": `no-cache`,
+        "Cache-Control": `no-cache`,
+        "Accept-Language": `en-US,en;q=0.9`,
+        "Accept-Encoding": `gzip, deflate, br`
+      }
+    };
+    let file = new File([blobImage], `${userId}_.png`, { type: "image/png" });
+    let timestamp = new Date().getTime();
+
+    let fileName = `${userId}_${timestamp}.png`;
+    
+    let uploadRequest = {
+      FileName: fileName,
+      FileData: file
+    }
+    instance.post(request.add_profile_picture + userId, uploadRequest, config).then(response => {
+      return response;
+    }).then(data => {
+        const profileResponse = data;
+      }).catch((err) => {
+        console.log(err);
+      })
+
   }
   const dateOfBirthChange = (e, date) => {
     TenantInfoDetails['birthDate'] = date.value;
@@ -247,6 +288,7 @@ export default function TenantDetails() {
       .then(response => {
         if (response.data.result !== null && response.data.result !== 'undefined') {
           sessionStorage.setItem("leaseProfileid", response.data.result);
+          saveTenantPhoto()
           navigateEsign(e);
 
         }
@@ -286,10 +328,10 @@ export default function TenantDetails() {
           const tenantInfoGetresult = tenantInfoGetdata.result;
           console.log(tenantInfoGetresult);
           if (typeof tenantInfoGetresult !== "undefined" && tenantInfoGetresult !== null & tenantInfoGetresult !== "") {
-            localStorage.setItem("tenantIfo", JSON.stringify(tenantInfoGetresult));
-            let tenantMovinData = JSON.parse(localStorage.getItem("tenantIfo"));
-            
+            sessionStorage.setItem("tenantIfo", JSON.stringify(tenantInfoGetresult));
+            let tenantMovinData = JSON.parse(sessionStorage.getItem("tenantIfo"));
             setTenantInfoDetails(tenantMovinData);
+            setPhotopath(tenantInfoGetresult.photoPath);
           }
 
         }
@@ -326,9 +368,9 @@ export default function TenantDetails() {
     instance.post(request.update_user_info + `/${userid}`, requestBody, config).then((response) => {
       const userUpdateResponse = response.data.data;
       console.log(userUpdateResponse)
-      if (userUpdateResponse.isSuccess === true && userUpdateResponse.returnCode === "SUCCESS") {
-        console.log(userUpdateResponse)
-      }
+      // if (userUpdateResponse.isSuccess === true && userUpdateResponse.returnCode === "SUCCESS") {
+      //   console.log(userUpdateResponse)
+      // }
     })
   }
 
@@ -465,7 +507,11 @@ export default function TenantDetails() {
 
                 <label className="position-absolute r-0 t-1 z-index-1 cursor-pointer" htmlFor="photoUpload"><img width='50' height='50' className="" alt="Edit Photo" src="/assets/images/edit-photo.svg" /></label>
               }
-              <Image className="TenantDetailsProfileImage object-fit-cover" src={profileImageSrc.img} size='medium' circular />
+              {photoPath ?
+               <Image className="TenantDetailsProfileImage object-fit-cover" src={photoPath} size='medium' circular />
+               :  <Image className="TenantDetailsProfileImage object-fit-cover" src={profileImageSrc.img} size='medium' circular />
+              }
+             
               <div className="text-center mt-1">
                 {!imguploadStatus &&
                   <label htmlFor="photoUpload" className="text-success fw-500 cursor-pointer">Upload Photo</label>

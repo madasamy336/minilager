@@ -22,7 +22,7 @@ export default function MyLeases() {
   })
 
   const [ScheduleMoveOut, SetScheduleMoveOut] = useState({
-    date: "",
+    date: new Date(),
     reason: "",
   })
 
@@ -287,11 +287,12 @@ export default function MyLeases() {
     const anchor = document.createElement('a');
     anchor.href = path;
     anchor.download = filename;
+    anchor.target = "_blank"
 
     // Append to the DOM
     document.body.appendChild(anchor);
 
-    // Trigger `click` event
+    // Trigger click event
     anchor.click();
 
     // Remove element from DOM
@@ -349,13 +350,13 @@ export default function MyLeases() {
         {console.log(leaseResponse[0])}
         {leaseInfoById[0].leaseInfo.moveOutScheduledOn == null || typeof leaseInfoById[0].leaseInfo.moveOutScheduledOn == 'undefined' || leaseInfoById[0].leaseInfo.moveOutScheduledOn == '' || leaseInfoById[0].leaseInfo.moveOutScheduledOn.length == 0 ?
           <div className="col-6 text-right" >
-            <button onClick={() => SetScheduleMoveOutMOdal({ open: true, dimmer: 'blurring' })} className="ui button basic box-shadow-none border-success-dark-light-1 fs-7 fw-400  px-1">
+            <button onClick={() => SetScheduleMoveOutMOdal({ open: true, dimmer: 'blurring' })} className="ui button basic box-shadow-none border-success-dark-light-1 fs-7 fw-400  px-1 m-2">
               <img height="16" width="16" src="/assets/images/calendar.svg" alt="calendar" />
               <span className="text-success ml-1 veritical-align-text-top fw-600" >Schedule Move-Out</span></button>
           </div> :
           <div className="col-12 col-md-6 text-right" >
-            <span className="text-secondary fw-500">Schedule Move-Out date:<span className="mx-1 text-success">{leaseInfoById[0].leaseInfo.moveOutScheduledOn}</span></span>
-            <button className="ui button bg-success-dark   fs-7 fw-400 text-white px-3 py-1" onClick={e => CancelScheduleMOveOut(e)}>Cancel</button>
+            <span className="text-secondary fw-500">Schedule Move-Out date:<span className="mx-1 text-success">{helper.readDate(leaseInfoById[0].leaseInfo.moveOutScheduledOn)}</span></span>
+            <button className="ui button bg-success-dark cancel-shecdule-btn fs-7 fw-400 text-white px-3 py-1 m-2" onClick={e => CancelScheduleMOveOut(e)}>Cancel</button>
           </div>
         }
         <div className="py-4 px-3">
@@ -455,8 +456,8 @@ export default function MyLeases() {
               </div>
             </div>
             <div className='text-center'>
-              {/* <button className="ui button basic box-shadow-none border-success-dark-light-1 fs-8 px-2 py-1 my-2" onClick={() => download(selectedUnitLeasedocument, "LeaseAgreement")}><a className='text-success'>Download</a></button> */}
-              <button className="ui button basic box-shadow-none border-success-dark-light-1 fs-8 px-2 py-1 my-2"><a className='text-success' download={selectedUnitLeasedocument}>Download</a></button>
+               <button className="ui button basic box-shadow-none border-success-dark-light-1 fs-8 px-2 py-1 my-2" onClick={() => download(selectedUnitLeasedocument, "LeaseAgreement")}><a className='text-success'>Preview</a></button> 
+              {/* <button className="ui button basic box-shadow-none border-success-dark-light-1 fs-8 px-2 py-1 my-2"><a className='text-success' download={selectedUnitLeasedocument}>Download</a></button> */}
             </div>
 
           </div>
@@ -478,7 +479,7 @@ export default function MyLeases() {
           <div className="ui form px-4 px-sm-2">
             <div className="field w-100 datePicker my-3">
               <label className='fw-500 fs-7 mb-1' >Schedule Move-Out Date</label>
-              <SemanticDatepicker disabled={isButtonLoading} value={new Date(ScheduleMoveOut.date)} name="date" onChange={(e, data) => handleChange(e, data)} placeholder='Select date' className='w-100' />
+              <SemanticDatepicker disabled={isButtonLoading} format="DD-MM-YYYY" value={new Date(ScheduleMoveOut.date)} name="date" onChange={(e, data) => handleChange(e, data)} placeholder='Select date' className='w-100' />
             </div>
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-1' >Reason</label>

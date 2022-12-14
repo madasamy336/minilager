@@ -7,7 +7,7 @@ const SuccessfulMoveIn = () => {
 
     const RentNow = (e) => {
         e.preventDefault();
-        navigate('/home')
+        navigate('/postBooking/Profile');
       }
     return (
         <div className="bg-white border-radius-15 text-center border-top-success-4 card-boxshadow w-35 mx-auto px-2 py-5 mt-5">

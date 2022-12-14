@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react"
-import { Dropdown, Input } from 'semantic-ui-react';
+import { Button, Dropdown, Input } from 'semantic-ui-react';
 import SemanticDatepicker from 'react-semantic-ui-datepickers';
 import 'react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css';
 import countriecodes from '../../../components/CountryCode';
 import instance from '../../../services/instance';
 import request from '../../../services/request';
 import Helper from "../../../helper";
-// import { format } from 'date-fns'
+import { ToastContainer, toast } from 'react-toastify';
+
+import 'react-toastify/dist/ReactToastify.css';
 
 
 let helper = new Helper();
@@ -19,6 +21,7 @@ export default function Profile() {
   const [isEdit, editTenantDetails] = useState(true);
   const [isTenantaddress, showTenantAddress] = useState(true);
   const [blobImage, setBlobImage] = useState(true);
+  const [isLoading, setLoading] = useState(false);
 
   const [tenantDetails, setTenantDetails] = useState({
     ssn: '',
@@ -47,6 +50,7 @@ export default function Profile() {
 
 
   function fetchTenantDetails() {
+    setLoading(true)
     let config = {
       headers: {
         "Content-Type": "application/json"
@@ -60,12 +64,15 @@ export default function Profile() {
         localStorage.setItem("UserInfo", JSON.stringify(data));
         setTenantDetails(data)
         setprofileImageSrc(data.photoPath)
+        setLoading(false)
       } else {
         editTenantDetails(false)
         console.log('No records found');
+        setLoading(false)
       }
     }).catch((err) => {
       console.log(err);
+      setLoading(false)
     })
   }
 
@@ -75,43 +82,25 @@ export default function Profile() {
     setTenantDetails({ ...tenantDetails, [name]: value });
   }
 
-  // const profileImageUpload = (e) => {
-  //   e.preventDefault();
-  //   let img = e.target.files[0];
-  //   if (!img.name.match(/\.(jpg|jpeg|png|svg)$/)) {
-  //     alert('Please check the your file format,only jpg,jpeg,png,svg formats are supported')
-  //     return false;
-  //   }
-  //   if (img.size > 1000000) {
-  //     alert('Please make sure the file size showTenantaddress less than 1mb and try again')
-  //     return false;
-  //   }
-  //   setprofileImageSrc(this.convertBase64(img))
-  //   console.log("profileImageSrc", profileImageSrc);
-  // }
-
   const profileImageUpload = (e) => {
     e.preventDefault();
     let file = e.target.files[0];
     const reader = new FileReader();
     reader.addEventListener("load", () => {
-      // convert image file to base64 string
-      // preview.src = reader.result;
       setprofileImageSrc(reader.result);
     }, false);
     if (file) {
-      const blob = new Blob([file],{type: 'image/png'});
+      const blob = new Blob([file], { type: 'image/png' });
       setBlobImage(blob);
       reader.readAsDataURL(file);
-    
+
     }
     console.log("setprofileImageSrc", profileImageSrc);
   }
 
 
   function saveTenantPhoto() {
-    // let image = document.getElementById('tenantProfileImage').src
-    // console.log(image);
+    setLoading(true)
     let userId = localStorage.getItem('userid');
     let imagedata = new File([profileImageSrc], `${userId}_.png`, { type: "image/png" });
     let config = {
@@ -136,7 +125,7 @@ export default function Profile() {
 
     formData.append("FileName", fileName);
     formData.append("FileData", file);
-    
+
     let uploadRequest = {
       FileName: fileName,
       FileData: file
@@ -145,43 +134,22 @@ export default function Profile() {
       return response;
     }).then(data => {
       console.log()
-        const profileResponse = data;
-        console.log(profileResponse);
-      }).catch((err) => {
-        console.log(err);
-      })
+      const profileResponse = data;
+      console.log(profileResponse);
+      setLoading(false)
+
+    }).catch((err) => {
+      console.log(err);
+      setLoading(false)
+
+    })
 
   }
 
-  // function saveTenantPhoto() {
-  //   let image = document.getElementById('tenantProfileImage').src
-  //   console.log(image);
-  //   let config = {
-  //     headers: {
-  //       "Content-Type": "application/json"
-  //     }
-  //   };
-  //   let userId = localStorage.getItem('userid');
-  //   const formData = new FormData();
-
-  //   formData.append("FileName", "Profile");
-  //   formData.append("FileData", profileImageSrc);
-  //   console.log(profileImageSrc)
-  //   // let requestBody = {
-  //   //   FileName: "Profile",
-  //   //   FileData: profileImageSrc
-
-  //   // }
-  //   console.log("requestBody", formData)
-  //   instance.post(request.add_profile_picture + userId, formData, config).then((response) => {
-  //     const profileResponse = response.data;
-  //     console.log(profileResponse);
-  //   }).catch((err) => {
-  //     console.log(err);
-  //   })
-  // }
 
   function updateTenantInfo() {
+    setLoading(true)
+
     let config = {
       headers: {
         "Content-Type": "application/json"
@@ -195,6 +163,20 @@ export default function Profile() {
       }
     }).then(() => {
       saveTenantPhoto()
+      toast.success('Profile Info Updated', {
+        position: "top-right",
+        autoClose: 3000,
+        duration: 100,
+        hideProgressBar: false,
+        closeOnClick: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        toastId: "updateTenantInfo"
+      });
+      setLoading(false)
+      editTenantDetails(true)
+      showTenantAddress(true)
     })
   }
 
@@ -212,6 +194,7 @@ export default function Profile() {
   return (
     <>
       <div className="mx-2 mx-sm-1">
+        <ToastContainer />
         <div className="bg-white card-boxShadow border-radius-15 py-2 mb-2">
           <div className="row dashed-bottom px-3 py-2 px-sm-2">
             <div className="col-lg-6 col-md-6 col-sm-6">
@@ -260,7 +243,7 @@ export default function Profile() {
                 <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                   <div className="field w-100 datePicker my-3">
                     <label className="text-dark fs-7 fw-500">Date of Birth<span className="error">*</span></label>
-                    <SemanticDatepicker name="birthDate" placeholder='Select date' format="DD-MM-YYYY" value={new Date(tenantDetails.birthDate)} className='w-100' onChange={handleChange} />
+                    <SemanticDatepicker name="birthDate" placeholder='Select date' format="DD-MM-YYYY" value={new Date(tenantDetails.birthDate)} className='w-100' onChange={onChangePersonalInfo} />
                   </div>
                   <div className="field my-3">
                     <label className="text-dark fs-7 fw-500">Phone Number<span className="error">*</span></label>
@@ -281,8 +264,8 @@ export default function Profile() {
                 </div>
               </div>
               <div className="mt-2 text-center">
-                <button className="ui button text-dark fs-7 fw-400 px-5 mx-1 mb-sm-1" onClick={editTenantDetails}>CANCEL</button>
-                <button className="ui button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-sm-1" onClick={() => updateTenantInfo(tenantDetails)}>SAVE</button>
+                <button className="ui button text-dark fs-7 fw-400 px-5 mx-1 mb-sm-1" disabled={isLoading} onClick={editTenantDetails}>CANCEL</button>
+                <Button className="ui button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-sm-1" loading={isLoading} disabled={isLoading} onClick={() => updateTenantInfo(tenantDetails)}>SAVE</Button>
               </div>
             </div>}
 
@@ -301,7 +284,7 @@ export default function Profile() {
                   </div>
                   <div className="col-lg-8 col-md-8 col-sm-8">
                     {/* <p className="fs-7 mb-2">{helper.displayDate(tenantDetails.birthDate)}</p> */}
-                    <p className="fs-7 mb-2">{tenantDetails.birthDate}</p>
+                    <p className="fs-7 mb-2">{helper.readDate(new Date(tenantDetails.birthDate))}</p>
                   </div>
 
                   <div className="col-lg-4 col-md-4 col-sm-4">
@@ -330,7 +313,7 @@ export default function Profile() {
                     <p className="fs-7 fw-500 text-dark">Company Registration Number</p>
                   </div>
                     <div className="col-lg-8 col-md-8 col-sm-8">
-                      <p className="fs-7">4646464</p>
+                      <p className="fs-7">{tenantDetails.ssn}</p>
                     </div></div>}
                 </div>
               </div>
@@ -380,37 +363,37 @@ export default function Profile() {
                 <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                   <div className="field my-2">
                     <label className="text-dark fs-7 fw-500">Address Line 1<span className="error">*</span></label>
-                    <input type="text" />
+                    <input type="text" name="addressLineOne" value={tenantDetails.addressLineOne} onChange={e => onChangePersonalInfo(e)} />
                   </div>
                 </div>
                 <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                   <div className="field my-2">
                     <label className="text-dark fs-7 fw-500">Address Line 2<span className="error">*</span></label>
-                    <input type="text" />
+                    <input type="text" name="addressLineTwo" value={tenantDetails.addressLineTwo} onChange={e => onChangePersonalInfo(e)} />
                   </div>
                 </div>
                 <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                   <div className="field my-2">
                     <label className="text-dark fs-7 fw-500">City<span className="error">*</span></label>
-                    <input type="text" />
+                    <input type="text" name="city" value={tenantDetails.city} onChange={e => onChangePersonalInfo(e)} />
                   </div>
                 </div>
                 <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                   <div className="field my-2">
                     <label className="text-dark fs-7 fw-500">State/Province<span className="error">*</span></label>
-                    <input type="text" />
+                    <input type="text" name="state" value={tenantDetails.state} onChange={e => onChangePersonalInfo(e)} />
                   </div>
                 </div>
                 <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                   <div className="field my-2">
                     <label className="text-dark fs-7 fw-500">Zip/Postal Code<span className="error">*</span></label>
-                    <input type="text" />
+                    <input type="text" name="zipcode" value={tenantDetails.zipCode} onChange={e => onChangePersonalInfo(e)} />
                   </div>
                 </div>
               </div>
               <div className="mt-2 text-center">
-                <button className="ui button text-dark fs-7 fw-400 px-5 mx-1 mb-sm-1" onClick={showTenantAddress}>CANCEL</button>
-                <button className="ui button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-sm-1 ">SAVE</button>
+                <button className="ui button text-dark fs-7 fw-400 px-5 mx-1 mb-sm-1" disabled={isLoading} onClick={showTenantAddress}>CANCEL</button>
+                <button className="ui button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-sm-1 " loading={isLoading} disabled={isLoading} onClick={() => updateTenantInfo(tenantDetails)}>SAVE</button>
               </div>
             </div>}
 
