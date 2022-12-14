@@ -306,12 +306,9 @@ const Units = () => {
                                 <div className='units-div'>
                                     <div className='row'>
 
-                                        <div className={!loader && `d-none`}>
+                                        {loader ? (<div>
                                             <PlaceholderLoader cardCount={7} />
-                                        </div>
-
-                                        {!loader && <UnitsCard filterRequest={filterRequest} storageTypevalue={storageTypeValue} UnitResponse={UnitResponse} setUnitResponse={setUnitResponse} setLoading={setLoading} />
-                                        }
+                                        </div>) : (<UnitsCard filterRequest={filterRequest} storageTypevalue={storageTypeValue} UnitResponse={UnitResponse} setUnitResponse={setUnitResponse} setLoading={setLoading} />)}
 
 
 

@@ -12,7 +12,7 @@ import Helper from "../../../helper";
 const helper = new Helper()
 export default function MyLeases() {
   const [activeUnit, setactive] = useState('');
-  const [ScheduleMoveOutMOdal, SetScheduleMoveOutMOdal] = useState({
+  const [ScheduleMoveOutMOdal, SetScheduleMoveOutModal] = useState({
     open: false,
     dimmer: undefined,
   })
@@ -21,8 +21,8 @@ export default function MyLeases() {
     dimmer: undefined,
   })
 
-  const [ScheduleMoveOut, SetScheduleMoveOut] = useState({
-    date: new Date(),
+  const [scheduleMoveOutDate, SetScheduleMoveOutDate] = useState({
+    date: null,
     reason: "",
   })
 
@@ -57,11 +57,11 @@ export default function MyLeases() {
     },
   ]
   const [ScheduleMovedOut, SetScheduleMovedOut] = useState(false)
-  // const [ScheduleMoveOutDate, SetScheduleMoveOutDate] = useState('')
+  // const [scheduleMoveOutDate, SetScheduleMoveOutDate] = useState('')
   // const ScheduleMOveOut = (e) => {
   //   e.preventDefault();
   //   SetScheduleMovedOut(true);
-  //   SetScheduleMoveOutMOdal(({
+  //   SetScheduleMoveOutModal(({
   //     open: false,
   //   }))
   // }
@@ -101,9 +101,11 @@ export default function MyLeases() {
           setLeaseResponse(leases.result);
           localStorage.setItem("leases", JSON.stringify(leases.result));
           let loadDefaultUnit = leases.result.filter(x => x.unitInfo.id === leases.result[0].unitInfo.id);
+          console.log("loadDefaultUnit", loadDefaultUnit);
+          console.log("setactive", leases.result[0].unitInfo.id);
           setLeaseInfoById(loadDefaultUnit);
           setactive(leases.result[0].unitInfo.id);
-          SetScheduleMoveOut({ ...ScheduleMoveOut, ["date"]: leases.result[0].leaseInfo.moveOutScheduledOn })
+          SetScheduleMoveOutDate({ ...scheduleMoveOutDate, ["date"]: leases.result[0].leaseInfo.moveOutScheduledOn })
           sixStorageLeaseagreement(leases.result[0].leaseInfo.id)
           setLoading(false);
         }
@@ -132,7 +134,7 @@ export default function MyLeases() {
 
   function addScheduleMOveOutDate(data) {
     setButtonLoading(true)
-    console.log(ScheduleMoveOut.date);
+    console.log(scheduleMoveOutDate.date);
     // console.log(leaseId)
     let config = {
       headers: {
@@ -142,8 +144,8 @@ export default function MyLeases() {
     let userId = localStorage.getItem('userid');
     const requestbody = {
       unitNumber: data.unitInfo.unitNumber,
-      scheduleDate: ScheduleMoveOut.date,
-      reason: ScheduleMoveOut.reason,
+      scheduleDate: scheduleMoveOutDate.date,
+      reason: scheduleMoveOutDate.reason,
       tenantId: userId
     }
     console.log(requestbody)
@@ -156,10 +158,10 @@ export default function MyLeases() {
         console.log("sixStorageScheduleMoveOut", res);
         if (res.isSuccess !== false && res.isSuccess === true && res.returnCode === 'SUCCESS') {
           setTimeout(function () {
-            SetScheduleMoveOutMOdal(({
+            SetScheduleMoveOutModal(({
               open: false,
             }))
-            SetScheduleMoveOut({
+            SetScheduleMoveOutDate({
               reason: ''
             })
             CancelScheduleMoveOut({
@@ -176,7 +178,7 @@ export default function MyLeases() {
 
   function cancelScheduleMOveOutDate(data) {
     setButtonLoading(true)
-    console.log(ScheduleMoveOut.date);
+    console.log(scheduleMoveOutDate.date);
     // console.log(leaseId)
     let config = {
       headers: {
@@ -186,8 +188,8 @@ export default function MyLeases() {
     let userId = localStorage.getItem('userid');
     const requestbody = {
       unitNumber: data.unitInfo.unitNumber,
-      scheduleDate: ScheduleMoveOut.date,
-      reason: ScheduleMoveOut.reason,
+      scheduleDate: scheduleMoveOutDate.date,
+      reason: scheduleMoveOutDate.reason,
       tenantId: userId
     }
     console.log(requestbody)
@@ -223,7 +225,6 @@ export default function MyLeases() {
     sixStorageLeaseagreement(showUnitLeasevalue[0].leaseInfo.id);
   }
 
-
   function sixStorageLeaseagreement(contract_id) {
     let config = {
       headers: {
@@ -232,70 +233,39 @@ export default function MyLeases() {
     };
     let userId = localStorage.getItem('userid');
     const data = {
-      "ContractId": contract_id,
+      "contractId": contract_id,
       "tenantId": userId
     }
-    instance
-      .post(request.lease_documents, data, config)
-      .then((response) => {
-        let responseValue = response.data;
-        console.log(response);
-        if (responseValue.returnCode === 'NO_RECORDS_FOUND') {
-          setselectedUnitLeasedocument(responseValue.returnCode);
-        } else {
-          responseValue.result.map(val => {
-            if (val.documentName === 'Leaseagreement') {
-              setselectedUnitLeasedocument(val.documentPath);
-            }
-            else {
-              setselectedUnitInsuranceDocument(val.documentPath);
-            }
-          });
-          setselectedUnitLeasedocument(response.data.data.result[0].documentPath);
+    instance.post(request.lease_documents, data, config)
+      .then(response => {
+        return response;
+      }).then(data => {
+        if (typeof data !== 'undefined' || data !== null) {
+          if (typeof data.data.isSuccess !== 'undefined' && data.data !== null && data.data.isSuccess === true && data.data.result !== null) {
+            data.data.result.map(val => {
+              if (val.documentName === 'Leaseagreement') {
+                setselectedUnitLeasedocument(val.documentPath);
+              }
+            })
+          } else {
+            setselectedUnitLeasedocument("No Record Found");
+
+          }
         }
-      }).catch((err) => {
-        // setModal(false);
+      }).catch(err => {
         console.log(err);
-      });
+      })
   }
 
-  // function download_file(fileURL, fileName) {
-  //   // for non-IE
-  //   if (!window.ActiveXObject) {
-  //     var save = document.createElement('a');
-  //     save.href = fileURL;
-  //     save.target = '_blank';
-  //     var filename = fileURL.substring(fileURL.lastIndexOf('/') + 1);
-  //     save.download = fileName || filename;
-  //     if (navigator.userAgent.toLowerCase().match(/(ipad|iphone|safari)/) && navigator.userAgent.search("Chrome") < 0) {
-  //       document.location = save.href;
-  //       // window event not working here
-  //     } else {
-  //       var evt = new MouseEvent('click', {
-  //         'view': window,
-  //         'bubbles': true,
-  //         'cancelable': false
-  //       });
-  //       save.dispatchEvent(evt);
-  //       (window.URL || window.webkitURL).revokeObjectURL(save.href);
-  //     }
-  //   }
-  // }
 
+  // Open Pdf File to New Tab and Download
   const download = (path, filename) => {
-    // Create a new link
     const anchor = document.createElement('a');
     anchor.href = path;
     anchor.download = filename;
     anchor.target = "_blank"
-
-    // Append to the DOM
     document.body.appendChild(anchor);
-
-    // Trigger click event
     anchor.click();
-
-    // Remove element from DOM
     document.body.removeChild(anchor);
   };
 
@@ -303,9 +273,9 @@ export default function MyLeases() {
     console.log(e.target.value)
   }
 
-  function handleChange(e, data) {
+  function handleChange(_e, data) {
     console.log(data);
-    SetScheduleMoveOut({ ...ScheduleMoveOut, [data.name]: data.value })
+    SetScheduleMoveOutDate({ ...scheduleMoveOutDate, [data.name]: data.value })
   }
 
 
@@ -350,12 +320,12 @@ export default function MyLeases() {
         {console.log(leaseResponse[0])}
         {leaseInfoById[0].leaseInfo.moveOutScheduledOn == null || typeof leaseInfoById[0].leaseInfo.moveOutScheduledOn == 'undefined' || leaseInfoById[0].leaseInfo.moveOutScheduledOn == '' || leaseInfoById[0].leaseInfo.moveOutScheduledOn.length == 0 ?
           <div className="col-6 text-right" >
-            <button onClick={() => SetScheduleMoveOutMOdal({ open: true, dimmer: 'blurring' })} className="ui button basic box-shadow-none border-success-dark-light-1 fs-7 fw-400  px-1 m-2">
+            <button onClick={() => SetScheduleMoveOutModal({ open: true, dimmer: 'blurring' })} className="ui button basic box-shadow-none border-success-dark-light-1 fs-7 fw-400  px-1 m-2">
               <img height="16" width="16" src="/assets/images/calendar.svg" alt="calendar" />
               <span className="text-success ml-1 veritical-align-text-top fw-600" >Schedule Move-Out</span></button>
           </div> :
           <div className="col-12 col-md-6 text-right" >
-            <span className="text-secondary fw-500">Schedule Move-Out date:<span className="mx-1 text-success">{helper.readDate(leaseInfoById[0].leaseInfo.moveOutScheduledOn)}</span></span>
+            <span className="text-secondary fw-500">Schedule Move-Out date:<span className="mx-1 text-success">{leaseInfoById[0].leaseInfo.moveOutScheduledOn}</span></span>
             <button className="ui button bg-success-dark cancel-shecdule-btn fs-7 fw-400 text-white px-3 py-1 m-2" onClick={e => CancelScheduleMOveOut(e)}>Cancel</button>
           </div>
         }
@@ -384,11 +354,6 @@ export default function MyLeases() {
                   {leaseInfoById[0].leaseInfo.gateStatus.descreption == 'Overlocked' && <span className={`danger-label-leases veritical-align-super py-1 px-2 fw-500`}>
                     Overlocked
                   </span>}
-
-                  {/* the code i have commented below is for overlock danger label */}
-                  {/* <span className="danger-label-leases veritical-align-super py-1 px-2 fw-500">
-                   Overlock
-                  </span>  */}
                 </div>
                 <div className="pb-1 mb-1 d-flex align-items-center"><img width='18' height='18' src='/assets/images/selfstorage.svg' alt='Self Storage' /><span className='ml-1'>{leaseInfoById[0].unitInfo.storageType.name} - <strong className="fw-700"> {helper.displayMeasurementSize(leaseInfoById[0].unitInfo.unitMeasurement, leaseInfoById[0].unitInfo.measurementType)} </strong> ({leaseInfoById[0].unitInfo.unitType.name})</span></div>
                 <div className='d-flex align-items-center'><img width='18' height='18' src='/assets/images/location-new.svg' alt='Self Storage' /><span className='ml-1'>{leaseInfoById[0].unitInfo.building.name}, {leaseInfoById[0].unitInfo.location.name}</span></div>
@@ -396,14 +361,6 @@ export default function MyLeases() {
                   {leaseInfoById[0].unitInfo.amenityInfoList.map((amenities) => {
                     return <div className='d-flex align-items-center my-2 mr-2' key={amenities.unitId}>
                       <img src={amenities.imageUrl} style={{ width: 15, height: 15 }} />
-                      {/* <svg id="Fully_automated" data-name="Fully automated" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 16.723 16.437">
-                      <path id="Path_17536" data-name="Path 17536" d="M241.438,119.189c-.048.327-.082.658-.148.981a7.957,7.957,0,0,1-2.1,3.948,9.023,9.023,0,0,1-3.064,2.118l-.153.064c.155.07.286.127.415.188.178.083.234.21.168.366a.263.263,0,0,1-.381.129q-.509-.22-1.013-.448a.273.273,0,0,1-.131-.439q.3-.468.606-.929a.272.272,0,0,1,.394-.1.268.268,0,0,1,.058.389c-.049.081-.1.16-.153.24l.027.035c.311-.161.631-.308.932-.487a8,8,0,0,0,3.7-4.568,6.981,6.981,0,0,0-.136-4.484c-.021-.062-.046-.122-.065-.184a.273.273,0,0,1,.165-.371.269.269,0,0,1,.343.194,9.43,9.43,0,0,1,.3.98c.091.418.139.846.206,1.269.008.053.019.105.029.158v.947Z" transform="translate(-224.716 -110.581)" fill="#328128" />
-                      <path id="Path_17537" data-name="Path 17537" d="M75.651,73.828c-.417.157-.783.291-1.146.434a.16.16,0,0,0-.078.116c-.01.13,0,.261,0,.391a.628.628,0,0,1-.668.661c-.321,0-.642-.005-.962-.027a.564.564,0,0,1-.521-.551c-.007-.152,0-.3-.008-.457a.177.177,0,0,0-.089-.122q-.49-.217-.988-.418a.16.16,0,0,0-.136.017c-.1.084-.187.182-.28.274a.617.617,0,0,1-.881.031,9.452,9.452,0,0,1-.671-.69.626.626,0,0,1,.033-.86c.12-.125.246-.245.343-.341-.148-.4-.285-.765-.429-1.133a.144.144,0,0,0-.107-.066c-.141-.008-.283,0-.424,0A.627.627,0,0,1,68,70.454q-.01-.449,0-.9a.625.625,0,0,1,.637-.626c.163,0,.325,0,.456,0,.17-.374.334-.727.489-1.084a.16.16,0,0,0-.032-.135c-.081-.095-.175-.178-.263-.268a.619.619,0,0,1-.025-.893c.216-.229.445-.448.681-.657a.62.62,0,0,1,.847.017c.113.1.214.218.328.318a.155.155,0,0,0,.134.025c.359-.151.716-.309,1.1-.478,0-.121,0-.284,0-.446a.634.634,0,0,1,.669-.681c.277,0,.555,0,.832,0a.616.616,0,0,1,.635.627c.006.141-.005.284.006.424a.174.174,0,0,0,.082.127c.355.147.713.287,1.115.446.08-.086.185-.21.3-.324a.621.621,0,0,1,.881-.016c.226.212.443.435.649.666a.629.629,0,0,1-.027.885c-.116.122-.3.229-.33.367s.126.286.185.436c.081.2.155.406.219.613.029.094.069.131.168.125.141-.008.283-.005.424,0a.621.621,0,0,1,.617.612q.011.457,0,.914a.623.623,0,0,1-.626.622c-.125,0-.25.006-.375,0a.152.152,0,0,0-.175.12q-.182.47-.394.928a.137.137,0,0,0,.034.194c.089.079.171.167.255.253a.612.612,0,0,1,.033.868,8.3,8.3,0,0,1-.716.691.617.617,0,0,1-.833-.04c-.129-.124-.243-.263-.329-.356ZM73.341,74.9c.12,0,.24,0,.359,0s.188-.04.182-.179c-.01-.206,0-.414,0-.62a.271.271,0,0,1,.252-.306,3.906,3.906,0,0,0,1.323-.534.283.283,0,0,1,.408.054c.144.141.29.28.426.428.09.1.162.1.257.007q.257-.262.528-.511c.09-.082.087-.148,0-.23-.142-.135-.279-.275-.417-.415a.283.283,0,0,1-.05-.42,3.94,3.94,0,0,0,.544-1.284.283.283,0,0,1,.323-.256c.2,0,.4,0,.6,0,.119,0,.168-.042.165-.162,0-.245-.006-.49,0-.735,0-.137-.055-.183-.186-.179-.218.006-.435,0-.653,0a.265.265,0,0,1-.291-.23,3.822,3.822,0,0,0-.536-1.339.277.277,0,0,1,.054-.407c.149-.151.3-.3.451-.449a.126.126,0,0,0,0-.208c-.18-.182-.359-.365-.533-.552-.084-.091-.151-.081-.231,0-.14.145-.283.287-.427.427a.269.269,0,0,1-.394.045,4.1,4.1,0,0,0-1.3-.553c-.2-.047-.257-.129-.259-.335s0-.425,0-.637c0-.1-.035-.139-.134-.138q-.384,0-.767,0c-.11,0-.155.045-.152.158.006.223,0,.446,0,.669a.276.276,0,0,1-.242.3,3.839,3.839,0,0,0-1.34.535.272.272,0,0,1-.394-.048c-.148-.144-.3-.289-.439-.439-.084-.088-.153-.1-.245-.01-.176.178-.357.351-.541.521a.127.127,0,0,0,0,.218c.141.135.279.275.416.415a.29.29,0,0,1,.051.434,3.914,3.914,0,0,0-.538,1.269c-.044.2-.128.261-.334.264s-.4,0-.6,0c-.11,0-.158.041-.156.154,0,.25.005.5,0,.751,0,.13.054.171.178.167.207-.007.414,0,.62,0,.188,0,.274.069.31.247a3.909,3.909,0,0,0,.535,1.323.281.281,0,0,1-.051.408c-.141.144-.281.289-.429.425-.1.089-.107.16-.008.256.175.171.346.347.512.527.082.089.148.089.231,0,.14-.145.283-.286.428-.427a.275.275,0,0,1,.394-.049,4.055,4.055,0,0,0,1.314.556c.178.041.239.128.24.316,0,.207,0,.414,0,.62,0,.1.044.15.147.148.13,0,.261,0,.392,0Z" transform="translate(-65.026 -61.824)" fill="#328128" />
-                      <path id="Path_17538" data-name="Path 17538" d="M.819,109.062c-.159.078-.279.14-.4.2a.27.27,0,0,1-.387-.114.262.262,0,0,1,.147-.363q.5-.258,1-.506a.269.269,0,0,1,.4.141q.248.532.483,1.07a.253.253,0,0,1-.134.366.26.26,0,0,1-.36-.154c-.038-.078-.071-.159-.107-.238s-.069-.147-.112-.242c-.024.051-.044.086-.058.122a8.655,8.655,0,0,0-.517,1.832,5.315,5.315,0,0,0,.089,1.85,7.558,7.558,0,0,0,5.282,5.893,7.244,7.244,0,0,0,2.508.353.691.691,0,0,1,.211.01.265.265,0,0,1-.086.518c-.435-.011-.873,0-1.3-.05A8.248,8.248,0,0,1,.252,112.6a6.7,6.7,0,0,1,.486-3.3c.024-.065.045-.13.081-.234Z" transform="translate(-0.002 -103.512)" fill="#328128" />
-                      <path id="Path_17539" data-name="Path 17539" d="M56.178,3.159c0-.14,0-.237,0-.334a.275.275,0,0,1,.262-.28.264.264,0,0,1,.275.265c.011.391.014.783.009,1.175a.28.28,0,0,1-.294.271q-.612.009-1.224,0a.264.264,0,0,1-.284-.272.27.27,0,0,1,.3-.269c.221,0,.442,0,.7,0-.133-.157-.236-.288-.348-.409A8.23,8.23,0,0,0,50.352.594,7.542,7.542,0,0,0,43.51,3.316c-.043.049-.081.1-.124.151a.274.274,0,0,1-.39.061.268.268,0,0,1-.024-.4c.126-.157.253-.314.391-.459A8.047,8.047,0,0,1,50.01.022a8.831,8.831,0,0,1,6.03,2.985l.137.151Z" transform="translate(-41.021 0)" fill="#328128" />
-                      <path id="Path_17540" data-name="Path 17540" d="M135.92,136.414a2.421,2.421,0,0,1,2.437-2.388.9.9,0,0,1,.24.037.226.226,0,0,1,.173.246.221.221,0,0,1-.193.229c-.171.026-.346.028-.517.055a1.851,1.851,0,0,0-1.566,2.15,1.9,1.9,0,0,0,2.191,1.494,1.844,1.844,0,0,0,1.388-2.631c-.082-.181-.042-.335.1-.4s.291-.007.383.173a2.388,2.388,0,0,1-1.638,3.368,2.435,2.435,0,0,1-2.968-1.972c-.021-.117-.022-.238-.032-.357Z" transform="translate(-129.989 -128.178)" fill="#328128" />
-                      <path id="Path_17541" data-name="Path 17541" d="M210.129,140.148a.274.274,0,0,1-.391.284,2.226,2.226,0,0,1-.29-.182.259.259,0,0,1-.072-.348.239.239,0,0,1,.321-.112,1.787,1.787,0,0,1,.345.213A.4.4,0,0,1,210.129,140.148Z" transform="translate(-200.204 -133.666)" fill="#328128" />
-                    </svg> */}
                       <span className="ml-1">{amenities.name}</span>
                     </div>
                   })}
@@ -452,11 +409,11 @@ export default function MyLeases() {
             <div className=' overflow-auto'>
               <div className="rentalAgreementContainer">
                 {/* for document preview */}
-                <iframe src={selectedUnitLeasedocument} width="100%" height="900px" frameBorder="0"></iframe>
+                {selectedUnitLeasedocument ? <iframe src={selectedUnitLeasedocument} width="100%" height="900px"></iframe> : "No Record Found"}
               </div>
             </div>
             <div className='text-center'>
-               <button className="ui button basic box-shadow-none border-success-dark-light-1 fs-8 px-2 py-1 my-2" onClick={() => download(selectedUnitLeasedocument, "LeaseAgreement")}><a className='text-success'>Preview</a></button> 
+              <button className="ui button basic box-shadow-none border-success-dark-light-1 fs-8 px-2 py-1 my-2" onClick={() => download(selectedUnitLeasedocument, "LeaseAgreement")}><a className='text-success'>Preview</a></button>
               {/* <button className="ui button basic box-shadow-none border-success-dark-light-1 fs-8 px-2 py-1 my-2"><a className='text-success' download={selectedUnitLeasedocument}>Download</a></button> */}
             </div>
 
@@ -467,11 +424,11 @@ export default function MyLeases() {
         dimmer={ScheduleMoveOutMOdal.dimmer}
         open={ScheduleMoveOutMOdal.open}
         size='tiny'
-        onClose={() => SetScheduleMoveOutMOdal({ open: false })}
+        onClose={() => SetScheduleMoveOutModal({ open: false })}
       >
         <Modal.Header className='bg-success-dark text-white text-center fs-6 py-2 fw-400 position-relative'>Schedule Move-Out
 
-          {!isButtonLoading && <svg onClick={() => SetScheduleMoveOutMOdal({ open: false })} className='r-3 cursor-pointer position-absolute' xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 17.473 17.47">
+          {!isButtonLoading && <svg onClick={() => SetScheduleMoveOutModal({ open: false })} className='r-3 cursor-pointer position-absolute' xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 17.473 17.47">
             <path id="wrong-5" d="M978.609-438.353l-2.052-2.043-4.37-4.366a1.33,1.33,0,0,1-.4-1.425,1.3,1.3,0,0,1,.833-.843,1.3,1.3,0,0,1,1.171.183,3.019,3.019,0,0,1,.353.321q3.009,3,6.009,6.01c.088.088.159.193.254.309.127-.118.217-.2.3-.281l6.156-6.156a1.332,1.332,0,0,1,1.325-.431,1.3,1.3,0,0,1,.927.828,1.3,1.3,0,0,1-.188,1.228,3.412,3.412,0,0,1-.325.35q-3,3.009-6.011,6.009a3.233,3.233,0,0,1-.317.244c.132.14.213.23.3.316q3.052,3.053,6.108,6.1a1.36,1.36,0,0,1,.441,1.387,1.305,1.305,0,0,1-2.205.564c-.59-.568-1.163-1.157-1.74-1.736l-4.487-4.491a2.068,2.068,0,0,1-.183-.248l-.142-.051a1.52,1.52,0,0,1-.191.325q-3.047,3.059-6.1,6.111a1.341,1.341,0,0,1-1.45.419,1.3,1.3,0,0,1-.851-.866,1.3,1.3,0,0,1,.235-1.19,3.215,3.215,0,0,1,.257-.274l6.034-6.033C978.386-438.167,978.484-438.245,978.609-438.353Z" transform="translate(-971.716 447.116)" fill="#fff" />
           </svg>}
         </Modal.Header>
@@ -479,11 +436,11 @@ export default function MyLeases() {
           <div className="ui form px-4 px-sm-2">
             <div className="field w-100 datePicker my-3">
               <label className='fw-500 fs-7 mb-1' >Schedule Move-Out Date</label>
-              <SemanticDatepicker disabled={isButtonLoading} format="DD-MM-YYYY" value={new Date(ScheduleMoveOut.date)} name="date" onChange={(e, data) => handleChange(e, data)} placeholder='Select date' className='w-100' />
+              <SemanticDatepicker disabled={isButtonLoading} showToday={true} selectedDate={helper.readDate(new Date())} value={helper.readDate(leaseInfoById[0].leaseInfo.moveOutScheduledOn)} name="date" onChange={(e, { name, value }) => SetScheduleMoveOutDate(name, value)} placeholder='Select date' className='w-100' />
             </div>
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-1' >Reason</label>
-              <TextArea disabled={isButtonLoading} placeholder='Please tell us reason' name="reason" value={ScheduleMoveOut.reason} onChange={(e, data) => handleChange(e, data)} />
+              <TextArea disabled={isButtonLoading} placeholder='Please tell us reason' name="reason" value={scheduleMoveOutDate.reason} onChange={(e, data) => handleChange(e, data)} />
             </div>
             <div className='text-center my-2'>
               <Button className="ui button bg-success-dark fs-7 fw-400 text-white px-3 py-1" disabled={isButtonLoading} loading={isButtonLoading} onClick={() => addScheduleMOveOutDate(leaseInfoById[0])}>Schedule</Button>
@@ -508,11 +465,11 @@ export default function MyLeases() {
           <div className="ui form px-4 px-sm-2">
             <div className="field w-100 datePicker my-3">
               <label className='fw-500 fs-7 mb-1' >Schedule Move-Out Date</label>
-              <SemanticDatepicker disabled={isButtonLoading} value={new Date(leaseInfoById[0].leaseInfo.moveOutScheduledOn)} name="date" onChange={(e, data) => handleChange(e, data)} placeholder='Select date' className='w-100' />
+              <SemanticDatepicker disabled={isButtonLoading} name="date" onChange={(e, data) => handleChange(e, data)} placeholder='Select date' className='w-100' />
             </div>
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-1' >Reason</label>
-              <TextArea disabled={isButtonLoading} required placeholder='Please tell us reason' name="reason" value={ScheduleMoveOut.reason} onChange={(e, data) => handleChange(e, data)} />
+              <TextArea disabled={isButtonLoading} required placeholder='Please tell us reason' name="reason" value={scheduleMoveOutDate.reason} onChange={(e, data) => handleChange(e, data)} />
             </div>
             <div className='text-center my-2'>
               <Button className="ui button bg-success-dark fs-7 fw-400 text-white px-3 py-1" disabled={isButtonLoading} loading={isButtonLoading} onClick={() => cancelScheduleMOveOutDate(leaseInfoById[0])}>Schedule</Button>
