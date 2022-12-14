@@ -6,10 +6,7 @@ import request from '../../../services/request';
 import Helper from "../../../helper";
 import { json } from "react-router-dom";
 import ReactDOM from 'react-dom';
-import ReactPaginate from 'react-paginate';
 let helper = new Helper();
-
-
 let userid = localStorage.getItem("userid");
 let invoiceId_No_Array = [];
 let TotalAmountArray = [];
@@ -17,8 +14,6 @@ let totalAmount = 0;
 let currentRecords;
 let pageNumbers;
 let nPages;
-
-
 export default function MYInvoices() {
   const [invoiceitems, setInvoiceItems] = useState();
   const [isCheck, setIsCheck] = useState([]);
