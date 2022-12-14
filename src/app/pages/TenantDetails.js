@@ -1,7 +1,7 @@
 import PreBookingBreadcrumb from "../components/prebooking breadcrumb/PreBookingBreadcrumb";
 import { Dropdown, Image, Input, Modal } from "semantic-ui-react";
 import SemanticDatepicker from "react-semantic-ui-datepickers";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import TenantDetailEmergengyContactAccordian from "../components/tenantDetailsAccordian/TenantDetailsAccordian";
 import { json, useNavigate } from "react-router-dom";
 import countriecodes from "../components/CountryCode";
@@ -16,6 +16,8 @@ export default function TenantDetails() {
   let preferredStorageValue = JSON.parse(sessionStorage.getItem("preferredStorage"));
   let leaseProfileId = sessionStorage.getItem('leaseProfileid');
   let emergencyDetail = sessionStorage.getItem('emergencyDetail');
+  let BusinessUser =  JSON.parse(sessionStorage.getItem('isBussinessUser'));
+  let companyDetail = [];
   const navigate = useNavigate();
   const [profileImageSrc, setprofileImageSrc] = useState({
     img: '/assets/images/userDemoProfile.svg'
@@ -23,9 +25,12 @@ export default function TenantDetails() {
   const [photoPath, setPhotopath] = useState(null);
   const [blobImage, setblobImage] = useState();
   const [imagesize, setImageSize] = useState();
+  const companyName = useRef(null);
+  const companyRegistrationNumber = useRef(null);
   // <button onClick={e => tenantInfoFinal(e)} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">NEXT</button>
   // <button onClick={() => SetCreditCheckModal({ open: true, dimmer: 'blurring' })} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">NEXT</button>
-  const [TenantInfoDetails, setTenantInfoDetails] = useState({
+  const [TenantInfoDetails, setTenantInfoDetails] = useState(
+    {
     firstName: '',
     lastName: '',
     email: '',
@@ -38,7 +43,6 @@ export default function TenantDetails() {
     state: '',
     zipCode: '',
     ssn: '',
-
   });
 
   const [TenantInfoError, setTenantInfoError] = useState({
@@ -139,6 +143,9 @@ export default function TenantDetails() {
       emergencyContactErr.emergencyphoneno = "Phone No is Required";
       isValid = false;
     }
+    
+    
+    
     if (!isValid) {
       setEmergencyContactErr(emergencyContactErr);
     } else {
@@ -213,7 +220,7 @@ export default function TenantDetails() {
       headers: {
         "Authorization": `Bearer 5Yu5sIUiF+HEB/Fg/kuJNZ7kgz78oTDmEogfTgTJH4+mXQdh/WoXJbZSX67yNf8Rr2ZFaEfPI/Ruw/lMiFtmTw==Xpto4oAFPkK+Huo5T+Z+sA==`,
         "Content-Type": `multipart/form-data; boundary=----${time}`,
-        "Content-Length":`${imagesize}`,
+        "Content-Length": `${imagesize}`,
         "accept": "application/json",
         "Pragma": `no-cache`,
         "Cache-Control": `no-cache`,
@@ -221,7 +228,7 @@ export default function TenantDetails() {
         "Accept-Encoding": `gzip, deflate, br`
       }
     };
-    
+
     let timestamp = new Date().getTime();
 
     let fileName = `${userId}_${timestamp}.png`;
@@ -276,6 +283,7 @@ export default function TenantDetails() {
         city: TenantInfoDetails.city,
         zipCode: TenantInfoDetails.zipCode
       },
+      companyDetails: BusinessUser ?companyDetail: {},
       deliveryAddress: {},
       emergencyContact: emergencyContactArray,
       id: leaseProfileId ? leaseProfileId : "",
@@ -419,6 +427,23 @@ export default function TenantDetails() {
       TenantInfoError.state = "state is Required";
       isValid = false;
     }
+    if(BusinessUser){
+      debugger
+      let companyErrormessage = document.getElementById("companyname");
+      if(companyName.current.value === ''){
+        companyErrormessage.classList.remove('d-none')
+        isValid = false
+      }else{
+        companyDetail={companyName:companyName.current.value};
+        sessionStorage.setItem("companyDetail",JSON.stringify(companyDetail));
+        companyErrormessage.classList.add('d-none');
+
+      }
+      // if(companyRegistrationNumber.current.value == ''){
+      //   isValid = false
+      // }
+    }
+      
     if (!isValid) {
       setTenantInfoError(TenantInfoError);
     } else {
@@ -458,7 +483,7 @@ export default function TenantDetails() {
 
   } = emergencyContactErr;
 
-  console.log(contactaccordian);
+  console.log(BusinessUser);
 
   return (
     <>
@@ -558,21 +583,32 @@ export default function TenantDetails() {
           <div className="col-12  col-md-6  px-4 px-sm-2">
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-2'>Social Security Number</label>
-              <input className="noCounterNumber" type='number' name="ssn" placeholder='Social Security Number' value={TenantInfoDetails.ssn} onChange={(e) => handlechange(e)} />
+              <input className="noCounterNumber" type='number' name="ssn" placeholder='Social Security Number' onChange={(e) => handlechange(e)} />
             </div>
           </div>
-          <div className="col-12  col-md-6  px-4 px-sm-2">
-            <div className="field w-100  my-3">
-              <label className='fw-500 fs-7 mb-2'>Company Name</label>
-              <input className="noCounterNumber" type='number' name="ssn" placeholder='Company Name' value={TenantInfoDetails.ssn} onChange={(e) => handlechange(e)} />
+          {BusinessUser  ?
+            <div className="col-12  col-md-6  px-4 px-sm-2">
+              <div className="field w-100  my-3">
+                <label className='fw-500 fs-7 mb-2'>Company Name <i className="text-danger ">*</i></label>
+                <input className="noCounterNumber" ref={companyName} type='text' name="companyname" placeholder='Company Name' />
+                <div id="companyname" className="text-danger mt-1 d-none"> Please Enter Company Name </div>
+              </div>
             </div>
-          </div>
-          <div className="col-12  col-md-6  px-4 px-sm-2">
-            <div className="field w-100  my-3">
-              <label className='fw-500 fs-7 mb-2'>Company registra</label>
-              <input className="noCounterNumber" type='number' name="ssn" placeholder='Social Security Number' value={TenantInfoDetails.ssn} onChange={(e) => handlechange(e)} />
-            </div>
-          </div>
+            : ""
+
+          }
+          {BusinessUser ?
+            <div className="col-12  col-md-6  px-4 px-sm-2">
+              <div className="field w-100  my-3">
+                <label className='fw-500 fs-7 mb-2'>Company registration No <i className="text-danger ">*</i></label>
+                <input className="noCounterNumber" ref={companyRegistrationNumber} type='text' name="companyregistration" placeholder='Company registration No' />
+                <div id="registration" className="text-danger mt-1 d-none"> Please Enter registration No </div>
+              </div>
+            </div> : ""
+
+
+          }
+
           <div className="col-12  col-md-6  px-4 px-sm-2 my-3">
             <span>Are you Military user? <span className="mx-2"><input className="mr-1" type="checkbox" /><label>Yes</label></span><span><input className="mr-1" type="checkbox" /><label>No</label></span></span>
           </div>
