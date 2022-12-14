@@ -21,7 +21,7 @@
 
 #mainHeader {
     z-index: 999 !important;
-    background-color:$layoutBackground !important ;
+    background-color: $layoutBackground !important ;
 }
 .myLeaseUnitMenu {
     .item {
@@ -40,7 +40,7 @@
 .MyleasesTab {
     .ui.pointing.menu {
         border-bottom: none !important;
-        .item{
+        .item {
             color: $TextSecondary !important;
             font-weight: 600 !important;
         }
@@ -54,97 +54,97 @@
     .ui.segment.tab {
         border: none !important;
         box-shadow: none !important;
-    .insuranceContent{
-        .card{
-            border: 1px solid $textDisabledColor;
+        .insuranceContent {
+            .card {
+                border: 1px solid $textDisabledColor;
+            }
+            .card.changePlanCard {
+                height: 165px !important;
+            }
+            .card.active {
+                background-color: $primaryColor !important;
+                color: white !important;
+            }
+            .invoiceDocumentContainer {
+                height: 170px !important;
+            }
         }
-        .card.changePlanCard{
-            height: 165px !important;
-        }
-        .card.active{
-         background-color: $primaryColor !important;
-         color: white !important;
-        }
-        .invoiceDocumentContainer{
-            height: 170px !important;
-        
-        }
-    }
-    .serviceContent,.MerchandiseContent{
-        .serviceTable,.MerchandiseTable{
-            min-width: 800px;
-            thead{
-                th{
-                    padding:0.5rem 1rem;
-                    border-bottom:1px $lightGray;
-                    border-style:dashed;
-                    font-weight: 600;
-                    font-size: 0.9rem;
-                    color: $textDisabledColor;
+        .serviceContent,
+        .MerchandiseContent {
+            .serviceTable,
+            .MerchandiseTable {
+                min-width: 800px;
+                thead {
+                    th {
+                        padding: 0.5rem 1rem;
+                        border-bottom: 1px $lightGray;
+                        border-style: dashed;
+                        font-weight: 600;
+                        font-size: 0.9rem;
+                        color: $textDisabledColor;
+                    }
+                }
+                .ScrollBody {
+                    max-height: 250px;
+                    tbody {
+                        td {
+                            padding: 1rem;
+                        }
+                    }
                 }
             }
-            .ScrollBody{
-                max-height: 250px;
-                tbody{
-                    td{
-                        padding: 1rem;
-                    }
-                   }
-            }
-      
         }
     }
-    }
 }
-.rentalAgreementContainer{
+.rentalAgreementContainer {
     height: 250px !important;
     min-width: 800px;
 }
-.pricesummaryLoader{
+.pricesummaryLoader {
     margin: 50px auto !important;
 }
-.w-sm-100{
-    @include for-mobile{
+.w-sm-100 {
+    @include for-mobile {
         width: 100% !important;
-    } 
+    }
 }
-.pagination-div{
-    .ui.menu{
+.pagination-div {
+    .ui.menu {
         background-color: transparent !important;
         border: 0 !important;
         box-shadow: none !important;
-        .item{
+        .item {
             min-width: 0em;
             padding: 0.7rem !important;
-            &::before{
+            &::before {
                 display: none;
             }
-            @include for-mobile{
+            @include for-mobile {
                 padding: 0.6rem !important;
             }
         }
-        .item.active{
+        .item.active {
             background-color: transparent !important;
             color: $primaryColor;
         }
     }
 }
-input[type=checkbox] {
-    accent-color: #2c7a22  !important;
-  }
-.ml-4px{
+input[type="checkbox"] {
+    accent-color: #2c7a22 !important;
+}
+.ml-4px {
     margin-left: 4px !important;
 }
 .ui.breadcrumb .icon.divider {
     font-size: 1em !important;
 }
-.success-label-leases{
+.success-label-leases {
     font-size: 0.8rem !important;
     color: $UnitsDropdownBg !important;
     background-color: $LabelSuccessBg !important;
     border-radius: 5px !important;
 }
-.danger-label-leases{
+.danger-label-leases {
     font-size: 0.8rem !important;
     color: $Error !important;
     background-color: $LabelDangerBg !important;
@@ -153,19 +153,36 @@ input[type=checkbox] {
 .field .noCounterNumber .ui.dropdown input {
     width: 100% !important;
 }
-.ui.icon.input{
-    input{
-        &:hover{
+.ui.icon.input {
+    input {
+        &:hover {
             cursor: pointer;
         }
     }
-} 
-
-iframe #accountform_form, .accountForm{
-margin:auto!important;
 }
 
-.noUnits-Found{
+iframe #accountform_form,
+.accountForm {
+    margin: auto !important;
+}
+
+.noUnits-Found {
     display: flex;
     justify-content: center;
+}
+
+li.page-item a.page-link {
+    color: gray;
+    &:visited {
+        color: #2c7a22;
+    }
+    &:hover {
+        color: #2c7a22;
+    }
+    &.active {
+        color: #fff;
+        background-color: #2c7a22;
+        padding: 5px;
+        border-radius: 5px;
+    }
 }
