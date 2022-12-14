@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Icon, Pagination } from 'semantic-ui-react';
+import { Icon, Pagination, Loader } from 'semantic-ui-react';
 
 export default function MYInvoices() {
   const [checkedAll, setCheckedAll] = useState(false);
   const [checked, setChecked] = useState({
     chk: false,
   });
+  const [loader, setLoading] = useState(true);
+
 
   const selectAll = (value) => {
     setCheckedAll(value);

@@ -380,10 +380,7 @@ export default function RentingDetails() {
                           <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
                         </div>
                       }
-
-
                     }) : ''}
-
                 </div>
               </div>
 
