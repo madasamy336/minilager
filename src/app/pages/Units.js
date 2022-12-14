@@ -8,6 +8,8 @@ import instance from '../services/instance';
 import request from '../services/request';
 
 const Units = () => {
+
+    const [tentTypes , setTenantTypes] = useState('');
     const [UnitResponse, setUnitResponse] = useState(null);
     const [storageTypeValue, setStorageTypeValue] = useState('');
     const [filterRequest, setFilterRequest] = useState('')
@@ -194,14 +196,20 @@ const Units = () => {
         {
             key: 1,
             text: 'Personal User',
-            value: 'Personal User'
+            value: 'false'
         },
         {
             key: 2,
             text: 'Business User',
-            value: 'Business User',
+            value: 'true',
         },
     ]
+
+
+    const tenantInfoChange = (event,data)=>{
+        setTenantTypes(data.value);
+        sessionStorage.setItem("isBussinessUser", data.value);
+    }
 
     const storageTypeOptions = typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof filters.storageType !== 'undefined' && filters.storageType !== null && filters.storageType !== "" && filters.storageType.length > 0 ?
         filters.storageType.map(storageType => {
@@ -257,7 +265,8 @@ const Units = () => {
                         <h2 className='text-center'>Find Your Storage Place</h2>
                         <div className='row'>
                             <div className='col-lg-6 col-md-6 col-sm-12'>
-                                <Dropdown placeholder="Choose Tenant Type" clearable fluid search selection options={tenantTypeOptions} />
+                                {typeof tenantTypeOptions !=="undefined" && tenantTypeOptions !==null && tenantTypeOptions !=="" && tenantTypeOptions.length > 0  ?   <Dropdown  placeholder="Choose Tenant Type" clearable fluid search selection options={tenantTypeOptions} value={tentTypes} onChange= {tenantInfoChange}  />  : null}
+                              
                             </div>
                             <div className='col-lg-6 col-md-6 col-sm-12'>
                                 {storageTypeOptions !== null && typeof storageTypeOptions !== 'undefined' && storageTypeOptions !== '' && typeof storageTypeOptions[0].value !== 'undefined' && storageTypeOptions[0].value !== null && storageTypeOptions[0].value !== '' ?
