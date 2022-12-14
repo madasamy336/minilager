@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { Button, Dropdown, Input } from 'semantic-ui-react';
+import { Button, Dropdown, Input, Loader } from 'semantic-ui-react';
 import SemanticDatepicker from 'react-semantic-ui-datepickers';
 import 'react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css';
 import countriecodes from '../../../components/CountryCode';
@@ -108,11 +108,11 @@ export default function Profile() {
         "Authorization": `Bearer  5Yu5sIUiF+HEB/Fg/kuJNZ7kgz78oTDmEogfTgTJH4+mXQdh/WoXJbZSX67yNf8Rr2ZFaEfPI/Ruw/lMiFtmTw==Xpto4oAFPkK+Huo5T+Z+sA==`,
         "Content-Type": "multipart/form-data; boundary=----787208ea84637614785e28ded8a6a7b8",
         "accept": "application/json",
-        "Content-Length": `int(13286)`,
+        // "Content-Length": `int(1000000)`,
         "Pragma": `no-cache`,
         "Cache-Control": `no-cache`,
         "Accept-Language": `en-US,en;q=0.9`,
-        "Accept-Encoding": `gzip, deflate, br`
+        // "Accept-Encoding": `gzip, deflate, br`
       }
     };
     let file = new File([blobImage], `${userId}_.png`, { type: "image/png" });
@@ -193,6 +193,9 @@ export default function Profile() {
 
   return (
     <>
+     {isLoading ? (
+          <Loader size='large' active>Loading</Loader>
+        ) : (
       <div className="mx-2 mx-sm-1">
         <ToastContainer />
         <div className="bg-white card-boxShadow border-radius-15 py-2 mb-2">
@@ -482,7 +485,7 @@ export default function Profile() {
             </div>
           </div>
         </div>
-      </div>
+      </div>)}
     </>
   )
 }

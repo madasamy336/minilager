@@ -20,8 +20,9 @@ export default function TenantDetails() {
   const [profileImageSrc, setprofileImageSrc] = useState({
     img: '/assets/images/userDemoProfile.svg'
   });
-  const [photoPath , setPhotopath] = useState(null);
-  const[blobImage, setblobImage] = useState();
+  const [photoPath, setPhotopath] = useState(null);
+  const [blobImage, setblobImage] = useState();
+  const [imagesize, setImageSize] = useState();
   // <button onClick={e => tenantInfoFinal(e)} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">NEXT</button>
   // <button onClick={() => SetCreditCheckModal({ open: true, dimmer: 'blurring' })} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">NEXT</button>
   const [TenantInfoDetails, setTenantInfoDetails] = useState({
@@ -44,10 +45,10 @@ export default function TenantDetails() {
     firstName: '',
     email: '',
     phoneNumber: '',
-    addressLineOne:'',
+    addressLineOne: '',
     city: '',
-    state:'',
-    zipCode:''
+    state: '',
+    zipCode: ''
   });
 
   const [emergencyContactDetails, setEmergencyContactDetails] = useState({
@@ -66,7 +67,7 @@ export default function TenantDetails() {
 
   const [imguploadStatus, SetimguploadStatus] = useState(false);
   const [contactaccordian, SetContactaccordian] = useState([]);
-  
+
 
   const [creditStatus, SetCreditStatus] = useState(false);
   const [creditCheckModal, SetCreditCheckModal] = useState({
@@ -188,38 +189,43 @@ export default function TenantDetails() {
       alert('Please make sure the file size is less than 1mb and try again')
       return false;
     }
-
+    setImageSize(img.size);
     if (e.target.files && e.target.files[0]) {
       setprofileImageSrc({ img: URL.createObjectURL(img) });
-      const blob = new Blob([img],{type: 'image/png'});
+      const blob = new Blob([img], { type: 'image/png' });
       setblobImage(blob);
       SetimguploadStatus(true);
+      saveTenantPhoto();
 
     }
-    
+
   }
+
 
   function saveTenantPhoto() {
     // let image = document.getElementById('tenantProfileImage').src
     // console.log(image);
+    const date = new Date();
+    let time = date.getTime();
     let userId = localStorage.getItem('userid');
+    let file = new File([blobImage], `${userId}_.png`, { type: "image/png" });
     let config = {
       headers: {
-        "Authorization": `Bearer  5Yu5sIUiF+HEB/Fg/kuJNZ7kgz78oTDmEogfTgTJH4+mXQdh/WoXJbZSX67yNf8Rr2ZFaEfPI/Ruw/lMiFtmTw==Xpto4oAFPkK+Huo5T+Z+sA==`,
-        "Content-Type": "multipart/form-data; boundary=----787208ea84637614785e28ded8a6a7b8",
+        "Authorization": `Bearer 5Yu5sIUiF+HEB/Fg/kuJNZ7kgz78oTDmEogfTgTJH4+mXQdh/WoXJbZSX67yNf8Rr2ZFaEfPI/Ruw/lMiFtmTw==Xpto4oAFPkK+Huo5T+Z+sA==`,
+        "Content-Type": `multipart/form-data; boundary=----${time}`,
+        "Content-Length":`${imagesize}`,
         "accept": "application/json",
-        "Content-Length": `int(13286)`,
         "Pragma": `no-cache`,
         "Cache-Control": `no-cache`,
         "Accept-Language": `en-US,en;q=0.9`,
         "Accept-Encoding": `gzip, deflate, br`
       }
     };
-    let file = new File([blobImage], `${userId}_.png`, { type: "image/png" });
+    
     let timestamp = new Date().getTime();
 
     let fileName = `${userId}_${timestamp}.png`;
-    
+
     let uploadRequest = {
       FileName: fileName,
       FileData: file
@@ -227,10 +233,10 @@ export default function TenantDetails() {
     instance.post(request.add_profile_picture + userId, uploadRequest, config).then(response => {
       return response;
     }).then(data => {
-        const profileResponse = data;
-      }).catch((err) => {
-        console.log(err);
-      })
+      const profileResponse = data;
+    }).catch((err) => {
+      console.log(err);
+    })
 
   }
   const dateOfBirthChange = (e, date) => {
@@ -240,18 +246,19 @@ export default function TenantDetails() {
 
   const leaseProfileSave = (e) => {
     let emergencyContactArray = [];
-    if(contactaccordian.length > 0){
-      sessionStorage.setItem('emergencyDetail',JSON.stringify(contactaccordian));
-      contactaccordian.forEach((item)=> {
-        emergencyContactArray.push({id:null,
-          firstName:item.name,
-          lastName:item.lname,
-          email:item.email,
-          mobile:item.phone
-         })
+    if (contactaccordian.length > 0) {
+      sessionStorage.setItem('emergencyDetail', JSON.stringify(contactaccordian));
+      contactaccordian.forEach((item) => {
+        emergencyContactArray.push({
+          id: null,
+          firstName: item.name,
+          lastName: item.lname,
+          email: item.email,
+          mobile: item.phone
+        })
       })
 
-    }else{
+    } else {
       emergencyContactArray = [];
     }
     let config = {
@@ -288,7 +295,6 @@ export default function TenantDetails() {
       .then(response => {
         if (response.data.result !== null && response.data.result !== 'undefined') {
           sessionStorage.setItem("leaseProfileid", response.data.result);
-          saveTenantPhoto()
           navigateEsign(e);
 
         }
@@ -383,10 +389,10 @@ export default function TenantDetails() {
       lastName: "",
       email: "",
       phoneNumber: "",
-      addressLineOne:"",
+      addressLineOne: "",
       city: "",
-      state:"",
-      zipCode:""
+      state: "",
+      zipCode: ""
     }
     let isValid = true;
     if (!TenantInfoDetails.firstName) {
@@ -415,21 +421,21 @@ export default function TenantDetails() {
     }
     if (!isValid) {
       setTenantInfoError(TenantInfoError);
-    }else{
+    } else {
       updateTenantInfo();
       leaseProfileSave(e)
     }
-   
+
 
   }
 
 
   useEffect(() => {
     tenantInfo();
-    if(emergencyDetail){
+    if (emergencyDetail) {
       SetContactaccordian(JSON.parse(emergencyDetail))
     }
-    
+
   }, [])
 
 
@@ -441,7 +447,7 @@ export default function TenantDetails() {
     addressLineOne: addressLine1Error,
     city: cityError,
     state: stateError,
-    zipCode:postalError
+    zipCode: postalError
 
   } = TenantInfoError;
 
@@ -451,7 +457,7 @@ export default function TenantDetails() {
     emergencyphoneno: phone_err
 
   } = emergencyContactErr;
- 
+
   console.log(contactaccordian);
 
   return (
@@ -508,10 +514,10 @@ export default function TenantDetails() {
                 <label className="position-absolute r-0 t-1 z-index-1 cursor-pointer" htmlFor="photoUpload"><img width='50' height='50' className="" alt="Edit Photo" src="/assets/images/edit-photo.svg" /></label>
               }
               {photoPath ?
-               <Image className="TenantDetailsProfileImage object-fit-cover" src={photoPath} size='medium' circular />
-               :  <Image className="TenantDetailsProfileImage object-fit-cover" src={profileImageSrc.img} size='medium' circular />
+                <Image className="TenantDetailsProfileImage object-fit-cover" src={photoPath} size='medium' circular />
+                : <Image className="TenantDetailsProfileImage object-fit-cover" src={profileImageSrc.img} size='medium' circular />
               }
-             
+
               <div className="text-center mt-1">
                 {!imguploadStatus &&
                   <label htmlFor="photoUpload" className="text-success fw-500 cursor-pointer">Upload Photo</label>
@@ -555,6 +561,18 @@ export default function TenantDetails() {
               <input className="noCounterNumber" type='number' name="ssn" placeholder='Social Security Number' value={TenantInfoDetails.ssn} onChange={(e) => handlechange(e)} />
             </div>
           </div>
+          <div className="col-12  col-md-6  px-4 px-sm-2">
+            <div className="field w-100  my-3">
+              <label className='fw-500 fs-7 mb-2'>Company Name</label>
+              <input className="noCounterNumber" type='number' name="ssn" placeholder='Company Name' value={TenantInfoDetails.ssn} onChange={(e) => handlechange(e)} />
+            </div>
+          </div>
+          <div className="col-12  col-md-6  px-4 px-sm-2">
+            <div className="field w-100  my-3">
+              <label className='fw-500 fs-7 mb-2'>Company registra</label>
+              <input className="noCounterNumber" type='number' name="ssn" placeholder='Social Security Number' value={TenantInfoDetails.ssn} onChange={(e) => handlechange(e)} />
+            </div>
+          </div>
           <div className="col-12  col-md-6  px-4 px-sm-2 my-3">
             <span>Are you Military user? <span className="mx-2"><input className="mr-1" type="checkbox" /><label>Yes</label></span><span><input className="mr-1" type="checkbox" /><label>No</label></span></span>
           </div>
@@ -576,7 +594,7 @@ export default function TenantDetails() {
           <div className="col-12 col-md-6 px-4 px-sm-2">
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-2'>Address Line 1</label>
-              <input type='text' placeholder='Address Line 1' name="addressLineOne" value={TenantInfoDetails.addressLineOne} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo}/>
+              <input type='text' placeholder='Address Line 1' name="addressLineOne" value={TenantInfoDetails.addressLineOne} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
               <div className="text-danger mt-1">{addressLine1Error}</div>
             </div>
           </div>

@@ -84,14 +84,11 @@ const CreditCardTab = (props) => {
                 const res = data.data.result;
                 if (res.isSuccess !== false && res.isSuccess === true && res.returnCode === "SUCCESS") {
                     props.listCardFunction();
+                    setShowCard(true)
                 }
             })
             .catch((err) => {
                 console.log(err);
-                // setMsg(languages.something_wrong_contact_support);
-                // setLoadingButton(false);
-                // setOpenSnack(true);
-                // setSeverity("error");
             });
     };
 
@@ -104,7 +101,9 @@ const CreditCardTab = (props) => {
                 <div>
                     {!showcard && <div className="ui form w-50 w-sm-100">
                         <iframe src={props.paymentFom} width="100%" height="800px" />
-
+                        <div className="mt-2 text-left">
+                            <button className="ui button text-dark fs-7 fw-400 px-5 mx-1 mb-sm-1 px-sm-2" onClick={() => showCardHandler()}>CANCEL</button>
+                        </div>
                         {/* <div className="field mb-3">
                             <label className="fw-500 mb-2">Name on the Card<i className="text-danger ">*</i></label>
                             <input placeholder='Name on the Card' />
