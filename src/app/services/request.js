@@ -31,7 +31,10 @@ const requests = {
     lease_agreement: "v1/moveIn/preview",
     movein_paymentform: "v1/moveIn/paymentform",
     lease_profile:"v1/moveIn/leaseProfile",
-    save_move:"v1/moveIn"
+    save_move:"v1/moveIn",
+    invoices: "v1/unit/invoice",
+    invoicePaymentForm: "v1/user/paymentform",
+    invoicePaymentFormSuccess: "v1/unit/payment",
 }
 
 export default requests; 

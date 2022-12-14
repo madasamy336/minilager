@@ -26,9 +26,9 @@ function App() {
     const error = useSelector(state => state.appConfig.error)
     const countries = useSelector(state => state.appConfig.countries);
     const dispatch = useDispatch()
-    // useEffect(() => {
-    //     dispatch(fetchAppConfig())
-    // }, [])
+    useEffect(() => {
+        dispatch(fetchAppConfig())
+    }, [])
     const Navigate = useNavigate();
     const windowWidth = window.innerWidth
     const [mobileWidth, SetmobileWidth] = useState();

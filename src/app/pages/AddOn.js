@@ -270,6 +270,7 @@ export default function AddOn() {
           console.log(preferredStorage);
           setAddOnsResponse(response.data.result[0].addOns);
           sessionStorage.setItem('preferredStorage', JSON.stringify(preferredStorage));
+          setLoader(false)
           if (serviceSessionValue !== null && typeof serviceSessionValue !== 'undefined') {
             serviceSessionValue.forEach((e) => {
               let servicesChecked = document.getElementById(`services_${e}`);
@@ -278,7 +279,6 @@ export default function AddOn() {
               }
               //
             })
-            setLoader(false)
           }
         }
       })
