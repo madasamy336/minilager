@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Icon, Item, ItemMeta, Pagination, Button, Modal } from 'semantic-ui-react';
+import { Icon, Item, ItemMeta, Pagination, Button, Modal, Placeholder, Loader, Segment, Image } from 'semantic-ui-react';
 import parse from "html-react-parser";
 import instance from "../../../services/instance";
 import request from '../../../services/request';
@@ -23,6 +23,7 @@ export default function MYInvoices() {
   const [mondelcontent, setModelcontent] = useState(``);
   const [currentPage, setCurrentPage] = useState(1);
   const [recordsPerPage] = useState(10);
+  const [isLoading, setLoader] = useState(false);
 
   const indexOfLastRecord = currentPage * recordsPerPage;
   const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
@@ -38,8 +39,9 @@ export default function MYInvoices() {
   }
 
   const nextPage = () => {
-    if (currentPage !== nPages)
+    if (currentPage !== nPages) {
       setCurrentPage(currentPage + 1)
+    }
   }
 
 
@@ -61,7 +63,7 @@ export default function MYInvoices() {
           TotalAmountArray.push(parseFloat(currentRecords[k].unPaidBalance));
         }
         totalAmount = TotalAmountArray.reduce((pre, curr) => pre + curr, 0);
-       
+
       }
     } else {
       setIsCheck(isCheck.filter(i => i !== id));
@@ -76,7 +78,7 @@ export default function MYInvoices() {
         TotalAmountArray.splice(indexunpdaid, 1);
       }
       totalAmount = TotalAmountArray.reduce((pre, curr) => pre + curr, 0);
-      if(typeof isCheck !=="undefined" && isCheck !==null && isCheck !=="" && isCheck.length === 1){
+      if (typeof isCheck !== "undefined" && isCheck !== null && isCheck !== "" && isCheck.length === 1) {
         setIsCheckAll(!isCheckAll);
         document.getElementById("selectedAllCheckbox").checked = false;
       }
@@ -97,7 +99,7 @@ export default function MYInvoices() {
         TotalAmountArray.push(item.unPaidBalance);
       });
       totalAmount = TotalAmountArray.reduce((pre, curr) => pre + curr, 0);
-     
+
     } else {
       TotalAmountArray = [];
       totalAmount = 0;
@@ -164,7 +166,7 @@ export default function MYInvoices() {
 
 
   const customInvoices = () => {
-
+    setLoader(true)
     let config = {
       headers: {
         "Content-Type": "application/json",
@@ -189,6 +191,7 @@ export default function MYInvoices() {
           }
 
         }
+        setLoader(false)
       })
       .catch((error) => {
         console.log(error);
@@ -271,75 +274,85 @@ export default function MYInvoices() {
             </div>
           </div>
           <div className="myInvoiceTable">
-            <table className="w-100">
-              <thead>
-                <tr>
-                  <th className="text-center"><input type="checkbox" id ="selectedAllCheckbox"  onChange={(e) => selectAllCheckBox(e)} /></th>
-                  <th className="text-center">Invoice Amount</th>
-                  <th className="text-center">Invoice Date</th>
-                  <th className="text-center">Paid On</th>
-                  <th className="text-center">Invoice Details</th>
-                  <th className="text-center">Payment Receipt</th>
-                </tr>
-              </thead>
-              <tbody>
-                {typeof currentRecords !== "undefined" && currentRecords !== null && currentRecords !== "" && currentRecords.length > 0 ?
-                  currentRecords.map((item) => {
-                    return <tr key={item.id}>
-                      <td className="text-center">
-                        {item.invoiceStatus === "PAID" ? <input type="checkbox" disabled /> : item.invoiceStatus === "UNPAID" ? <input type="checkbox" name = {item.id} id={item.id} checked={isCheck.includes(item.id)} value={item.id} onChange={(e) => selectInvoice(e, e.target.value, item.invoiceNo, item.unPaidBalance)} /> : ''}
-                      </td>
-                      <td className="text-center">
-                        <p className="fw-500">
-                          {item.invoiceStatus === "PAID" ? <label className="success-label">PAID</label> : item.invoiceStatus === "UNPAID" ? <label className="danger-label">NOTPAID</label> : ''}
-                          &nbsp; {helper.displayCurrency(item.invoiceAmount)}</p>
-                      </td>
-                      <td className="text-center"><p className="fw-500">{helper.show_date_format2(item.invoiceDate)}</p></td>
-                      <td className="text-center">
-                        {typeof item.receiptDetails !== "undefined" && item.receiptDetails !== null && item.receiptDetails !== "" && item.receiptDetails.length > 0 && item.invoiceStatus === "PAID" ?
-                          <p className="fw-500">{helper.show_date_format2(item.receiptDetails[0].paidOn)}</p> : "-"
-                        }
-                      </td>
-                      <td className="text-center"><p>Invoice#: {item.invoiceNo}
-                        {typeof item.invoiceUrl !== "undefined" && item.invoiceUrl !== null && item.invoiceUrl !== "" ? <a href={item.invoiceUrl} target="_blank" rel="noreferrer"><label><svg className="ml-1 cursor-pointer" id="Layer_1" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 363.2 384.08"><path d="M181.19,384.05c-42.35,0-84.69,.09-127.04-.03-26.03-.08-47.02-16.85-52.68-41.94-.94-4.19-1.34-8.58-1.37-12.88-.14-20-.14-40,.03-60,.02-2.87,.39-6.66,2.18-8.37,2.48-2.38,6.39-4.2,9.81-4.43,4.19-.28,7.45,2.76,8.65,7.02,.62,2.2,.74,4.6,.75,6.91,.06,19.33,0,38.67,.04,58,.05,21.13,13.23,34.45,34.27,34.46,83.86,.04,167.72,.05,251.57,0,20.65-.01,34.17-13.53,34.26-34.12,.09-20.17,0-40.34,.04-60.51,.02-6.14,2.3-9.69,7.03-11.43,6.31-2.32,13.9,1.83,13.95,8.67,.19,24.32,1.44,48.79-.85,72.91-2.61,27.42-25.43,45.64-53.11,45.72-42.51,.12-85.03,.03-127.54,.03Z" /><path d="M170.86,239.4v-5.42c0-72.67,0-145.33,0-218,0-1,0-2,0-3C170.91,4.98,174.98,.02,181.49,0c6.61-.02,10.61,4.76,10.61,12.93,.02,73.5,.01,147,.01,220.5,0,1.97,0,3.93,0,7.21,2.07-1.88,3.37-2.97,4.56-4.16,20.28-20.26,40.52-40.56,60.88-60.75,1.94-1.92,4.38-3.81,6.93-4.55,4.55-1.31,8.63,.3,11.27,4.4,2.61,4.06,2.35,8.23-.42,12.15-.85,1.21-1.97,2.25-3.03,3.31-26.99,26.99-53.98,53.98-80.98,80.96-7.29,7.28-12.28,7.28-19.59-.01-27-26.98-54.01-53.96-80.95-81-1.84-1.85-3.81-3.99-4.62-6.38-1.51-4.43-.38-8.58,3.47-11.64,3.55-2.83,8.77-2.99,12.56-.27,1.61,1.16,3.03,2.6,4.44,4.01,19.82,19.78,39.63,39.57,59.39,59.41,1.27,1.27,2.1,2.97,3.13,4.48,.56-.4,1.13-.81,1.69-1.21Z" /></svg></label>
-                        </a> : <a href="javascript:void(0);"><label><svg className="ml-1 cursor-pointer" id="Layer_1" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 363.2 384.08"><path d="M181.19,384.05c-42.35,0-84.69,.09-127.04-.03-26.03-.08-47.02-16.85-52.68-41.94-.94-4.19-1.34-8.58-1.37-12.88-.14-20-.14-40,.03-60,.02-2.87,.39-6.66,2.18-8.37,2.48-2.38,6.39-4.2,9.81-4.43,4.19-.28,7.45,2.76,8.65,7.02,.62,2.2,.74,4.6,.75,6.91,.06,19.33,0,38.67,.04,58,.05,21.13,13.23,34.45,34.27,34.46,83.86,.04,167.72,.05,251.57,0,20.65-.01,34.17-13.53,34.26-34.12,.09-20.17,0-40.34,.04-60.51,.02-6.14,2.3-9.69,7.03-11.43,6.31-2.32,13.9,1.83,13.95,8.67,.19,24.32,1.44,48.79-.85,72.91-2.61,27.42-25.43,45.64-53.11,45.72-42.51,.12-85.03,.03-127.54,.03Z" /><path d="M170.86,239.4v-5.42c0-72.67,0-145.33,0-218,0-1,0-2,0-3C170.91,4.98,174.98,.02,181.49,0c6.61-.02,10.61,4.76,10.61,12.93,.02,73.5,.01,147,.01,220.5,0,1.97,0,3.93,0,7.21,2.07-1.88,3.37-2.97,4.56-4.16,20.28-20.26,40.52-40.56,60.88-60.75,1.94-1.92,4.38-3.81,6.93-4.55,4.55-1.31,8.63,.3,11.27,4.4,2.61,4.06,2.35,8.23-.42,12.15-.85,1.21-1.97,2.25-3.03,3.31-26.99,26.99-53.98,53.98-80.98,80.96-7.29,7.28-12.28,7.28-19.59-.01-27-26.98-54.01-53.96-80.95-81-1.84-1.85-3.81-3.99-4.62-6.38-1.51-4.43-.38-8.58,3.47-11.64,3.55-2.83,8.77-2.99,12.56-.27,1.61,1.16,3.03,2.6,4.44,4.01,19.82,19.78,39.63,39.57,59.39,59.41,1.27,1.27,2.1,2.97,3.13,4.48,.56-.4,1.13-.81,1.69-1.21Z" /></svg></label>
-                        </a>}
-                      </p>
-                      </td>
-                      <td className="text-center">
-                        {typeof item.receiptDetails !== "undefined" && item.receiptDetails !== null && item.receiptDetails !== "" && item.receiptDetails.length > 0 ?
-                          <p>Receipt#: {item.receiptDetails[0].receiptNo}
-                            {typeof item.receiptDetails[0].receiptUrl !== "undefined" && item.receiptDetails[0].receiptUrl !== null && item.receiptDetails[0].receiptUrl !== "" ?
-                              <a href={item.receiptDetails[0].receiptUrl} target="_blank" rel="noreferrer"><label><svg className="ml-1 cursor-pointer" id="Layer_1" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 363.2 384.08"><path d="M181.19,384.05c-42.35,0-84.69,.09-127.04-.03-26.03-.08-47.02-16.85-52.68-41.94-.94-4.19-1.34-8.58-1.37-12.88-.14-20-.14-40,.03-60,.02-2.87,.39-6.66,2.18-8.37,2.48-2.38,6.39-4.2,9.81-4.43,4.19-.28,7.45,2.76,8.65,7.02,.62,2.2,.74,4.6,.75,6.91,.06,19.33,0,38.67,.04,58,.05,21.13,13.23,34.45,34.27,34.46,83.86,.04,167.72,.05,251.57,0,20.65-.01,34.17-13.53,34.26-34.12,.09-20.17,0-40.34,.04-60.51,.02-6.14,2.3-9.69,7.03-11.43,6.31-2.32,13.9,1.83,13.95,8.67,.19,24.32,1.44,48.79-.85,72.91-2.61,27.42-25.43,45.64-53.11,45.72-42.51,.12-85.03,.03-127.54,.03Z" /><path d="M170.86,239.4v-5.42c0-72.67,0-145.33,0-218,0-1,0-2,0-3C170.91,4.98,174.98,.02,181.49,0c6.61-.02,10.61,4.76,10.61,12.93,.02,73.5,.01,147,.01,220.5,0,1.97,0,3.93,0,7.21,2.07-1.88,3.37-2.97,4.56-4.16,20.28-20.26,40.52-40.56,60.88-60.75,1.94-1.92,4.38-3.81,6.93-4.55,4.55-1.31,8.63,.3,11.27,4.4,2.61,4.06,2.35,8.23-.42,12.15-.85,1.21-1.97,2.25-3.03,3.31-26.99,26.99-53.98,53.98-80.98,80.96-7.29,7.28-12.28,7.28-19.59-.01-27-26.98-54.01-53.96-80.95-81-1.84-1.85-3.81-3.99-4.62-6.38-1.51-4.43-.38-8.58,3.47-11.64,3.55-2.83,8.77-2.99,12.56-.27,1.61,1.16,3.03,2.6,4.44,4.01,19.82,19.78,39.63,39.57,59.39,59.41,1.27,1.27,2.1,2.97,3.13,4.48,.56-.4,1.13-.81,1.69-1.21Z" /></svg></label>
-                              </a> : <a href="javascript:void(0);"><label><svg className="ml-1 cursor-pointer" id="Layer_1" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 363.2 384.08"><path d="M181.19,384.05c-42.35,0-84.69,.09-127.04-.03-26.03-.08-47.02-16.85-52.68-41.94-.94-4.19-1.34-8.58-1.37-12.88-.14-20-.14-40,.03-60,.02-2.87,.39-6.66,2.18-8.37,2.48-2.38,6.39-4.2,9.81-4.43,4.19-.28,7.45,2.76,8.65,7.02,.62,2.2,.74,4.6,.75,6.91,.06,19.33,0,38.67,.04,58,.05,21.13,13.23,34.45,34.27,34.46,83.86,.04,167.72,.05,251.57,0,20.65-.01,34.17-13.53,34.26-34.12,.09-20.17,0-40.34,.04-60.51,.02-6.14,2.3-9.69,7.03-11.43,6.31-2.32,13.9,1.83,13.95,8.67,.19,24.32,1.44,48.79-.85,72.91-2.61,27.42-25.43,45.64-53.11,45.72-42.51,.12-85.03,.03-127.54,.03Z" /><path d="M170.86,239.4v-5.42c0-72.67,0-145.33,0-218,0-1,0-2,0-3C170.91,4.98,174.98,.02,181.49,0c6.61-.02,10.61,4.76,10.61,12.93,.02,73.5,.01,147,.01,220.5,0,1.97,0,3.93,0,7.21,2.07-1.88,3.37-2.97,4.56-4.16,20.28-20.26,40.52-40.56,60.88-60.75,1.94-1.92,4.38-3.81,6.93-4.55,4.55-1.31,8.63,.3,11.27,4.4,2.61,4.06,2.35,8.23-.42,12.15-.85,1.21-1.97,2.25-3.03,3.31-26.99,26.99-53.98,53.98-80.98,80.96-7.29,7.28-12.28,7.28-19.59-.01-27-26.98-54.01-53.96-80.95-81-1.84-1.85-3.81-3.99-4.62-6.38-1.51-4.43-.38-8.58,3.47-11.64,3.55-2.83,8.77-2.99,12.56-.27,1.61,1.16,3.03,2.6,4.44,4.01,19.82,19.78,39.63,39.57,59.39,59.41,1.27,1.27,2.1,2.97,3.13,4.48,.56-.4,1.13-.81,1.69-1.21Z" /></svg></label>
-                              </a>
-                            }
-                          </p> : "NA"
-                        }
-                      </td>
-                    </tr>
+            {isLoading ? (<Segment>
+              <Placeholder fluid>
+                <Placeholder.Line />
+                <Placeholder.Line />
+                <Placeholder.Line />
+                <Placeholder.Line />
+                <Placeholder.Line />
+              </Placeholder></Segment>) : (
+              <table className="w-100">
+                <thead>
+                  <tr>
+                    <th className="text-center"><input type="checkbox" id="selectedAllCheckbox" onChange={(e) => selectAllCheckBox(e)} /></th>
+                    <th className="text-center">Invoice Amount</th>
+                    <th className="text-center">Invoice Date</th>
+                    <th className="text-center">Paid On</th>
+                    <th className="text-center">Invoice Details</th>
+                    <th className="text-center">Payment Receipt</th>
+                  </tr>
+                </thead>
+                <tbody>
 
-                  }) : ''
+                  {typeof currentRecords !== "undefined" && currentRecords !== null && currentRecords !== "" && currentRecords.length > 0 ?
+                    currentRecords.map((item) => {
+                      return <tr key={item.id}>
+                        <td className="text-center">
+                          {item.invoiceStatus === "PAID" ? <input type="checkbox" disabled /> : item.invoiceStatus === "UNPAID" ? <input type="checkbox" name={item.id} id={item.id} checked={isCheck.includes(item.id)} value={item.id} onChange={(e) => selectInvoice(e, e.target.value, item.invoiceNo, item.unPaidBalance)} /> : item.invoiceStatus === "PARTIALLY-PAID"  ? <input type="checkbox" disabled /> : ''}
+                        </td>
+                        <td className="text-center">
+                          <p className="fw-500">
+                            {item.invoiceStatus === "PAID" ? <label className="success-label">PAID</label> : item.invoiceStatus === "UNPAID" ? <label className="danger-label">NOT-PAID</label> : item.invoiceStatus === "PARTIALLY-PAID"  ? <label className="warning-label" color="orange">PARTIALLY-PAID</label> : ''}
+                            &nbsp; {helper.displayCurrency(item.invoiceAmount)}</p>
+                        </td>
+                        <td className="text-center"><p className="fw-500">{helper.show_date_format2(item.invoiceDate)}</p></td>
+                        <td className="text-center">
+                          {typeof item.receiptDetails !== "undefined" && item.receiptDetails !== null && item.receiptDetails !== "" && item.receiptDetails.length > 0 && item.invoiceStatus === "PAID" ?
+                            <p className="fw-500">{helper.show_date_format2(item.receiptDetails[0].paidOn)}</p> : "-"
+                          }
+                        </td>
+                        <td className="text-center"><p>Invoice#: {item.invoiceNo}
+                          {typeof item.invoiceUrl !== "undefined" && item.invoiceUrl !== null && item.invoiceUrl !== "" ? <a href={item.invoiceUrl} target="_blank" rel="noreferrer"><label><svg className="ml-1 cursor-pointer" id="Layer_1" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 363.2 384.08"><path d="M181.19,384.05c-42.35,0-84.69,.09-127.04-.03-26.03-.08-47.02-16.85-52.68-41.94-.94-4.19-1.34-8.58-1.37-12.88-.14-20-.14-40,.03-60,.02-2.87,.39-6.66,2.18-8.37,2.48-2.38,6.39-4.2,9.81-4.43,4.19-.28,7.45,2.76,8.65,7.02,.62,2.2,.74,4.6,.75,6.91,.06,19.33,0,38.67,.04,58,.05,21.13,13.23,34.45,34.27,34.46,83.86,.04,167.72,.05,251.57,0,20.65-.01,34.17-13.53,34.26-34.12,.09-20.17,0-40.34,.04-60.51,.02-6.14,2.3-9.69,7.03-11.43,6.31-2.32,13.9,1.83,13.95,8.67,.19,24.32,1.44,48.79-.85,72.91-2.61,27.42-25.43,45.64-53.11,45.72-42.51,.12-85.03,.03-127.54,.03Z" /><path d="M170.86,239.4v-5.42c0-72.67,0-145.33,0-218,0-1,0-2,0-3C170.91,4.98,174.98,.02,181.49,0c6.61-.02,10.61,4.76,10.61,12.93,.02,73.5,.01,147,.01,220.5,0,1.97,0,3.93,0,7.21,2.07-1.88,3.37-2.97,4.56-4.16,20.28-20.26,40.52-40.56,60.88-60.75,1.94-1.92,4.38-3.81,6.93-4.55,4.55-1.31,8.63,.3,11.27,4.4,2.61,4.06,2.35,8.23-.42,12.15-.85,1.21-1.97,2.25-3.03,3.31-26.99,26.99-53.98,53.98-80.98,80.96-7.29,7.28-12.28,7.28-19.59-.01-27-26.98-54.01-53.96-80.95-81-1.84-1.85-3.81-3.99-4.62-6.38-1.51-4.43-.38-8.58,3.47-11.64,3.55-2.83,8.77-2.99,12.56-.27,1.61,1.16,3.03,2.6,4.44,4.01,19.82,19.78,39.63,39.57,59.39,59.41,1.27,1.27,2.1,2.97,3.13,4.48,.56-.4,1.13-.81,1.69-1.21Z" /></svg></label>
+                          </a> : <a href="javascript:void(0);"><label><svg className="ml-1 cursor-pointer" id="Layer_1" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 363.2 384.08"><path d="M181.19,384.05c-42.35,0-84.69,.09-127.04-.03-26.03-.08-47.02-16.85-52.68-41.94-.94-4.19-1.34-8.58-1.37-12.88-.14-20-.14-40,.03-60,.02-2.87,.39-6.66,2.18-8.37,2.48-2.38,6.39-4.2,9.81-4.43,4.19-.28,7.45,2.76,8.65,7.02,.62,2.2,.74,4.6,.75,6.91,.06,19.33,0,38.67,.04,58,.05,21.13,13.23,34.45,34.27,34.46,83.86,.04,167.72,.05,251.57,0,20.65-.01,34.17-13.53,34.26-34.12,.09-20.17,0-40.34,.04-60.51,.02-6.14,2.3-9.69,7.03-11.43,6.31-2.32,13.9,1.83,13.95,8.67,.19,24.32,1.44,48.79-.85,72.91-2.61,27.42-25.43,45.64-53.11,45.72-42.51,.12-85.03,.03-127.54,.03Z" /><path d="M170.86,239.4v-5.42c0-72.67,0-145.33,0-218,0-1,0-2,0-3C170.91,4.98,174.98,.02,181.49,0c6.61-.02,10.61,4.76,10.61,12.93,.02,73.5,.01,147,.01,220.5,0,1.97,0,3.93,0,7.21,2.07-1.88,3.37-2.97,4.56-4.16,20.28-20.26,40.52-40.56,60.88-60.75,1.94-1.92,4.38-3.81,6.93-4.55,4.55-1.31,8.63,.3,11.27,4.4,2.61,4.06,2.35,8.23-.42,12.15-.85,1.21-1.97,2.25-3.03,3.31-26.99,26.99-53.98,53.98-80.98,80.96-7.29,7.28-12.28,7.28-19.59-.01-27-26.98-54.01-53.96-80.95-81-1.84-1.85-3.81-3.99-4.62-6.38-1.51-4.43-.38-8.58,3.47-11.64,3.55-2.83,8.77-2.99,12.56-.27,1.61,1.16,3.03,2.6,4.44,4.01,19.82,19.78,39.63,39.57,59.39,59.41,1.27,1.27,2.1,2.97,3.13,4.48,.56-.4,1.13-.81,1.69-1.21Z" /></svg></label>
+                          </a>}
+                        </p>
+                        </td>
+                        <td className="text-center">
+                          {typeof item.receiptDetails !== "undefined" && item.receiptDetails !== null && item.receiptDetails !== "" && item.receiptDetails.length > 0 ?
+                            <p>Receipt#: {item.receiptDetails[0].receiptNo}
+                              {typeof item.receiptDetails[0].receiptUrl !== "undefined" && item.receiptDetails[0].receiptUrl !== null && item.receiptDetails[0].receiptUrl !== "" ?
+                                <a href={item.receiptDetails[0].receiptUrl} target="_blank" rel="noreferrer"><label><svg className="ml-1 cursor-pointer" id="Layer_1" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 363.2 384.08"><path d="M181.19,384.05c-42.35,0-84.69,.09-127.04-.03-26.03-.08-47.02-16.85-52.68-41.94-.94-4.19-1.34-8.58-1.37-12.88-.14-20-.14-40,.03-60,.02-2.87,.39-6.66,2.18-8.37,2.48-2.38,6.39-4.2,9.81-4.43,4.19-.28,7.45,2.76,8.65,7.02,.62,2.2,.74,4.6,.75,6.91,.06,19.33,0,38.67,.04,58,.05,21.13,13.23,34.45,34.27,34.46,83.86,.04,167.72,.05,251.57,0,20.65-.01,34.17-13.53,34.26-34.12,.09-20.17,0-40.34,.04-60.51,.02-6.14,2.3-9.69,7.03-11.43,6.31-2.32,13.9,1.83,13.95,8.67,.19,24.32,1.44,48.79-.85,72.91-2.61,27.42-25.43,45.64-53.11,45.72-42.51,.12-85.03,.03-127.54,.03Z" /><path d="M170.86,239.4v-5.42c0-72.67,0-145.33,0-218,0-1,0-2,0-3C170.91,4.98,174.98,.02,181.49,0c6.61-.02,10.61,4.76,10.61,12.93,.02,73.5,.01,147,.01,220.5,0,1.97,0,3.93,0,7.21,2.07-1.88,3.37-2.97,4.56-4.16,20.28-20.26,40.52-40.56,60.88-60.75,1.94-1.92,4.38-3.81,6.93-4.55,4.55-1.31,8.63,.3,11.27,4.4,2.61,4.06,2.35,8.23-.42,12.15-.85,1.21-1.97,2.25-3.03,3.31-26.99,26.99-53.98,53.98-80.98,80.96-7.29,7.28-12.28,7.28-19.59-.01-27-26.98-54.01-53.96-80.95-81-1.84-1.85-3.81-3.99-4.62-6.38-1.51-4.43-.38-8.58,3.47-11.64,3.55-2.83,8.77-2.99,12.56-.27,1.61,1.16,3.03,2.6,4.44,4.01,19.82,19.78,39.63,39.57,59.39,59.41,1.27,1.27,2.1,2.97,3.13,4.48,.56-.4,1.13-.81,1.69-1.21Z" /></svg></label>
+                                </a> : <a href="javascript:void(0);"><label><svg className="ml-1 cursor-pointer" id="Layer_1" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 363.2 384.08"><path d="M181.19,384.05c-42.35,0-84.69,.09-127.04-.03-26.03-.08-47.02-16.85-52.68-41.94-.94-4.19-1.34-8.58-1.37-12.88-.14-20-.14-40,.03-60,.02-2.87,.39-6.66,2.18-8.37,2.48-2.38,6.39-4.2,9.81-4.43,4.19-.28,7.45,2.76,8.65,7.02,.62,2.2,.74,4.6,.75,6.91,.06,19.33,0,38.67,.04,58,.05,21.13,13.23,34.45,34.27,34.46,83.86,.04,167.72,.05,251.57,0,20.65-.01,34.17-13.53,34.26-34.12,.09-20.17,0-40.34,.04-60.51,.02-6.14,2.3-9.69,7.03-11.43,6.31-2.32,13.9,1.83,13.95,8.67,.19,24.32,1.44,48.79-.85,72.91-2.61,27.42-25.43,45.64-53.11,45.72-42.51,.12-85.03,.03-127.54,.03Z" /><path d="M170.86,239.4v-5.42c0-72.67,0-145.33,0-218,0-1,0-2,0-3C170.91,4.98,174.98,.02,181.49,0c6.61-.02,10.61,4.76,10.61,12.93,.02,73.5,.01,147,.01,220.5,0,1.97,0,3.93,0,7.21,2.07-1.88,3.37-2.97,4.56-4.16,20.28-20.26,40.52-40.56,60.88-60.75,1.94-1.92,4.38-3.81,6.93-4.55,4.55-1.31,8.63,.3,11.27,4.4,2.61,4.06,2.35,8.23-.42,12.15-.85,1.21-1.97,2.25-3.03,3.31-26.99,26.99-53.98,53.98-80.98,80.96-7.29,7.28-12.28,7.28-19.59-.01-27-26.98-54.01-53.96-80.95-81-1.84-1.85-3.81-3.99-4.62-6.38-1.51-4.43-.38-8.58,3.47-11.64,3.55-2.83,8.77-2.99,12.56-.27,1.61,1.16,3.03,2.6,4.44,4.01,19.82,19.78,39.63,39.57,59.39,59.41,1.27,1.27,2.1,2.97,3.13,4.48,.56-.4,1.13-.81,1.69-1.21Z" /></svg></label>
+                                </a>
+                              }
+                            </p> : "NA"
+                          }
+                        </td>
+                      </tr>
 
-                }
+                    }) : ''
 
-              </tbody>
-            </table>
+                  }
+
+                </tbody>
+              </table>)}
           </div>
         </div>
-        <div className='pagination-div mt-2 mb-3 text-center'>
-          <nav aria-label="Page navigation example">
-            <ul className="pagination">
-              <li className="page-item"><a className="page-link" onClick={prevPage} >Previous</a></li>
-              {typeof pageNumbers !== "undefined" && pageNumbers !== null && pageNumbers !== "" && pageNumbers.length > 0 ?
-                pageNumbers.map((pagNumber) => {
-                  return <li key={pagNumber} className="page-item"><a className="page-link" onClick={() => setCurrentPage(pagNumber)}>{pagNumber}</a></li>
-                }) : ""
-              }
-              <li className="page-item"><a className="page-link" onClick={nextPage} >Next</a></li>
-            </ul>
-          </nav>
-        </div>
+        {!isLoading ? (
+          <div className='pagination-div mt-2 mb-3 text-center'>
+            <nav aria-label="Page navigation example">
+              <ul className="pagination">
+                <li className="page-item"><a className="page-link" onClick={prevPage} >Previous</a></li>
+                {typeof pageNumbers !== "undefined" && pageNumbers !== null && pageNumbers !== "" && pageNumbers.length > 0 ?
+                  pageNumbers.map((pagNumber) => {
+                    return <li key={pagNumber} className="page-item"><a className={(currentPage === pagNumber ? 'active ' : '') + "page-link"} onClick={() => setCurrentPage(pagNumber)}>{pagNumber}</a></li>
+                  }) : ""
+                }
+                <li className="page-item"><a className="page-link" id="nextbtn" onClick={nextPage} >Next</a></li>
+              </ul>
+            </nav>
+          </div>) : ("")}
 
         {/** Payment Form Modal Start */}
         <Modal
