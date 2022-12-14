@@ -236,7 +236,7 @@ const AccordionExampleStyled = (selectedStorageType) => {
             <a href="/">Select All</a> | <a href="/">Clear All</a>
           </div>
           <ul>
-            {console.log(UnitTypeDimension)}
+          
             {typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof UnitTypeDimension !== 'undefined' && UnitTypeDimension !== null && UnitTypeDimension !== "" ?
               Object.keys(UnitTypeDimension).map(data => {
                 return UnitTypeDimension[data].map(dimension => {
@@ -263,7 +263,7 @@ const AccordionExampleStyled = (selectedStorageType) => {
         </div>
       </Accordion.Title>
       <Accordion.Content active={activeIndex === 4}>
-        {console.log(NewPriceValue)}
+       
         <div>
           <UnitsRangeSlider priceRange={NewPriceValue} />
         </div>
