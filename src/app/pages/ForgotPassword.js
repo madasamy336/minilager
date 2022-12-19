@@ -48,7 +48,7 @@ const ForgotPassword = () => {
         const validations = { userName: '' };
         let isValid = true;
         if (!userName) {
-            validations.userName = 'UserName is required';
+            validations.userName = 'Username is required';
             isValid = false;
         }
         if (!isValid) {
@@ -157,7 +157,7 @@ const ForgotPassword = () => {
                                     </svg>
                                 </div>
                                 <div className="form-control mb-2">
-                                    <label className="d-block mb-1">Email/User Name</label>
+                                    <label className="d-block mb-1">Email/User Name <span className="requiredfield">*</span></label>
                                     <div className="ui input w-100 position-relative">
                                         <input type="text" className="pl-5" placeholder="Enter Email/User Name" name="userName" value={userName} onChange={(e) => { handleChange(e) }} onBlur={validateOne} />
                                         <svg className="position-absolute l-1 t-1" id="user-svgrepo-com" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 30.667 30.667">

@@ -39,8 +39,12 @@ export default function MYInvoices() {
   }
 
   const nextPage = () => {
+    setLoader(true)
     if (currentPage !== nPages) {
-      setCurrentPage(currentPage + 1)
+      setTimeout(() => {
+        setCurrentPage(currentPage + 1)
+        setLoader(false)
+      }, 1500);
     }
   }
 
