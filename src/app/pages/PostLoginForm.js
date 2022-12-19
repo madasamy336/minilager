@@ -88,16 +88,16 @@ const PostLoginForm = (props) => {
         let isValid = true
 
         if (!username) {
-            validations.username = 'UserName is required'
+            validations.username = 'Username is required'
             isValid = false
         }
         if (username && !/\S+@\S+\.\S+/.test(username)) {
-            validations.username = 'UserName format must be as example@mail.com'
+            validations.username = 'Username format must be as example@mail.com'
             isValid = false
         }
 
         if (!password) {
-            validations.password = 'password is required'
+            validations.password = 'Password is required'
             isValid = false
         }
 
@@ -532,7 +532,7 @@ const PostLoginForm = (props) => {
                         </div>
                         <form>
                             <div className="form-control">
-                                <label className="d-block">User Name</label>
+                                <label className="d-block">Username <span className="requiredfield">*</span></label>
                                 <div className="ui input w-100 position-relative">
                                     <input type="text" name="username" placeholder="Enter First Name" value={username}
                                         onChange={(e) => { handleChange(e) }}
@@ -549,7 +549,7 @@ const PostLoginForm = (props) => {
                                 <div className="text-danger mt-1"> {nameVal}</div>
                             </div>
                             <div className="form-control">
-                                <label className="d-block">Password</label>
+                                <label className="d-block">Password <span className="requiredfield">*</span></label>
                                 <div className="ui input w-100 position-relative">
                                     <input type="password" placeholder="Enter Password"
                                         value={password} name="password"
