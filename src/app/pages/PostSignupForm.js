@@ -1,7 +1,7 @@
 import { Link,useNavigate } from "react-router-dom";
 import { Dropdown, Input } from "semantic-ui-react";
 import countriecodes from "../components/CountryCode";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import instance from '../services/instance';
 import request from '../services/request';
@@ -12,7 +12,10 @@ import 'react-toastify/dist/ReactToastify.css';
 
 
 export default function PostSignupForm(props) {
-        
+    const [toggle, setToggle] = useState(true);
+    const showPasswordHandler = () => {
+        setToggle(!toggle);
+    }
     const navigate = useNavigate();
     const dispatch = useDispatch();
     // getting culture 
@@ -92,22 +95,22 @@ export default function PostSignupForm(props) {
         const validations = { firstName: '', lastName: '', email: '', phoneNumber: '', password: '' }
         let isValid = true;
         if (!firstName) {
-            validations.firstName = 'Firstname is required';
+            validations.firstName = 'First Name is required';
             isValid = false;
         }
         if (!lastName) {
-            validations.lastName = 'Lastname  is required';
+            validations.lastName = 'Last Name  is required';
             isValid = false;
         }
         if (!email) {
-            validations.email = 'email  is required';
+            validations.email = 'Email  is required';
         }
         if (!phoneNumber) {
-            validations.phoneNumber = 'phonenumber  is required';
+            validations.phoneNumber = 'Phone Number  is required';
         }
 
         if (!password) {
-            validations.password = 'password  is required';
+            validations.password = 'Password  is required';
 
         }
 
@@ -178,6 +181,7 @@ export default function PostSignupForm(props) {
     } = validations
 
     return (
+        
         <>
                 <ToastContainer />
 
@@ -196,7 +200,7 @@ export default function PostSignupForm(props) {
                             </div>
                             <form>
                                 <div className="form-control">
-                                    <label className="d-block">First Name</label>
+                                    <label className="d-block">First Name <span className="requiredfield">*</span></label>
                                     <div className="ui input w-100 position-relative">
                                         <input type="text" placeholder="Enter First Name" name="firstName" value={firstName} onChange={(e) => { handleChange(e) }} onBlur={validateOne} />
                                         <svg className="position-absolute l-1 t-1" id="user-svgrepo-com" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 30.667 30.667">
@@ -210,7 +214,7 @@ export default function PostSignupForm(props) {
                                     <div className="text-danger mt-1"> {nameVal}</div>
                                 </div>
                                 <div className="form-control">
-                                    <label className="d-block">Last Name</label>
+                                    <label className="d-block">Last Name<span className="requiredfield">*</span></label>
                                     <div className="ui input w-100 position-relative">
                                         <input type="text" placeholder="Enter Last Name" name="lastName" value={lastName} onChange={(e) => { handleChange(e) }} onBlur={validateOne} />
                                         <svg className="position-absolute l-1 t-1" id="user-svgrepo-com" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 30.667 30.667">
@@ -224,7 +228,7 @@ export default function PostSignupForm(props) {
                                     <div className="text-danger mt-1"> {lastval}</div>
                                 </div>
                                 <div className="form-control">
-                                    <label className="d-block">Email Address</label>
+                                    <label className="d-block">Email Address<span className="requiredfield">*</span></label>
                                     <div className="ui input w-100 position-relative">
                                         <input type="text" placeholder="Enter Email Address" name="email" value={email} onChange={(e) => { handleChange(e) }} onBlur={validateOne} />
                                         <svg className="position-absolute l-1 t-1" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 28.667 28.667">
@@ -234,7 +238,7 @@ export default function PostSignupForm(props) {
                                     <div className="text-danger mt-1"> {emailval}</div>
                                 </div>
                                 <div className="field form-control w-100">
-                                    <label className="d-block">Mobile Number</label>
+                                    <label className="d-block">Mobile Number<span className="requiredfield">*</span></label>
                                     <div className="ui input w-100">
                                         <Input className="noCounterNumber w-100" type="tel" placeholder="Enter Mobile Number" onInput={(e) => { sixStorageCheckPhoneNumber(e) }} name="phoneNumber" value={phoneNumber} onBlur={validateOne} onChange={(e) => { handleChange(e) }}
                                             label={<Dropdown defaultValue='+91' search options={countriecodes} />}
@@ -243,15 +247,37 @@ export default function PostSignupForm(props) {
                                     <div className="text-danger mt-1"> {phoneNumberval}</div>
                                 </div>
                                 <div className="form-control">
-                                    <label className="d-block">Password</label>
+                                    <label className="d-block">Password<span className="requiredfield">*</span></label>
                                     <div className="ui input w-100 position-relative">
-                                        <input type="password" placeholder="Enter Password" name="password" value={password} onChange={(e) => { handleChange(e) }} onBlur={validateOne} />
+                                        <input type={toggle ? "password" : "text"}  placeholder="Enter Password" name="password" value={password} onChange={(e) => { handleChange(e) }} onBlur={validateOne} />
                                         <svg className="position-absolute l-1 t-1" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 22.036 32">
                                             <g id="password-svgrepo-com" transform="translate(-31.62)" opacity="0.21">
                                                 <path id="Path_18916" data-name="Path 18916" d="M50.9,11.539h-.521v-3.8a7.739,7.739,0,0,0-15.479,0v3.8h-.522A2.761,2.761,0,0,0,31.62,14.3V29.243A2.761,2.761,0,0,0,34.377,32H50.9a2.761,2.761,0,0,0,2.757-2.757V14.3A2.76,2.76,0,0,0,50.9,11.539Zm-13.636-3.8a5.376,5.376,0,0,1,10.752,0v3.8H37.262Zm14.03,21.5a.4.4,0,0,1-.394.394H34.377a.4.4,0,0,1-.394-.394V14.3a.4.4,0,0,1,.394-.394H50.9a.4.4,0,0,1,.394.394Z" />
                                                 <path id="Path_18917" data-name="Path 18917" d="M95.229,116.309a1.182,1.182,0,0,0-1.182,1.182v4.524a1.182,1.182,0,1,0,2.363,0v-4.524A1.182,1.182,0,0,0,95.229,116.309Z" transform="translate(-52.591 -97.983)" />
                                             </g>
                                         </svg>
+                                        {!toggle && <div onClick={showPasswordHandler}>
+                    <svg className="eyeopen position-absolute r-2 t-1" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 31.937 21.446">
+                        <g id="Group_56" data-name="Group 56" transform="translate(0 0)" opacity="0.65">
+                            <g id="password" transform="translate(0 0)">
+                                <path id="Path_93" data-name="Path 93" d="M878.2-407.131c.228-.29.464-.574.682-.872,2.62-3.56,5.766-6.5,9.985-8.034,5.525-2.011,10.626-.952,15.309,2.451a22.867,22.867,0,0,1,5.8,6.2.882.882,0,0,1,.111.754c-2.479,4.291-5.658,7.9-10.324,9.863-5.088,2.145-9.828,1.223-14.213-1.972a28.547,28.547,0,0,1-6.984-7.546,4.836,4.836,0,0,0-.37-.444Zm22.676.8a6.669,6.669,0,0,0-6.6-6.652,6.684,6.684,0,0,0-6.712,6.622,6.686,6.686,0,0,0,6.648,6.685,6.666,6.666,0,0,0,6.669-6.661Z" transform="translate(-878.19 417.051)" fill="#686868" />
+                                <path id="Path_94" data-name="Path 94" d="M971.814-358.949a3.951,3.951,0,0,1-3.954-4.059,3.949,3.949,0,0,1,4.059-3.953,3.948,3.948,0,0,1,3.953,4.057A3.948,3.948,0,0,1,971.814-358.949Z" transform="translate(-955.837 373.676)" fill="#686868" />
+                            </g>
+                        </g>
+                    </svg>
+                </div>}
+
+                {toggle && <div onClick={showPasswordHandler}>
+                    <svg className="eyeclose position-absolute r-2 t-1" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 31.937 25.414">
+                        <g id="Group_56" data-name="Group 56" transform="translate(0 0.707)" opacity="0.59">
+                            <g id="password" transform="translate(0 0)">
+                                <path id="Path_93" data-name="Path 93" d="M878.2-407.131c.228-.29.464-.574.682-.872,2.62-3.56,5.766-6.5,9.985-8.034,5.525-2.011,10.626-.952,15.309,2.451a22.867,22.867,0,0,1,5.8,6.2.882.882,0,0,1,.111.754c-2.479,4.291-5.658,7.9-10.324,9.863-5.088,2.145-9.828,1.223-14.213-1.972a28.547,28.547,0,0,1-6.984-7.546,4.836,4.836,0,0,0-.37-.444Zm22.676.8a6.669,6.669,0,0,0-6.6-6.652,6.684,6.684,0,0,0-6.712,6.622,6.686,6.686,0,0,0,6.648,6.685,6.666,6.666,0,0,0,6.669-6.661Z" transform="translate(-878.19 417.051)" fill="#686868" />
+                                <path id="Path_94" data-name="Path 94" d="M971.814-358.949a3.951,3.951,0,0,1-3.954-4.059,3.949,3.949,0,0,1,4.059-3.953,3.948,3.948,0,0,1,3.953,4.057A3.948,3.948,0,0,1,971.814-358.949Z" transform="translate(-955.837 373.676)" fill="#686868" />
+                            </g>
+                            <line id="Line_7" data-name="Line 7" y1="24" x2="24" transform="translate(4.242)" fill="none" stroke="#707070" strokeWidth="2" />
+                        </g>
+                    </svg>
+                </div>}
                                     </div>
                                     <div className="text-danger mt-1"> {paswordval}</div>
                                 </div>
