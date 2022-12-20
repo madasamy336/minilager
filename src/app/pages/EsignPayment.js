@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 import { useEffect } from 'react';
-import { json, useNavigate } from 'react-router-dom';
+import { json, useNavigate, } from 'react-router-dom';
 import PreBookingBreadcrumb from '../components/prebooking breadcrumb/PreBookingBreadcrumb';
 import instance from '../services/instance';
 import request from '../services/request';
 import Helper from "../helper";
 import PDFMerger from 'pdf-merger-js/browser';
 import ModalComponent from '../components/modal/ModalComponent';
-import { Modal, Button, Loader } from 'semantic-ui-react';
+import { Modal, Button, Loader, Placeholder ,Segment} from 'semantic-ui-react';
 import parse from "html-react-parser";
 let helper = new Helper();
 let unitDetailRespones = {};
@@ -29,7 +29,7 @@ export default function EsignPayment() {
   let facilityaddress = JSON.parse(sessionStorage.getItem('facilityaddress'));
   let checkPaymentModes = JSON.parse(sessionStorage.getItem('configdata')).paymentModes;
   let promoAppliedsession = sessionStorage.getItem("applypromo");
-  let makeSavedCardMandatory = JSON.parse(sessionStorage.getItem('configdata')).culture.isSavedCardsByDefault; 
+  let makeSavedCardMandatory = JSON.parse(sessionStorage.getItem('configdata')).culture.isSavedCardsByDefault;
   let tenantInfo = JSON.parse(sessionStorage.getItem('tenantIfo'));
   const [saveAgreement, setSaveAgreement] = useState();
   const [PaymentModal, setpaymentModal] = useState({ open: false, dimmer: undefined, })
@@ -405,7 +405,17 @@ export default function EsignPayment() {
                           </div>
                         });
                       })
-                      : <div className="ui active centered inline loader"></div>
+                      : <Segment raised>
+                        <Placeholder>
+                          <Placeholder.Header image>
+                            <Placeholder.Line />
+                            <Placeholder.Line />
+                          </Placeholder.Header>
+                          <Placeholder.Paragraph>
+                            <Placeholder.Line length='medium' />
+                            <Placeholder.Line length='short' />
+                          </Placeholder.Paragraph>
+                        </Placeholder></Segment>
 
                     }
                     <div className='row mt-2'>
@@ -632,27 +642,27 @@ export default function EsignPayment() {
         </Modal.Header>
         <Modal.Content className=' overflow-y-auto'>
           {iFrameResponse ?
-           makeSavedCardMandatory
-             ?
-             <div className='d-flex align-items-center justify-content-center error'> 
-              Note: The Card will be saved for auto payments
-             </div>
-             : <div>
-             <div className='d-flex align-items-center justify-content-center'>
-               <input type="checkbox" id="savedcard" checked={saveCard} onChange={(e) => { changeSavedCard(e) }} />
-               <div className='ml-2'>
-                 <p>Save this card for future transaction</p>
-               </div>
-             </div>
-             <div className='d-flex align-items-center justify-content-center'>
-               <input type="checkbox" id="autopayenabled" checked={autoPayEnabled} onChange={(e) => { changeAutoPayEnabled(e) }} />
-               <div className='ml-2'>
-                 <p>Use the saved card for future recurring payments </p>
-               </div>
-             </div>
-           </div>
-           
-             : ""
+            makeSavedCardMandatory
+              ?
+              <div className='d-flex align-items-center justify-content-center error'>
+                Note: The Card will be saved for auto payments
+              </div>
+              : <div>
+                <div className='d-flex align-items-center justify-content-center'>
+                  <input type="checkbox" id="savedcard" checked={saveCard} onChange={(e) => { changeSavedCard(e) }} />
+                  <div className='ml-2'>
+                    <p>Save this card for future transaction</p>
+                  </div>
+                </div>
+                <div className='d-flex align-items-center justify-content-center'>
+                  <input type="checkbox" id="autopayenabled" checked={autoPayEnabled} onChange={(e) => { changeAutoPayEnabled(e) }} />
+                  <div className='ml-2'>
+                    <p>Use the saved card for future recurring payments </p>
+                  </div>
+                </div>
+              </div>
+
+            : ""
           }
 
 
