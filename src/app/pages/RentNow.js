@@ -1,7 +1,6 @@
-import React, { useState,useRef } from "react";
+import React, { useState, useRef } from "react";
 import Card from "../components/rentnow/Cards";
 import { useTranslation } from "react-i18next";
-import { fetchFacilty } from '../redux/actions/facility/faciltyAction';
 import { useEffect } from 'react';
 import instance from '../services/instance';
 import request from '../services/request';
@@ -35,21 +34,21 @@ const RentNow = () => {
             })
     }
 
-    const searchFacilityDetail = ()=> {
+    const searchFacilityDetail = () => {
         let locationSearch = LocationResponse;
-        let filterResult = locationSearch.filter((i)=> (i.locationName.toLowerCase().includes(searchinput.current.value.toLowerCase())) || (i.address.addressLine1.toLowerCase().includes(searchinput.current.value.toLowerCase())) || (i.address.zipCode !== null && i.address.zipCode.includes(searchinput.current.value)) );
-        if(searchinput.current.value === ''){
+        let filterResult = locationSearch.filter((i) => (i.locationName.toLowerCase().includes(searchinput.current.value.toLowerCase())) || (i.address.addressLine1.toLowerCase().includes(searchinput.current.value.toLowerCase())) || (i.address.zipCode !== null && i.address.zipCode.includes(searchinput.current.value)));
+        if (searchinput.current.value === '') {
             filterResult = [];
         }
-        if(filterResult.length > 0){
+        if (filterResult.length > 0) {
             setLocationResponse(filterResult);
-        }else{
+        } else {
             fetchFaciltyDetail();
         }
-       
+
     }
     const facilitycall = () => {
-        if(searchinput.current.value === ''){
+        if (searchinput.current.value === '') {
             fetchFaciltyDetail();
         }
 
@@ -77,13 +76,13 @@ const RentNow = () => {
                                     <path id="Path_4" data-name="Path 4" d="M133.208,79.849a6.729,6.729,0,1,1-6.75-6.719,6.751,6.751,0,0,1,6.75,6.719Zm-2.694,0a4.035,4.035,0,1,0-4.017,4.042A4.073,4.073,0,0,0,130.514,79.852Z" transform="translate(-106.292 -64.907)" fill="#67be5c" />
                                 </g>
                             </svg>
-                            <input  ref={searchinput} className='border-0 border-radius-0' placeholder={t('Zip,City or Address')} type="text" /><i aria-hidden="true" className="search icon"></i><button className="ui button" onClick={searchFacilityDetail} onChange={()=>{facilitycall}}> {t('Search')}</button>
+                            <input ref={searchinput} className='border-0 border-radius-0' placeholder={t('Zip,City or Address')} type="text" /><i aria-hidden="true" className="search icon"></i><button className="ui button" onClick={searchFacilityDetail} onChange={() => { facilitycall }}> {t('Search')}</button>
                         </div>
-                        { LocationResponse ?
-                        <Card facilitydetails={LocationResponse} />: 
-                        <div className="ui active centered inline loader"></div>
+                        {LocationResponse ?
+                            <Card facilitydetails={LocationResponse} /> :
+                            <div className="ui active centered inline loader"></div>
                         }
-                        
+
                     </div>
                 </div>
             </div>
