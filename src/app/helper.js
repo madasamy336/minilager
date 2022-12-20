@@ -21,10 +21,11 @@ class Helper {
             this.culture = JSON.parse(sessionStorage.getItem("culture")).culture;
             this.currency = JSON.parse(sessionStorage.getItem("culture")).currency;
             this.dateFormat = JSON.parse(sessionStorage.getItem("culture")).dateFormat
-
+        } else {
+            this.culture = 'en-US';
+            this.currency = 'USD';
+            this.dateFormat = 'DD-MM-YYYY'
         }
-
-
     }
 
     checkPhoneNumber(event) {

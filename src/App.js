@@ -7,6 +7,7 @@ import Profile from './app/pages/postbooking/profile/Profile';
 import MyLeases from './app/pages/postbooking/my leases/MyLeases';
 import MYInvoices from './app/pages/postbooking/my invoices/MYInvoices';
 import Payment from './app/pages/postbooking/payment/Payment';
+import PrivateRoute from './app/components/ProtectedRoute';
 import Updatepassword from './app/pages/postbooking/update password/Updatepassword';
 import { useEffect, useState, React } from 'react';
 import PostSignupForm from './app/pages/PostSignupForm';
@@ -40,7 +41,7 @@ function App() {
         if (!user) {
             SetUserLoggediIn(false)
             // Navigate('/login');
-        }else{
+        } else {
             SetUserLoggediIn(true)
         }
         SetmobileWidth(windowWidth)
@@ -49,60 +50,31 @@ function App() {
     return (
         <>
 
-            <Header width={mobileWidth} sidebar={sidebar}  showSidebar={ShowSidebar} />
-            {location.pathname.startsWith('/postBooking') && <SidebarPostBooking width={mobileWidth} sidebar={sidebar} showSidebar={ShowSidebar}/>}
-                <div className={` pusher  ${location.pathname.startsWith('/postBooking') && `${mobileWidth>980 ? 'pusher-desktop ':'pt-120'}`} `} id='mainContent'>      
-                    <Routes>
-                        <Route exact path='/' element={<RentNow />} />
-                        <Route path='/login' element={<PostLoginForm callingfrom="postbooking" />} />
-                        <Route path='/preBooking/sign-in' element={<PostLoginForm callingfrom='prebooking'  />} />
-                        <Route path='/forgotpassword' element={<ForgotPassword />} />
-                        <Route path='/signup' element={<PostSignupForm  callingfrom ="postbooking"/>} />
-                        <Route path='/preBooking/signup' element={<PostSignupForm callingfrom ="prebooking" />} />
-                        <Route path='/preBooking/units' element={<Units />} />
-                        <Route path='/preBooking/rentingDetails' element={<RentingDetails />} />
-                        <Route path='/preBooking/addOns' element={<AddOn />} />
-                        <Route path='/preBooking/TenantDetails' element={<TenantDetails />} />
-                        <Route path='/preBooking/esignPayment' element={<EsignPayment />} />
-                        <Route path='/preBooking/thankyou' element={<SuccessfulMoveIn />} />
+            <Header width={mobileWidth} sidebar={sidebar} showSidebar={ShowSidebar} />
+            {location.pathname.startsWith('/postBooking') && <SidebarPostBooking width={mobileWidth} sidebar={sidebar} showSidebar={ShowSidebar} />}
+            <div className={` pusher  ${location.pathname.startsWith('/postBooking') && `${mobileWidth > 980 ? 'pusher-desktop ' : 'pt-120'}`} `} id='mainContent'>
+                <Routes>
 
-                  
-                    <Route path='/postBooking/Profile' element={<Profile />} />
-                    <Route path='/postBooking/myLeases' element={<MyLeases />} />
-                    <Route path='/postBooking/myInvoices' element={<MYInvoices />} />
-                    <Route path='/postBooking/payment' element={<Payment />} />
-                    <Route path='/postBooking/updatePassword' element={<Updatepassword />} />
-                    {/* <Route path='/postBooking/Profile'
-                            element={
-                                <Protected isLoggedIn={isUserLoggedIn}>
-                                    <Profile />
-                                </Protected>}
-                        />
-                        <Route path='/postBooking/myLeases'
-                            element={
-                                <Protected isLoggedIn={isUserLoggedIn}>
-                                    <MyLeases />
-                                </Protected>}
-                        />
-                        <Route path='/postBooking/myInvoices'
-                            element={
-                                <Protected isLoggedIn={isUserLoggedIn}>
-                                    <MYInvoices />
-                                </Protected>}
-                        />
-                        <Route path='/postBooking/payment'
-                            element={
-                                <Protected isLoggedIn={isUserLoggedIn}>
-                                    <Payment />
-                                </Protected>}
-                        />
-                        <Route path='/postBooking/updatePassword'
-                            element={
-                                <Protected isLoggedIn={isUserLoggedIn}>
-                                    <Updatepassword />
-                                </Protected>}
-                        />
-                    </Routes> */}
+                    <Route exact path='/' element={<RentNow />} />
+                    <Route path='/login' element={<PostLoginForm callingfrom="postbooking" />} />
+                    <Route path='/preBooking/sign-in' element={<PostLoginForm callingfrom='prebooking' />} />
+                    <Route path='/forgotpassword' element={<ForgotPassword />} />
+                    <Route path='/signup' element={<PostSignupForm callingfrom="postbooking" />} />
+                    <Route path='/preBooking/signup' element={<PostSignupForm callingfrom="prebooking" />} />
+                    <Route path='/preBooking/units' element={<Units />} />
+                    <Route path='/preBooking/rentingDetails' element={<RentingDetails />} />
+                    <Route path='/preBooking/addOns' element={<AddOn />} />
+                    <Route path='/preBooking/TenantDetails' element={<TenantDetails />} />
+                    <Route path='/preBooking/esignPayment' element={<EsignPayment />} />
+                    <Route path='/preBooking/thankyou' element={<SuccessfulMoveIn />} />
+
+                    <Route exact path='/' element={<PrivateRoute />}>
+                        <Route path='/postBooking/myLeases' element={<MyLeases />} />
+                        <Route path='/postBooking/myInvoices' element={<MYInvoices />} />
+                        <Route path='/postBooking/payment' element={<Payment />} />
+                        <Route path='/postBooking/updatePassword' element={<Updatepassword />} />
+                        <Route path='/postBooking/Profile' element={<Profile />} />
+                    </Route>
                 </Routes>
             </div>
 

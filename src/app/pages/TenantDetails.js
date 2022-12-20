@@ -1,7 +1,7 @@
 import PreBookingBreadcrumb from "../components/prebooking breadcrumb/PreBookingBreadcrumb";
 import { Dropdown, Image, Input, Modal } from "semantic-ui-react";
 import SemanticDatepicker from "react-semantic-ui-datepickers";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import TenantDetailEmergengyContactAccordian from "../components/tenantDetailsAccordian/TenantDetailsAccordian";
 import { json, useNavigate } from "react-router-dom";
 import countriecodes from "../components/CountryCode";
@@ -9,13 +9,21 @@ import instance from '../services/instance';
 import request from '../services/request';
 import Helper from "../helper";
 let helper = new Helper();
-
-
+let customFieldValue = [];
+let customValues;
+let Sdetails;
+let cusomfieldPhone;
+let customInputFieldValue;
 export default function TenantDetails() {
+  let unitid = localStorage.getItem('unitid');
   let userid = localStorage.getItem("userid");
   let preferredStorageValue = JSON.parse(sessionStorage.getItem("preferredStorage"));
   let leaseProfileId = sessionStorage.getItem('leaseProfileid');
   let emergencyDetail = sessionStorage.getItem('emergencyDetail');
+  let BusinessUser =  JSON.parse(sessionStorage.getItem('isBussinessUser'));
+  let customFieldAccess = JSON.parse(localStorage.getItem('CustomFieldsSetting'));
+  let unitDetailCustomField =JSON.parse(sessionStorage.getItem("customFieldstorage"));
+  let companyDetail = [];
   const navigate = useNavigate();
   const [profileImageSrc, setprofileImageSrc] = useState({
     img: '/assets/images/userDemoProfile.svg'
@@ -23,9 +31,12 @@ export default function TenantDetails() {
   const [photoPath, setPhotopath] = useState(null);
   const [blobImage, setblobImage] = useState();
   const [imagesize, setImageSize] = useState();
+  const companyName = useRef(null);
+  const companyRegistrationNumber = useRef(null);
   // <button onClick={e => tenantInfoFinal(e)} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">NEXT</button>
   // <button onClick={() => SetCreditCheckModal({ open: true, dimmer: 'blurring' })} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">NEXT</button>
-  const [TenantInfoDetails, setTenantInfoDetails] = useState({
+  const [TenantInfoDetails, setTenantInfoDetails] = useState(
+    {
     firstName: '',
     lastName: '',
     email: '',
@@ -38,7 +49,6 @@ export default function TenantDetails() {
     state: '',
     zipCode: '',
     ssn: '',
-
   });
 
   const [TenantInfoError, setTenantInfoError] = useState({
@@ -64,11 +74,8 @@ export default function TenantDetails() {
     emergencyphoneno: '',
   });
 
-
   const [imguploadStatus, SetimguploadStatus] = useState(false);
   const [contactaccordian, SetContactaccordian] = useState([]);
-
-
   const [creditStatus, SetCreditStatus] = useState(false);
   const [creditCheckModal, SetCreditCheckModal] = useState({
     open: false,
@@ -139,6 +146,9 @@ export default function TenantDetails() {
       emergencyContactErr.emergencyphoneno = "Phone No is Required";
       isValid = false;
     }
+    
+    
+    
     if (!isValid) {
       setEmergencyContactErr(emergencyContactErr);
     } else {
@@ -213,7 +223,7 @@ export default function TenantDetails() {
       headers: {
         "Authorization": `Bearer 5Yu5sIUiF+HEB/Fg/kuJNZ7kgz78oTDmEogfTgTJH4+mXQdh/WoXJbZSX67yNf8Rr2ZFaEfPI/Ruw/lMiFtmTw==Xpto4oAFPkK+Huo5T+Z+sA==`,
         "Content-Type": `multipart/form-data; boundary=----${time}`,
-        "Content-Length":`${imagesize}`,
+        "Content-Length": `${imagesize}`,
         "accept": "application/json",
         "Pragma": `no-cache`,
         "Cache-Control": `no-cache`,
@@ -221,7 +231,7 @@ export default function TenantDetails() {
         "Accept-Encoding": `gzip, deflate, br`
       }
     };
-    
+
     let timestamp = new Date().getTime();
 
     let fileName = `${userId}_${timestamp}.png`;
@@ -243,8 +253,80 @@ export default function TenantDetails() {
     TenantInfoDetails['birthDate'] = date.value;
 
   }
+  const checkCustomfieldValue = () => {
+    let customValue = JSON.parse(localStorage.getItem(`CustomFieldsSetting`));
+    let errorcount = 0;
+    if(customValue){
+      let filterUnitSpecificValue = customValue.filter(i => i.matadata.displayOn === 'Movein Tenant Details')
+      filterUnitSpecificValue.forEach((item)=> {
+        let customvalue = document.getElementById(`${item.matadata.type}_${item.fieldId}`);
+        let errordiv = document.getElementById(`${item.fieldId}`);
+       
+        if(item.matadata.isMandatory === true){
+          
+          if( item.matadata.type === 'textbox' && customvalue.value === ''){
+            errordiv.style.display="block";
+            errorcount = errorcount+1;
+            return
+          }else if(item.matadata.type === 'radio'){
+            debugger
+            let checkRadioButton = [];
+           let radiobutton = document.getElementsByName(`${item.matadata.type}_${item.fieldId}`);
+           radiobutton.forEach((item)=> {
+            checkRadioButton.push(item.checked);
+           })
+           if(checkRadioButton.length > 0 && checkRadioButton.includes(true) === false){
+            errordiv.style.display="block";
+            errorcount = errorcount+1;
+           }
+          }else if( item.matadata.type === "checkboxes" ){
+            let checkRadioButton = [];
+            let radiobutton = document.getElementsByName(`${item.matadata.type}_${item.fieldId}`);
+            radiobutton.forEach((item)=> {
+             checkRadioButton.push(item.checked);
+            })
+            if(checkRadioButton.length > 0 && checkRadioButton.includes(true) === false){
+              errordiv.style.display="block";
+              errorcount = errorcount+1;
+            }
+  
+          }else if( item.matadata.type === "checkbox"){
+            let checkRadioButton = [];
+           let radiobutton = document.getElementsByName(`${item.matadata.type}_${item.fieldId}`);
+           radiobutton.forEach((item)=> {
+            checkRadioButton.push(item.checked);
+           })
+           if(checkRadioButton.length > 0 && checkRadioButton.includes(true) === false){
+            errordiv.style.display="block";
+            errorcount = errorcount+1;
+          }
+          }
+          else if(item.matadata.type === 'textarea' && customvalue.value === ''){
+            errordiv.style.display="block";
+            errorcount = errorcount+1;
+            return
+          }else if(item.matadata.type === 'date'&& customvalue.value === ''){
+            errordiv.style.display="block";
+            errorcount = errorcount+1;
+            return
+          }else{
+            console.log('test')
+          }
+          
+         }
+      })
+     
+            if(errorcount === 0){
+              Array.prototype.push.apply(unitDetailCustomField,customFieldValue); 
+              // updateTenantInfo();
+              sessionStorage.setItem('customFieldstorage',JSON.stringify(unitDetailCustomField));
+              leaseProfileSave(unitDetailCustomField)
+              //sessionStorage.setItem("customFieldstorage",JSON.stringify(customFieldValue))
+             }
+    }
+    }
 
-  const leaseProfileSave = (e) => {
+  const leaseProfileSave = (customfield) => {
     let emergencyContactArray = [];
     if (contactaccordian.length > 0) {
       sessionStorage.setItem('emergencyDetail', JSON.stringify(contactaccordian));
@@ -276,7 +358,9 @@ export default function TenantDetails() {
         city: TenantInfoDetails.city,
         zipCode: TenantInfoDetails.zipCode
       },
+      companyDetails: BusinessUser ?companyDetail: {},
       deliveryAddress: {},
+      customFields:customfield ? customfield : [], 
       emergencyContact: emergencyContactArray,
       id: leaseProfileId ? leaseProfileId : "",
       tenantId: userid,
@@ -295,11 +379,9 @@ export default function TenantDetails() {
       .then(response => {
         if (response.data.result !== null && response.data.result !== 'undefined') {
           sessionStorage.setItem("leaseProfileid", response.data.result);
-          navigateEsign(e);
-
+          navigate('/preBooking/esignPayment')
+          //checkCustomfieldValue();
         }
-
-
       })
       .catch(error => {
         console.log(error)
@@ -373,14 +455,106 @@ export default function TenantDetails() {
     console.log(request.update_user_info + `/${userid}`);
     instance.post(request.update_user_info + `/${userid}`, requestBody, config).then((response) => {
       const userUpdateResponse = response.data.data;
-      console.log(userUpdateResponse)
+      if(customFieldAccess && customFieldAccess.length > 0){
+        checkCustomfieldValue();
+      }else{
+      leaseProfileSave()
+      }
       // if (userUpdateResponse.isSuccess === true && userUpdateResponse.returnCode === "SUCCESS") {
       //   console.log(userUpdateResponse)
       // }
     })
   }
+  const customhandlechange = (e,data,checkfield) => {
+    // setInputValue({"id":e.target.id,"":e.target.})
+    if(checkfield === 'date'){
+      const index = customFieldValue.findIndex(object => {
+        return object.fieldId === data.fieldId
+      })
+     if(index !== -1){
+       customFieldValue[index].value = data.value
+     }else{
+       customFieldValue.push({fieldId: data.fieldId, value:helper.readDate(data.value), unitId:unitid,fieldpage:data.fieldpage,typeof:data.type });
+  
+     }
+      if(data.value === '' && data.required){
+        document.getElementById(`${data.fieldId}`).style.display="block";
+      
+      }else{
+        document.getElementById(`${data.fieldId}`).style.display="none";
+      }
+    }
+    customValues = {
+      value: e.target.value,
+      unitId: e.target.dataset.unitid,
+      fieldId: e.target.dataset.fieldid,
+    }
+    const index = customFieldValue.findIndex(object => {
+      return object.fieldId === e.target.dataset.fieldid
+    })
+   if(index !== -1){
+     customFieldValue[index].value = e.target.value
+   }else{
+    if(e.target.dataset.fieldid){
+     customFieldValue.push({fieldId: e.target.dataset.fieldid, value:e.target.value, unitId:unitid, typeof:e.target.dataset.type,fieldpage:e.target.dataset.fieldpage });
+    }
+
+   }
+    // SetCustomS({ ...TestT, [e.target.dataset.fieldid]: customValues });
+    const fieldId = e.target.dataset.fieldid;
+    const checked = e.target.checked;
+    const isMandatory = e.target.dataset.required;
+
+    sessionStorage.setItem("fieldid", (fieldId));
+    let alphabet = document.getElementById("Alphabet");
+    if (e.target.value && e.target.dataset.datatype) {
+      let letters = /^[A-Za-z]+$/;
+     
+      if (!e.target.value.match(letters)) {
+        if(alphabet){
+          document.getElementById("Alphabet").style.display = 'block';
+        }
+      
+      } else {
+        if(alphabet){
+        document.getElementById("Alphabet").style.display = 'none';
+        }
+      }
+    } else {
+      if(alphabet){
+        document.getElementById("Alphabet").style.display = 'none';
+        }
+    }
 
 
+    if (!checked && isMandatory === "true") {
+      let field_getId = document.getElementById(fieldId);
+      if (field_getId !== null && typeof field_getId !== 'undefined') {
+        field_getId.style.display = 'block';
+      }
+    }
+    else {
+      let field_getId = document.getElementById(fieldId);
+      if (field_getId !== null && typeof field_getId !== 'undefined') {
+        field_getId.style.display = 'none';
+      }
+
+    }
+
+
+  }
+  const customfleldvalidate = (e) => {
+    const fieldId = e.target.dataset.fieldid;
+    const value = e.target.value;
+    const isMandatory = e.target.dataset.required;
+    if (!value && isMandatory === "true") {
+      document.getElementById(fieldId).style.display = 'block';
+    } else if (!value && isMandatory === "false") {
+      document.getElementById(fieldId).style.display = 'none';
+    } else {
+      document.getElementById(fieldId).style.display = 'none';
+    }
+  }
 
   const tenantInfoFinal = (e) => {
     e.preventDefault();
@@ -419,11 +593,29 @@ export default function TenantDetails() {
       TenantInfoError.state = "state is Required";
       isValid = false;
     }
+    if(BusinessUser){
+      let companyErrormessage = document.getElementById("companyname");
+      if(companyName.current.value === ''){
+        companyErrormessage.classList.remove('d-none')
+        isValid = false
+      }else{
+        companyDetail={companyName:companyName.current.value};
+        sessionStorage.setItem("companyDetail",JSON.stringify(companyDetail));
+        companyErrormessage.classList.add('d-none');
+
+      }
+      // if(companyRegistrationNumber.current.value == ''){
+      //   isValid = false
+      // }
+    }
+    
+      
     if (!isValid) {
       setTenantInfoError(TenantInfoError);
     } else {
+      checkCustomfieldValue();
       updateTenantInfo();
-      leaseProfileSave(e)
+      
     }
 
 
@@ -435,10 +627,48 @@ export default function TenantDetails() {
     if (emergencyDetail) {
       SetContactaccordian(JSON.parse(emergencyDetail))
     }
-
   }, [])
 
+  useEffect(()=>{
+    setTimeout(() => {
+      if(customFieldAccess){
+        bindCustomFieldValue();
+      }
+    },1000)      
+  },[customFieldAccess])
 
+
+  const bindCustomFieldValue = () => {
+    unitDetailCustomField.filter((i=>i.fieldpage === 'Movein Tenant Details')).forEach((item)=> {
+     let element = document.getElementById(`${item.typeof}_${item.fieldId}`);
+     if(item.typeof === 'textbox' || item.typeof === 'textarea' && element){
+        element.value = item.value
+     }else if(item.typeof === 'checkboxes' || item.typeof === 'checkbox'){
+       let checkboxes = document.getElementsByName(`${item.typeof}_${item.fieldId}`);
+        checkboxes.forEach((element)=> {
+         if(element.defaultValue === item.value){
+           element.checked = true
+         }
+        });
+     } else if(item.typeof === 'radio'){
+       let checkboxes = document.getElementsByName(`${item.typeof}_${item.fieldId}`);
+        checkboxes.forEach((element)=> {
+         if(element.defaultValue === item.value){
+           element.checked = true
+         }
+        });
+     }else if(item.typeof === "date"){
+       setTimeout(() => {
+         if(element){
+           element.value = helper.readDate(new Date(item.value))
+         }
+ 
+       },1000)      
+     }
+     
+    })
+ 
+   }
   const {
     firstName: fname_Data,
     lastName: lastNameError,
@@ -458,7 +688,6 @@ export default function TenantDetails() {
 
   } = emergencyContactErr;
 
-  console.log(contactaccordian);
 
   return (
     <>
@@ -558,25 +787,143 @@ export default function TenantDetails() {
           <div className="col-12  col-md-6  px-4 px-sm-2">
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-2'>Social Security Number</label>
-              <input className="noCounterNumber" type='number' name="ssn" placeholder='Social Security Number' value={TenantInfoDetails.ssn} onChange={(e) => handlechange(e)} />
+              <input className="noCounterNumber" type='number' name="ssn" placeholder='Social Security Number' onChange={(e) => handlechange(e)} />
             </div>
           </div>
-          <div className="col-12  col-md-6  px-4 px-sm-2">
-            <div className="field w-100  my-3">
-              <label className='fw-500 fs-7 mb-2'>Company Name</label>
-              <input className="noCounterNumber" type='number' name="ssn" placeholder='Company Name' value={TenantInfoDetails.ssn} onChange={(e) => handlechange(e)} />
+          {BusinessUser  ?
+            <div className="col-12  col-md-6  px-4 px-sm-2">
+              <div className="field w-100  my-3">
+                <label className='fw-500 fs-7 mb-2'>Company Name <i className="text-danger ">*</i></label>
+                <input className="noCounterNumber" ref={companyName} type='text' name="companyname" placeholder='Company Name' />
+                <div id="companyname" className="text-danger mt-1 d-none"> Please Enter Company Name </div>
+              </div>
             </div>
-          </div>
-          <div className="col-12  col-md-6  px-4 px-sm-2">
-            <div className="field w-100  my-3">
-              <label className='fw-500 fs-7 mb-2'>Company registra</label>
-              <input className="noCounterNumber" type='number' name="ssn" placeholder='Social Security Number' value={TenantInfoDetails.ssn} onChange={(e) => handlechange(e)} />
-            </div>
-          </div>
-          <div className="col-12  col-md-6  px-4 px-sm-2 my-3">
-            <span>Are you Military user? <span className="mx-2"><input className="mr-1" type="checkbox" /><label>Yes</label></span><span><input className="mr-1" type="checkbox" /><label>No</label></span></span>
-          </div>
+            : ""
+
+          }
+          {BusinessUser ?
+            <div className="col-12  col-md-6  px-4 px-sm-2">
+              <div className="field w-100  my-3">
+                <label className='fw-500 fs-7 mb-2'>Company registration No <i className="text-danger ">*</i></label>
+                <input className="noCounterNumber" ref={companyRegistrationNumber} type='text' name="companyregistration" placeholder='Company registration No' />
+                <div id="registration" className="text-danger mt-1 d-none"> Please Enter registration No </div>
+              </div>
+            </div> : ""
+
+
+          }
+           {typeof customFieldAccess !== "undefined" && customFieldAccess !== null && customFieldAccess !== "" && customFieldAccess.length > 0 ?
+                      customFieldAccess.map((item, index) => {
+                        {
+
+                          typeof Sdetails !== "undefined" && Sdetails !== null && Sdetails !== "" && Sdetails.length > 0 ?
+                            Sdetails.forEach((data) => {
+                              cusomfieldPhone = data.value.fid;
+                            }) : ""
+                        }
+
+                        if (item.matadata.displayOn === "Movein Tenant Details" && item.matadata.type === "textbox" && item.matadata.dataType === "Alphabet") {
+                          return <div key={item.fieldId} className="col-12 col-md-6 px-4 px-sm-2">
+                          <div key={item.fieldId} className="field w-100 my-2 ">
+                            <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}
+                            </label>
+                            <input type='text' id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-datatype={item.matadata.dataType} data-type={item.matadata.type} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
+                            <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
+                            <div className="text-danger mt-1" id={item.matadata.dataType} style={{ display: 'none' }}>It should allow Alphabet Only</div>
+                          </div>
+                          </div>
+
+                        } else if (item.matadata.displayOn === "Movein Tenant Details" && item.matadata.type === "textbox" && item.matadata.dataType === "Alphanumeric") {
+
+                          return<div key={item.fieldId} className="col-12 col-md-6 px-4 px-sm-2"> 
+                          <div className="field w-100 my-2 ">
+                            <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}
+                            </label>
+                            <input type='text' id={`${item.matadata.type}_${item.fieldId}`}  placeholder={item.fieldName} value={customInputFieldValue} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
+                            <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
+                          </div>
+                          </div>
+
+                        }
+
+                        else if (item.matadata.displayOn === "Movein Tenant Details" && item.matadata.type === "date") {
+                          return <div key={item.fieldId} className="col-12 col-md-6 px-4 px-sm-2">
+                              <div className="field w-100 datePicker my-2">
+                                <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}</label>
+                                <SemanticDatepicker  id={`${item.matadata.type}_${item.fieldId}`}  placeholder={item.fieldName} className='w-100' data-name={item.fieldName} fieldId={item.fieldId} unitId={unitid} required={item.matadata.isMandatory} fieldpage={item.matadata.displayOn} type={item.matadata.type} onChange={(e,data) => customhandlechange(e,data,"date")} />
+                                <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
+                              </div>
+                            </div>
+                        }
+                        else if (item.matadata.displayOn === "Movein Tenant Details" && item.matadata.type === "checkboxes") {
+                          return <div key={item.fieldId} className="col-12 col-md-6 px-4 px-sm-2">
+                            <span  id={`${item.matadata.type}_${item.fieldId}`} >{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}
+                              <span className="mx-2">
+                                <input   id={`${item.matadata.type}_${item.fieldId}`} className="mr-1" type="checkbox" name={`${item.matadata.type}_${item.fieldId}`} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.options[0].option} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} />
+                                <label>{item.options[0].option}</label>
+                              </span>
+                              <span>
+                                <input   id={`${item.matadata.type}_${item.fieldId}`} className="mr-1" type="checkbox" name={`${item.matadata.type}_${item.fieldId}`} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.options[1].option} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} />
+                                <label>{item.options[1].option}</label>
+                              </span>
+                            </span>
+                            <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
+                          </div>
+                        }
+
+                        else if (item.matadata.displayOn === "Movein Tenant Details" && item.matadata.type === "textarea") {
+
+                          return <div  key={item.fieldId} className="col-12 col-md-6 px-4 px-sm-2">
+                              <div className="field w-100 my-2">
+                                <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}</label>
+                                <textarea  id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} data-name={item.fieldName} data-type={item.matadata.type} value={customInputFieldValue} rows="3" data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)}></textarea>
+                                <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
+                              </div>
+                            </div>
+                         
+                        }
+                        else if (item.matadata.displayOn === "Movein Tenant Details" && item.matadata.type === "checkbox") {
+
+                          return <div key={item.fieldId} className="col-12 col-md-6 px-4 px-sm-2">
+                              <span  id={`${item.matadata.type}_${item.fieldId}`}>
+                                <span className="mx-0">
+                                  <input className="mr-1" type="checkbox" name={`${item.matadata.type}_${item.fieldId}`} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.fieldName} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
+                                  <label>{item.fieldName}{item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}</label>
+                                </span>
+                              </span>
+                              <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
+                            </div>
+
+                        } else if (item.matadata.displayOn === "Movein Tenant Details" && item.matadata.type === "textbox" && item.matadata.dataType === "Digits (0-9)") {
+
+                          return <div key={item.fieldId} className="col-12 col-md-6 px-4 px-sm-2">
+                          <div  className="field w-100 my-2 ">
+                            <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}
+                            </label>
+                            <input type='number' id={`${item.matadata.type}_${item.fieldId}`} name={item.fieldId} placeholder={item.fieldName} value={cusomfieldPhone} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
+                            <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
+                          </div>
+                          </div>
+
+                        } else if (item.matadata.displayOn === "Movein Tenant Details" && item.matadata.type === "radio") {
+                          return <div key={item.fieldId} className="col-12 col-md-6 px-4 px-sm-2">
+                            <span  id={`${item.matadata.type}_${item.fieldId}`}>{item.fieldName}{item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}
+                              <span className="mx-2">
+                                <input className="mr-1"  id={`${item.matadata.type}_${item.fieldId}`} type="radio" name={`${item.matadata.type}_${item.fieldId}`} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.options[0].option} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} />
+                                <label>{item.options[0].option}</label>
+                              </span>
+                              <span>
+                                <input className="mr-1"  id={`${item.matadata.type}_${item.fieldId}`} type="radio" name={`${item.matadata.type}_${item.fieldId}`} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.options[1].option} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} />
+                                <label>{item.options[1].option}</label>
+                              </span>
+                            </span>
+                            <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
+                          </div>
+                        }
+                      }) : ''}
+
         </div>
+        
         <div className="row ui form">
           <div className="col-12">
             <h6 className='text-dark dashed-bottom fw-500 fs-6 px-4 py-2 px-sm-2'>
