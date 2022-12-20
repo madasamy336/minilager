@@ -24,6 +24,7 @@
     "react-datepicker": "^4.8.0",
     "react-dom": "^18.2.0",
     "react-dropdown": "^1.11.0",
+    "react-hook-form": "^7.40.0",
     "react-i18next": "^11.18.6",
     "react-loader-spinner": "^5.3.4",
     "react-lottie-player": "^1.5.0",
