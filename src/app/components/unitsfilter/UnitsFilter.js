@@ -1,27 +1,37 @@
-import React, { Component, useState } from 'react'
-import { Accordion } from 'semantic-ui-react'
+import { componentsToColor } from 'pdf-lib';
+import { propTypes } from 'pdf-viewer-reactjs';
+import React, { Component, useState, useEffect } from 'react'
+import { Accordion, Item } from 'semantic-ui-react'
 import UnitsRangeSlider from '../unitsrangeslider/UnitsRangeSlider'
 let Buildingfilter;
 let unitTypeFilter;
 let UnitTypeDimension = [];
-let PriceRange = [];
 let NewPriceValue;
 let AmenityFilter;
-let requestBuildingVal = [];
-let requestLocationVal = [];
-let requestUnitTypeVal = [];
-let requestAmenitiesVal = [];
+
+
 const AccordionExampleStyled = (selectedStorageType) => {
-
   const filters = JSON.parse(localStorage.getItem('Units'));
+  const [filterBuilding, setFilterBuiding] = useState([]);
+  const [filterUnitType, setfilterUnitType] = useState([]);
+  const [filterDimensions, setfilterDimensions] = useState([]);
+  const [PriceRangeArrayvalue, setPriceRangeArrayvalue] = useState();
+  const [filterAmenity, setfilterAmenity] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
-
-  const [filterSelectedName, setFilterSelectedName] = useState([]);
+  const [selectAll, setSelectAll] = useState(true);
+  const [minPriceState, setMinPriceState] = useState();
+  const [maxPriceState, setMaxPriceState] = useState();
   const handleClick = (e, titleProps) => {
     const { index } = titleProps;
     const newIndex = activeIndex === index ? -1 : index
     setActiveIndex(newIndex);
   }
+
+  const pricerangeOnchangevalue = (data) => {
+    setPriceRangeArrayvalue(data);
+}
+
+
   function checkStoragePriceRange(PriceRangeArray, storageCategoryValue) {
     let PriceArray = [];
     PriceRangeArray.map((array) => {
@@ -42,6 +52,7 @@ const AccordionExampleStyled = (selectedStorageType) => {
       "minPrice": minvalue,
       "maxPrice": MaxValue,
     }
+
     sessionStorage.setItem("MinValue", minvalue);
     sessionStorage.setItem("MaxValue", MaxValue);
   }
@@ -67,7 +78,6 @@ const AccordionExampleStyled = (selectedStorageType) => {
     AmenityFilter = filters.amenityValue.filter(i => i.storageTypeId === selectedStorageType.storageTypeValue);
   }
 
-
   const storageTypeOptions = typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof filters.storageType !== 'undefined' && filters.storageType !== null && filters.storageType !== "" && filters.storageType.length > 0 ?
     filters.storageType.map(storageType => {
       return {
@@ -77,63 +87,145 @@ const AccordionExampleStyled = (selectedStorageType) => {
       }
     }) : '';
 
-  const onFilterChange = (e, name) => {
-    let filters = []
+  const onChangeUnitMesurement = (e, unitMeasurement, unitTypeId) => {
     if (e.target.checked) {
-      filters.push(e.target.value);
-    }
-    setFilterSelectedName(name);
-
-  }
-
-  const sixStorageOnChangeBuilding = (e) => {
-
-    if (e.target.checked === true) {
-      console.log('checked');
-      requestBuildingVal.push(e.target.value);
-
+      setfilterDimensions([...filterDimensions, { unitmesurement: unitMeasurement, unitTypeid: unitTypeId }]);
     } else {
-
-      var index = requestBuildingVal.indexOf(e.target.value);
-      if (index > -1) {
-        requestBuildingVal.splice(index, 1);
-      }
+      setfilterDimensions((item) => item.filter((i) => i.unitTypeid !== unitTypeId));
     }
-
-    selectedStorageType.filterValue({ buildingValue: requestBuildingVal, unitTypeId: requestUnitTypeVal, amenityId: requestAmenitiesVal });
-
   }
 
-  const sixStorageOnChangeAmenity = (e) => {
+  const selectAllBuilding = () => {
+    setFilterBuiding([]);
+    Buildingfilter.forEach((item) => {
+      setFilterBuiding((items) => [...items, { buildingname: item.buildingName, buildingid: item.buildingId }]);
+    });
+  }
 
+  const selectAllUnitType = () => {
+    setfilterUnitType([]);
+    unitTypeFilter.forEach((item) => {
+      setfilterUnitType((items) => [...items, { unitTypename: item.unitTypeName, unitTypeid: item.unitTypeId }]);
+    });
+  }
+
+  const clearAllBuilding = () => {
+    setFilterBuiding([]);
+  }
+
+  const clearAllUnitType = () => {
+    setfilterUnitType([]);
+  }
+
+
+  const selectAllDimension = () => {
+    setfilterDimensions([]);
+    unitTypeFilter.forEach((item) => {
+      setfilterDimensions((items) => [...items, { unitTypeid: item.unitTypeId, unitmesurement: item.unitMeasurement }]);
+    });
+  }
+
+  const clearAllDimension = () => {
+    setfilterDimensions([]);
+  }
+
+
+  const selectAllAmenityCheckbox = () => {
+    setfilterAmenity([]);
+    AmenityFilter.forEach((item) => {
+      setfilterAmenity((items) => [...items, { amenitiesname: item.name, amenitiesid: item.id }]);
+    });
+  }
+
+  const clearAllAmenityCheckbox = () => {
+    setfilterAmenity([]);
+  }
+
+  const onChangeBuilding = (e, buildingname, buildingid) => {
     if (e.target.checked === true) {
-      requestAmenitiesVal.push(e.target.value);
+      setFilterBuiding([...filterBuilding, { buildingname: buildingname, buildingid: buildingid }]);
     } else {
-
-      var index = requestAmenitiesVal.indexOf(e.target.value);
-      if (index > -1) {
-        requestAmenitiesVal.splice(index, 1);
-      }
+      setFilterBuiding((item) => item.filter((i) => i.buildingid !== buildingid));
     }
-
-    selectedStorageType.filterValue({ buildingValue: requestBuildingVal, unitTypeId: requestUnitTypeVal, amenityId: requestAmenitiesVal });
-
   }
-  const sixStorageOnChangeUnit = (e) => {
 
+  const sixStorageOnChangeAmenity = (e, amenitiesName, amenitiesId) => {
     if (e.target.checked === true) {
-      requestUnitTypeVal.push(e.target.value);
-
+      setfilterAmenity([...filterAmenity, { amenitiesname: amenitiesName, amenitiesid: amenitiesId }]);
     } else {
-      var index = requestUnitTypeVal.indexOf(e.target.value);
-      if (index > -1) {
-        requestUnitTypeVal.splice(index, 1);
-      }
+      setfilterAmenity((items) => items.filter((i) => i.amenitiesid !== amenitiesId));
     }
-    selectedStorageType.filterValue({ buildingValue: requestBuildingVal, unitTypeId: requestUnitTypeVal, amenityId: requestAmenitiesVal });
-
   }
+  const onChangeUnitType = (e, unitTypeName, unitTypeId) => {
+    if (e.target.checked) {
+      setfilterUnitType([...filterUnitType, { unitTypename: unitTypeName, unitTypeid: unitTypeId }]);
+    } else {
+      setfilterUnitType((item) => item.filter((i) => i.unitTypeid !== unitTypeId));
+    }
+  }
+
+  const removeBuilding = (buildingid) => {
+    setFilterBuiding((item) => item.filter((i) => i.buildingid !== buildingid));
+  }
+  const removeUnitType = (unitTypeId) => {
+    setfilterUnitType((item) => item.filter((i) => i.unitTypeid !== unitTypeId));
+  }
+
+  const removeUnitDimension = (unitTypeId) => {
+    setfilterDimensions((item) => item.filter((i) => i.unitTypeid !== unitTypeId));
+  }
+
+  const removeAmenities = (amenitiesId) => {
+    setfilterAmenity((item) => item.filter((i) => i.amenitiesid !== amenitiesId));
+  }
+  const clearAllFilters = () => {
+    setFilterBuiding([]);
+    setfilterUnitType([]);
+    setfilterDimensions([]);
+    setfilterAmenity([]);
+    setPriceRangeArrayvalue([]);
+    setMaxPriceState(0);
+    setMinPriceState(0);
+  }
+
+  const applyAllFiterValues = ()=>{
+    let selectedbuildingId;
+    let selectedUnitTypeId;
+    let selectedAmenitiesId;
+    if(typeof filterBuilding !=="undefined" && filterBuilding !=="" && filterBuilding !==null){
+      selectedbuildingId = filterBuilding.filter((i)=> i.buildingid).map((item)=>{
+       return item.buildingid;
+      });
+    }
+    if(typeof filterUnitType !=="undefined" && filterUnitType !== "" && filterUnitType !==null){
+     selectedUnitTypeId = filterUnitType.filter((i)=>i.unitTypeid).map((item)=>{
+       return item.unitTypeid;
+      });
+    }
+    if(typeof filterAmenity !=="undefined" && filterAmenity !=="" && filterAmenity !==null){
+      selectedAmenitiesId = filterAmenity.filter((i)=>i.amenitiesid).map((item)=>{
+      return item.amenitiesid; 
+      });
+    }
+
+    let FilterSearchId = {
+      buildingid: selectedbuildingId,
+      unitTypeid: selectedUnitTypeId,
+      amenitiesid: selectedAmenitiesId,
+      priceRange: PriceRangeArrayvalue
+    }
+
+    selectedStorageType.unitsearchFilters(FilterSearchId);
+  
+  }
+
+
+  console.log(minPriceState);
+  console.log(maxPriceState);
+  
+
   return (
+
     <Accordion styled>
       <Accordion.Title active={activeIndex === 0} index={0}>
         <div className='d-flex justify-content-between align-items-center'>
@@ -141,22 +233,44 @@ const AccordionExampleStyled = (selectedStorageType) => {
             <img src="/assets/images/filter.png" alt="" />Filters
           </div>
           <div>
-            <p className='fs-8 text-success'>Clear All</p>
+            <p className='fs-8 text-success' onClick={() => clearAllFilters()}>Clear All</p>
           </div>
         </div>
         <div className='row mt-3 selectedFilter'>
-          <div className='col-lg-4 col-md-6 col-sm-4'>
-            <p className='fs-8 d-flex justify-content-between align-items-center p-1 mr-1 mb-1'>Building 1 <img src='/assets/images/wrong.svg' alt='Close' /></p>
-          </div>
-          <div className='col-lg-4 col-md-6 col-sm-4'>
-            <p className='fs-8 d-flex justify-content-between align-items-center p-1 mr-1'>Small <img src='/assets/images/wrong.svg' alt='Close' /></p>
-          </div>
-          <div className='col-lg-4 col-md-6 col-sm-4'>
-            <p className='fs-8 d-flex justify-content-between align-items-center p-1 mr-1'>10x9x9 <img src='/assets/images/wrong.svg' alt='Close' /></p>
-          </div>
-          <div className='col-lg-4 col-md-6 col-sm-4'>
-            <p className='fs-8 d-flex justify-content-between align-items-center p-1 mr-1'>Amenity 1 <img src='/assets/images/wrong.svg' alt='Close' /></p>
-          </div>
+
+          {typeof filterBuilding !== "undefined" && filterBuilding !== null && filterBuilding !== "" && filterBuilding.length > 0 ?
+            filterBuilding.map((item) => {
+              return <div key={item.buildingid} className='col-lg-4 col-md-6 col-sm-4'>
+                <p className='fs-8 d-flex justify-content-between align-items-center p-1 mr-1 mb-1'>{item.buildingname}<a onClick={() => removeBuilding(item.buildingid)}><img src='/assets/images/wrong.svg' alt='Close' /></a></p>
+              </div>
+            }) : ""}
+
+
+          {typeof filterUnitType !== "undefined" && filterUnitType !== null && filterUnitType !== "" && filterUnitType.length > 0 ?
+            filterUnitType.map((item) => {
+              return <div key={item.unitTypeid} className='col-lg-4 col-md-6 col-sm-4'>
+                <p className='fs-8 d-flex justify-content-between align-items-center p-1 mr-1'>{item.unitTypename}<a onClick={() => removeUnitType(item.unitTypeid)}><img src='/assets/images/wrong.svg' alt='Close' /></a></p>
+              </div>
+
+            }) : ""}
+
+
+          {typeof filterDimensions !== "undefined" && filterDimensions !== "" && filterDimensions !== null && filterDimensions.length > 0 ?
+            filterDimensions.map((item) => {
+              return <div key={item.unitTypeid} className='col-lg-4 col-md-6 col-sm-4'>
+                <p className='fs-8 d-flex justify-content-between align-items-center p-1 mr-1'>{item.unitmesurement}<a onClick={() => removeUnitDimension(item.unitTypeid)}><img src='/assets/images/wrong.svg' alt='Close' /></a></p>
+              </div>
+            }) : ""
+          }
+
+          {typeof filterAmenity !== "undefined" && filterAmenity !== "" && filterAmenity !== null && filterAmenity.length > 0 ?
+            filterAmenity.map((item) => {
+              return <div key={item.amenitiesid} className='col-lg-4 col-md-6 col-sm-4'>
+                <p className='fs-8 d-flex justify-content-between align-items-center p-1 mr-1'>{item.amenitiesname}<a onClick={() => removeAmenities(item.amenitiesid)}><img src='/assets/images/wrong.svg' alt='Close' /></a></p>
+              </div>
+            }) : ""
+
+          }
         </div>
       </Accordion.Title>
 
@@ -176,12 +290,13 @@ const AccordionExampleStyled = (selectedStorageType) => {
         <div>
           {/* <h6 className='fw-600 mb-1'>Building</h6> */}
           <div className='text-success text-right'>
-            <a href="/">Select All</a> | <a href="/">Clear All</a>
+            {selectAll ? <a onClick={() => selectAllBuilding()} >Select All</a> : ""} | <a onClick={() => clearAllBuilding()}>Clear All</a>
           </div>
           <ul>
             {typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof filters.building !== 'undefined' && filters.building !== null && filters.building !== "" && filters.building.length > 0 ?
               Buildingfilter.map(buildingVal => {
-                return <li key={buildingVal.key}><input value={buildingVal.buildingId} className='mr-1 mb-1' type="checkbox" onChange={(e) => sixStorageOnChangeBuilding(e)} />{buildingVal.buildingName}</li>
+                return <li key={buildingVal.key}><input value={buildingVal.buildingId} id={buildingVal.buildingId}
+                  className='mr-1 mb-1' type="checkbox" checked={filterBuilding.find((item) => item.buildingid === buildingVal.buildingId)} onChange={(e) => onChangeBuilding(e, buildingVal.buildingName, buildingVal.buildingId)} />{buildingVal.buildingName}</li>
               })
               : ''}
           </ul>
@@ -190,7 +305,6 @@ const AccordionExampleStyled = (selectedStorageType) => {
           ) : ''}
         </div>
       </Accordion.Content>
-
       <Accordion.Title className='d-flex justify-content-between align-items-center'
         active={activeIndex === 2}
         index={2}
@@ -207,12 +321,12 @@ const AccordionExampleStyled = (selectedStorageType) => {
         <div>
           {/* <h6 className='fw-600 mb-1'>LARGE</h6> */}
           <div className='text-success text-right'>
-            <a href="/">Select All</a> | <a href="/">Clear All</a>
+            {selectAll ? <a onClick={() => selectAllUnitType()}>Select All</a> : ""}  | <a onClick={() => clearAllUnitType()}>Clear All</a>
           </div>
           <ul>
             {typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof filters.unitType !== 'undefined' && filters.unitType !== null && filters.unitType !== "" && filters.unitType.length > 0 ?
               unitTypeFilter.map(unitTypeValue => {
-                return <li key={unitTypeValue.key}><input value={unitTypeValue.unitTypeId} className='mr-1 mb-1' type="checkbox" onChange={sixStorageOnChangeUnit} />{unitTypeValue.unitTypeName}</li>
+                return <li key={unitTypeValue.key}><input value={unitTypeValue.unitTypeId} checked={filterUnitType.find((item) => item.unitTypeid === unitTypeValue.unitTypeId)} className='mr-1 mb-1' type="checkbox" onChange={(e) => onChangeUnitType(e, unitTypeValue.unitTypeName, unitTypeValue.unitTypeId)} />{unitTypeValue.unitTypeName}</li>
               })
               : ''}
           </ul>
@@ -233,14 +347,14 @@ const AccordionExampleStyled = (selectedStorageType) => {
       <Accordion.Content active={activeIndex === 3}>
         <div>
           <div className='text-success text-right'>
-            <a href="/">Select All</a> | <a href="/">Clear All</a>
+            {selectAll ? <a onClick={() => selectAllDimension()}>Select All</a> : ""}  | <a onClick={() => clearAllDimension()} >Clear All</a>
           </div>
           <ul>
-          
+
             {typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof UnitTypeDimension !== 'undefined' && UnitTypeDimension !== null && UnitTypeDimension !== "" ?
               Object.keys(UnitTypeDimension).map(data => {
                 return UnitTypeDimension[data].map(dimension => {
-                  return <li key={dimension.key}><input value={dimension.unitTypeId} className='mr-1 mb-1' type="checkbox" onChange={onFilterChange} />{dimension.unitMeasurement}</li>
+                  return <li key={dimension.key}><input value={dimension.unitTypeId} checked={filterDimensions.find((item) => item.unitTypeid === dimension.unitTypeId)} className='mr-1 mb-1' type="checkbox" onChange={(e) => onChangeUnitMesurement(e, dimension.unitMeasurement, dimension.unitTypeId)} />{dimension.unitMeasurement}</li>
                 })
               })
               : ''}
@@ -263,38 +377,51 @@ const AccordionExampleStyled = (selectedStorageType) => {
         </div>
       </Accordion.Title>
       <Accordion.Content active={activeIndex === 4}>
-       
         <div>
-          <UnitsRangeSlider priceRange={NewPriceValue} />
+          <UnitsRangeSlider priceRange={NewPriceValue} minprice = {(min)=> setMinPriceState(min)} maxprice = {(max)=>setMaxPriceState(max)}  pricerangeinitialvalue={pricerangeOnchangevalue}/>
         </div>
       </Accordion.Content>
-      {typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof AmenityFilter !== 'undefined' && AmenityFilter !== null && AmenityFilter !== "" && AmenityFilter.length > 0 ?
-        <><Accordion.Title className={`d-flex justify-content-between align-items-center`}
-          active={activeIndex === 5}
-          index={5}
-          onClick={handleClick}
-        >
-          <div className={`d-flex justify-content-between align-items-center `}>
-            <img src="/assets/images/amenity.png" alt="" />Amenity
-          </div>
-          <div>
-            <img src="/assets/images/arrow-down.png" alt="" />
-          </div>
-        </Accordion.Title>
-          <Accordion.Content active={activeIndex === 5}>
-            <div>
-              <ul>
-                {typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof AmenityFilter !== 'undefined' && AmenityFilter !== null && AmenityFilter !== "" && AmenityFilter.length > 0 ?
-                  AmenityFilter.map(amenityfilterValue => {
-                    return <li key={amenityfilterValue.key}><input value={amenityfilterValue.id} className='mr-1 mb-1' type="checkbox" onChange={sixStorageOnChangeAmenity} />{amenityfilterValue.name}</li>
-                  })
-                  : ''}
-              </ul>
-              <a href="/" className='text-success text-right d-block'>MORE</a>
+      {
+        typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof AmenityFilter !== 'undefined' && AmenityFilter !== null && AmenityFilter !== "" && AmenityFilter.length > 0 ?
+          <><Accordion.Title className={`d-flex justify-content-between align-items-center`}
+            active={activeIndex === 5}
+            index={5}
+            onClick={handleClick}
+          >
+            <div className={`d-flex justify-content-between align-items-center `}>
+              <img src="/assets/images/amenity.png" alt="" />Amenity
             </div>
-          </Accordion.Content></>
-        : ''}
-    </Accordion>
+            <div>
+              <img src="/assets/images/arrow-down.png" alt="" />
+            </div>
+          </Accordion.Title>
+            <Accordion.Content active={activeIndex === 5}>
+              <div>
+
+                <div className='text-success text-right'>
+                  {selectAll ? <a onClick={() => selectAllAmenityCheckbox()} >Select All</a> : ""} | <a onClick={() => clearAllAmenityCheckbox()}>Clear All</a>
+                </div>
+
+                <ul>
+                  {typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof AmenityFilter !== 'undefined' && AmenityFilter !== null && AmenityFilter !== "" && AmenityFilter.length > 0 ?
+                    AmenityFilter.map(amenityfilterValue => {
+                      return <li key={amenityfilterValue.key}><input value={amenityfilterValue.id} checked={filterAmenity.find((item) => item.amenitiesid === amenityfilterValue.id)} className='mr-1 mb-1' type="checkbox" onChange={(e) => sixStorageOnChangeAmenity(e, amenityfilterValue.name, amenityfilterValue.id)} />{amenityfilterValue.name}</li>
+                    })
+                    : ''}
+                </ul>
+                <a href="/" className='text-success text-right d-block'>MORE</a>
+              </div>
+            </Accordion.Content></>
+          : ''
+      }
+
+      <div className='text-center my-2'>
+        <button className='ui button bg-white border-success-dark-light-1 text-success fs-7 fw-400 px-5 mx-1 mb-1 mb-sm-1 px-sm-2' onClick={()=>clearAllFilters()}>Clear All</button>
+        <button className='ui button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-1 mb-sm-1 px-sm-2' onClick={()=>applyAllFiterValues()} >Apply</button>
+      </div>
+    </Accordion >
+
+
   )
 }
 
