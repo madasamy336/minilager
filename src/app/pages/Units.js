@@ -22,7 +22,6 @@ const Units = () => {
     });
     const filters = JSON.parse(localStorage.getItem('Units'));
     let locationId = localStorage.getItem('locationid');
-
     useEffect(() => {
         fetchUnitFilter(locationId);
     }, [storageTypeValue]);
@@ -157,7 +156,23 @@ const Units = () => {
         return filteredFinalData;
     }
 
-    const sixStorageLoadUnitList = (storageTypeid) => {
+    const sixStorageLoadUnitList = (storageTypeid, searchFilterValues) => {
+        let buidingId;
+        let unitTypeId;
+        let amenitiesId;
+        let minvalues;
+        let maxvalues;
+        if(typeof searchFilterValues !=="undefined" && searchFilterValues !==null && searchFilterValues !=="" ){
+            buidingId = searchFilterValues.buildingid;
+            unitTypeId =  searchFilterValues.unitTypeid;
+            amenitiesId = searchFilterValues.amenitiesid;
+            if(typeof searchFilterValues.priceRange !=="undefined" && searchFilterValues.priceRange !==null &&  searchFilterValues.priceRange !==""){
+                minvalues = searchFilterValues.priceRange[0];
+                maxvalues = searchFilterValues.priceRange [1];
+            }
+           
+        }
+      
         setLoading(true);
 
         let config = {
@@ -169,9 +184,13 @@ const Units = () => {
         let requestbody = {
             storageTypeId: [storageTypeid],
             locationId: [locationId],
-            buildingId: filterRequest.buildingValue,
-            unitTypeId: filterRequest.unitTypeId,
-            amenityId: filterRequest.amenityId,
+            buildingId: buidingId,
+            unitTypeId: unitTypeId,
+            amenityId: amenitiesId,
+            priceRange:{
+                minPrice:minvalues,
+                maxPrice:maxvalues
+            },
             pageNumber: 1,
             pageSize: 10,
             isBusinessUser: false,
@@ -230,11 +249,11 @@ const Units = () => {
 
     }
 
-    const filterUnit = () => {
+    // const filterUnit = () => {
 
-        sixStorageLoadUnitList(storageTypeValue);
+    //     sixStorageLoadUnitList(storageTypeValue);
 
-    }
+    // }
     const sortUnitOptions = [
         {
             key: 'popular',
@@ -255,6 +274,7 @@ const Units = () => {
             content: 'Price Low to High',
         }
     ]
+
 
     return (
         <div className="units-wrapper">
@@ -280,11 +300,8 @@ const Units = () => {
                     <div className="row">
                         <div className="col-lg-3 col-md-3 col-sm-12">
                             <div className="filters-div">
-                                <AccordionExampleStyled filterValue={filterValue} storageTypeValue={storageTypeValue} modal={() => SetunitTypeModal({ open: true, size: 'tiny', dimmer: 'blurring' })} />
-                                <div className='text-center my-2'>
-                                    <button className='ui button bg-white border-success-dark-light-1 text-success fs-7 fw-400 px-5 mx-1 mb-1 mb-sm-1 px-sm-2'>Clear All</button>
-                                    <button className='ui button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-1 mb-sm-1 px-sm-2' onClick={filterUnit}>Apply</button>
-                                </div>
+                                <AccordionExampleStyled filterValue={filterValue} unitsearchFilters = {(items)=>sixStorageLoadUnitList(storageTypeValue, items)}   storageTypeValue={storageTypeValue} modal={() => SetunitTypeModal({ open: true, size: 'tiny', dimmer: 'blurring' })}  />
+                                
                             </div>
                         </div>
                         <div className="col-lg-9 col-md-9 col-sm-12">
