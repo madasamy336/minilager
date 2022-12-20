@@ -269,7 +269,6 @@ export default function TenantDetails() {
             errorcount = errorcount+1;
             return
           }else if(item.matadata.type === 'radio'){
-            debugger
             let checkRadioButton = [];
            let radiobutton = document.getElementsByName(`${item.matadata.type}_${item.fieldId}`);
            radiobutton.forEach((item)=> {

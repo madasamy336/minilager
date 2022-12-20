@@ -39,6 +39,7 @@ export default function RentingDetails() {
   const [invoiceDefault, setInvoiceDefault] = useState();
   const [recurring, setRecurring] = useState();
   const [movinDate, setMovinDate] = useState(new Date());
+  const [desiredMoveOutDate,setDesiredMoveOutDate] = useState();
   const [customFieldAccess, SetCustomFieldAccess] = useState();
   const clientDataconfig = JSON.parse(sessionStorage.getItem("configdata"));
   const recurringDefaultValue = clientDataconfig.recurringTypes[0].recurringTypeId;
@@ -89,7 +90,13 @@ export default function RentingDetails() {
 
   const movindateOnchange = (e, item) => {
     setMovinDate(item.value);
+    setDesiredMoveOutDate('');
+    sessionStorage.removeItem('desiredMoveoutDate')
     childRef.current.unitInfodetailscall();
+  }
+  const DesiredMoveoutDateChange = (e, date) => {
+    sessionStorage.setItem('desiredMoveoutDate', date.value)
+    setDesiredMoveOutDate(date.value);
   }
   const invoiceOnchange = (e, item) => {
     sessionStorage.setItem("invoiceData", (item.value));
@@ -102,26 +109,26 @@ export default function RentingDetails() {
     childRef.current.unitInfodetailscall();
 
   }
-  const [inputValue,setInputValue]=useState({})
+  const [inputValue, setInputValue] = useState({})
 
-  const customhandlechange = (e,data,checkfield) => {
+  const customhandlechange = (e, data, checkfield) => {
     // setInputValue({"id":e.target.id,"":e.target.})
-    if(checkfield === 'date'){
+    if (checkfield === 'date') {
       console.log(data);
       const index = customFieldValue.findIndex(object => {
         return object.fieldId === data.fieldId
       })
-     if(index !== -1){
-       customFieldValue[index].value = data.value
-     }else{
-       customFieldValue.push({fieldId: data.fieldId, value:helper.readDate(data.value), unitId:unitid,fieldpage:data.fieldpage,typeof:data.type });
-  
-     }
-      if(data.value === '' && data.required){
-        document.getElementById(`${data.fieldId}`).style.display="block";
-      
-      }else{
-        document.getElementById(`${data.fieldId}`).style.display="none";
+      if (index !== -1) {
+        customFieldValue[index].value = data.value
+      } else {
+        customFieldValue.push({ fieldId: data.fieldId, value: helper.readDate(data.value), unitId: unitid, fieldpage: data.fieldpage, typeof: data.type });
+
+      }
+      if (data.value === '' && data.required) {
+        document.getElementById(`${data.fieldId}`).style.display = "block";
+
+      } else {
+        document.getElementById(`${data.fieldId}`).style.display = "none";
       }
     }
     customValues = {
@@ -133,16 +140,16 @@ export default function RentingDetails() {
     const index = customFieldValue.findIndex(object => {
       return object.fieldId === e.target.dataset.fieldid
     })
-   if(index !== -1){
-     customFieldValue[index].value = e.target.value
-   }else{
-    if(e.target.dataset.fieldid){
-     customFieldValue.push({fieldId: e.target.dataset.fieldid, value:e.target.value, unitId:unitid, typeof:e.target.dataset.type,fieldpage:e.target.dataset.fieldpage });
+    if (index !== -1) {
+      customFieldValue[index].value = e.target.value
+    } else {
+      if (e.target.dataset.fieldid) {
+        customFieldValue.push({ fieldId: e.target.dataset.fieldid, value: e.target.value, unitId: unitid, typeof: e.target.dataset.type, fieldpage: e.target.dataset.fieldpage });
+      }
+
     }
 
-   }
-  
-   console.log(customFieldValue);
+    console.log(customFieldValue);
     // SetCustomS({ ...TestT, [e.target.dataset.fieldid]: customValues });
 
 
@@ -154,21 +161,21 @@ export default function RentingDetails() {
     let alphabet = document.getElementById("Alphabet");
     if (e.target.value && e.target.dataset.datatype) {
       let letters = /^[A-Za-z]+$/;
-     
+
       if (!e.target.value.match(letters)) {
-        if(alphabet){
+        if (alphabet) {
           document.getElementById("Alphabet").style.display = 'block';
         }
-      
+
       } else {
-        if(alphabet){
-        document.getElementById("Alphabet").style.display = 'none';
+        if (alphabet) {
+          document.getElementById("Alphabet").style.display = 'none';
         }
       }
     } else {
-      if(alphabet){
+      if (alphabet) {
         document.getElementById("Alphabet").style.display = 'none';
-        }
+      }
     }
 
 
@@ -231,16 +238,16 @@ export default function RentingDetails() {
 
   useEffect(() => {
     customFieldsSettings();
-    PricesummaryData(); 
-    
+    PricesummaryData();
+
   }, [newArray]);
 
-  useEffect(()=>{
-    if(customfieldBindingData){
+  useEffect(() => {
+    if (customfieldBindingData) {
       bindCustomFieldValue();
     }
-    
-  },[customFieldAccess])
+
+  }, [customFieldAccess])
 
 
   const customFieldsSettings = () => {
@@ -268,111 +275,110 @@ export default function RentingDetails() {
   }
 
   const bindCustomFieldValue = () => {
-   customfieldBindingData.forEach((item)=> {
-    let element = document.getElementById(`${item.typeof}_${item.fieldId}`);
-    if(item.typeof === 'textbox' && element){
-       element.value = item.value
-    }else if(item.typeof === 'checkboxes'){
-      let checkboxes = document.getElementsByName(`${item.typeof}_${item.fieldId}`);
-       checkboxes.forEach((element)=> {
-        console.log(element.defaultValue ===item.value);
-        if(element.defaultValue === item.value){
-          element.checked = true
-        }
-       });
-    } else if(item.typeof === 'radio'){
-      let checkboxes = document.getElementsByName(`${item.typeof}_${item.fieldId}`);
-       checkboxes.forEach((element)=> {
-        console.log(element.defaultValue ===item.value);
-        if(element.defaultValue === item.value){
-          element.checked = true
-        }
-       });
-    }else if(item.typeof === "date"){
-      setTimeout(() => {
-        if(element){
-          element.value = item.value
-        }
-      },1000)      
-    }
-    
-   })
+    customfieldBindingData.forEach((item) => {
+      let element = document.getElementById(`${item.typeof}_${item.fieldId}`);
+      if (item.typeof === 'textbox' && element) {
+        element.value = item.value
+      } else if (item.typeof === 'checkboxes') {
+        let checkboxes = document.getElementsByName(`${item.typeof}_${item.fieldId}`);
+        checkboxes.forEach((element) => {
+          console.log(element.defaultValue === item.value);
+          if (element.defaultValue === item.value) {
+            element.checked = true
+          }
+        });
+      } else if (item.typeof === 'radio') {
+        let checkboxes = document.getElementsByName(`${item.typeof}_${item.fieldId}`);
+        checkboxes.forEach((element) => {
+          console.log(element.defaultValue === item.value);
+          if (element.defaultValue === item.value) {
+            element.checked = true
+          }
+        });
+      } else if (item.typeof === "date") {
+        setTimeout(() => {
+          if (element) {
+            element.value = item.value
+          }
+        }, 1000)
+      }
+
+    })
 
   }
 
   const checkCustomfieldValue = () => {
-  let customValue = JSON.parse(localStorage.getItem(`CustomFieldsSetting`));
-  let errorcount = 0;
-  if(customValue){
-    let filterUnitSpecificValue = customValue.filter(i => i.matadata.displayOn === 'Unit specific details')
-    filterUnitSpecificValue.forEach((item)=> {
-      let customvalue = document.getElementById(`${item.matadata.type}_${item.fieldId}`);
-      let errordiv = document.getElementById(`${item.fieldId}`);
-     
-      if(item.matadata.isMandatory === true){
-        
-        if( item.matadata.type === 'textbox' && customvalue.value === ''){
-          errordiv.style.display="block";
-          errorcount = errorcount+1;
-          return
-        }else if(item.matadata.type === 'radio'){
-          debugger
-          let checkRadioButton = [];
-         let radiobutton = document.getElementsByName(`${item.matadata.type}_${item.fieldId}`);
-         radiobutton.forEach((item)=> {
-          checkRadioButton.push(item.checked);
-         })
-         if(checkRadioButton.length > 0 && checkRadioButton.includes(true) === false){
-          errordiv.style.display="block";
-          errorcount = errorcount+1;
-         }
-        }else if( item.matadata.type === "checkboxes" ){
-          let checkRadioButton = [];
-          let radiobutton = document.getElementsByName(`${item.matadata.type}_${item.fieldId}`);
-          radiobutton.forEach((item)=> {
-           checkRadioButton.push(item.checked);
-          })
-          if(checkRadioButton.length > 0 && checkRadioButton.includes(true) === false){
-            errordiv.style.display="block";
-            errorcount = errorcount+1;
+    let customValue = JSON.parse(localStorage.getItem(`CustomFieldsSetting`));
+    let errorcount = 0;
+    if (customValue) {
+      let filterUnitSpecificValue = customValue.filter(i => i.matadata.displayOn === 'Unit specific details')
+      filterUnitSpecificValue.forEach((item) => {
+        let customvalue = document.getElementById(`${item.matadata.type}_${item.fieldId}`);
+        let errordiv = document.getElementById(`${item.fieldId}`);
+
+        if (item.matadata.isMandatory === true) {
+
+          if (item.matadata.type === 'textbox' && customvalue.value === '') {
+            errordiv.style.display = "block";
+            errorcount = errorcount + 1;
+            return
+          } else if (item.matadata.type === 'radio') {
+            let checkRadioButton = [];
+            let radiobutton = document.getElementsByName(`${item.matadata.type}_${item.fieldId}`);
+            radiobutton.forEach((item) => {
+              checkRadioButton.push(item.checked);
+            })
+            if (checkRadioButton.length > 0 && checkRadioButton.includes(true) === false) {
+              errordiv.style.display = "block";
+              errorcount = errorcount + 1;
+            }
+          } else if (item.matadata.type === "checkboxes") {
+            let checkRadioButton = [];
+            let radiobutton = document.getElementsByName(`${item.matadata.type}_${item.fieldId}`);
+            radiobutton.forEach((item) => {
+              checkRadioButton.push(item.checked);
+            })
+            if (checkRadioButton.length > 0 && checkRadioButton.includes(true) === false) {
+              errordiv.style.display = "block";
+              errorcount = errorcount + 1;
+            }
+
+          } else if (item.matadata.type === "checkbox") {
+            let checkRadioButton = [];
+            let radiobutton = document.getElementsByName(`${item.matadata.type}_${item.fieldId}`);
+            radiobutton.forEach((item) => {
+              checkRadioButton.push(item.checked);
+            })
+            if (checkRadioButton.length > 0 && checkRadioButton.includes(true) === false) {
+              errordiv.style.display = "block";
+              errorcount = errorcount + 1;
+            }
+
           }
 
-        }else if( item.matadata.type === "checkbox"){
-          let checkRadioButton = [];
-         let radiobutton = document.getElementsByName(`${item.matadata.type}_${item.fieldId}`);
-         radiobutton.forEach((item)=> {
-          checkRadioButton.push(item.checked);
-         })
-         if(checkRadioButton.length > 0 && checkRadioButton.includes(true) === false){
-          errordiv.style.display="block";
-          errorcount = errorcount+1;
-        }
+          else if (item.matadata.type === 'textarea' && customvalue.value === '') {
+            errordiv.style.display = "block";
+            errorcount = errorcount + 1;
+            return
+          } else if (item.matadata.type === 'date' && customvalue.value === '') {
+            errordiv.style.display = "block";
+            errorcount = errorcount + 1;
+            return
+          } else {
+            if (errorcount === 0) {
+              sessionStorage.setItem("customFieldstorage", JSON.stringify(customFieldValue))
+              navigate('/preBooking/addOns');
+            }
+          }
+
 
         }
-        
-        else if(item.matadata.type === 'textarea' && customvalue.value === ''){
-          errordiv.style.display="block";
-          errorcount = errorcount+1;
-          return
-        }else if(item.matadata.type === 'date'&& customvalue.value === ''){
-          errordiv.style.display="block";
-          errorcount = errorcount+1;
-          return
-        }else{
-          if(errorcount === 0){
-            sessionStorage.setItem("customFieldstorage",JSON.stringify(customFieldValue))
-            navigate('/preBooking/addOns');
-           }
-        }
-        
-        
-       }
-       
-     
-    })
 
-    
-  }
+
+      })
+
+
+    }
 
 
   }
@@ -414,25 +420,25 @@ export default function RentingDetails() {
                   <div className="ui form px-4 px-sm-2">
                     <div className="field w-100 datePicker my-3">
                       <label className='fw-500 fs-7 mb-2' >Move-In Date</label>
-                      <SemanticDatepicker placeholder='Select date' className='w-100' value={movinDate} onChange={movindateOnchange} />
+                      <SemanticDatepicker clearable={false} placeholder='Select date' className='w-100' clearOnSameDateClick ={false} value={movinDate} onChange={movindateOnchange} filterDate={(date) => { const now = new Date(); return date >= now; }} />
                     </div>
                     {typeof invoice !== "undefined" && invoice !== null && invoice.length > 0 ?
                       <div className="field w-100  my-3">
                         <label className='fw-500 fs-7 mb-2'>Invoice Period</label>
-                        <Dropdown placeholder='Select Invoice Period' clearable fluid search selection options={invoice} value={invoice.value} defaultValue={invoiceDefault} onChange={invoiceOnchange} />
+                        <Dropdown placeholder='Select Invoice Period'  fluid search selection options={invoice} value={invoice.value} defaultValue={invoiceDefault} onChange={invoiceOnchange} />
                       </div> : ""}
                     {typeof recurring !== "undefined" && recurring !== null && recurring.length > 0 ?
                       <div className="field w-100  my-3">
                         <label className='fw-500 fs-7 mb-2'>Invoice Recurring</label>
-                        <Dropdown placeholder='Select Invoice Recurring' clearable fluid search selection options={recurring} value={recurring.value} defaultValue={recurringDefaultValue} onChange={recurringOnchange} />
+                        <Dropdown placeholder='Select Invoice Recurring'  fluid search selection options={recurring} value={recurring.value} defaultValue={recurringDefaultValue} onChange={recurringOnchange} />
                       </div> : ""}
                     <div className="field w-100 datePicker my-3">
                       <label className='fw-500 fs-7 mb-2' >Desired Move Out date</label>
-                      <SemanticDatepicker placeholder='Select date' className='w-100' />
+                      <SemanticDatepicker placeholder='Select date' className='w-100'  value={desiredMoveOutDate} filterDate={(date) => { const now = new Date(movinDate); return date >= now;}} onChange={DesiredMoveoutDateChange}/>
                     </div>
 
 
-                    {typeof customFieldAccess !== "undefined" && customFieldAccess !== null && customFieldAccess !== "" && customFieldAccess.length > 0 ? 
+                    {typeof customFieldAccess !== "undefined" && customFieldAccess !== null && customFieldAccess !== "" && customFieldAccess.length > 0 ?
                       customFieldAccess.map((item, index) => {
                         {
 
@@ -453,11 +459,11 @@ export default function RentingDetails() {
                           </div>
 
                         } else if (item.matadata.displayOn === "Unit specific details" && item.matadata.type === "textbox" && item.matadata.dataType === "Alphanumeric") {
-                          {console.log("alpha value" +item.fieldId === customFieldId)}
+                          { console.log("alpha value" + item.fieldId === customFieldId) }
                           return <div key={item.fieldId} className="field w-100 my-2 ">
                             <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}
                             </label>
-                            <input type='text' id={`${item.matadata.type}_${item.fieldId}`}  placeholder={item.fieldName} value={item.fieldId === customFieldId? customFieldValue:customInputFieldValue} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
+                            <input type='text' id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} value={item.fieldId === customFieldId ? customFieldValue : customInputFieldValue} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
                             <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
                           </div>
 
@@ -468,7 +474,7 @@ export default function RentingDetails() {
                             <div className="col-12">
                               <div className="field w-100 datePicker my-2">
                                 <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}</label>
-                                <SemanticDatepicker  id={`${item.matadata.type}_${item.fieldId}`}  placeholder={item.fieldName} className='w-100' data-name={item.fieldName} fieldId={item.fieldId} unitId={unitid} required={item.matadata.isMandatory} fieldpage={item.matadata.displayOn} type={item.matadata.type} onChange={(e,data) => customhandlechange(e,data,"date")} />
+                                <SemanticDatepicker id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} className='w-100' data-name={item.fieldName} fieldId={item.fieldId} unitId={unitid} required={item.matadata.isMandatory} fieldpage={item.matadata.displayOn} type={item.matadata.type} onChange={(e, data) => customhandlechange(e, data, "date")} />
                                 <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
                               </div>
                             </div>
@@ -478,13 +484,13 @@ export default function RentingDetails() {
 
                         else if (item.matadata.displayOn === "Unit specific details" && item.matadata.type === "checkboxes") {
                           return <div key={item.fieldId} className="col-12 my-2">
-                            <span  id={`${item.matadata.type}_${item.fieldId}`} >{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}
+                            <span id={`${item.matadata.type}_${item.fieldId}`} >{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}
                               <span className="mx-2">
-                                <input   id={`${item.matadata.type}_${item.fieldId}`} className="mr-1" type="checkbox" name={`${item.matadata.type}_${item.fieldId}`} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.options[0].option} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} />
+                                <input id={`${item.matadata.type}_${item.fieldId}`} className="mr-1" type="checkbox" name={`${item.matadata.type}_${item.fieldId}`} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.options[0].option} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} />
                                 <label>{item.options[0].option}</label>
                               </span>
                               <span>
-                                <input   id={`${item.matadata.type}_${item.fieldId}`} className="mr-1" type="checkbox" name={`${item.matadata.type}_${item.fieldId}`} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.options[1].option} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} />
+                                <input id={`${item.matadata.type}_${item.fieldId}`} className="mr-1" type="checkbox" name={`${item.matadata.type}_${item.fieldId}`} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.options[1].option} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} />
                                 <label>{item.options[1].option}</label>
                               </span>
                             </span>
@@ -498,7 +504,7 @@ export default function RentingDetails() {
                             <div className="col-12">
                               <div className="field w-100 my-2">
                                 <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}</label>
-                                <textarea  id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} data-name={item.fieldName} data-type={item.matadata.type} value={customInputFieldValue} rows="3" data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)}></textarea>
+                                <textarea id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} data-name={item.fieldName} data-type={item.matadata.type} value={customInputFieldValue} rows="3" data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)}></textarea>
                                 <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
                               </div>
                             </div>
@@ -510,7 +516,7 @@ export default function RentingDetails() {
 
                           return <div key={item.fieldId} className='row mt-2'>
                             <div className="col-12">
-                              <span  id={`${item.matadata.type}_${item.fieldId}`}>
+                              <span id={`${item.matadata.type}_${item.fieldId}`}>
                                 <span className="mx-0">
                                   <input className="mr-1" type="checkbox" name={`${item.matadata.type}_${item.fieldId}`} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.fieldName} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
                                   <label>{item.fieldName}{item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}</label>
@@ -531,13 +537,13 @@ export default function RentingDetails() {
 
                         } else if (item.matadata.displayOn === "Unit specific details" && item.matadata.type === "radio") {
                           return <div key={item.fieldId} className="col-12 my-2">
-                            <span  id={`${item.matadata.type}_${item.fieldId}`}>{item.fieldName}{item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}
+                            <span id={`${item.matadata.type}_${item.fieldId}`}>{item.fieldName}{item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}
                               <span className="mx-2">
-                                <input className="mr-1"  id={`${item.matadata.type}_${item.fieldId}`} type="radio" name={`${item.matadata.type}_${item.fieldId}`} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.options[0].option} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} />
+                                <input className="mr-1" id={`${item.matadata.type}_${item.fieldId}`} type="radio" name={`${item.matadata.type}_${item.fieldId}`} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.options[0].option} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} />
                                 <label>{item.options[0].option}</label>
                               </span>
                               <span>
-                                <input className="mr-1"  id={`${item.matadata.type}_${item.fieldId}`} type="radio" name={`${item.matadata.type}_${item.fieldId}`} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.options[1].option} data-fieldpage={item.matadata.displayOn}  onChange={(e) => customhandlechange(e)} />
+                                <input className="mr-1" id={`${item.matadata.type}_${item.fieldId}`} type="radio" name={`${item.matadata.type}_${item.fieldId}`} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.options[1].option} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} />
                                 <label>{item.options[1].option}</label>
                               </span>
                             </span>
