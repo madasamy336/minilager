@@ -29,19 +29,17 @@ const PostLoginForm = (props) => {
     })
 
     let { username, password, rememberPassword } = values;
-   
+
 
     if (userid !== null && typeof userid !== "undefined" && userid !== '') {
 
         const navigate = useNavigate();
-        if(props.callingfrom === 'prebooking'){
+        if (props.callingfrom === 'prebooking') {
             navigate('/preBooking/TenantDetails')
 
-        }else{
+        } else {
             navigate('/postBooking/Profile');
         }
-        
-       
         // setValues({...values,username:username })
     }
 
@@ -52,18 +50,26 @@ const PostLoginForm = (props) => {
 
 
     const validateOne = (e) => {
-
         const { name } = e.target
         const value = values[name]
         let message = ''
-
-        if (!value) {
-            message = `${name} is required`
+        switch (name) {
+            case 'username':
+                if (!value) {
+                    message = `Username is required`
+                }
+                else if (!/\S+@\S+\.\S+/.test(value)) {
+                    message = 'Email format must be as example@mail.com'
+                }
+                break;
+            case 'password':
+                if (!value) {
+                    message = 'Password is Required'
+                }
+                break;
+            default:
+                break;
         }
-        if (value && name === 'username' && !/\S+@\S+\.\S+/.test(value)) {
-            message = 'Email format must be as example@mail.com'
-        }
-
         setValidations({ ...validations, [name]: message })
     }
 
@@ -127,7 +133,7 @@ const PostLoginForm = (props) => {
                 console.log(configData);
                 if (configData.result !== null && typeof configData.result !== 'undefined' && configData.result !== '') {
                     // to emulate some network delay
-                       if (configData.returnMessage === 'SUCCESS') {
+                    if (configData.returnMessage === 'SUCCESS') {
                         toast.success('You are logged in successfully', {
                             position: "top-right",
                             autoClose: 3000,
@@ -146,20 +152,20 @@ const PostLoginForm = (props) => {
                         }
                         let userid = localStorage.getItem('userid');
                         if (userid !== null && typeof userid !== 'undefined' && userid !== '') {
-                            if(props.callingfrom === 'prebooking'){
+                            if (props.callingfrom === 'prebooking') {
                                 navigate('/preBooking/TenantDetails')
 
-                            }else{
+                            } else {
                                 navigate('/postBooking/Profile');
                             }
-                           
+
                         }
                     }
 
 
 
 
-                  } else if (configData.result === null && configData.returnCode === "INVALID_PARAM" && configData.returnMessage === "Invalid user name or password") {
+                } else if (configData.result === null && configData.returnCode === "INVALID_PARAM" && configData.returnMessage === "Invalid user name or password") {
                     toast.error('Invalid UserName or Password', {
                         position: "top-right",
                         autoClose: 3000,
@@ -573,12 +579,12 @@ const PostLoginForm = (props) => {
                         </form>
                         <div className="signup-div text-center">
                             {
-                                props.callingfrom === 'prebooking'? 
-                                <p>Don't have an account? <Link to={'/preBooking/signup'}>Signup Now</Link></p>: 
-                                <p>Don't have an account? <Link to={'/signup'}>Signup Now</Link></p>
+                                props.callingfrom === 'prebooking' ?
+                                    <p>Don't have an account? <Link to={'/preBooking/signup'}>Signup Now</Link></p> :
+                                    <p>Don't have an account? <Link to={'/signup'}>Signup Now</Link></p>
 
                             }
-                           
+
                         </div>
                     </div>
                 </div>
