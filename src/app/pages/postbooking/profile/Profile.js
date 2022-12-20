@@ -5,7 +5,7 @@ import countriecodes from '../../../components/CountryCode';
 import instance from '../../../services/instance';
 import request from '../../../services/request';
 import Helper from "../../../helper";
-import PhoneInput from 'react-phone-number-input';
+import PhoneInput, { formatPhoneNumber, formatPhoneNumberIntl } from 'react-phone-number-input'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-phone-number-input/style.css';
@@ -15,8 +15,13 @@ let helper = new Helper();
 let addressLineOneReq;
 let addressLineTwoReq;
 let postalCodeReq;
+let birthDateReq;
+let DefaultCountryCode;
 export default function Profile() {
-
+  const clientDataconfig = JSON.parse(sessionStorage.getItem("configdata"));
+  const culture = clientDataconfig.culture.culture
+  const country = culture.substring(culture.indexOf('-') + 1, culture.length).toLowerCase();
+  console.log(country);
   const [profileImageSrc, setprofileImageSrc] = useState('')
 
   // const [contactPhone, SetContactPhone] = useState();
@@ -56,6 +61,7 @@ export default function Profile() {
 
   useEffect(() => {
     fetchTenantDetails();
+    // setDefultContryCode()
   }, []);
 
 
@@ -76,12 +82,16 @@ export default function Profile() {
         addressLineOneReq = data['addressLineOne'];
         addressLineTwoReq = data['addressLineTwo'];
         postalCodeReq = data['zipCode'];
+        birthDateReq = data['birthDate'];
+        data['phoneNumber'] = data['phoneNumber'].replace(DefaultCountryCode, '')
         setTenantDetails(data)
+        // setTenantDetails({ ...tenantDetails, ['phoneNumber'] : data['phoneNumber'].replace(DefaultCountryCode, '') });
 
-        console.log(data.addressLineOne);
-
+        // tenantDetails.phoneNumber = data['phoneNumber'].replace(DefaultCountryCode, '')
         setprofileImageSrc(data.photoPath)
-        setLoading(false)
+        setTimeout(() => {
+          setLoading(false)
+        }, 1000);
       } else {
         editTenantDetails(false)
         console.log('No records found');
@@ -94,7 +104,8 @@ export default function Profile() {
   }
 
   const onChangePersonalInfo = (e) => {
-    console.log(e);
+    console.log(e.target.value);
+    console.log(e.target.name);
     if (e.target.name === 'addressLine1') {
       tenantDetails['addressLineOne'] = e.target.value;
       addressLineOneReq = e.target.value;
@@ -184,13 +195,18 @@ export default function Profile() {
       }
     };
     let userid = localStorage.getItem('userid');
-    console.log("tenantDetails", tenantDetails);
+    console.log("updateTenantInfo", tenantDetails);
+    console.log("birthDateReq", new Date(birthDateReq));
     tenantDetails['addressLine1'] = addressLineOneReq;
     tenantDetails['addressLine2'] = addressLineTwoReq;
     tenantDetails['postalCode'] = postalCodeReq;
+    tenantDetails['dateOfBirth'] = new Date(birthDateReq);
+    // tenantDetails['phoneNumber'] = tenantDetails['phoneNumber'];
     instance.post(request.update_user_info + '/' + userid, tenantDetails, config).then((response) => {
       const userUpdateResponse = response.data;
       if (userUpdateResponse.isSuccess === true && userUpdateResponse.returnCode === "SUCCESS") {
+        editTenantDetails(true)
+        fetchTenantDetails()
         toast.success('Profile Info Updated', {
           position: "top-right",
           autoClose: 3000,
@@ -211,11 +227,32 @@ export default function Profile() {
 
   function handleChangeBirthdate(event, data) {
     console.log(event, data);
-    setTenantDetails({ ...tenantDetails, ['birthDate']: data.value });
+    const newDate = new Date(data.value);
+    birthDateReq = newDate;
+    setTenantDetails({ ...tenantDetails, ['dateOfBirth']: newDate });
   }
 
-  const SetContactPhone = (e) => {
-    console.log(e);
+  const setDefultContryCode = (_e, data) => {
+    if (data.value && data.value.length !== 0) {
+      DefaultCountryCode = data.value
+    } else {
+      countriecodes.filter(countryData => {
+        if (countryData.flag == country) {
+          DefaultCountryCode = countryData.value
+        }
+      })
+    }
+
+  }
+
+  // const getCountryCode = (_e, data) => {
+  //   // console.log(e,d);
+  //  return DefaultCountryCode = data.value
+  // }
+
+
+  const onChangePhoneInput = (e, data) => {
+    setTenantDetails({ ...tenantDetails, ['phoneNumber']: e });
   }
 
   return (
@@ -273,14 +310,19 @@ export default function Profile() {
                   <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                     <div className="field w-100 datePicker my-3">
                       <label className="text-dark fs-7 fw-500">Date of Birth<span className="error">*</span></label>
-                      <SemanticDatepicker name="birthDate" placeholder='Select date' format="DD-MM-YYYY" value={tenantDetails.birthDate ? tenantDetails.birthDate : ''} className='w-100' onChange={handleChangeBirthdate} />
+                      <SemanticDatepicker name="dateOfBirth" placeholder='Select date' format="DD-MM-YYYY" value={new Date(birthDateReq)} className='w-100' onChange={handleChangeBirthdate} />
                     </div>
                     <div className="field my-3">
                       <label className="text-dark fs-7 fw-500">Phone Number<span className="error">*</span></label>
-                      {/* <Input name="phoneNumber" value={tenantDetails.phoneNumber} onChange={e => onChangePersonalInfo(e)} className="noCounterNumber" type="text" placeholder="Enter Mobile Number"
-                        label={<Dropdown defaultValue='+91' search options={countriecodes} />}
+                      {console.log("Hello", tenantDetails.phoneNumber)}
+                      <PhoneInput
+                        defaultCountry={DefaultCountryCode}
+                        value={tenantDetails.phoneNumber}
+                        onChange={(e, d) => onChangePhoneInput(e, d)} />
+                      {/* <Input name="phoneNumber" value={tenantDetails.phoneNumber} onChange={e => onChangePersonalInfo(e)} className="noCounterNumber" type="number" placeholder="Enter Mobile Number"
+                        label={<Dropdown defaultValue={DefaultCountryCode} onChange={(e, d )=> setDefultContryCode(e, d)}
+                          search options={countriecodes} />}
                         labelPosition='left' /> */}
-                      <PhoneInput value={tenantDetails.phoneNumber} name="phoneNumber" onChange={e => onChangePersonalInfo(e)} />
                     </div>
                   </div>
                   <div className="col-lg-6 col-md-6 col-sm-12 px-2">
@@ -314,8 +356,8 @@ export default function Profile() {
                       <p className="fs-7 fw-500 text-dark mb-2">Date of Birth</p>
                     </div>
                     <div className="col-lg-8 col-md-8 col-sm-8">
-                      {/* <p className="fs-7 mb-2">{helper.displayDate(tenantDetails.birthDate)}</p> */}
                       <p className="fs-7 mb-2">{helper.readDate(new Date(tenantDetails.birthDate))}</p>
+                      {/* <p className="fs-7 mb-2">{birthDateReq}</p> */}
                     </div>
 
                     <div className="col-lg-4 col-md-4 col-sm-4">
