@@ -282,7 +282,6 @@ export default function RentingDetails() {
       } else if (item.typeof === 'checkboxes') {
         let checkboxes = document.getElementsByName(`${item.typeof}_${item.fieldId}`);
         checkboxes.forEach((element) => {
-          console.log(element.defaultValue === item.value);
           if (element.defaultValue === item.value) {
             element.checked = true
           }
@@ -290,7 +289,6 @@ export default function RentingDetails() {
       } else if (item.typeof === 'radio') {
         let checkboxes = document.getElementsByName(`${item.typeof}_${item.fieldId}`);
         checkboxes.forEach((element) => {
-          console.log(element.defaultValue === item.value);
           if (element.defaultValue === item.value) {
             element.checked = true
           }

@@ -32,6 +32,7 @@ export default function EsignPayment() {
   let makeSavedCardMandatory = JSON.parse(sessionStorage.getItem('configdata')).culture.isSavedCardsByDefault;
   let tenantInfo = JSON.parse(sessionStorage.getItem('tenantIfo'));
   let desiredMoveOutDate = sessionStorage.getItem("desiredMoveoutDate");
+  let BusinessUser =  JSON.parse(sessionStorage.getItem('isBussinessUser'));
   const [saveAgreement, setSaveAgreement] = useState();
   const [PaymentModal, setpaymentModal] = useState({ open: false, dimmer: undefined, })
   const [mondelcontent, setModelcontent] = useState(``);
@@ -235,7 +236,7 @@ export default function EsignPayment() {
     if(desiredMoveOutDate !== 'null' && desiredMoveOutDate !== null && desiredMoveOutDate !== 'undefined'){
       unitDetailRespones.units[0]['desiredMoveOutDate'] =helper.readDate(new Date(desiredMoveOutDate));
     }
-    unitDetailRespones['isBusinessUser'] = true;
+    unitDetailRespones['isBusinessUser'] = BusinessUser;
     unitDetailRespones['payLater'] = paylater;
     unitDetailRespones['saveCard'] = saveCard;
     unitDetailRespones['enableAutopay'] = autoPayEnabled;

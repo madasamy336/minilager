@@ -18,6 +18,7 @@ let storageTypeId;
 const Pricesummary = forwardRef((props, ref) => {
   let invoiceData = JSON.parse(sessionStorage.getItem("invoiceData"));
   let recurringData = JSON.parse(sessionStorage.getItem("recurringData"));
+  let BusinessUser =  JSON.parse(sessionStorage.getItem('isBussinessUser'));
   let promoAppliedsession = sessionStorage.getItem("applypromo");
   useImperativeHandle(ref, () => ({
     unitInfodetailscall() {
@@ -125,7 +126,7 @@ const Pricesummary = forwardRef((props, ref) => {
     let promodiscountdata;
 
     promodiscountdata = {
-      tenantTypeId: 3,
+      tenantTypeId: BusinessUser ? 2 : 1,
       unitIds: [unitid],
       period: invoiceData,
       visibility: 0,
