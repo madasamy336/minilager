@@ -8,13 +8,16 @@ import instance from '../services/instance';
 import request from '../services/request';
 
 const Units = () => {
-
-    const [tentTypes , setTenantTypes] = useState('');
+    const [tentTypes, setTenantTypes] = useState('');
+    const [SortByPriceRange, setSortByPriceRange] = useState("Ascending");
     const [UnitResponse, setUnitResponse] = useState(null);
     const [storageTypeValue, setStorageTypeValue] = useState('');
+    const [tenantTypeError, setTenantTypeError] = useState('');
     const [filterRequest, setFilterRequest] = useState('')
     const [loader, setLoading] = useState(true);
     const [filtercall, setFilterCall] = useState(false);
+   
+   
     const [unitTypeModal, SetunitTypeModal] = useState({
         open: false,
         dimmer: undefined,
@@ -162,17 +165,17 @@ const Units = () => {
         let amenitiesId;
         let minvalues;
         let maxvalues;
-        if(typeof searchFilterValues !=="undefined" && searchFilterValues !==null && searchFilterValues !=="" ){
+        if (typeof searchFilterValues !== "undefined" && searchFilterValues !== null && searchFilterValues !== "") {
             buidingId = searchFilterValues.buildingid;
-            unitTypeId =  searchFilterValues.unitTypeid;
+            unitTypeId = searchFilterValues.unitTypeid;
             amenitiesId = searchFilterValues.amenitiesid;
-            if(typeof searchFilterValues.priceRange !=="undefined" && searchFilterValues.priceRange !==null &&  searchFilterValues.priceRange !==""){
+            if (typeof searchFilterValues.priceRange !== "undefined" && searchFilterValues.priceRange !== null && searchFilterValues.priceRange !== "") {
                 minvalues = searchFilterValues.priceRange[0];
-                maxvalues = searchFilterValues.priceRange [1];
+                maxvalues = searchFilterValues.priceRange[1];
             }
-           
+
         }
-      
+
         setLoading(true);
 
         let config = {
@@ -187,10 +190,11 @@ const Units = () => {
             buildingId: buidingId,
             unitTypeId: unitTypeId,
             amenityId: amenitiesId,
-            priceRange:{
-                minPrice:minvalues,
-                maxPrice:maxvalues
+            priceRange: {
+                minPrice: minvalues,
+                maxPrice: maxvalues
             },
+            sortDirection:SortByPriceRange,
             pageNumber: 1,
             pageSize: 10,
             isBusinessUser: false,
@@ -225,9 +229,18 @@ const Units = () => {
     ]
 
 
-    const tenantInfoChange = (event,data)=>{
+    const tenantInfoChange = (event, data) => {
         setTenantTypes(data.value);
         sessionStorage.setItem("isBussinessUser", data.value);
+    }
+
+    const tenantTypeValidation = (data) => {
+        setTenantTypeError(data);
+    }
+
+    const sortByPriceRange = (event, data)=>{
+        setSortByPriceRange(data.value);
+        sixStorageLoadUnitList(storageTypeValue);
     }
 
     const storageTypeOptions = typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof filters.storageType !== 'undefined' && filters.storageType !== null && filters.storageType !== "" && filters.storageType.length > 0 ?
@@ -262,19 +275,21 @@ const Units = () => {
             content: 'Popular',
         },
         {
-            key: 'Price High to Low',
+            key: 'Ascending',
             text: 'Price High to Low',
-            value: 'Price High to Low',
+            value: 'Ascending',
             content: 'Price High to Low',
         },
         {
-            key: 'Price Low to High',
+            key: 'Descending',
             text: 'Price Low to High',
-            value: 'Price Low to High',
+            value: 'Descending',
             content: 'Price Low to High',
         }
     ]
 
+
+    console.log(SortByPriceRange);
 
     return (
         <div className="units-wrapper">
@@ -285,8 +300,8 @@ const Units = () => {
                         <h2 className='text-center'>Find Your Storage Place</h2>
                         <div className='row'>
                             <div className='col-lg-6 col-md-6 col-sm-12'>
-                                {typeof tenantTypeOptions !=="undefined" && tenantTypeOptions !==null && tenantTypeOptions !=="" && tenantTypeOptions.length > 0  ?   <Dropdown  placeholder="Choose Tenant Type" clearable fluid search selection options={tenantTypeOptions} value={tentTypes} onChange= {tenantInfoChange}  />  : null}
-                              
+                                {typeof tenantTypeOptions !== "undefined" && tenantTypeOptions !== null && tenantTypeOptions !== "" && tenantTypeOptions.length > 0 ? <Dropdown placeholder="Choose Tenant Type" clearable fluid search selection options={tenantTypeOptions} value={tentTypes} onChange={tenantInfoChange} /> : null}
+
                             </div>
                             <div className='col-lg-6 col-md-6 col-sm-12'>
                                 {storageTypeOptions !== null && typeof storageTypeOptions !== 'undefined' && storageTypeOptions !== '' && typeof storageTypeOptions[0].value !== 'undefined' && storageTypeOptions[0].value !== null && storageTypeOptions[0].value !== '' ?
@@ -295,18 +310,19 @@ const Units = () => {
                             </div>
                         </div>
                     </div>
+
                 </div>
                 <div className="units-row">
                     <div className="row">
                         <div className="col-lg-3 col-md-3 col-sm-12">
                             <div className="filters-div">
-                                <AccordionExampleStyled filterValue={filterValue} unitsearchFilters = {(items)=>sixStorageLoadUnitList(storageTypeValue, items)}   storageTypeValue={storageTypeValue} modal={() => SetunitTypeModal({ open: true, size: 'tiny', dimmer: 'blurring' })}  />
-                                
+                                <AccordionExampleStyled filterValue={filterValue} unitsearchFilters={(items) => sixStorageLoadUnitList(storageTypeValue, items)} storageTypeValue={storageTypeValue} modal={() => SetunitTypeModal({ open: true, size: 'tiny', dimmer: 'blurring' })} />
+
                             </div>
                         </div>
                         <div className="col-lg-9 col-md-9 col-sm-12">
                             <div className="units-container-div">
-                                <p className='text-center error py-1 d-none'>Please Select Tenant Type</p>
+                                <div className='text-center text-danger' id='tenanttype-options'>{tenantTypeError}</div>
                                 <div className='sort-div text-right py-1'>
                                     <Header as='h4'>
                                         <Header.Content>
@@ -315,7 +331,8 @@ const Units = () => {
                                                 floating
                                                 inline
                                                 options={sortUnitOptions}
-                                                defaultValue={sortUnitOptions[0].value}
+                                                defaultValue={sortUnitOptions[1].value}
+                                                onChange={sortByPriceRange}
                                             />
                                         </Header.Content>
                                     </Header>
@@ -325,11 +342,7 @@ const Units = () => {
 
                                         {loader ? (<div>
                                             <PlaceholderLoader cardCount={7} />
-                                        </div>) : (<UnitsCard filterRequest={filterRequest} storageTypevalue={storageTypeValue} UnitResponse={UnitResponse} setUnitResponse={setUnitResponse} setLoading={setLoading} />)}
-
-
-
-
+                                        </div>) : (<UnitsCard filterRequest={filterRequest} storageTypevalue={storageTypeValue} UnitResponse={UnitResponse} setUnitResponse={setUnitResponse} setLoading={setLoading}   tenantTypeValue = {tentTypes} tenantTypeError={(data) => tenantTypeValidation(data)} />)}
                                     </div>
                                 </div>
                                 <div className='pagination-div mt-2 mb-3 text-center'>
