@@ -25,10 +25,6 @@ const CreditCardTab = (props) => {
             <Image avatar src="/assets/images/menu.svg" />
         </span>
     )
-    const CardOptions = [
-        { key: 'Make as primary', text: 'Make as primary', value: 'MakeAsPrimary', image: { src: '/assets/images/credit-cardd.svg' } },
-        { key: 'Delete', text: 'Delete', value: 'Delete', image: { src: '/assets/images/delete.svg' }, },
-    ]
 
     useEffect(() => {
         listCreditCards();

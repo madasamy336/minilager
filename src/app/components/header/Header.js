@@ -10,23 +10,23 @@ export default function Header(props) {
     props.showSidebar(!props.sidebar)
   }
   const { t, i18n } = useTranslation();
-  const changeLanguageHandler = (e) => {
-    const languageValue = e.target.value
+  const changeLanguageHandler = (e, data) => {
+    const languageValue = data.value;
     i18n.changeLanguage(languageValue);
   }
-  const Languages=[
-    
-      { key: 'nn', text: 'Norwegian', value: 'nn' }
+  const Languages = [
+
+    { key: 'nn', text: 'Norwegian', value: 'nn' }
     ,
-    
-      { key: 'en', text: 'english', value: 'en' },
-    
+
+    { key: 'en', text: 'English', value: 'en' },
+
   ]
   return (
     <>
 
       <div className={`position-fixed w-100 ${location.pathname.startsWith('/postBooking') && `${props.width < 980 && 'pb-5'}`}`} id='mainHeader'>
- 
+
         <div className='ui secondary pointing menu py-1 bg-white d-block  w-100'>
           <a href="/" className={`item d-inline-block ${props.width < 981 && 'w-50'}`}>
             <img className={`${props.width > 980 && 'w-50'} ${props.width > 500 ? `${props.width < 980 && 'w-25'}` : `w-75`}`} src='https://123minilager.no/wp-content/uploads/2020/03/cropped-123Minilager-Lager-til-leie-1.jpg' alt="123minilager.no" />
@@ -45,7 +45,7 @@ export default function Header(props) {
               <NavLink to={'/login'} className="item fs-7 fw-700 mx-4 navtext py-3 d-inline-block">
                 MY SIDE
               </NavLink>
-              <Dropdown placeholder='State' search selection  options={Languages} />
+              <Dropdown onChange={(e, data)=>changeLanguageHandler(e, data)} placeholder='Choose Language' selection options={Languages} />
 
             </div>
 

@@ -31,6 +31,8 @@ export default function EsignPayment() {
   let promoAppliedsession = sessionStorage.getItem("applypromo");
   let makeSavedCardMandatory = JSON.parse(sessionStorage.getItem('configdata')).culture.isSavedCardsByDefault;
   let tenantInfo = JSON.parse(sessionStorage.getItem('tenantIfo'));
+  let desiredMoveOutDate = sessionStorage.getItem("desiredMoveoutDate");
+  let BusinessUser =  JSON.parse(sessionStorage.getItem('isBussinessUser'));
   const [saveAgreement, setSaveAgreement] = useState();
   const [PaymentModal, setpaymentModal] = useState({ open: false, dimmer: undefined, })
   const [mondelcontent, setModelcontent] = useState(``);
@@ -231,7 +233,10 @@ export default function EsignPayment() {
     if (typeof cardResponse !== 'undefined' && cardResponse !== null && cardResponse !== '') {
       unitDetailRespones['paymentTransactionResponse'] = cardResponse;
     }
-    unitDetailRespones['isBusinessUser'] = true;
+    if(desiredMoveOutDate !== 'null' && desiredMoveOutDate !== null && desiredMoveOutDate !== 'undefined'){
+      unitDetailRespones.units[0]['desiredMoveOutDate'] =helper.readDate(new Date(desiredMoveOutDate));
+    }
+    unitDetailRespones['isBusinessUser'] = BusinessUser;
     unitDetailRespones['payLater'] = paylater;
     unitDetailRespones['saveCard'] = saveCard;
     unitDetailRespones['enableAutopay'] = autoPayEnabled;
@@ -243,7 +248,10 @@ export default function EsignPayment() {
       .then((response) => {
         console.log(response);
         if (response.data.isSuccess) {
-
+          sessionStorage.removeItem('leaseProfileid');
+          sessionStorage.removeItem('insurancedetail');
+          sessionStorage.removeItem('vehicleDetail');
+          sessionStorage.removeItem('merchandiseItem');
           navigate('/preBooking/thankyou')
         } else {
           alert('something went wrong')
@@ -346,9 +354,9 @@ export default function EsignPayment() {
                       <div className="card-details">
                         <div className="mb-2">
                           <h6 className="fs-6 fw-400 text-success mb-1">Personal Details</h6>
-                          <p className="mb-1">Peter John</p>
-                          <p className="mb-1">peterjohn@gmail.com</p>
-                          <p className="mb-1">(987) 654 3210</p>
+                          <p className="mb-1">{tenantInfo.firstName} {tenantInfo.lastName}</p>
+                          <p className="mb-1">{tenantInfo.email}</p>
+                          <p className="mb-1">{tenantInfo.phoneNumber}</p>
                         </div>
                         {facilityaddress !== null && typeof facilityaddress !== 'undefined' ?
                           <div>

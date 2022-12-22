@@ -387,7 +387,10 @@ const AccordionExampleStyled = (selectedStorageType) => {
         </Accordion.Title>
         <Accordion.Content active={activeIndex === 4}>
           <div>
-            <UnitsRangeSlider priceRange={NewPriceValue} minprice={(min) => setMinPriceState(min)} maxprice={(max) => setMaxPriceState(max)} pricerangeinitialvalue={pricerangeOnchangevalue} />
+          {NewPriceValue?
+          <UnitsRangeSlider priceRange={NewPriceValue} minprice = {(min)=> setMinPriceState(min)} maxprice = {(max)=>setMaxPriceState(max)}  pricerangeinitialvalue={pricerangeOnchangevalue}/>
+          : ""
+          }
           </div>
         </Accordion.Content>
 
