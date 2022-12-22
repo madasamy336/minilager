@@ -21,6 +21,7 @@ const AccordionExampleStyled = (selectedStorageType) => {
   const [selectAll, setSelectAll] = useState(true);
   const [minPriceState, setMinPriceState] = useState();
   const [maxPriceState, setMaxPriceState] = useState();
+  const [PriceRangeStatus, setPriceRangeStatus] = useState(true);
   const handleClick = (e, titleProps) => {
     const { index } = titleProps;
     const newIndex = activeIndex === index ? -1 : index
@@ -29,7 +30,7 @@ const AccordionExampleStyled = (selectedStorageType) => {
 
   const pricerangeOnchangevalue = (data) => {
     setPriceRangeArrayvalue(data);
-}
+  }
 
 
   function checkStoragePriceRange(PriceRangeArray, storageCategoryValue) {
@@ -53,6 +54,17 @@ const AccordionExampleStyled = (selectedStorageType) => {
       "maxPrice": MaxValue,
     }
 
+    if (NewPriceValue.maxPrice === NewPriceValue.minPrice) {
+      let priceRangeHiding = document.getElementById("pricerange-hide");
+      if (typeof priceRangeHiding !=="undefined" && priceRangeHiding !==null && priceRangeHiding !==""){
+        priceRangeHiding.style.display = 'none';
+      }
+    }else{
+      let priceRangeHiding = document.getElementById("pricerange-hide");
+      if (typeof priceRangeHiding !=="undefined" && priceRangeHiding !==null && priceRangeHiding !==""){
+        priceRangeHiding.style.display = 'block';
+      }
+    }
     sessionStorage.setItem("MinValue", minvalue);
     sessionStorage.setItem("MaxValue", MaxValue);
   }
@@ -188,23 +200,23 @@ const AccordionExampleStyled = (selectedStorageType) => {
     setMinPriceState(0);
   }
 
-  const applyAllFiterValues = ()=>{
+  const applyAllFiterValues = () => {
     let selectedbuildingId;
     let selectedUnitTypeId;
     let selectedAmenitiesId;
-    if(typeof filterBuilding !=="undefined" && filterBuilding !=="" && filterBuilding !==null){
-      selectedbuildingId = filterBuilding.filter((i)=> i.buildingid).map((item)=>{
-       return item.buildingid;
+    if (typeof filterBuilding !== "undefined" && filterBuilding !== "" && filterBuilding !== null) {
+      selectedbuildingId = filterBuilding.filter((i) => i.buildingid).map((item) => {
+        return item.buildingid;
       });
     }
-    if(typeof filterUnitType !=="undefined" && filterUnitType !== "" && filterUnitType !==null){
-     selectedUnitTypeId = filterUnitType.filter((i)=>i.unitTypeid).map((item)=>{
-       return item.unitTypeid;
+    if (typeof filterUnitType !== "undefined" && filterUnitType !== "" && filterUnitType !== null) {
+      selectedUnitTypeId = filterUnitType.filter((i) => i.unitTypeid).map((item) => {
+        return item.unitTypeid;
       });
     }
-    if(typeof filterAmenity !=="undefined" && filterAmenity !=="" && filterAmenity !==null){
-      selectedAmenitiesId = filterAmenity.filter((i)=>i.amenitiesid).map((item)=>{
-      return item.amenitiesid; 
+    if (typeof filterAmenity !== "undefined" && filterAmenity !== "" && filterAmenity !== null) {
+      selectedAmenitiesId = filterAmenity.filter((i) => i.amenitiesid).map((item) => {
+        return item.amenitiesid;
       });
     }
 
@@ -216,13 +228,8 @@ const AccordionExampleStyled = (selectedStorageType) => {
     }
 
     selectedStorageType.unitsearchFilters(FilterSearchId);
-  
+
   }
-
-
-  console.log(minPriceState);
-  console.log(maxPriceState);
-  
 
   return (
 
@@ -364,23 +371,29 @@ const AccordionExampleStyled = (selectedStorageType) => {
         </div>
       </Accordion.Content>
 
-      <Accordion.Title className='d-flex justify-content-between align-items-center'
-        active={activeIndex === 4}
-        index={4}
-        onClick={handleClick}
-      >
-        <div className='d-flex justify-content-between align-items-center'>
-          <img src="/assets/images/price-range.png" alt="" />Price Range
-        </div>
-        <div>
-          <img src="/assets/images/arrow-down.png" alt="" />
-        </div>
-      </Accordion.Title>
-      <Accordion.Content active={activeIndex === 4}>
-        <div>
-          <UnitsRangeSlider priceRange={NewPriceValue} minprice = {(min)=> setMinPriceState(min)} maxprice = {(max)=>setMaxPriceState(max)}  pricerangeinitialvalue={pricerangeOnchangevalue}/>
-        </div>
-      </Accordion.Content>
+      <div id="pricerange-hide">
+
+        <Accordion.Title className='d-flex justify-content-between align-items-center'
+          active={activeIndex === 4}
+          index={4}
+          onClick={handleClick}
+        >
+          <div className='d-flex justify-content-between align-items-center'>
+            <img src="/assets/images/price-range.png" alt="" />Price Range
+          </div>
+          <div>
+            <img src="/assets/images/arrow-down.png" alt="" />
+          </div>
+        </Accordion.Title>
+        <Accordion.Content active={activeIndex === 4}>
+          <div>
+            <UnitsRangeSlider priceRange={NewPriceValue} minprice={(min) => setMinPriceState(min)} maxprice={(max) => setMaxPriceState(max)} pricerangeinitialvalue={pricerangeOnchangevalue} />
+          </div>
+        </Accordion.Content>
+
+      </div>
+
+
       {
         typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof AmenityFilter !== 'undefined' && AmenityFilter !== null && AmenityFilter !== "" && AmenityFilter.length > 0 ?
           <><Accordion.Title className={`d-flex justify-content-between align-items-center`}
@@ -416,8 +429,8 @@ const AccordionExampleStyled = (selectedStorageType) => {
       }
 
       <div className='text-center my-2'>
-        <button className='ui button bg-white border-success-dark-light-1 text-success fs-7 fw-400 px-5 mx-1 mb-1 mb-sm-1 px-sm-2' onClick={()=>clearAllFilters()}>Clear All</button>
-        <button className='ui button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-1 mb-sm-1 px-sm-2' onClick={()=>applyAllFiterValues()} >Apply</button>
+        <button className='ui button bg-white border-success-dark-light-1 text-success fs-7 fw-400 px-5 mx-1 mb-1 mb-sm-1 px-sm-2' onClick={() => clearAllFilters()}>Clear All</button>
+        <button className='ui button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-1 mb-sm-1 px-sm-2' onClick={() => applyAllFiterValues()} >Apply</button>
       </div>
     </Accordion >
 
