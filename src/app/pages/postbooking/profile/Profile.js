@@ -15,13 +15,12 @@ let helper = new Helper();
 let addressLineOneReq;
 let addressLineTwoReq;
 let postalCodeReq;
-let birthDateReq;
+let birthDateReq = new Date();
 let DefaultCountryCode;
 export default function Profile() {
   const clientDataconfig = JSON.parse(sessionStorage.getItem("configdata"));
   const culture = clientDataconfig.culture.culture
   const country = culture.substring(culture.indexOf('-') + 1, culture.length).toLowerCase();
-  console.log(country);
   const [profileImageSrc, setprofileImageSrc] = useState('')
 
   // const [contactPhone, SetContactPhone] = useState();
@@ -310,7 +309,7 @@ export default function Profile() {
                   <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                     <div className="field w-100 datePicker my-3">
                       <label className="text-dark fs-7 fw-500">Date of Birth<span className="error">*</span></label>
-                      <SemanticDatepicker name="dateOfBirth" placeholder='Select date' format="DD-MM-YYYY" value={new Date(birthDateReq)} className='w-100' onChange={handleChangeBirthdate} />
+                      <SemanticDatepicker name="dateOfBirth" placeholder='Select date' maxDate={new Date()} format="DD-MM-YYYY" value={typeof birthDateReq !== "undefined" && birthDateReq !== null && birthDateReq !== "" ? new Date(birthDateReq) : new Date()} className='w-100' onChange={handleChangeBirthdate} />
                     </div>
                     <div className="field my-3">
                       <label className="text-dark fs-7 fw-500">Phone Number<span className="error">*</span></label>
@@ -356,7 +355,7 @@ export default function Profile() {
                       <p className="fs-7 fw-500 text-dark mb-2">Date of Birth</p>
                     </div>
                     <div className="col-lg-8 col-md-8 col-sm-8">
-                      <p className="fs-7 mb-2">{helper.readDate(new Date(tenantDetails.birthDate))}</p>
+                      <p className="fs-7 mb-2">{tenantDetails?.birthDate ? helper.readDate(new Date(tenantDetails.birthDate)) : "-"}</p>
                       {/* <p className="fs-7 mb-2">{birthDateReq}</p> */}
                     </div>
 
