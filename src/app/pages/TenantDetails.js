@@ -3,6 +3,7 @@ import { Dropdown, Image, Input, Modal } from "semantic-ui-react";
 import SemanticDatepicker from "react-semantic-ui-datepickers";
 import React, { useEffect, useRef, useState } from "react";
 import TenantDetailEmergengyContactAccordian from "../components/tenantDetailsAccordian/TenantDetailsAccordian";
+import PhoneInput, { formatPhoneNumber, formatPhoneNumberIntl } from 'react-phone-number-input'
 import { json, useNavigate } from "react-router-dom";
 import countriecodes from "../components/CountryCode";
 import instance from '../services/instance';
@@ -14,6 +15,8 @@ let customValues;
 let Sdetails;
 let cusomfieldPhone;
 let customInputFieldValue;
+let DefaultCountryCode;
+
 export default function TenantDetails() {
   let unitid = localStorage.getItem('unitid');
   let userid = localStorage.getItem("userid");
@@ -24,6 +27,10 @@ export default function TenantDetails() {
   let customFieldAccess = JSON.parse(localStorage.getItem('CustomFieldsSetting'));
   let unitDetailCustomField =JSON.parse(sessionStorage.getItem("customFieldstorage"));
   let companyDetail = [];
+  const clientDataconfig = JSON.parse(sessionStorage.getItem("configdata"));
+  const culture = clientDataconfig.culture.culture
+  const country = culture.substring(culture.indexOf('-') + 1, culture.length).toLowerCase();
+
   const navigate = useNavigate();
   const [profileImageSrc, setprofileImageSrc] = useState({
     img: '/assets/images/userDemoProfile.svg'
@@ -415,8 +422,8 @@ export default function TenantDetails() {
           const tenantInfoGetresult = tenantInfoGetdata.result;
           console.log(tenantInfoGetresult);
           if (typeof tenantInfoGetresult !== "undefined" && tenantInfoGetresult !== null & tenantInfoGetresult !== "") {
-            sessionStorage.setItem("tenantIfo", JSON.stringify(tenantInfoGetresult));
-            let tenantMovinData = JSON.parse(sessionStorage.getItem("tenantIfo"));
+            sessionStorage.setItem("tenantInfo", JSON.stringify(tenantInfoGetresult));
+            let tenantMovinData = JSON.parse(sessionStorage.getItem("tenantInfo"));
             setTenantInfoDetails(tenantMovinData);
             setPhotopath(tenantInfoGetresult.photoPath);
           }

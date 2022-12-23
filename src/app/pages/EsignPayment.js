@@ -30,7 +30,7 @@ export default function EsignPayment() {
   let checkPaymentModes = JSON.parse(sessionStorage.getItem('configdata')).paymentModes;
   let promoAppliedsession = sessionStorage.getItem("applypromo");
   let makeSavedCardMandatory = JSON.parse(sessionStorage.getItem('configdata')).culture.isSavedCardsByDefault;
-  let tenantInfo = JSON.parse(sessionStorage.getItem('tenantIfo'));
+  let tenantInfo = JSON.parse(sessionStorage.getItem('tenantInfo'));
   let desiredMoveOutDate = sessionStorage.getItem("desiredMoveoutDate");
   let BusinessUser =  JSON.parse(sessionStorage.getItem('isBussinessUser'));
   const [saveAgreement, setSaveAgreement] = useState();

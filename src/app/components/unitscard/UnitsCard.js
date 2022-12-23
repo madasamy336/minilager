@@ -13,13 +13,14 @@ const UnitsCard = (props) => {
     const [loading, setLoading] = useState(false);
     const clientDataconfig = JSON.parse(sessionStorage.getItem("configdata"));
     const rentNow = (e, unitid) => {
-        let unitdetailid = typeof unitid !== "undefined" && unitid !== null && unitid.length > 0 ? unitid[0] : null;
-        localStorage.setItem('unitid', unitdetailid);
-        e.preventDefault();
-        navigate(`/preBooking/rentingDetails`);
+        props.checkTenantType();
+        if (props.tenantType) {
+            let unitdetailid = typeof unitid !== "undefined" && unitid !== null && unitid.length > 0 ? unitid[0] : null;
+            localStorage.setItem('unitid', unitdetailid);
+            e.preventDefault();
+            navigate(`/preBooking/rentingDetails`);
+        }
     }
-
-
 
     return (
         <>
@@ -42,10 +43,7 @@ const UnitsCard = (props) => {
                                             content={item.description}
                                             hideOnScroll />
                                     })
-
-
                                 ) : ''
-
                                 }
 
                             </div>
