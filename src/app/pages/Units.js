@@ -6,10 +6,14 @@ import { useEffect, useState } from 'react';
 import PlaceholderLoader from "../components/placeholder/Placeholder";
 import instance from '../services/instance';
 import request from '../services/request';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Units = () => {
-    const [tentTypes, setTenantTypes] = useState('');
+    const [tenantTypes, setTenantTypes] = useState('');
+    const [tenantTypeError, setTenantTypeError] = useState(false);
     const [SortByPriceRange, setSortByPriceRange] = useState("Ascending");
+
     const [UnitResponse, setUnitResponse] = useState(null);
     const [storageTypeValue, setStorageTypeValue] = useState('');
     const [tenantTypeError, setTenantTypeError] = useState('');
@@ -25,11 +29,16 @@ const Units = () => {
     });
     const filters = JSON.parse(localStorage.getItem('Units'));
     let locationId = localStorage.getItem('locationid');
+    let userInfo = JSON.parse(localStorage.getItem('tenantInfo'));
+    let isBussinessUser = sessionStorage.getItem('isBussinessUser');
     useEffect(() => {
         fetchUnitFilter(locationId);
     }, [storageTypeValue]);
 
     useEffect(() => {
+        if (userInfo !== null) {
+            setTenantTypes(userInfo.bussinessUser ?  'true' : 'false');
+          }
         sixStorageLoadUnitList(storageTypeValue);
     }, []);
 
@@ -173,9 +182,7 @@ const Units = () => {
                 minvalues = searchFilterValues.priceRange[0];
                 maxvalues = searchFilterValues.priceRange[1];
             }
-
-        }
-
+}
         setLoading(true);
 
         let config = {
@@ -261,12 +268,13 @@ const Units = () => {
         setFilterRequest(data);
 
     }
+    const checkTenantType = () => {
+        document.getElementById('tenantTypeError').classList.remove('d-none')
+        document.querySelector('#root').scrollIntoView({
+            behavior: 'smooth'
+        }, 500)
+    }
 
-    // const filterUnit = () => {
-
-    //     sixStorageLoadUnitList(storageTypeValue);
-
-    // }
     const sortUnitOptions = [
         {
             key: 'popular',
@@ -293,6 +301,7 @@ const Units = () => {
 
     return (
         <div className="units-wrapper">
+            <ToastContainer />
             <div className="ui container fluid">
                 <div className="units-banner position-relative">
                     <img className='w-100' src='/assets/images/rentnow-img.png' alt="Storage Units" />
@@ -300,8 +309,7 @@ const Units = () => {
                         <h2 className='text-center'>Find Your Storage Place</h2>
                         <div className='row'>
                             <div className='col-lg-6 col-md-6 col-sm-12'>
-                                {typeof tenantTypeOptions !== "undefined" && tenantTypeOptions !== null && tenantTypeOptions !== "" && tenantTypeOptions.length > 0 ? <Dropdown placeholder="Choose Tenant Type" clearable fluid search selection options={tenantTypeOptions} value={tentTypes} onChange={tenantInfoChange} /> : null}
-
+                                {typeof tenantTypeOptions !== "undefined" && tenantTypeOptions !== null && tenantTypeOptions !== "" && tenantTypeOptions.length > 0 ? <Dropdown placeholder="Choose Tenant Type" clearable fluid search selection options={tenantTypeOptions} value={tenantTypes} onChange={tenantInfoChange} /> : null}
                             </div>
                             <div className='col-lg-6 col-md-6 col-sm-12'>
                                 {storageTypeOptions !== null && typeof storageTypeOptions !== 'undefined' && storageTypeOptions !== '' && typeof storageTypeOptions[0].value !== 'undefined' && storageTypeOptions[0].value !== null && storageTypeOptions[0].value !== '' ?
@@ -317,12 +325,11 @@ const Units = () => {
                         <div className="col-lg-3 col-md-3 col-sm-12">
                             <div className="filters-div">
                                 <AccordionExampleStyled filterValue={filterValue} unitsearchFilters={(items) => sixStorageLoadUnitList(storageTypeValue, items)} storageTypeValue={storageTypeValue} modal={() => SetunitTypeModal({ open: true, size: 'tiny', dimmer: 'blurring' })} />
-
                             </div>
                         </div>
                         <div className="col-lg-9 col-md-9 col-sm-12">
                             <div className="units-container-div">
-                                <div className='text-center text-danger' id='tenanttype-options'>{tenantTypeError}</div>
+                                <p id="tenantTypeError" className='text-center error py-1 d-none'>Please Select Tenant Type</p>
                                 <div className='sort-div text-right py-1'>
                                     <Header as='h4'>
                                         <Header.Content>
@@ -342,7 +349,9 @@ const Units = () => {
 
                                         {loader ? (<div>
                                             <PlaceholderLoader cardCount={7} />
-                                        </div>) : (<UnitsCard filterRequest={filterRequest} storageTypevalue={storageTypeValue} UnitResponse={UnitResponse} setUnitResponse={setUnitResponse} setLoading={setLoading}   tenantTypeValue = {tentTypes} tenantTypeError={(data) => tenantTypeValidation(data)} />)}
+                                        </div>) : (<UnitsCard tenantType={tenantTypes} checkTenantType={() => checkTenantType()} filterRequest={filterRequest} storageTypevalue={storageTypeValue} UnitResponse={UnitResponse} setUnitResponse={setUnitResponse} setLoading={setLoading} />)}
+
+
                                     </div>
                                 </div>
                                 <div className='pagination-div mt-2 mb-3 text-center'>

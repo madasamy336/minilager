@@ -77,7 +77,7 @@ export default function Profile() {
       if (typeof userInfoResponse !== 'undefined' && userInfoResponse !== null && userInfoResponse !== '' && userInfoResponse.isSuccess === true) {
         let data = userInfoResponse.result;
 
-        localStorage.setItem("UserInfo", JSON.stringify(data));
+        localStorage.setItem("tenantInfo", JSON.stringify(data));
         addressLineOneReq = data['addressLineOne'];
         addressLineTwoReq = data['addressLineTwo'];
         postalCodeReq = data['zipCode'];
