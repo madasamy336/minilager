@@ -10,14 +10,18 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Units = () => {
-
     const [tenantTypes, setTenantTypes] = useState('');
     const [tenantTypeError, setTenantTypeError] = useState(false);
+    const [SortByPriceRange, setSortByPriceRange] = useState("Ascending");
+
     const [UnitResponse, setUnitResponse] = useState(null);
     const [storageTypeValue, setStorageTypeValue] = useState('');
+    const [tenantTypeError, setTenantTypeError] = useState('');
     const [filterRequest, setFilterRequest] = useState('')
     const [loader, setLoading] = useState(true);
     const [filtercall, setFilterCall] = useState(false);
+   
+   
     const [unitTypeModal, SetunitTypeModal] = useState({
         open: false,
         dimmer: undefined,
@@ -178,7 +182,7 @@ const Units = () => {
                 minvalues = searchFilterValues.priceRange[0];
                 maxvalues = searchFilterValues.priceRange[1];
             }
-        }
+}
         setLoading(true);
 
         let config = {
@@ -197,6 +201,7 @@ const Units = () => {
                 minPrice: minvalues,
                 maxPrice: maxvalues
             },
+            sortDirection:SortByPriceRange,
             pageNumber: 1,
             pageSize: 10,
             isBusinessUser: false,
@@ -236,6 +241,15 @@ const Units = () => {
         sessionStorage.setItem("isBussinessUser", data.value);
     }
 
+    const tenantTypeValidation = (data) => {
+        setTenantTypeError(data);
+    }
+
+    const sortByPriceRange = (event, data)=>{
+        setSortByPriceRange(data.value);
+        sixStorageLoadUnitList(storageTypeValue);
+    }
+
     const storageTypeOptions = typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof filters.storageType !== 'undefined' && filters.storageType !== null && filters.storageType !== "" && filters.storageType.length > 0 ?
         filters.storageType.map(storageType => {
             return {
@@ -269,19 +283,21 @@ const Units = () => {
             content: 'Popular',
         },
         {
-            key: 'Price High to Low',
+            key: 'Ascending',
             text: 'Price High to Low',
-            value: 'Price High to Low',
+            value: 'Ascending',
             content: 'Price High to Low',
         },
         {
-            key: 'Price Low to High',
+            key: 'Descending',
             text: 'Price Low to High',
-            value: 'Price Low to High',
+            value: 'Descending',
             content: 'Price Low to High',
         }
     ]
 
+
+    console.log(SortByPriceRange);
 
     return (
         <div className="units-wrapper">
@@ -302,6 +318,7 @@ const Units = () => {
                             </div>
                         </div>
                     </div>
+
                 </div>
                 <div className="units-row">
                     <div className="row">
@@ -321,7 +338,8 @@ const Units = () => {
                                                 floating
                                                 inline
                                                 options={sortUnitOptions}
-                                                defaultValue={sortUnitOptions[0].value}
+                                                defaultValue={sortUnitOptions[1].value}
+                                                onChange={sortByPriceRange}
                                             />
                                         </Header.Content>
                                     </Header>
@@ -332,8 +350,6 @@ const Units = () => {
                                         {loader ? (<div>
                                             <PlaceholderLoader cardCount={7} />
                                         </div>) : (<UnitsCard tenantType={tenantTypes} checkTenantType={() => checkTenantType()} filterRequest={filterRequest} storageTypevalue={storageTypeValue} UnitResponse={UnitResponse} setUnitResponse={setUnitResponse} setLoading={setLoading} />)}
-
-
 
 
                                     </div>

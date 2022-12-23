@@ -23,10 +23,9 @@ const UnitsCard = (props) => {
     }
 
     return (
-        <>
+        <> 
             {/* <PlaceholderLoader key="" cardCount={} />   */}
             {typeof props.UnitResponse !== 'undefined' && props.UnitResponse !== null &&
-
                 props.UnitResponse.map(details => {
                     return <div key={details.unitTypeId} className='col-lg-4 col-md-6 col-sm-12 2 px-2 '>
                         <div key="" className='card my-2'>
