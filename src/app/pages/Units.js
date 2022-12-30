@@ -297,7 +297,8 @@ const Units = () => {
     ]
 
 
-    console.log(SortByPriceRange);
+  
+   
 
     return (
         <div className="units-wrapper">
