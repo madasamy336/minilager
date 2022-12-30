@@ -16,7 +16,7 @@ const Units = () => {
 
     const [UnitResponse, setUnitResponse] = useState(null);
     const [storageTypeValue, setStorageTypeValue] = useState('');
-    const [tenantTypeError, setTenantTypeError] = useState('');
+    //const [tenantTypeError, setTenantTypeError] = useState('');
     const [filterRequest, setFilterRequest] = useState('')
     const [loader, setLoading] = useState(true);
     const [filtercall, setFilterCall] = useState(false);
@@ -297,7 +297,8 @@ const Units = () => {
     ]
 
 
-    console.log(SortByPriceRange);
+  
+   
 
     return (
         <div className="units-wrapper">
