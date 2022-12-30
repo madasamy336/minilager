@@ -149,7 +149,7 @@ export default function RentingDetails() {
 
     }
 
-    console.log(customFieldValue);
+   
     // SetCustomS({ ...TestT, [e.target.dataset.fieldid]: customValues });
 
 
@@ -381,6 +381,8 @@ export default function RentingDetails() {
 
   }
 
+ 
+
 
   return (
     <>
@@ -457,7 +459,6 @@ export default function RentingDetails() {
                           </div>
 
                         } else if (item.matadata.displayOn === "Unit specific details" && item.matadata.type === "textbox" && item.matadata.dataType === "Alphanumeric") {
-                          { console.log("alpha value" + item.fieldId === customFieldId) }
                           return <div key={item.fieldId} className="field w-100 my-2 ">
                             <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}
                             </label>
