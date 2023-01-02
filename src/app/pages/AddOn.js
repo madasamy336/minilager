@@ -366,11 +366,11 @@ export default function AddOn() {
                     {!ownInsurance && (
                       <div className=" p-3 AddonsInsurance">
 
-                        {typeof addOnsResponse !== 'undefined' && addOnsResponse !== null && addOnsResponse.insurance !== 'undefined' && addOnsResponse.insurance !== null ?
+                        {typeof addOnsResponse !== 'undefined' && addOnsResponse !== null ?
 
                           <div className='row'>
                             {
-                              addOnsResponse.insurance.map(item => {
+                              addOnsResponse.insurance !== 'undefined' && addOnsResponse.insurance !== null && addOnsResponse.insurance.map(item => {
                                 return <div key={item.id} className='col-lg-3 col-md-6 col-sm-12 px-1 mb-1'>
                                   <div className={`card changePlanCard cursor-pointer  border-radius-10 text-center p-2 ${activePlan === item.planName && 'active'}`} onClick={(e) => selectAdminInsurance(item.planName, item.id)}>
                                     <p className=' fs-7 fw-500 pb-1 mt-1'>{item.planName}</p>
