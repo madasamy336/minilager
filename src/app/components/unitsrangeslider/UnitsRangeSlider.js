@@ -21,7 +21,7 @@ const UnitsRangeSlider = (props) => {
                 thumbClassName="thumb"
                 trackClassName="track"
                 reverse = {false}
-                defaultValue={[10, 500]}
+                defaultValue={[props.priceRange.minPrice, props.priceRange.maxPrice]}
                 min={props.priceRange.minPrice}
                 max={props.priceRange.maxPrice}
                 ariaLabel={['Lower thumb', 'Upper thumb']}
