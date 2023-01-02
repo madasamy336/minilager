@@ -9,10 +9,16 @@ import request from '../services/request';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+let totatCount;
+let pagesizepagination = 10;
+let pages = 0;
+
 const Units = () => {
     const [tenantTypes, setTenantTypes] = useState('');
     const [tenantTypeError, setTenantTypeError] = useState(false);
     const [SortByPriceRange, setSortByPriceRange] = useState("Ascending");
+    const [unitLoadMoreButtonVal, setUnitLoadMoreButtonVal] = useState();
+    const [pageNumber, setPageNumber] = useState(1);
 
     const [UnitResponse, setUnitResponse] = useState(null);
     const [storageTypeValue, setStorageTypeValue] = useState('');
@@ -20,8 +26,8 @@ const Units = () => {
     const [filterRequest, setFilterRequest] = useState('')
     const [loader, setLoading] = useState(true);
     const [filtercall, setFilterCall] = useState(false);
-   
-   
+
+
     const [unitTypeModal, SetunitTypeModal] = useState({
         open: false,
         dimmer: undefined,
@@ -37,10 +43,10 @@ const Units = () => {
 
     useEffect(() => {
         if (userInfo !== null) {
-            setTenantTypes(userInfo.bussinessUser ?  'true' : 'false');
-          }
+            setTenantTypes(userInfo.bussinessUser ? 'true' : 'false');
+        }
         sixStorageLoadUnitList(storageTypeValue);
-    }, []);
+    }, [pageNumber]);
 
     const fetchUnitFilter = (loactionid) => {
         let config = {
@@ -182,7 +188,7 @@ const Units = () => {
                 minvalues = searchFilterValues.priceRange[0];
                 maxvalues = searchFilterValues.priceRange[1];
             }
-}
+        }
         setLoading(true);
 
         let config = {
@@ -201,8 +207,8 @@ const Units = () => {
                 minPrice: minvalues,
                 maxPrice: maxvalues
             },
-            sortDirection:SortByPriceRange,
-            pageNumber: 1,
+            sortDirection: SortByPriceRange,
+            pageNumber: pageNumber,
             pageSize: 10,
             isBusinessUser: false,
             unitSort: "UnitNumber",
@@ -213,6 +219,17 @@ const Units = () => {
             .post(request.user_search, requestbody, config)
             .then(response => {
                 setUnitResponse(response.data.result);
+                let loadmoreUnitCount = response.data.totalCount - response.data.pageCount;
+                totatCount = response.data.totalCount;
+                let quotient = Math.floor(totatCount / pagesizepagination);
+                let remainder = totatCount % pagesizepagination;
+                if (remainder > 0) {
+                    pages = quotient + 1;
+                } else {
+                    pages = quotient;
+
+                }
+                setUnitLoadMoreButtonVal(loadmoreUnitCount);
                 setLoading(false);
                 setFilterCall(true);
             })
@@ -245,9 +262,14 @@ const Units = () => {
         setTenantTypeError(data);
     }
 
-    const sortByPriceRange = (event, data)=>{
+    const sortByPriceRange = (event, data) => {
         setSortByPriceRange(data.value);
         sixStorageLoadUnitList(storageTypeValue);
+    }
+
+    const PaginationHandleChange = (event, value) => {
+        window.scroll(0,300);
+        setPageNumber(value.activePage);
     }
 
     const storageTypeOptions = typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof filters.storageType !== 'undefined' && filters.storageType !== null && filters.storageType !== "" && filters.storageType.length > 0 ?
@@ -297,8 +319,8 @@ const Units = () => {
     ]
 
 
-  
-   
+
+
 
     return (
         <div className="units-wrapper">
@@ -355,13 +377,15 @@ const Units = () => {
 
                                     </div>
                                 </div>
-                                <div className='pagination-div mt-2 mb-3 text-center'>
-                                    <Pagination ellipsisItem={{ content: <Icon name='ellipsis horizontal' />, icon: true }}
-                                        firstItem={{ content: <Icon name='angle double left' />, icon: true }}
-                                        lastItem={{ content: <Icon name='angle double right' />, icon: true }}
-                                        prevItem={{ content: <Icon name='angle left' />, icon: true }}
-                                        nextItem={{ content: <Icon name='angle right' />, icon: true }} defaultActivePage={1} totalPages={10} />
-                                </div>
+                                {typeof unitLoadMoreButtonVal !== 'undefined' && unitLoadMoreButtonVal !== null && unitLoadMoreButtonVal !== '' && unitLoadMoreButtonVal > 0 && unitLoadMoreButtonVal !== 0 ? (
+                                    <div className='pagination-div mt-2 mb-3 text-center'>
+                                        <Pagination ellipsisItem={{ content: <Icon name='ellipsis horizontal' />, icon: true }}
+                                            firstItem={{ content: <Icon name='angle double left' />, icon: true }}
+                                            lastItem={{ content: <Icon name='angle double right' />, icon: true }}
+                                            prevItem={{ content: <Icon name='angle left' />, icon: true }}
+                                            nextItem={{ content: <Icon name='angle right' />, icon: true }} defaultActivePage={1} totalPages={pages} onPageChange={PaginationHandleChange} />
+                                    </div>
+                                ) : ''}
                             </div>
                         </div>
                     </div>
