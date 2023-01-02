@@ -34,12 +34,12 @@ const Card = (props) => {
                         let facilityaddress = details.address;
                         return <div key={""} className='rentNow-card bg-white'>
                             <div className='row'>
-                                <div className='col-lg-3 col-md-3 col-sm-12'>
+                                {/* <div className='col-lg-3 col-md-3 col-sm-12'>
                                     <div className='rentNow-card-img h-100'>
                                         <img className='w-100 h-100' src="./assets/images/Minilager-Container.png" alt='' />
                                     </div>
-                                </div>
-                                <div className='col-lg-7 col-md-7 col-sm-12'>
+                                </div> */}
+                                <div className='col-lg-10 col-md-10 col-sm-12'>
                                     <div className='rentNow-card-desc text-left'>
                                         <h2 className='text-success fw-500'><svg xmlns="http://www.w3.org/2000/svg" width="18.046" height="18" viewBox="0 0 18.046 25">
                                             <path id="Location_" data-name="Location " d="M-233.385-419.062a9.008,9.008,0,0,1,2.622-6.383A8.76,8.76,0,0,1-225.687-428a8.763,8.763,0,0,1,6.278,1.39,8.733,8.733,0,0,1,3.78,5.328,8.752,8.752,0,0,1-1.158,7.068q-3.359,5.27-6.754,10.525c-.045.068-.086.137-.137.205a.816.816,0,0,1-1.38,0c-.251-.357-.479-.733-.711-1.1q-3.11-4.852-6.217-9.705A8.632,8.632,0,0,1-233.385-419.062Zm13.12-.031a4.113,4.113,0,0,0-4.108-4.1,4.113,4.113,0,0,0-4.093,4.086,4.114,4.114,0,0,0,4.094,4.112,4.114,4.114,0,0,0,4.107-4.1Z" transform="translate(233.386 428.108)" fill="#67be5c" />

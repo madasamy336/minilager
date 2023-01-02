@@ -318,7 +318,7 @@ export default function EsignPayment() {
                     taxpecentage = i.value
                   })
                   return <div key='' className="row">
-                    <div className="col-lg-3 col-md-3 col-12 px-1">
+                    {/* <div className="col-lg-3 col-md-3 col-12 px-1">
                       <div className="card-img h-100">
                         {item.unitInfo.imageUrl !== '' && item.unitInfo.imageUrl !== null ?
                           <img className="w-100 h-100 border-radius-10" src={item.unitInfo.imageUrl} alt="Container" />
@@ -326,8 +326,8 @@ export default function EsignPayment() {
                         }
 
                       </div>
-                    </div>
-                    <div className="col-lg-5 col-md-5 col-12 px-1">
+                    </div> */}
+                    <div className="col-lg-6 col-md-6 col-12 px-1">
                       <div className="card-desc card-bg-secondary p-2 border-radius-10 mt-sm-2 mb-sm-2">
                         <h2 className="fs-4 fw-700 mb-2">{storageType}-{unitNumber}</h2>
                         <div className="pb-1 d-flex align-items-center"><img src='/assets/images/selfstorage.svg' alt='Self Storage' /><span className='ml-1'>{unitTypeName} - <strong className="fw-700">{unitMeasurement}</strong>({measurementType})</span></div>
@@ -350,7 +350,7 @@ export default function EsignPayment() {
                         }
                       </div>
                     </div>
-                    <div className="col-lg-4 col-md-4 col-12 px-1">
+                    <div className="col-lg-6 col-md-6 col-12 px-1">
                       <div className="card-details">
                         <div className="mb-2">
                           <h6 className="fs-6 fw-400 text-success mb-1">Personal Details</h6>
