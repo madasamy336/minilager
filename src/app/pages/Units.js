@@ -299,12 +299,6 @@ const Units = () => {
 
     const sortUnitOptions = [
         {
-            key: 'popular',
-            text: 'Popular',
-            value: 'popular',
-            content: 'Popular',
-        },
-        {
             key: 'Ascending',
             text: 'Price High to Low',
             value: 'Ascending',

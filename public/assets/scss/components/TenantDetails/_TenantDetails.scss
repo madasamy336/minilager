@@ -7,3 +7,17 @@
         border-bottom: 1px solid #eee;
     }
 }
+
+.PhoneInput {
+    width: 100%;
+    .PhoneInputCountry {
+        position: absolute;
+        top: 188px!important;
+        left: 605px!important;
+    }
+    input {
+        width: 100%;
+        padding-left: 3rem!important;
+        height: 40px;
+    }
+}

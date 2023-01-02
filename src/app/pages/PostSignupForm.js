@@ -221,7 +221,7 @@ export default function PostSignupForm(props) {
                         <div className="createAccountform-inputs bg-white h-100">
                             <div className="form-title">
                                 <h2 className="text-success fw-600">CREATE YOUR ACCOUNT</h2>
-                                <p>Already a User? <a href="/" onClick={e => ValidateSignin(e)}>Sign in </a></p>
+                                <p>Already a User? <Link to={'/login'}>Sign in</Link></p>
                             </div>
                             <form>
                                 <div className="form-control">
