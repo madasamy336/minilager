@@ -115,6 +115,9 @@ export default function TenantDetails() {
     setEmergencyContactErr({ ...emergencyContactErr, [name]: message })
 
   }
+  const onChangePhoneInput = (e, data) => {
+    setEmergencyContactDetails({ ...emergencyContactDetails, ['emergencyphoneno']: e });
+  }
 
   const validateTenantInfo = (e) => {
     const { name } = e.target;
@@ -1018,9 +1021,14 @@ export default function TenantDetails() {
               <div className="field w-100  my-3">
                 <label className='fw-500 fs-7 mb-2'>Phone Number <i className="text-danger ">*</i></label>
                 {/* <input value={contactPhone} onChange={e=>SetContactPhone(e.target.value)} className="noCounterNumber" type='number' placeholder='Enter Phone Number' /> */}
-                <Input value={emergencyContactDetails.emergencyphoneno} onChange={(e) => emergencyhandlechange(e)} className="noCounterNumber" onBlur={(e) => validateemergencycontactInfo(e)} type="number" name="emergencyphoneno" placeholder="Enter Mobile Number"
+                {/* <Input value={emergencyContactDetails.emergencyphoneno} onChange={(e) => emergencyhandlechange(e)} className="noCounterNumber" onBlur={(e) => validateemergencycontactInfo(e)} type="number" name="emergencyphoneno" placeholder="Enter Mobile Number"
                   label={<Dropdown defaultValue='+91' search options={countriecodes} />}
-                  labelPosition='left' />
+                  labelPosition='left' /> */}
+                                <PhoneInput
+                  defaultCountry={DefaultCountryCode}
+                  value={emergencyContactDetails.emergencyphoneno}
+                  placeholder="Enter Mobile Number"
+                  onChange={(e, d) => onChangePhoneInput(e, d)} />
                 <div className="text-danger mt-1">{[phone_err]}</div>
               </div>
             </div>
