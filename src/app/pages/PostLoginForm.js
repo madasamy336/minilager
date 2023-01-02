@@ -534,7 +534,13 @@ const PostLoginForm = (props) => {
                     <div className="postloginform-inputs bg-white">
                         <div className="form-title">
                             <h2 className="text-success fw-600">WELCOME</h2>
-                            <p>Don't have an account? <Link to={'/signup'} className="fw-500">Signup Now</Link></p>
+                            {
+                                props.callingfrom === 'prebooking' ?
+                                    <p>Don't have an account? <Link to={'/preBooking/signup'}>Signup Now</Link></p> :
+                                    <p>Don't have an account? <Link to={'/signup'}>Signup Now</Link></p>
+
+                            }
+                           
                         </div>
                         <form>
                             <div className="form-control">
