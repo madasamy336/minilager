@@ -367,7 +367,7 @@ export default function MyLeases() {
         </div>
       ) : "No records found"}
 
-      <div className="bg-white card-boxShadow border-radius-15  mb-2">
+      {/* <div className="bg-white card-boxShadow border-radius-15  mb-2">
         <div className=" dashed-bottom px-4 py-1 px-sm-2">
 
           <h6 className="fs-6 fw-500 pt-1"><svg id="select_product" data-name="select product" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 31.305 31.48">
@@ -379,7 +379,7 @@ export default function MyLeases() {
         <div className="py-1 px-3">
           <Tab className="MyleasesTab" menu={{ secondary: true, pointing: true }} panes={panes} />
         </div>
-      </div>
+      </div> */}
       <div className="bg-white card-boxShadow border-radius-15  mb-2">
         <div className=" dashed-bottom px-4 py-1 px-sm-2">
 

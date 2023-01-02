@@ -457,7 +457,7 @@ export default function AddOn() {
                         <SemanticDatepicker placeholder='Effective To Date' className='w-100' onChange={(e, item) => setEffectiveToDate(item.value)} />
                         <p className="error py-1 effective_to_date d-none">Please Enter Effective To Date</p>
                       </div>
-                      <div className="field w-100 datePicker my-3">
+                      {/* <div className="field w-100 datePicker my-3">
                         <label className='fw-500 fs-7 mb-2'>Document Upload</label>
                         <div className='upload text-center' htmlFor="insuranceUpload">
                           <label className='cursor-pointer py-3 d-flex justify-content-center align-items-center flex-wrap' htmlFor="insuranceUpload"><svg className='w-100' xmlns="http://www.w3.org/2000/svg" width="45" height="45" viewBox="0 0 66 65.99">
@@ -469,7 +469,7 @@ export default function AddOn() {
                           </label>
                           <input id='insuranceUpload' type="file" />
                         </div>
-                      </div>
+                      </div> */}
                       <div className='text-center my-4'>
                         <button className="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2 mb-sm-1" onClick={cancelInsuranceHandler}>Change</button>
                       </div>

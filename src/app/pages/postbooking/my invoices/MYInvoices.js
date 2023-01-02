@@ -83,14 +83,13 @@ export default function MYInvoices() {
       }
       totalAmount = TotalAmountArray.reduce((pre, curr) => pre + curr, 0);
       if (typeof isCheck !== "undefined" && isCheck !== null && isCheck !== "" && isCheck.length === 1) {
-        setIsCheckAll(!isCheckAll);
         document.getElementById("selectedAllCheckbox").checked = false;
       }
     }
   }
 
   const selectAllCheckBox = (e) => {
-    setIsCheckAll(!isCheckAll);
+   
     let unPaidInvoiceStaus = invoiceitems.filter(i => i.invoiceStatus === "UNPAID");
     if (typeof unPaidInvoiceStaus !== "undefined" && unPaidInvoiceStaus !== null && unPaidInvoiceStaus !== "" && unPaidInvoiceStaus.length > 0) {
       setIsCheck(unPaidInvoiceStaus.map(item => item.id));
@@ -99,12 +98,15 @@ export default function MYInvoices() {
       setIsCheck([]);
     }
     if (e.target.checked) {
+      setIsCheckAll(true);
+      TotalAmountArray=[];
       unPaidInvoiceStaus.forEach(item => {
         TotalAmountArray.push(item.unPaidBalance);
       });
       totalAmount = TotalAmountArray.reduce((pre, curr) => pre + curr, 0);
 
     } else {
+      setIsCheckAll(false);
       TotalAmountArray = [];
       totalAmount = 0;
     }
@@ -139,6 +141,8 @@ export default function MYInvoices() {
             TotalAmountArray = [];
             setIsCheck([]);
             customInvoices();
+            invoiceId_No_Array = [];
+            setIsCheckAll(false);
           }
 
         }
@@ -152,7 +156,6 @@ export default function MYInvoices() {
 
   useEffect(() => {
     customInvoices();
-
     const ReceiveIframeResponse = (event) => {
       if (event.data.message !== null && typeof event.data.message !== 'undefined') {
         let paymentTransactionResponse = JSON.parse(event.data.message);
@@ -171,6 +174,7 @@ export default function MYInvoices() {
 
   const customInvoices = () => {
     setLoader(true)
+    let userid = localStorage.getItem("userid");
     let config = {
       headers: {
         "Content-Type": "application/json",
@@ -242,9 +246,6 @@ export default function MYInvoices() {
 
   }
 
-  console.log(isCheckAll);
-  console.log(isCheck);
-
 
   return (
     <div className="mx-2 mx-sm-1">
@@ -303,12 +304,13 @@ export default function MYInvoices() {
                     currentRecords.map((item) => {
                       return <tr key={item.id}>
                         <td className="text-center">
-                          {item.invoiceStatus === "PAID" ? <input type="checkbox" disabled /> : item.invoiceStatus === "UNPAID" ? <input type="checkbox" name={item.id} id={item.id} checked={isCheck.includes(item.id)} value={item.id} onChange={(e) => selectInvoice(e, e.target.value, item.invoiceNo, item.unPaidBalance)} /> : item.invoiceStatus === "PARTIALLY-PAID"  ? <input type="checkbox" disabled /> : ''}
+                          {item.invoiceStatus === "PAID" || item.invoiceStatus === "Processing"  ? <input type="checkbox" disabled /> : item.invoiceStatus === "UNPAID" || item.invoiceStatus ==="PARTIALLY-PAID" && item.unPaidBalance > 0 ? <input type="checkbox" name={item.id} id={item.id} checked={isCheck.includes(item.id)} value={item.id} onChange={(e) => selectInvoice(e, e.target.value, item.invoiceNo, item.unPaidBalance)} /> : ''}
                         </td>
                         <td className="text-center">
                           <p className="fw-500">
-                            {item.invoiceStatus === "PAID" ? <label className="success-label">PAID</label> : item.invoiceStatus === "UNPAID" ? <label className="danger-label">NOT-PAID</label> : item.invoiceStatus === "PARTIALLY-PAID"  ? <label className="warning-label" color="orange">PARTIALLY-PAID</label> : ''}
-                            &nbsp; {helper.displayCurrency(item.invoiceAmount)}</p>
+                            {item.invoiceStatus === "PAID" ? <label className="success-label">PAID</label> : item.invoiceStatus === "UNPAID" ? <label className="danger-label">NOT-PAID</label> : item.invoiceStatus === "PARTIALLY-PAID"  ? <label className="danger-label" color="orange">PARTIALLY-PAID</label> : item.invoiceStatus ==="Processing" ? <label className="danger-label">PROCESSING</label> : ''}
+                            &nbsp; {item.invoiceStatus === "PARTIALLY-PAID" && item.unPaidBalance > 0 ? helper.displayCurrency(item.unPaidBalance) : helper.displayCurrency(item.invoiceAmount)}</p> 
+                            
                         </td>
                         <td className="text-center"><p className="fw-500">{helper.show_date_format2(item.invoiceDate)}</p></td>
                         <td className="text-center">
