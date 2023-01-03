@@ -16,8 +16,9 @@ const Pricesummary = forwardRef((props, ref) => {
   let invoiceData = JSON.parse(sessionStorage.getItem("invoiceData"));
   let recurringData = JSON.parse(sessionStorage.getItem("recurringData"));
   let BusinessUser =  JSON.parse(sessionStorage.getItem('isBussinessUser'));
- 
+  let promocheck = JSON.parse(sessionStorage.getItem('promoApplied'));
   let promoAppliedsession;
+  promoAppliedsession = sessionStorage.getItem("applypromo");
   useImperativeHandle(ref, () => ({
     unitInfodetailscall() {
       unitinfodetails();
@@ -161,13 +162,14 @@ const Pricesummary = forwardRef((props, ref) => {
 
   const promoOnchange = () => {
     SetApplyDiscountModal({ open: true, dimmer: 'blurring' });
-    document.getElementById("promoInputbox").style.display = 'block';
+    // document.getElementById("promoInputbox").style.display = 'block';
+    sessionStorage.setItem('promoApplied',false);
   }
 
   /**  Validate Promocode Discount Start **/
 
   const applyCoupon = () => {
-    promoAppliedsession = sessionStorage.getItem("applypromo");
+    
     let config = {
       headers: {
         "Content-Type": "application/json",
@@ -203,8 +205,9 @@ const Pricesummary = forwardRef((props, ref) => {
             progress: undefined,
             theme: "colored",
           });
+          sessionStorage.setItem('promoApplied',true);
 
-         document.getElementById("promoInputbox").style.display = 'none';
+          document.getElementById("promoInputbox").style.display = 'none';
 
           if (typeof promoValidate !== "undefined" && promoValidate !== null && promoValidate !== "") {
               sessionStorage.setItem('applypromo', promoValidate);
@@ -276,17 +279,20 @@ console.log(promoAppliedsession);
                     <div className='mb-2 d-flex px-1 justify-content-between text-light-gray fw-500'>
                       <p className='fs-6 fw-500 text-dark'>Promo Code</p>
                     </div>
-
+                    { !promocheck ?
                     <div className="field w-100 px-1 mt-3 mb-2" id ="promoInputbox">
-                      <div className='row mt-1'>
-                        <div className='col-9 ui input'>
-                          <input placeholder='Enter the code' className='border-bottom-only border-radius-0' value={promoValidate} onChange={e => setPromoValidate(e.target.value)} />
-                        </div>
-                        <div className='col-3 d-flex align-items-end justify-content-center'>
-                          <button className='ui button bg-success-dark fs-8 fw-400 text-white py-1 px-2' onClick={applyCoupon}>Apply</button>
-                        </div>
+                    <div className='row mt-1'>
+                      <div className='col-9 ui input'>
+                        <input placeholder='Enter the code' className='border-bottom-only border-radius-0' value={promoValidate} onChange={e => setPromoValidate(e.target.value)} />
+                      </div>
+                      <div className='col-3 d-flex align-items-end justify-content-center'>
+                        <button className='ui button bg-success-dark fs-8 fw-400 text-white py-1 px-2' onClick={applyCoupon}>Apply</button>
                       </div>
                     </div>
+                  </div>:""
+
+                    }
+                    
 
                     <div className='mb-2 d-flex px-1 justify-content-between text-light-gray fw-500'>
                       <span className='veritical-align-text-bottom cursor-pointer' onClick={() => SetApplyDiscountModal({ open: true, dimmer: 'blurring' })}> <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 22 22.938">

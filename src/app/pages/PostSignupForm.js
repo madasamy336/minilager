@@ -110,10 +110,10 @@ export default function PostSignupForm(props) {
 
     }
 
-    
-  const onChangePhoneInput = (e, data) => {
-    setValues({ ...values, ['phoneNumber']: e });
-  }
+
+    const onChangePhoneInput = (e, data) => {
+        setValues({ ...values, ['phoneNumber']: e });
+    }
 
     const ValidateSignin = (e) => {
         e.preventDefault();
@@ -315,7 +315,12 @@ export default function PostSignupForm(props) {
                                 <button className="ui button w-100 fw-100" onClick={e => ValidateSignin(e)}>Create an account</button>
                             </form>
                             <div className="signup-div text-center">
-                                <p>Already have an Account?  <Link to={'/login'}>Sign in</Link></p>
+                                {
+                                    props.callingfrom === 'prebooking' ? 
+                                    <p>Already have an Account?  <Link to={'/preBooking/sign-in'}>Sign in</Link></p> :
+                                    <p>Already have an Account?  <Link to={'/login'}>Sign in</Link></p>
+                                }
+
                             </div>
                         </div>
                     </div>

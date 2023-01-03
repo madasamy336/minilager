@@ -231,7 +231,7 @@ export default function TenantDetails() {
     let file = new File([blobImage], `${userId}_.png`, { type: "image/png" });
     let config = {
       headers: {
-        "Authorization": `Bearer 5Yu5sIUiF+HEB/Fg/kuJNZ7kgz78oTDmEogfTgTJH4+mXQdh/WoXJbZSX67yNf8Rr2ZFaEfPI/Ruw/lMiFtmTw==Xpto4oAFPkK+Huo5T+Z+sA==`,
+        "Authorization": `Bearer ${process.env.REACT_APP_ACCESS_TOKEN}`,
         "Content-Type": `multipart/form-data; boundary=----${time}`,
         "Content-Length": `${imagesize}`,
         "accept": "application/json",
@@ -787,9 +787,12 @@ export default function TenantDetails() {
           <div className="col-12  col-md-6  px-4 px-sm-2">
             <div className="points-events-none field w-100  my-3">
               <label className='fw-500 fs-7 mb-2'>Phone Number <i className="text-danger ">*</i></label>
-              <Input disabled className="noCounterNumber" type="number" name="phoneNumber" placeholder="Enter Mobile Number" value={TenantInfoDetails.phoneNumber} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo}
-                label={<Dropdown defaultValue='+91' search options={countriecodes} />}
-                labelPosition='left' />
+              <PhoneInput
+                // defaultCountry={DefaultCountryCode}
+                value={TenantInfoDetails.phoneNumber}
+                placeholder="Enter Mobile Number"
+                disabled
+              />
               <div className="text-danger mt-1">{phoneNo_Data}</div>
             </div>
           </div>
@@ -996,7 +999,7 @@ export default function TenantDetails() {
           </div>
         </div>
         {contactaccordian.length < 3 &&
-          <div className="row ui form mb-4">
+          <div className="row ui form mb-4 emergencycontact">
             <div className="col-12 col-md-6 px-4 px-sm-2">
               <div className="field w-100  my-3">
                 <label className='fw-500 fs-7 mb-2'>First Name <i className="text-danger ">*</i></label>

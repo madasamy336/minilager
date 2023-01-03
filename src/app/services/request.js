@@ -35,6 +35,7 @@ const requests = {
     invoices: "v1/unit/invoice",
     invoicePaymentForm: "v1/user/paymentform",
     invoicePaymentFormSuccess: "v1/unit/payment",
+    getsitedetail:"v1/common/site/details"
 }
 
 export default requests; 

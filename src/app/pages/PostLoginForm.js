@@ -191,7 +191,12 @@ const PostLoginForm = (props) => {
 
     const ForgotPassword = (e) => {
         e.preventDefault();
-        navigate('/forgotpassword')
+        if(props.callingfrom === "prebooking"){
+            navigate('/preBooking/forgotpassword')
+        }else{
+            navigate('/forgotpassword')
+        }
+       
     }
 
 
@@ -579,7 +584,7 @@ const PostLoginForm = (props) => {
                             <div className="remember-div d-flex justify-content-between">
                                 <p className="d-inline-flex">
                                     <input type="checkbox" name="rememberPassword" checked={rememberPassword} onChange={(event) => handleChechbox(event)} /><span>Remember me</span></p>
-                                <p><a href="/" onClick={e => ForgotPassword(e)}>Forget your password?</a></p>
+                                <p> <a href="/" onClick={e => ForgotPassword(e)}>Forget your password?</a> </p>
                             </div>
                             <button className="ui button w-100 fw-100" onClick={e => ValidateSignin(e)}>Sign In</button>
                         </form>
