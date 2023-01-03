@@ -49,7 +49,6 @@ export default function RentingDetails() {
   let customfieldBindingData = JSON.parse(sessionStorage.getItem("customFieldstorage"));
   const PricesummaryData = () => {
     if (clientDataconfig !== null && typeof clientDataconfig !== "undefined") {
-
       const invoiceperiodval = clientDataconfig.invoicePeriods !== null && typeof clientDataconfig.invoicePeriods !== "undefined" && clientDataconfig.invoicePeriods.length > 0 ?
         clientDataconfig.invoicePeriods.map(item => {
           if (item.preferred) {
@@ -136,7 +135,6 @@ export default function RentingDetails() {
       unitId: e.target.dataset.unitid,
       fieldId: e.target.dataset.fieldid,
     }
-    console.log(e.target.dataset);
     const index = customFieldValue.findIndex(object => {
       return object.fieldId === e.target.dataset.fieldid
     })
@@ -218,6 +216,7 @@ export default function RentingDetails() {
 
   const navigateAddon = (e) => {
 
+   
 
     // newArray = [];
     // newArray.push({
@@ -239,7 +238,6 @@ export default function RentingDetails() {
   useEffect(() => {
     customFieldsSettings();
     PricesummaryData();
-
   }, [newArray]);
 
   useEffect(() => {

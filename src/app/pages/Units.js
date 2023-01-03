@@ -51,6 +51,7 @@ const Units = () => {
                 setTenantTypes(tenantTypeOptions[0].value);
                 sessionStorage.setItem("isBussinessUser", tenantTypeOptions[0].value);
             }
+            sessionStorage.removeItem("applypromo");
           }
         sixStorageLoadUnitList(storageTypeValue);
     }, [pageNumber]);

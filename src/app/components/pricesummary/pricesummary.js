@@ -16,7 +16,8 @@ const Pricesummary = forwardRef((props, ref) => {
   let invoiceData = JSON.parse(sessionStorage.getItem("invoiceData"));
   let recurringData = JSON.parse(sessionStorage.getItem("recurringData"));
   let BusinessUser =  JSON.parse(sessionStorage.getItem('isBussinessUser'));
-  let promoAppliedsession = sessionStorage.getItem("applypromo");
+ 
+  let promoAppliedsession;
   useImperativeHandle(ref, () => ({
     unitInfodetailscall() {
       unitinfodetails();
@@ -30,7 +31,6 @@ const Pricesummary = forwardRef((props, ref) => {
   const [unitInfoDetails, setUnitInfoDetails] = useState();
   const [totalAmount, setTotalAmount] = useState();
   const [movinDate, setMovinDate] = useState(new Date());
-  const [promoCodeInputBox, setPromoCodeInputBox] = useState(true);
   const [promoOnchangebutton, setpromoOnchangebutton] = useState();
 
   let unitid = localStorage.getItem('unitid');
@@ -45,10 +45,6 @@ const Pricesummary = forwardRef((props, ref) => {
     unitinfodetails(true);
     let promoCodeGet = sessionStorage.getItem("applypromo");
     setpromoOnchangebutton(promoCodeGet);
-    if (promoCodeGet) {
-      setPromoCodeInputBox(false);
-    }
-
   }, []);
 
 
@@ -165,13 +161,13 @@ const Pricesummary = forwardRef((props, ref) => {
 
   const promoOnchange = () => {
     SetApplyDiscountModal({ open: true, dimmer: 'blurring' });
-    sessionStorage.removeItem('applypromo');
-    setPromoCodeInputBox(true);
+    document.getElementById("promoInputbox").style.display = 'block';
   }
 
   /**  Validate Promocode Discount Start **/
 
   const applyCoupon = () => {
+    promoAppliedsession = sessionStorage.getItem("applypromo");
     let config = {
       headers: {
         "Content-Type": "application/json",
@@ -194,9 +190,9 @@ const Pricesummary = forwardRef((props, ref) => {
 
       .post(request.validate_promocode, validate_Promocodedata, config)
       .then((response) => {
-        const validatePromoMessgae = response.data;
-        setValidateMsg(validatePromoMessgae);
-        if (typeof validatePromoMessgae !== "undefined" && validatePromoMessgae !== null && validatePromoMessgae !== "" && validatePromoMessgae.returnMessage === "SUCCESS") {
+        const validatePromoMessage = response.data;
+        setValidateMsg(validatePromoMessage);
+        if (typeof validatePromoMessage !== "undefined" && validatePromoMessage !== null && validatePromoMessage !== "" && validatePromoMessage.returnMessage === "SUCCESS") {
           toast.success('Promo Code Applied Successfully', {
             position: "top-right",
             autoClose: 3000,
@@ -208,18 +204,15 @@ const Pricesummary = forwardRef((props, ref) => {
             theme: "colored",
           });
 
-          if (typeof PromoDiscount !== "undefined" && PromoDiscount !== null && PromoDiscount !== "") {
-            PromoDiscount.forEach((item) => {
-              sessionStorage.setItem('applypromo', item.promotionalDiscount.promoCode);
-            });
+         document.getElementById("promoInputbox").style.display = 'none';
+
+          if (typeof promoValidate !== "undefined" && promoValidate !== null && promoValidate !== "") {
+              sessionStorage.setItem('applypromo', promoValidate);
           }
 
           let promoCodeGet = sessionStorage.getItem("applypromo");
           setpromoOnchangebutton(promoCodeGet);
-          if (promoCodeGet) {
-            setPromoCodeInputBox(false);
-          }
-
+        
         } else {
 
           toast.error('Invalid Promo Code', {
@@ -244,6 +237,8 @@ const Pricesummary = forwardRef((props, ref) => {
   }
 
 
+console.log(promoAppliedsession);
+  
   /** Validate Promocode Discount End ***/
 
   return (
@@ -282,7 +277,7 @@ const Pricesummary = forwardRef((props, ref) => {
                       <p className='fs-6 fw-500 text-dark'>Promo Code</p>
                     </div>
 
-                    {promoCodeInputBox ? <div className="field w-100 px-1 mt-3 mb-2">
+                    <div className="field w-100 px-1 mt-3 mb-2" id ="promoInputbox">
                       <div className='row mt-1'>
                         <div className='col-9 ui input'>
                           <input placeholder='Enter the code' className='border-bottom-only border-radius-0' value={promoValidate} onChange={e => setPromoValidate(e.target.value)} />
@@ -291,7 +286,7 @@ const Pricesummary = forwardRef((props, ref) => {
                           <button className='ui button bg-success-dark fs-8 fw-400 text-white py-1 px-2' onClick={applyCoupon}>Apply</button>
                         </div>
                       </div>
-                    </div> : ""}
+                    </div>
 
                     <div className='mb-2 d-flex px-1 justify-content-between text-light-gray fw-500'>
                       <span className='veritical-align-text-bottom cursor-pointer' onClick={() => SetApplyDiscountModal({ open: true, dimmer: 'blurring' })}> <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 22 22.938">
@@ -304,12 +299,12 @@ const Pricesummary = forwardRef((props, ref) => {
                     </div>
 
 
-                    {typeof promoOnchangebutton !== "undefined" && promoOnchangebutton !== null && promoOnchangebutton !==""?
+                    {typeof promoOnchangebutton !=="undefined" && promoOnchangebutton !==null && promoOnchangebutton !=="" &&  typeof promoValidate !== "undefined" && promoValidate !== null && promoValidate !==""?
                       <p className='d-flex align-items-center px-1'>
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24.631 24.637">
                           <path id="tick" d="M-81.811-487.2h-1.443a1.331,1.331,0,0,0-.186-.04,11.727,11.727,0,0,1-5.374-1.695,12.155,12.155,0,0,1-5.844-8.462c-.086-.461-.129-.931-.192-1.4v-1.443c.015-.085.032-.17.045-.256.076-.529.121-1.067.234-1.59A11.963,11.963,0,0,1-90-509.286a11.957,11.957,0,0,1,10.054-2.258A11.885,11.885,0,0,1-72.774-507a11.977,11.977,0,0,1,2.491,8.722,11.9,11.9,0,0,1-3,6.884,12.1,12.1,0,0,1-7.124,4.007C-80.874-487.306-81.343-487.26-81.811-487.2Zm-2.642-10.284c-.453-.418-.906-.83-1.354-1.238-.679-.621-1.345-1.263-2.053-1.852a1.178,1.178,0,0,0-1.878.633,1.271,1.271,0,0,0,.445,1.314q2,1.812,3.984,3.624a1.231,1.231,0,0,0,1.887-.047q3.828-3.792,7.651-7.589a2.755,2.755,0,0,0,.2-.211,1.23,1.23,0,0,0,.269-1.01,1.23,1.23,0,0,0-.606-.852,1.244,1.244,0,0,0-1.585.286q-3.378,3.372-6.753,6.75c-.061.061-.125.12-.2.192Z" transform="translate(94.85 511.833)" fill="#67c84e" />
                         </svg>
-                        {typeof PromoDiscount !=="undefined" && PromoDiscount !=="" && PromoDiscount !==null ? <div className='d-flex px-1 justify-content-between w-100'> <span>{PromoDiscount[0].promotionalDiscount.promoCode} applied</span>  <span >{helper.displayCurrency(totalAmount.discount)}</span></div>  : ""}
+                       <div className='d-flex px-1 justify-content-between w-100'> <span>{promoOnchangebutton} applied</span>  <span >{helper.displayCurrency(totalAmount.discount)}</span></div> 
                         
                       </p> : ""
                     }
