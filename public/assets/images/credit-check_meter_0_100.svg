@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="Untitled-1" width="359.904" height="219.612" viewBox="0 0 359.904 219.612">
+
+    <style xmlns="http://www.w3.org/2000/svg">
+    .speed-ani {
+    animation: speeding 3s infinite alternate;
+}
+.pointer {
+    /* background: #ffa500; */
+    /* width: 8px; */
+    /* height: 140px; */
+    /* border-radius: 10px; */
+    /* transform: rotate(-90deg); */
+    -ms-transform: rotate(-90deg);
+    -ms-transform-orgin: 50% 100%;
+    /* -webkit-transform: rotate(-90deg); */
+    -webkit-transform-orgin: 50% 100%;
+    /* margin: auto; */
+    transform-origin: bottom;
+    transform-box: fill-box;
+}
+       div {
+    display: block;
+}
+
+       @keyframes speeding {
+0% {
+   transform: translatey(-189px) translatex(-207px) rotate(-134deg);
+}
+
+25% {
+    transform: translatey(-198px) translatex(-171px) rotate(-92deg);
+}
+
+50% {
+    transform: translatey(-179px) translatex(-137px) rotate(-46deg);
+}
+
+75% {
+    transform: translatey(-142px) translatex(-127px) rotate(0deg);
+}
+
+100% {
+    transform: translatey(-112px) translatex(-145px) rotate(45deg);
+}
+       }
+  </style>
+  <g id="Layer_1">
+    <g id="Group_6833" data-name="Group 6833">
+      <g id="Group_6830" data-name="Group 6830">
+        <path id="Path_19492" data-name="Path 19492" d="M24.1,89.96A179.947,179.947,0,0,1,359.9,179.947H295.736a115.784,115.784,0,0,0-231.567,0H0A179.125,179.125,0,0,1,24.087,89.96Z" fill="#fff"/>
+        <g id="Group_6829" data-name="Group 6829" transform="translate(0.011)">
+          <path id="Path_19493" data-name="Path 19493" d="M365.673,79.689l-32.1-55.6A179.125,179.125,0,0,1,423.557,0V64.168a115.194,115.194,0,0,0-57.884,15.526Z" transform="translate(-243.61)" fill="#f7b11e"/>
+          <path id="Path_19494" data-name="Path 19494" d="M44.65,100.252l32.1-55.6a180.823,180.823,0,0,1,65.873,65.873l-55.6,32.1A116.286,116.286,0,0,0,44.65,100.252Z" transform="translate(193.181 -20.563)" fill="#fdeb48"/>
+          <path id="Path_19495" data-name="Path 19495" d="M166.76,64.168V0a179.124,179.124,0,0,1,89.987,24.087l-32.1,55.6A115.2,115.2,0,0,0,166.76,64.163Z" transform="translate(13.187)" fill="#fed137"/>
+          <path id="Path_19496" data-name="Path 19496" d="M496.472,142.626l-55.6-32.1A180.823,180.823,0,0,1,506.743,44.65l32.1,55.6A116.286,116.286,0,0,0,496.472,142.626Z" transform="translate(-416.783 -20.563)" fill="#f26d24"/>
+          <path id="Path_19497" data-name="Path 19497" d="M583.588,256.747H519.42a179.125,179.125,0,0,1,24.087-89.987l55.6,32.1a115.2,115.2,0,0,0-15.526,57.884Z" transform="translate(-519.42 -76.8)" fill="#d72626"/>
+          <path id="Path_19498" data-name="Path 19498" d="M15.526,256.747A115.2,115.2,0,0,0,0,198.863l55.6-32.1a179.074,179.074,0,0,1,24.092,89.987Z" transform="translate(280.199 -76.8)" fill="#99c817"/>
+        </g>
+      </g>
+      <g id="Group_6832" data-name="Group 6832" transform="translate(157.932 76.749)">
+        <path id="Path_19499" data-name="Path 19499" d="M252.681,142.27,156.846,252.411,142.54,238.1Z" transform="translate(-127.602 -142.27)" fill="#303030" class="pointer speed-ani" style="transform: translatey(-189px) translatex(-201px) rotate(-134deg);"/>
+        <g id="Group_6831" data-name="Group 6831" transform="translate(0 81.156)">
+          <ellipse id="Ellipse_226" data-name="Ellipse 226" cx="22.026" cy="22.026" rx="22.026" ry="22.026" fill="#303030"/>
+          <ellipse id="Ellipse_227" data-name="Ellipse 227" cx="15.655" cy="15.655" rx="15.655" ry="15.655" transform="translate(6.371 6.371)" fill="#fff"/>
+          <ellipse id="Ellipse_228" data-name="Ellipse 228" cx="10.983" cy="10.983" rx="10.983" ry="10.983" transform="translate(11.043 11.043)" fill="#303030"/>
+        </g>
+      </g>
+      <path id="Path_19500" data-name="Path 19500" d="M335.807,97.178a179.972,179.972,0,0,0-311.72,0A178.928,178.928,0,0,0,.156,179.947H0a179.947,179.947,0,1,1,359.893,0h-.156a178.928,178.928,0,0,0-23.93-82.769Z" transform="translate(0.011)" fill="#fff"/>
+      <path id="Path_19501" data-name="Path 19501" d="M110.874,159.132a129.5,129.5,0,0,1,241.639,64.276H338.8a115.784,115.784,0,0,0-231.567,0H93.52a128.81,128.81,0,0,1,17.354-64.276Z" transform="translate(-43.059 -43.461)" fill="#919191"/>
+    </g>
+  </g>
+  <text id="AAA" transform="translate(305.904 211.612)" fill="#393939" font-size="24" font-family="Poppins-Medium, Poppins" font-weight="500"><tspan x="0" y="0">100</tspan></text>
+  <text id="C" transform="translate(17.904 210.612)" fill="#393939" font-size="23" font-family="Poppins-Medium, Poppins" font-weight="500"><tspan x="0" y="0">0</tspan></text>
+</svg>
