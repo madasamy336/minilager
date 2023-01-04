@@ -43,6 +43,7 @@ export default function TenantDetails() {
   const [blobImage, setblobImage] = useState();
   const [imagesize, setImageSize] = useState();
   const companyName = useRef(null);
+  const ssn = useRef(null)
   const companyRegistrationNumber = useRef(null);
   // <button onClick={e => tenantInfoFinal(e)} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">NEXT</button>
   // <button onClick={() => SetCreditCheckModal({ open: true, dimmer: 'blurring' })} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">NEXT</button>
@@ -135,6 +136,16 @@ export default function TenantDetails() {
     if (!value) {
       message = `${name} is required`;
     }
+    let ssnErrormsg = document.getElementById('ssn');
+    if(ssn.current.value  === ''){
+      ssnErrormsg.classList.remove('d-none');
+    }else if(ssn.current.value.length <= 5)
+    {
+      ssnErrormsg.innerHTML=`Please enter at least 6 characters`
+      ssnErrormsg.classList.remove('d-none');
+    }else{
+      ssnErrormsg.classList.add('d-none');
+    }
     setTenantInfoError({ ...TenantInfoError, [name]: message });
   }
 
@@ -205,7 +216,7 @@ export default function TenantDetails() {
       51_70: "/assets/images/51-70.png",
       71_100: "/assets/images/71-100.png"
     }
-    if (0 < data && data < 20) {
+    if (0 < data && data <= 20) {
       return url[1_20]
     }
     else if (21 < data && data < 29) {
@@ -303,7 +314,9 @@ export default function TenantDetails() {
 
   const navigateEsign = (e) => {
     e.preventDefault();
-    navigate('/preBooking/esignPayment')
+    // navigate('/preBooking/esignPayment');
+    sessionStorage.setItem('customFieldstorage', JSON.stringify(unitDetailCustomField));
+    leaseProfileSave(unitDetailCustomField)
   }
 
   const profileImageUpload = (e) => {
@@ -428,6 +441,7 @@ export default function TenantDetails() {
             return
           } else {
             console.log('test')
+           
           }
 
         }
@@ -437,7 +451,8 @@ export default function TenantDetails() {
         Array.prototype.push.apply(unitDetailCustomField, customFieldValue);
         // updateTenantInfo();
         sessionStorage.setItem('customFieldstorage', JSON.stringify(unitDetailCustomField));
-        leaseProfileSave(unitDetailCustomField)
+        SetCreditCheckModal({ open: true });
+        // leaseProfileSave(unitDetailCustomField)
         //sessionStorage.setItem("customFieldstorage",JSON.stringify(customFieldValue))
       } else {
         return;
@@ -730,12 +745,25 @@ export default function TenantDetails() {
       // }
     }
 
+    let ssnErrormsg = document.getElementById('ssn');
+    if(ssn.current.value  === ''){
+      ssnErrormsg.classList.remove('d-none');
+      isValid = false;
+    }else if(ssn.current.value.length <= 5){
+      ssnErrormsg.classList.remove('d-none');
+      isValid = false;
+
+    }
+    else{
+      ssnErrormsg.classList.add('d-none');
+    }
+
 
     if (!isValid) {
       setTenantInfoError(TenantInfoError);
     } else {
       checkCustomfieldValue();
-      updateTenantInfo();
+      // updateTenantInfo();
     }
   }
 
@@ -775,6 +803,7 @@ export default function TenantDetails() {
       TenantInfoError.state = "state is Required";
       isValid = false;
     }
+
     if (BusinessUser) {
       let companyErrormessage = document.getElementById("companyname");
       if (companyName.current.value === '') {
@@ -858,7 +887,8 @@ export default function TenantDetails() {
     addressLineOne: addressLine1Error,
     city: cityError,
     state: stateError,
-    zipCode: postalError
+    zipCode: postalError,
+    ssn:ssnError
 
   } = TenantInfoError;
 
@@ -974,9 +1004,8 @@ export default function TenantDetails() {
           <div className="col-12  col-md-6  px-4 px-sm-2">
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-2'>Social Security Number <i className="text-danger ">*</i></label>
-              <input className="noCounterNumber" type='number' name="ssn" value={TenantInfoDetails.ssn} placeholder='Social Security Number' onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
+              <input className="noCounterNumber" ref={ssn} type='number' name="ssn" value={TenantInfoDetails.ssn} placeholder='Social Security Number' onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
               <div id="ssn" className="text-danger mt-1 d-none"> Please Enter Social Security Number </div>
-
             </div>
           </div>
           {BusinessUser ?
@@ -1232,9 +1261,9 @@ export default function TenantDetails() {
       </div>
       <div className="ui container text-center my-5">
         <button onClick={() => navigate('/preBooking/addOns')} className="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">BACK</button>
-        {/* <button onClick={e => tenantInfoFinal(e)} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">NEXT</button> */}
+        <button onClick={e => tenantInfoFinal(e)} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">NEXT</button>
         {/* <button onClick={() => checkCreditScore()} class/Name="ui button bg-success-dark   fs-7 fw-400 text-white px-5">NEXT</button> */}
-        <button onClick={() => SetCreditCheckModal({ open: true })} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">NEXT</button>
+        {/* <button onClick={() => SetCreditCheckModal({ open: true })} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">NEXT</button> */}
 
       </div>
 

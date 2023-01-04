@@ -33,6 +33,7 @@ export default function AddOn() {
   let VehicleSessionValue = JSON.parse(sessionStorage.getItem('vehicleDetail'));
   let merchandiseSessionvalue = JSON.parse(sessionStorage.getItem('merchandiseItem'));
   let thirdparty = JSON.parse(sessionStorage.getItem('thirdpartyinsurance'));
+  let BusinessUser = JSON.parse(sessionStorage.getItem('isBussinessUser'));
   let userid = localStorage.getItem('userid');
   const rentDetails = useSelector(state => state.rentdetail.renDetails);
   const [activePlan, SetactivePlan] = useState('');

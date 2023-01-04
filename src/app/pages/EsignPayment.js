@@ -43,6 +43,7 @@ export default function EsignPayment() {
   const [paymentLoader, setPaymentLoader] = useState(false);
   const [isLoading, setLoader] = useState(false);
   const [businessName, setbusinessName] = useState();
+  const [isSignatureVerified, setisSignatureVerified] = useState(false);
   const [saveCard, setSavecard] = useState(true);
   const [autoPayEnabled, setAutopayEnabled] = useState(true);
   const [iFrameResponse, setIframeRespones] = useState(false);
@@ -351,7 +352,7 @@ export default function EsignPayment() {
                     taxpecentage = i.value
                   })
                   return <div key='' className="row">
-                    {/* <div className="col-lg-3 col-md-3 col-12 px-1">
+                    <div className="col-lg-3 col-md-3 col-12 px-1">
                       <div className="card-img h-100">
                         {item.unitInfo.imageUrl !== '' && item.unitInfo.imageUrl !== null ?
                           <img className="w-100 h-100 border-radius-10" src={item.unitInfo.imageUrl} alt="Container" />
@@ -359,8 +360,8 @@ export default function EsignPayment() {
                         }
 
                       </div>
-                    </div> */}
-                    <div className="col-lg-6 col-md-6 col-12 px-1">
+                    </div>
+                    <div className="col-lg-5 col-md-5 col-12 px-1">
                       <div className="card-desc card-bg-secondary p-2 border-radius-10 mt-sm-2 mb-sm-2">
                         <h2 className="fs-4 fw-700 mb-2">{storageType}-{unitNumber}</h2>
                         <div className="pb-1 d-flex align-items-center"><img src='/assets/images/selfstorage.svg' alt='Self Storage' /><span className='ml-1'>{unitTypeName} - <strong className="fw-700">{unitMeasurement}</strong>({measurementType})</span></div>
@@ -383,7 +384,7 @@ export default function EsignPayment() {
                         }
                       </div>
                     </div>
-                    <div className="col-lg-6 col-md-6 col-12 px-1">
+                    <div className="col-lg-4 col-md-4 col-12 px-1">
                       <div className="card-details">
                         <div className="mb-2">
                           <h6 className="fs-6 fw-400 text-success mb-1">Personal Details</h6>
@@ -483,12 +484,12 @@ export default function EsignPayment() {
                         <label className='ml-1'>I have read and understood the contents of the documents listed and I am ready to sign</label>
                       </div>
                     </div>
-                    <div className='pt-4'>
+                    { esignMethod && <div className='pt-4'>
                       <div className='d-flex justify-content-between flex-wrap bg-primary-light p-1 border-success-dark-1 border-radius-5'>
                         <p className='d-flex align-items-center'><img src='/assets/images/esign.svg' alt='Esign' /><span className='ml-1'>Great! You have successfully signed the documents</span></p>
                         <button className="ui button text-success-dark bg-white card-border fs-7 fw-400 text-dark px-1 mr-2 mt-md-1">View Document</button>
                       </div>
-                      <div className='pt-4 d-flex justify-content-center flex-wrap'>
+                      <div className={`pt-4 d-flex justify-content-center flex-wrap}`}>
 
                         {paylaterButton === true ?
                           <button className="ui button bg-white d-flex align-items-center border-radius-5 card-border fs-6 fw-400 text-dark px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1" onClick={(e) => payNow(e)} ><img src='/assets/images/executed-payment.svg' alt='Pay Now' id="paynow" /><span className='ml-1' onClick={(e) => payNow(e)}>Pay Now</span></button>
@@ -505,10 +506,10 @@ export default function EsignPayment() {
 
 
                       </div>
-                    </div>
+                    </div>}
                   </div>
-                  {esignMethod && (
-                    <div className='mt-1'>
+                  {
+                    <div className='mt-1 d-none'>
                       <h5 className='fw-600 text-success-dark pb-2 card-border-bottom px-3'>SELECT E-SIGNATURE METHOD TO SIGN THE DOCUMENTS</h5>
                       <div className='py-4 px-3'>
                         <div className='card-border bank-div border-radius-5 d-flex align-items-center position-relative mb-3'>
@@ -531,9 +532,9 @@ export default function EsignPayment() {
                         </div>
                       </div>
                     </div>
-                  )}
+                  }
                 </div>
-                {!paylaterButton ?
+                {!paylaterButton &&  esignMethod  ?
                   <div className='bg-white card-boxshadow px-0 py-2 border-radius-15 mb-3 mt-2'>
                     <h6 className='text-dark fw-500 fs-6 px-4 py-2 px-sm-2 card-border-bottom fw-600 text-success-dark'>
                       <span className='veritical-align-text-top ml-1'>CHOOSE PAYMENT TYPE</span></h6>
