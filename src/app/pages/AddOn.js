@@ -32,6 +32,7 @@ export default function AddOn() {
   let serviceSessionValue = JSON.parse(sessionStorage.getItem('servicedetail'));
   let VehicleSessionValue = JSON.parse(sessionStorage.getItem('vehicleDetail'));
   let merchandiseSessionvalue = JSON.parse(sessionStorage.getItem('merchandiseItem'));
+  let thirdparty = JSON.parse(sessionStorage.getItem('thirdpartyinsurance'));
   let userid = localStorage.getItem('userid');
   const rentDetails = useSelector(state => state.rentdetail.renDetails);
   const [activePlan, SetactivePlan] = useState('');
@@ -89,6 +90,20 @@ export default function AddOn() {
       SetVehicleAccordian(VehicleSessionValue);
 
     }
+    if(thirdparty === true){
+      insuranceSessionValue.forEach((insurance)=> {
+        SetactivePlan('Own Insurance');
+        setPolicyProvider(insurance['insuranceInfo'].providerName);
+        setPolicyNumber(insurance['insuranceInfo'].policyNumber);
+        setEffectiveFromDate(new Date(insurance['insuranceInfo'].effectiveFrom));
+        setEffectiveToDate(new Date(insurance['insuranceInfo'].effectiveTill));
+      })
+
+      console.log(insuranceSessionValue);
+
+
+    }
+
 
     if (merchandiseSessionvalue !== null) {
       merchandiseSessionvalue.forEach((merchandiseItem) => {
@@ -474,22 +489,22 @@ export default function AddOn() {
                     {ownInsurance && (<div className="ui form px-4 px-sm-2">
                       <div className="field w-100 datePicker my-3">
                         <label className='fw-500 fs-7 mb-2'>Policy Provider Name</label>
-                        <input placeholder='Policy Provider Name' onChange={(e) => { setPolicyProvider(e.target.value) }} />
+                        <input placeholder='Policy Provider Name' value={policeProvide} onChange={(e) => { setPolicyProvider(e.target.value) }} />
                         <p className="error py-1 provider_name d-none">Please Enter Policy Provider Name</p>
                       </div>
                       <div className="field w-100 datePicker my-3">
                         <label className='fw-500 fs-7 mb-2'>Policy Number</label>
-                        <input placeholder='Policy Number' onChange={(e) => { setPolicyNumber(e.target.value) }} />
+                        <input placeholder='Policy Number' value={policyNumber} onChange={(e) => { setPolicyNumber(e.target.value) }} />
                         <p className="error py-1 policy_number d-none">Please Enter Policy Number</p>
                       </div>
                       <div className="field w-100 datePicker my-3">
                         <label className='fw-500 fs-7 mb-2' >Effective From Date</label>
-                        <SemanticDatepicker placeholder='Effective From Date' className='w-100' onChange={(e, item) => setEffectiveFromDate(item.value)} />
+                        <SemanticDatepicker placeholder='Effective From Date' value={effectiveFromDate} className='w-100' onChange={(e, item) => setEffectiveFromDate(item.value)} />
                         <p className="error py-1 effective_from_date  d-none">Please Enter Effective From Date</p>
                       </div>
                       <div className="field w-100 datePicker my-3">
                         <label className='fw-500 fs-7 mb-2' >Effective To Date</label>
-                        <SemanticDatepicker placeholder='Effective To Date' className='w-100' onChange={(e, item) => setEffectiveToDate(item.value)} />
+                        <SemanticDatepicker placeholder='Effective To Date' value={effectiveToDate} className='w-100' onChange={(e, item) => setEffectiveToDate(item.value)} />
                         <p className="error py-1 effective_to_date d-none">Please Enter Effective To Date</p>
                       </div>
                       {/* <div className="field w-100 datePicker my-3">
@@ -673,7 +688,7 @@ export default function AddOn() {
                           <label className='fw-500 fs-7 mb-2'>Year</label>
 
                           {/* <SemanticDatepicker placeholder='Year' formatOptions="yyyy" type='date' className='w-100' /> */}
-                          <input placeholder='Year' className='w-100' value={year} onChange={(e) => setYear(e.target.value)} />
+                          <input placeholder='Year' className='w-100' minLength={1900} maxLength={2099}  value={year} onChange={(e) => setYear(e.target.value)} />
                         </div>
                         <div className="field w-100 datePicker my-3">
                           <label className='fw-500 fs-7 mb-2'>Brand</label>

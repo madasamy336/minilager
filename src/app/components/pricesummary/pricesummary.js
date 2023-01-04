@@ -393,7 +393,7 @@ console.log(promoAppliedsession);
                     </div>
                   </div>
                 </div>
-              }) : ""}
+              }) : <div className='d-flex align-items-center justify-content-center mx-auto'>"No Promo Codes Available" </div>}
           </div>
         </Modal.Content>
       </Modal>

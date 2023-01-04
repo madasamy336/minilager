@@ -113,7 +113,11 @@ const AddonCard = (props) => {
            <ToastContainer />       
         <div className='card card-border-secondary border-radius-10'>
           <div className='merchandise-img text-center py-1 card-border-bottom'>
-            <img src={props.response.imageUrl} alt="Merchandise" />
+            {props.response.imageUrl !== null?
+             <img src={props.response.imageUrl} alt="Merchandise" />:
+             <img src="/assets/images/merchandise.png" alt="Merchandise" />
+              
+            }          
           </div>
           <div className='row p-1'>
             <div className='col-lg-6 col-md-6 col-sm-6'>
