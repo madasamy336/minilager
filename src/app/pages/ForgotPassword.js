@@ -8,7 +8,7 @@ import React from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const ForgotPassword = () => {
+const ForgotPassword = (props) => {
     const navigate = useNavigate();
     // Username value
     const [username, setUserName] = useState({ userName: '' });
@@ -20,7 +20,12 @@ const ForgotPassword = () => {
     
     const ValidateSignin = (e) => {
         e.preventDefault();
-        navigate('/login');
+        if(props.callingfrom === 'prebooking'){
+            navigate('/preBooking/sign-in')
+        }else{
+            navigate('/login');
+        }
+       
     }
     const handleChange = (e) => {
         e.persist();

@@ -41,32 +41,36 @@ const AccordionExampleStyled = (selectedStorageType) => {
       }
     });
 
-    let minvalue = Math.min.apply(Math, PriceArray.map(function (o) { return o.MinPrice; }));
-    if (minvalue == Infinity) {
-      minvalue = 0;
-    }
-    let MaxValue = Math.max.apply(Math, PriceArray.map(function (o) { return o.MaxPrice; }));
-    if (MaxValue == -Infinity) {
-      MaxValue = 0;
-    }
-    NewPriceValue = {
-      "minPrice": minvalue,
-      "maxPrice": MaxValue,
+    if (typeof PriceArray !== "undefined" && PriceArray !==null && PriceArray !=="" && PriceArray.length > 0){
+      let minvalue = Math.min.apply(Math, PriceArray.map(function (o) { return o.MinPrice; }));
+    
+      let maxValue = Math.max.apply(Math, PriceArray.map(function (o) { return o.MaxPrice; }));
+      
+      NewPriceValue = {
+        "minPrice": minvalue,
+        "maxPrice": maxValue,
+      }
+
+      if (NewPriceValue.maxPrice === NewPriceValue.minPrice) {
+        let priceRangeHiding = document.getElementById("pricerange-hide");
+        if (typeof priceRangeHiding !=="undefined" && priceRangeHiding !==null && priceRangeHiding !==""){
+          priceRangeHiding.style.display = 'none';
+        }
+      }else{
+        let priceRangeHiding = document.getElementById("pricerange-hide");
+        if (typeof priceRangeHiding !=="undefined" && priceRangeHiding !==null && priceRangeHiding !==""){
+          priceRangeHiding.style.display = 'block';
+        }
+      }
+      sessionStorage.setItem("MinValue", minvalue);
+      sessionStorage.setItem("MaxValue", maxValue);
     }
 
-    if (NewPriceValue.maxPrice === NewPriceValue.minPrice) {
-      let priceRangeHiding = document.getElementById("pricerange-hide");
-      if (typeof priceRangeHiding !=="undefined" && priceRangeHiding !==null && priceRangeHiding !==""){
-        priceRangeHiding.style.display = 'none';
-      }
-    }else{
-      let priceRangeHiding = document.getElementById("pricerange-hide");
-      if (typeof priceRangeHiding !=="undefined" && priceRangeHiding !==null && priceRangeHiding !==""){
-        priceRangeHiding.style.display = 'block';
-      }
-    }
-    sessionStorage.setItem("MinValue", minvalue);
-    sessionStorage.setItem("MaxValue", MaxValue);
+   
+    
+
+  
+    
   }
 
   if (typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof filters.building !== 'undefined' && filters.building !== null && filters.building !== "" && filters.building.length > 0 && selectedStorageType.storageTypeValue !== 'undefined' && selectedStorageType.storageTypeValue !== null) {

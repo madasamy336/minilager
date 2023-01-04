@@ -7,7 +7,7 @@ import request from '../services/request';
 import Helper from "../helper";
 import PDFMerger from 'pdf-merger-js/browser';
 import ModalComponent from '../components/modal/ModalComponent';
-import { Modal, Button, Loader, Placeholder ,Segment} from 'semantic-ui-react';
+import { Modal, Button, Loader, Placeholder, Segment } from 'semantic-ui-react';
 import parse from "html-react-parser";
 let helper = new Helper();
 let unitDetailRespones = {};
@@ -32,7 +32,8 @@ export default function EsignPayment() {
   let makeSavedCardMandatory = JSON.parse(sessionStorage.getItem('configdata')).culture.isSavedCardsByDefault;
   let tenantInfo = JSON.parse(sessionStorage.getItem('tenantInfo'));
   let desiredMoveOutDate = sessionStorage.getItem("desiredMoveoutDate");
-  let BusinessUser =  JSON.parse(sessionStorage.getItem('isBussinessUser'));
+  let BusinessUser = JSON.parse(sessionStorage.getItem('isBussinessUser'));
+  let thirtparty = JSON.parse(sessionStorage.getItem('thirdpartyinsurance'));
   const [saveAgreement, setSaveAgreement] = useState();
   const [PaymentModal, setpaymentModal] = useState({ open: false, dimmer: undefined, })
   const [mondelcontent, setModelcontent] = useState(``);
@@ -41,15 +42,19 @@ export default function EsignPayment() {
   const [OpenPaylaterModal, setPayLaterModal] = useState(false);
   const [paymentLoader, setPaymentLoader] = useState(false);
   const [isLoading, setLoader] = useState(false);
-
+  const [businessName, setbusinessName] = useState();
   const [saveCard, setSavecard] = useState(true);
   const [autoPayEnabled, setAutopayEnabled] = useState(true);
   const [iFrameResponse, setIframeRespones] = useState(false);
   const [paymentModeId, setpaymentModeId] = useState('');
 
   if (insuranceDetail !== null && insuranceDetail.length > 0) {
+
     insuranceDetail.forEach(element => {
-      insuranceArray.push(element.insurancePlans)
+
+      element.insurancePlans ? insuranceArray.push(element.insurancePlans) : insuranceArray = [];
+
+
     });
 
   }
@@ -90,6 +95,7 @@ export default function EsignPayment() {
   useEffect(() => {
     console.log(makeSavedCardMandatory);
     unitInfoDetails();
+    getSitedetail();
     const ReceiveIframeResponse = (event) => {
       if (event.data.message !== null && typeof event.data.message !== 'undefined') {
         const data = JSON.parse(event.data.message);
@@ -151,6 +157,26 @@ export default function EsignPayment() {
         console.log(error);
       });
 
+  }
+
+  function getSitedetail() {
+
+    let config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    instance
+      .get(request.getsitedetail, config)
+      .then(response => {
+        if (response.data.result) {
+          setbusinessName(response.data.result.businessName);
+        }
+      })
+      .catch(error => {
+        console.log(error)
+      })
   }
 
   //preview Leaseagreement
@@ -233,8 +259,8 @@ export default function EsignPayment() {
     if (typeof cardResponse !== 'undefined' && cardResponse !== null && cardResponse !== '') {
       unitDetailRespones['paymentTransactionResponse'] = cardResponse;
     }
-    if(desiredMoveOutDate !== 'null' && desiredMoveOutDate !== null && desiredMoveOutDate !== 'undefined'){
-      unitDetailRespones.units[0]['desiredMoveOutDate'] =helper.readDate(new Date(desiredMoveOutDate));
+    if (desiredMoveOutDate !== 'null' && desiredMoveOutDate !== null && desiredMoveOutDate !== 'undefined') {
+      unitDetailRespones.units[0]['desiredMoveOutDate'] = helper.readDate(new Date(desiredMoveOutDate));
     }
     unitDetailRespones['isBusinessUser'] = BusinessUser;
     unitDetailRespones['payLater'] = paylater;
@@ -243,6 +269,13 @@ export default function EsignPayment() {
     if (paymentModeId !== '') {
       unitDetailRespones['paymentModeId'] = paymentModeId;
     }
+    if (thirtparty) {
+      insuranceDetail.forEach((element) => {
+        unitDetailRespones.units[0]['insuranceInfo'] = element['insuranceInfo'];
+      })
+
+    }
+
     instance
       .post(request.save_move + `/${leaseprofileid}`, unitDetailRespones, config)
       .then((response) => {
@@ -318,7 +351,7 @@ export default function EsignPayment() {
                     taxpecentage = i.value
                   })
                   return <div key='' className="row">
-                    <div className="col-lg-3 col-md-3 col-12 px-1">
+                    {/* <div className="col-lg-3 col-md-3 col-12 px-1">
                       <div className="card-img h-100">
                         {item.unitInfo.imageUrl !== '' && item.unitInfo.imageUrl !== null ?
                           <img className="w-100 h-100 border-radius-10" src={item.unitInfo.imageUrl} alt="Container" />
@@ -326,8 +359,8 @@ export default function EsignPayment() {
                         }
 
                       </div>
-                    </div>
-                    <div className="col-lg-5 col-md-5 col-12 px-1">
+                    </div> */}
+                    <div className="col-lg-6 col-md-6 col-12 px-1">
                       <div className="card-desc card-bg-secondary p-2 border-radius-10 mt-sm-2 mb-sm-2">
                         <h2 className="fs-4 fw-700 mb-2">{storageType}-{unitNumber}</h2>
                         <div className="pb-1 d-flex align-items-center"><img src='/assets/images/selfstorage.svg' alt='Self Storage' /><span className='ml-1'>{unitTypeName} - <strong className="fw-700">{unitMeasurement}</strong>({measurementType})</span></div>
@@ -350,7 +383,7 @@ export default function EsignPayment() {
                         }
                       </div>
                     </div>
-                    <div className="col-lg-4 col-md-4 col-12 px-1">
+                    <div className="col-lg-6 col-md-6 col-12 px-1">
                       <div className="card-details">
                         <div className="mb-2">
                           <h6 className="fs-6 fw-400 text-success mb-1">Personal Details</h6>
@@ -431,7 +464,7 @@ export default function EsignPayment() {
                         <div className='card-border border-radius-5 mr-2 mr-md-0 mb-md-1'>
                           <h6 className='card-bg-secondary p-2 text-success-dark fs-6'>INITIATOR</h6>
                           <div className='py-2 px-1'>
-                            <p className='fw-600 fs-6 mb-1'>Fountainlakestorage</p>
+                            <p className='fw-600 fs-6 mb-1'>{businessName}</p>
                             <p>Non Signatory Party</p>
                           </div>
                         </div>
@@ -440,7 +473,7 @@ export default function EsignPayment() {
                         <div className='card-border border-radius-5 ml-2 ml-md-0'>
                           <h6 className='card-bg-secondary p-2 text-success-dark fs-6'>INITIATOR</h6>
                           <div className='py-2 px-1'>
-                            <p className='fw-600 fs-6 mb-1'>Fountainlakestorage</p>
+                            <p className='fw-600 fs-6 mb-1'>{tenantInfo.firstName} {tenantInfo.lastName}</p>
                             <p>Non Signatory Party</p>
                           </div>
                         </div>

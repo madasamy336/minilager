@@ -142,7 +142,7 @@ export default function Profile() {
     let imagedata = new File([profileImageSrc], `${userId}_.png`, { type: "image/png" });
     let config = {
       headers: {
-        "Authorization": `Bearer  5Yu5sIUiF+HEB/Fg/kuJNZ7kgz78oTDmEogfTgTJH4+mXQdh/WoXJbZSX67yNf8Rr2ZFaEfPI/Ruw/lMiFtmTw==Xpto4oAFPkK+Huo5T+Z+sA==`,
+        "Authorization": `Bearer ${process.env.REACT_APP_ACCESS_TOKEN}`,
         "Content-Type": "multipart/form-data; boundary=----787208ea84637614785e28ded8a6a7b8",
         "accept": "application/json",
         // "Content-Length": `int(1000000)`,

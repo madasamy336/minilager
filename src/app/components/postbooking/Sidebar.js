@@ -20,6 +20,18 @@ export default function SidebarPostBooking(props) {
     const timer = setTimeout(() => {
       console.log('This will run after 1 second!')
       localStorage.clear();
+      sessionStorage.removeItem("customFieldstorage");
+      sessionStorage.removeItem("MaxValue");
+      sessionStorage.removeItem("MinValue");
+      sessionStorage.removeItem("preferredStorage");
+      sessionStorage.removeItem("facilityaddress");
+      sessionStorage.removeItem("moveindate");
+      sessionStorage.removeItem("tenantInfo");
+      sessionStorage.removeItem("companyDetail");
+      sessionStorage.removeItem("isBussinessUser");
+      sessionStorage.removeItem("invoiceData");
+      sessionStorage.removeItem("recurringData");
+      sessionStorage.removeItem("fieldid");
       setLogoutModalOpen(({
         open: false,
         dimmer: undefined

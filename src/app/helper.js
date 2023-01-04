@@ -261,23 +261,19 @@ class Helper {
 
         switch (format) {
             case "M2": {
-                return (<div>m<sup className="cc">2</sup></div>);
+                return (<span>m<sup className="cc">2</sup></span>);
             }
             case "MQ": {
-                returnResult = `m<sup class="cc">3</sup>`;
-                break;
+                return (<span>m<sup className="cc">3</sup></span>);
             }
             case "QCM": {
-                returnResult = `cm<sup class="cc">3</sup>`;
-                break;
+                return (<span>cm<sup className="cc">3</sup></span>);
             }
             case "QFT": {
-                returnResult = `ft<sup class="cc">3</sup>`;
-                break;
+                return (<span>ft<sup className="cc">3</sup></span>);
             }
             case "QMT": {
-                returnResult = `m<sup class="cc">3</sup>`;
-                break;
+                return (<span>m<sup className="cc">3</sup></span>);
             }
             case "QSIZE": {
                 returnResult = `WxLxH`;
@@ -288,8 +284,7 @@ class Helper {
                 break;
             }
             case "SQFT": {
-                returnResult = `ft<sup class="cc">2</sup>`;
-                break;
+                return (<span>ft<sup className="cc">2</sup></span>);
             }
             default: {
                 returnResult = "";

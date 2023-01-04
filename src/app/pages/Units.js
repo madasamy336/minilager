@@ -9,10 +9,17 @@ import request from '../services/request';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+let isBussinessUser;
+let totatCount;
+let pagesizepagination = 10;
+let pages = 0;
+
 const Units = () => {
-    const [tenantTypes, setTenantTypes] = useState('');
+    const [tenantTypes, setTenantTypes] = useState();
     const [tenantTypeError, setTenantTypeError] = useState(false);
     const [SortByPriceRange, setSortByPriceRange] = useState("Ascending");
+    const [unitLoadMoreButtonVal, setUnitLoadMoreButtonVal] = useState();
+    const [pageNumber, setPageNumber] = useState(1);
 
     const [UnitResponse, setUnitResponse] = useState(null);
     const [storageTypeValue, setStorageTypeValue] = useState('');
@@ -20,8 +27,8 @@ const Units = () => {
     const [filterRequest, setFilterRequest] = useState('')
     const [loader, setLoading] = useState(true);
     const [filtercall, setFilterCall] = useState(false);
-   
-   
+
+
     const [unitTypeModal, SetunitTypeModal] = useState({
         open: false,
         dimmer: undefined,
@@ -29,18 +36,25 @@ const Units = () => {
     });
     const filters = JSON.parse(localStorage.getItem('Units'));
     let locationId = localStorage.getItem('locationid');
-    let userInfo = JSON.parse(localStorage.getItem('tenantInfo'));
-    let isBussinessUser = sessionStorage.getItem('isBussinessUser');
+   let userInfo = JSON.parse(localStorage.getItem('tenantInfo'));
     useEffect(() => {
         fetchUnitFilter(locationId);
     }, [storageTypeValue]);
 
     useEffect(() => {
-        if (userInfo !== null) {
-            setTenantTypes(userInfo.bussinessUser ?  'true' : 'false');
+       
+        if (typeof userInfo !=="undefined" && userInfo !==null && userInfo !=="") {
+            if(userInfo.businessUser === true){
+                setTenantTypes(tenantTypeOptions[1].value);
+                sessionStorage.setItem("isBussinessUser", tenantTypeOptions[1].value);
+            }else{
+                setTenantTypes(tenantTypeOptions[0].value);
+                sessionStorage.setItem("isBussinessUser", tenantTypeOptions[0].value);
+            }
+            sessionStorage.removeItem("applypromo");
           }
         sixStorageLoadUnitList(storageTypeValue);
-    }, []);
+    }, [pageNumber]);
 
     const fetchUnitFilter = (loactionid) => {
         let config = {
@@ -182,7 +196,7 @@ const Units = () => {
                 minvalues = searchFilterValues.priceRange[0];
                 maxvalues = searchFilterValues.priceRange[1];
             }
-}
+        }
         setLoading(true);
 
         let config = {
@@ -201,10 +215,10 @@ const Units = () => {
                 minPrice: minvalues,
                 maxPrice: maxvalues
             },
-            sortDirection:SortByPriceRange,
-            pageNumber: 1,
+            sortDirection: SortByPriceRange,
+            pageNumber: pageNumber,
             pageSize: 10,
-            isBusinessUser: false,
+            isBusinessUser: isBussinessUser ==="true" ? true : false,
             unitSort: "UnitNumber",
             unitVisibility: 1,
             availability: 2
@@ -213,6 +227,17 @@ const Units = () => {
             .post(request.user_search, requestbody, config)
             .then(response => {
                 setUnitResponse(response.data.result);
+                let loadmoreUnitCount = response.data.totalCount - response.data.pageCount;
+                totatCount = response.data.totalCount;
+                let quotient = Math.floor(totatCount / pagesizepagination);
+                let remainder = totatCount % pagesizepagination;
+                if (remainder > 0) {
+                    pages = quotient + 1;
+                } else {
+                    pages = quotient;
+
+                }
+                setUnitLoadMoreButtonVal(loadmoreUnitCount);
                 setLoading(false);
                 setFilterCall(true);
             })
@@ -239,15 +264,21 @@ const Units = () => {
     const tenantInfoChange = (event, data) => {
         setTenantTypes(data.value);
         sessionStorage.setItem("isBussinessUser", data.value);
+        isBussinessUser = sessionStorage.getItem('isBussinessUser');
     }
 
     const tenantTypeValidation = (data) => {
         setTenantTypeError(data);
     }
 
-    const sortByPriceRange = (event, data)=>{
+    const sortByPriceRange = (event, data) => {
         setSortByPriceRange(data.value);
         sixStorageLoadUnitList(storageTypeValue);
+    }
+
+    const PaginationHandleChange = (event, value) => {
+        window.scroll(0,300);
+        setPageNumber(value.activePage);
     }
 
     const storageTypeOptions = typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof filters.storageType !== 'undefined' && filters.storageType !== null && filters.storageType !== "" && filters.storageType.length > 0 ?
@@ -278,21 +309,19 @@ const Units = () => {
     const sortUnitOptions = [
         {
             key: 'Ascending',
-            text: 'Price High to Low',
+            text: 'Price Low to High',
             value: 'Ascending',
-            content: 'Price High to Low',
+            content: 'Price Low to High',
         },
         {
             key: 'Descending',
-            text: 'Price Low to High',
+            text: 'Price High to Low',
             value: 'Descending',
-            content: 'Price Low to High',
+            content: 'Price High to Low',
+            
         }
     ]
 
-
-  
-   
 
     return (
         <div className="units-wrapper">
@@ -304,7 +333,7 @@ const Units = () => {
                         <h2 className='text-center'>Find Your Storage Place</h2>
                         <div className='row'>
                             <div className='col-lg-6 col-md-6 col-sm-12'>
-                                {typeof tenantTypeOptions !== "undefined" && tenantTypeOptions !== null && tenantTypeOptions !== "" && tenantTypeOptions.length > 0 ? <Dropdown placeholder="Choose Tenant Type" clearable fluid search selection options={tenantTypeOptions} value={tenantTypes} onChange={tenantInfoChange} /> : null}
+                                {typeof tenantTypeOptions !== "undefined" && tenantTypeOptions !== null && tenantTypeOptions !== "" && tenantTypeOptions.length > 0  ? <Dropdown placeholder="Choose Tenant Type" clearable fluid search selection options={tenantTypeOptions} value={tenantTypes}  onChange={tenantInfoChange} /> : null}
                             </div>
                             <div className='col-lg-6 col-md-6 col-sm-12'>
                                 {storageTypeOptions !== null && typeof storageTypeOptions !== 'undefined' && storageTypeOptions !== '' && typeof storageTypeOptions[0].value !== 'undefined' && storageTypeOptions[0].value !== null && storageTypeOptions[0].value !== '' ?
@@ -333,7 +362,7 @@ const Units = () => {
                                                 floating
                                                 inline
                                                 options={sortUnitOptions}
-                                                defaultValue={sortUnitOptions[1].value}
+                                                defaultValue={sortUnitOptions[0].value}
                                                 onChange={sortByPriceRange}
                                             />
                                         </Header.Content>
@@ -349,13 +378,15 @@ const Units = () => {
 
                                     </div>
                                 </div>
-                                <div className='pagination-div mt-2 mb-3 text-center'>
-                                    <Pagination ellipsisItem={{ content: <Icon name='ellipsis horizontal' />, icon: true }}
-                                        firstItem={{ content: <Icon name='angle double left' />, icon: true }}
-                                        lastItem={{ content: <Icon name='angle double right' />, icon: true }}
-                                        prevItem={{ content: <Icon name='angle left' />, icon: true }}
-                                        nextItem={{ content: <Icon name='angle right' />, icon: true }} defaultActivePage={1} totalPages={10} />
-                                </div>
+                                {typeof unitLoadMoreButtonVal !== 'undefined' && unitLoadMoreButtonVal !== null && unitLoadMoreButtonVal !== '' && unitLoadMoreButtonVal > 0 && unitLoadMoreButtonVal !== 0 ? (
+                                    <div className='pagination-div mt-2 mb-3 text-center'>
+                                        <Pagination ellipsisItem={{ content: <Icon name='ellipsis horizontal' />, icon: true }}
+                                            firstItem={{ content: <Icon name='angle double left' />, icon: true }}
+                                            lastItem={{ content: <Icon name='angle double right' />, icon: true }}
+                                            prevItem={{ content: <Icon name='angle left' />, icon: true }}
+                                            nextItem={{ content: <Icon name='angle right' />, icon: true }} defaultActivePage={1} totalPages={pages} onPageChange={PaginationHandleChange} />
+                                    </div>
+                                ) : ''}
                             </div>
                         </div>
                     </div>

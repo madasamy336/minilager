@@ -191,7 +191,12 @@ const PostLoginForm = (props) => {
 
     const ForgotPassword = (e) => {
         e.preventDefault();
-        navigate('/forgotpassword')
+        if(props.callingfrom === "prebooking"){
+            navigate('/preBooking/forgotpassword')
+        }else{
+            navigate('/forgotpassword')
+        }
+       
     }
 
 
@@ -534,7 +539,13 @@ const PostLoginForm = (props) => {
                     <div className="postloginform-inputs bg-white">
                         <div className="form-title">
                             <h2 className="text-success fw-600">WELCOME</h2>
-                            <p>Don't have an account? <Link to={'/signup'} className="fw-500">Signup Now</Link></p>
+                            {
+                                props.callingfrom === 'prebooking' ?
+                                    <p>Don't have an account? <Link to={'/preBooking/signup'}>Signup Now</Link></p> :
+                                    <p>Don't have an account? <Link to={'/signup'}>Signup Now</Link></p>
+
+                            }
+                           
                         </div>
                         <form>
                             <div className="form-control">
@@ -573,7 +584,7 @@ const PostLoginForm = (props) => {
                             <div className="remember-div d-flex justify-content-between">
                                 <p className="d-inline-flex">
                                     <input type="checkbox" name="rememberPassword" checked={rememberPassword} onChange={(event) => handleChechbox(event)} /><span>Remember me</span></p>
-                                <p><a href="/" onClick={e => ForgotPassword(e)}>Forget your password?</a></p>
+                                <p> <a href="/" onClick={e => ForgotPassword(e)}>Forget your password?</a> </p>
                             </div>
                             <button className="ui button w-100 fw-100" onClick={e => ValidateSignin(e)}>Sign In</button>
                         </form>
