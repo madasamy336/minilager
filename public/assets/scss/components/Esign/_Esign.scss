@@ -22,3 +22,13 @@
     }
 }
 }
+.eSignTitle{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 10px;
+    border:1px dashed lightgray;
+    img{
+        width:8rem;
+    }
+}
