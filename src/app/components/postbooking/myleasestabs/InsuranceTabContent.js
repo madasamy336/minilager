@@ -15,16 +15,16 @@ export default function InsuranceTabContent() {
               
               && [
                  
-                  { plane: 'GOLD PLAN', amount: '$5000', monthpay: '$200', planStatus: 1 },
-                  { plane: 'SILVER PLAN', amount: '$2000', monthpay: '$150', planStatus: 0 },
-                  { plane: 'FLOATER PLAN', amount: '$2000', monthpay: '$100', planStatus: 0 },
-                  { plane: 'I HAVE A', amount: 'OWN INSURANCE' }
-              ].map(({ plane, amount, monthpay, planStatus }) => (
+                  { plan: 'GOLD PLAN', amount: '$5000', monthpay: '$200', planStatus: 1 },
+                  { plan: 'SILVER PLAN', amount: '$2000', monthpay: '$150', planStatus: 0 },
+                  { plan: 'FLOATER PLAN', amount: '$2000', monthpay: '$100', planStatus: 0 },
+                  { plan: 'I HAVE A', amount: 'OWN INSURANCE' }
+              ].map(({ plan, amount, monthpay, planStatus }) => (
                
                   <div key={``} className='col-lg-3 col-md-6 col-sm-12 px-4 mb-1'>
-                      <div className={`card changePlanCard cursor-pointer  border-radius-10 text-center p-2 ${activePlan === plane && 'active'}`} onClick={() => SetactivePlan(plane)}>
-                          <p className=' fs-7 fw-500 pb-1 mt-2'>{plane}</p>
-                          <h4 className={` fs-4 fw-500 pb-2 ${activePlan === plane ? 'text-white' : 'text-success-dark'}`}>{amount}</h4>
+                      <div className={`card changePlanCard cursor-pointer  border-radius-10 text-center p-2 ${activePlan === plan && 'active'}`} onClick={() => SetactivePlan(plan)}>
+                          <p className=' fs-7 fw-500 pb-1 mt-2'>{plan}</p>
+                          <h4 className={` fs-4 fw-500 pb-2 ${activePlan === plan ? 'text-white' : 'text-success-dark'}`}>{amount}</h4>
                           {monthpay && <span className='fs-8 fw-600 d-block mb-1'>{monthpay} Per Month</span>}
                           {planStatus === 1 && <span className='text-danger fs-8 d-block fw-600 mb-2'>Current Plan</span>}
 

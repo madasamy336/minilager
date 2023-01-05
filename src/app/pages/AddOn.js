@@ -134,7 +134,7 @@ export default function AddOn() {
       sessionStorage.setItem('thirdpartyinsurance', true);
       //provider
       let insuranceValue = {
-        provider_name: policeProvide !== '' ? policeProvide : '',
+        provider_name: insurancePolicyProvider !== '' ? insurancePolicyProvider : '',
         policy_number: policyNumber !== '' ? policyNumber : '',
         effective_to_date: effectiveToDate !== '' ? effectiveToDate : '',
         effective_from_date: effectiveFromDate !== '' ? effectiveFromDate : ''
@@ -156,7 +156,7 @@ export default function AddOn() {
           "insuranceInfo": {
             "isThirdParty": true,
             "providerPhone": '',
-            "providerName": policeProvide,
+            "providerName": insurancePolicyProvider,
             "policyNumber": policyNumber,
             "effectiveFrom": effectiveFromDate,
             "effectiveTill": effectiveToDate
@@ -349,7 +349,7 @@ export default function AddOn() {
   const [registrationNo, setRegistrationNo] = useState("");
   const [licenseNo, setLicenseNo] = useState("");
   //insurance
-  const [policeProvide, setPolicyProvider] = useState("");
+  const [insurancePolicyProvider, setPolicyProvider] = useState("");
   const [policyNumber, setPolicyNumber] = useState("");
   const [effectiveFromDate, setEffectiveFromDate] = useState("");
   const [effectiveToDate, setEffectiveToDate] = useState("");
@@ -490,7 +490,7 @@ export default function AddOn() {
                     {ownInsurance && (<div className="ui form px-4 px-sm-2">
                       <div className="field w-100 datePicker my-3">
                         <label className='fw-500 fs-7 mb-2'>Policy Provider Name</label>
-                        <input placeholder='Policy Provider Name' value={policeProvide} onChange={(e) => { setPolicyProvider(e.target.value) }} />
+                        <input placeholder='Policy Provider Name' value={insurancePolicyProvider} onChange={(e) => { setPolicyProvider(e.target.value) }} />
                         <p className="error py-1 provider_name d-none">Please Enter Policy Provider Name</p>
                       </div>
                       <div className="field w-100 datePicker my-3">

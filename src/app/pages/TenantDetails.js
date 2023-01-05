@@ -265,21 +265,28 @@ export default function TenantDetails() {
 
     axios.post('https://login.8storage.com/connect/token', data, config)
       .then(response => {
-        console.log(JSON.stringify(response.data));
+        // console.log(JSON.stringify(response.data));
         return response;
       }).then(result => {
-         authorizationToken = result.data.access_token
-         const requestBody = {
+        // console.log("data", data);
+        authorizationToken = result.data.access_token
+        sessionStorage.setItem('authToken', JSON.stringify(result.data.access_token));
+        console.log(authorizationToken);
+        const requestBody = {
           country_code: "NOR",
           event_type: "CREDIT_CHECK_ENQUIRY",
           identity_number: "24014021406",
           initiated_by: "Le Manns",
           request_from: "BOOKING_PORTAL",
-          tenant_id: "7c372a12-1789-4bcd-931d-c207e6b0c9fd",
-          tenant_type: "PERSON",
+          tenant_id: "7c372a12-1789-4bcd-931d-c207e6b0c9fa",
+          tenant_type: BusinessUser ? "BUSINESS" : "PERSON",
           is_existing_tenant: true
         }
 
+        if (BusinessUser) {
+          delete requestBody.identity_number;
+          requestBody.organization_number = "937400322";
+        }
         var creditCheckConfig = {
           headers: {
             'Content-Type': 'application/json',
@@ -289,7 +296,7 @@ export default function TenantDetails() {
 
         axios.post('https://qa-digitalsolutions-api.8storage.com/creditcheck', requestBody, creditCheckConfig)
           .then(response => {
-            console.log(JSON.stringify(response.data));
+            console.log("response", response.data);
             // setCreditCheckStatusResponse(response.data)
             setTenantCreditCheckDetails({ ...tenantCreditCheckDetails, credit_check_details: response.data.body, modified_on: new Date() })
             setCreditCheckLoader(false);
@@ -1271,16 +1278,21 @@ export default function TenantDetails() {
         <Modal.Content className='mh-400 overflow-y-auto text-center pt-2'>
           <div className="d-flex justify-content-center mb-2">
             {(!creditCheckLoader && !creditStatus) && <Image width='250' src="/assets/images/creditCheck.svg" />}
+            {/* Loader */}
             {creditCheckLoader && <>
-              {BusinessUser ? <img width='250' src='/assets/images/credit-check_meter_C_AAA.svg' alt='CreditCheck' /> :
+              {BusinessUser ?
+                <img width='250' src='/assets/images/credit-check_meter_C_AAA.svg' alt='CreditCheck' /> :
                 <img width='250' src='/assets/images/credit-check_meter_0_100.svg' alt='CreditCheck' />}
             </>
             }
-            {(!creditCheckLoader && creditStatus) && <>
-              {BusinessUser ? <Image width='250' src={`${PHOTO_URl_BUSINESS_USER.tenantCreditCheckDetails.credit_check_details.credit_score}`} /> : <Image width='250' src={`${PHOTO_URl_PERSONAL_USER(tenantCreditCheckDetails.credit_check_details.credit_score)}`} />}
+
+            {!creditCheckLoader && creditStatus && <>
+              {(!tenantCreditCheckDetails?.credit_check_details?.is_movein_recommended) ? <img width='250' src='/assets/images/poor_credit_score.svg' alt='CreditCheck' /> :
+                BusinessUser ?
+                  <Image width='250' src={`${PHOTO_URl_BUSINESS_USER.tenantCreditCheckDetails?.credit_check_details?.credit_score}`} /> :
+                  <Image width='250' src={`${PHOTO_URl_PERSONAL_USER(tenantCreditCheckDetails?.credit_check_details?.credit_score)}`} />}
             </>
             }
-
           </div>
           {!creditStatus && !creditCheckLoader &&
             <>
@@ -1298,18 +1310,23 @@ export default function TenantDetails() {
               Please tie your shoes while we check your credit score. Please do not perform any actions until we prompt
             </div>
           }
-          {creditStatus && !creditCheckLoader && <>
-            <div className="mb-3">
-              Congratulations! You have sufficient credit score to proceed further with us
+          {!creditCheckLoader && creditStatus && <>
+            {(!tenantCreditCheckDetails?.credit_check_details?.is_movein_recommended) ? <><div className="mb-3 text-danger">
+              Oops! The customer cannot complete the move-in with this credit score
             </div>
-            <div>
-              <button onClick={(e) => navigateEsign(e)} className="ui button bg-secondary  fs-7 fw-400 text-white px-5">Continue</button>
-            </div>
+              <div>
+                <button onClick={(e) => navigateEsign(e)} className="ui button bg-secondary  fs-7 fw-400 text-white px-5">Close</button>
+              </div>
+            </> : <>
+              <div className="mb-3">
+                Congratulations! You have sufficient credit score to proceed further with us
+              </div>
+              <div>
+                <button onClick={(e) => navigateEsign(e)} className="ui button bg-secondary  fs-7 fw-400 text-white px-5">Continue</button>
+              </div></>
+            }
           </>
-
           }
-
-
         </Modal.Content>
       </Modal>
     </>
