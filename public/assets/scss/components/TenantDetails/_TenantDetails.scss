@@ -21,3 +21,19 @@
         height: 40px;
     }
 }
+
+#tenantinfophone{
+    pointer-events: none !important;
+    padding-left: 35px;
+}
+.tenantPhonenumber .PhoneInput{
+    position: relative;
+}
+
+.tenantPhonenumber .PhoneInputCountry {
+    pointer-events: none;
+    opacity: .5;
+    position: absolute;
+    top: 15px !important;
+    left: 3px !important;
+}

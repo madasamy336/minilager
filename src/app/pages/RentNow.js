@@ -27,6 +27,10 @@ const RentNow = () => {
                 if (location.result !== null && location.result !== 'undefined' && location.result !== '') {
                     setLocationResponse(location.result);
                 }
+
+                if(location.returnCode === 'NO_RECORDS_FOUND' ){
+                    setLocationResponse([])
+                }
             })
             .catch(error => {
                 console.log(error);

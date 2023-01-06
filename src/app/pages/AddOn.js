@@ -92,6 +92,7 @@ export default function AddOn() {
 
     }
     if(thirdparty === true){
+      if(insuranceSessionValue !== null){
       insuranceSessionValue.forEach((insurance)=> {
         SetactivePlan('Own Insurance');
         setPolicyProvider(insurance['insuranceInfo'].providerName);
@@ -99,8 +100,8 @@ export default function AddOn() {
         setEffectiveFromDate(new Date(insurance['insuranceInfo'].effectiveFrom));
         setEffectiveToDate(new Date(insurance['insuranceInfo'].effectiveTill));
       })
+    }
 
-      console.log(insuranceSessionValue);
 
 
     }
@@ -128,7 +129,6 @@ export default function AddOn() {
      setLoader(true)
     e.preventDefault();
     let errorcount = 0;
-    debugger
     if (ownInsurance === true) {
       let policyProvider = document.querySelector('.six-storage-effective-provider-name');
       sessionStorage.setItem('thirdpartyinsurance', true);

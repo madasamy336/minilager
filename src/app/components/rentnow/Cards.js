@@ -29,6 +29,7 @@ const Card = (props) => {
     return (
         <>
             {typeof facilityDetailResponse.facilitydetails !== 'undefined' && facilityDetailResponse.facilitydetails !== null ? (
+                facilityDetailResponse.facilitydetails.length > 0 ?
                 <div className='rentNow-container'>
                     {facilityDetailResponse.facilitydetails.map(details => {
                         let facilityaddress = details.address;
@@ -96,7 +97,10 @@ const Card = (props) => {
                         </div>
                     })
                     }
-                </div>
+                </div> : <div className='col-lg-2 col-md-2 col-sm-12'>
+                    No Location found
+                                   
+                    </div>
 
 
             ) : <div className="ui active centered inline loader"></div>
