@@ -30,6 +30,8 @@ export default function TenantDetails() {
   let BusinessUser = JSON.parse(sessionStorage.getItem('isBussinessUser'));
   let customFieldAccess = JSON.parse(localStorage.getItem('CustomFieldsSetting'));
   let unitDetailCustomField = JSON.parse(sessionStorage.getItem("customFieldstorage"));
+  let nextpage = localStorage.getItem('nextpage');
+  let startdate = Number(localStorage.getItem('storedate'));
   let companyDetail = [];
   const clientDataconfig = JSON.parse(sessionStorage.getItem("configdata"));
   const culture = clientDataconfig.culture.culture
@@ -92,8 +94,7 @@ export default function TenantDetails() {
   const [contactaccordian, SetContactaccordian] = useState([]);
   const [creditStatus, SetCreditStatus] = useState(false);
   const [tenantCreditCheckDetails, setTenantCreditCheckDetails] = useState({})
-  const [creditCheckStatusResponse, setCreditCheckStatusResponse] = useState("")
-
+  const [creditcheckerror, setCreditCheckError] = useState(false)
   const [creditCheckModal, SetCreditCheckModal] = useState({
     open: false,
     dimmer: undefined,
@@ -208,7 +209,6 @@ export default function TenantDetails() {
   }
 
   const PHOTO_URl_PERSONAL_USER = (data) => {
-    console.log(data);
     const url = {
       1_20: "/assets/images/1-20.png",
       21_29: "/assets/images/21-29.png",
@@ -219,40 +219,77 @@ export default function TenantDetails() {
     if (0 < data && data <= 20) {
       return url[1_20]
     }
-    else if (21 < data && data < 29) {
+    else if (21 < data && data <= 29) {
       return url[21_29]
     }
-    else if (30 < data && data < 50) {
+    else if (30 < data && data <= 50) {
       return url[30_50]
     }
-    else if (51 < data && data < 70) {
+    else if (51 < data && data <= 70) {
       return url[51_70]
     }
-    else if (71 < data && data < 100) {
+    else if (71 < data && data <= 100) {
       return url[71_100]
+    }else{
+      return '/assets/images/poor_credit_score.svg'
+
     }
 
   }
 
-  const PHOTO_URl_BUSINESS_USER = {
-    A: "/assets/images/A.png",
-    AA: "/assets/images/AA.png",
-    AN: "/assets/images/AN.png",
-    B: "/assets/images/B.png",
-    C: "/assets/images/c.png",
-    NR: "/assets/images/NR.png",
+  const PHOTO_URl_BUSINESS_USER = (data) => {
+    const url = {
+      A: "/assets/images/A.png",
+     AA: "/assets/images/AA.png",
+     AN: "/assets/images/AN.png",
+     B: "/assets/images/B.png",
+     C: "/assets/images/c.png",
+     NR: "/assets/images/NR.png",
+    }
+    if (data === 'A') {
+      return url.A
+    }
+    else if (data === 'AA') {
+      return url.AA
+    }
+    else if (data === 'AN') {
+      return url.AN
+    }
+    else if (data === 'B') {
+      return url.B
+    }
+    else if (data === 'C') {
+      return url.C
+    }
+    else if (data === 'NR') {
+      return url.NR
+    }else{
+
+      return '/assets/images/poor_credit_score.svg'
+    }
 
   }
+
+  // const PHOTO_URl_BUSINESS_USER1 = {
+  //   A: "/assets/images/A.png",
+  //   AA: "/assets/images/AA.png",
+  //   AN: "/assets/images/AN.png",
+  //   B: "/assets/images/B.png",
+  //   C: "/assets/images/c.png",
+  //   NR: "/assets/images/NR.png",
+
+  // }
 
   const proceedCreditCheck = (e) => {
     e.preventDefault();
+    updateTenantInfo();
     setCreditCheckLoader(true);
     let authorizationToken = "";
     var data = {
       client_id: 'te844ecc-b342-8eca-313b-93e8547e7254',
       client_secret: '2557c303-005e-53d6-78fd-8980c46633e5',
       grant_type: 'client_credentials',
-      acr_values: 'tenant:0ca2b3be-53d8-48ad-beb0-e31fbe1e84f8',
+      acr_values: `tenant:${clientDataconfig.clientId}`,
       scopes: 'sixstorage_admin_api_scope'
     };
     var config = {
@@ -269,23 +306,23 @@ export default function TenantDetails() {
         return response;
       }).then(result => {
         // console.log("data", data);
-        authorizationToken = result.data.access_token
+        authorizationToken = result.data.access_token;
+        localStorage.setItem('storedate', Date.now());
         sessionStorage.setItem('authToken', JSON.stringify(result.data.access_token));
         console.log(authorizationToken);
         const requestBody = {
           country_code: "NOR",
           event_type: "CREDIT_CHECK_ENQUIRY",
-          identity_number: "24014021406",
-          initiated_by: "Le Manns",
+          identity_number: ssn.current.value,
+          initiated_by: `${TenantInfoDetails.firstName}${TenantInfoDetails.lastName}`,
           request_from: "BOOKING_PORTAL",
-          tenant_id: "7c372a12-1789-4bcd-931d-c207e6b0c9fa",
+          tenant_id: `${userid}`,
           tenant_type: BusinessUser ? "BUSINESS" : "PERSON",
-          is_existing_tenant: true
         }
 
         if (BusinessUser) {
           delete requestBody.identity_number;
-          requestBody.organization_number = "937400322";
+          requestBody.organization_number = `${companyRegistrationNumber.current.value}`;
         }
         var creditCheckConfig = {
           headers: {
@@ -296,24 +333,48 @@ export default function TenantDetails() {
 
         axios.post('https://qa-digitalsolutions-api.8storage.com/creditcheck', requestBody, creditCheckConfig)
           .then(response => {
-            console.log("response", response.data);
-            // setCreditCheckStatusResponse(response.data)
-            setTenantCreditCheckDetails({ ...tenantCreditCheckDetails, credit_check_details: response.data.body, modified_on: new Date() })
-            setCreditCheckLoader(false);
-            SetCreditStatus(true)
+            console.log(response.data.body);
+            if(response.data.status === 500){
+              setTenantCreditCheckDetails({ ...tenantCreditCheckDetails, credit_check_details:response.data.message,credit_check_discription: response.data.description, modified_on: new Date() })
+              setCreditCheckLoader(false);
+              SetCreditStatus(true)
+              
+
+
+            }else{
+              localStorage.setItem('nextpage',response.data.body.is_movein_recommended? true:false)
+              // setCreditCheckStatusResponse(response.data)
+              setTenantCreditCheckDetails({ ...tenantCreditCheckDetails, credit_check_details: response.data.body, modified_on: new Date() })
+              setCreditCheckLoader(false);
+              SetCreditStatus(true)
+
+
+            }
+           
+              
+            // }else {
+            //   setCreditCheckLoader(false);
+            //   setCreditCheckError(true);
+
+            // }
+           
           })
           .catch((error) => {
             console.log(error);
           });
       })
       .catch((error) => {
-        console.log(error);
+        setCreditCheckLoader(false);
+        setCreditCheckError(true);
       });
 
   }
 
   const navigateEsign = (e) => {
-    e.preventDefault();
+    if(typeof e !== 'undefined' && e !== null){
+      e.preventDefault();
+    }
+    updateTenantInfo();
     // navigate('/preBooking/esignPayment');
     sessionStorage.setItem('customFieldstorage', JSON.stringify(unitDetailCustomField));
     leaseProfileSave(unitDetailCustomField)
@@ -387,7 +448,7 @@ export default function TenantDetails() {
   const checkCustomfieldValue = () => {
     let customValue = JSON.parse(localStorage.getItem(`CustomFieldsSetting`));
     let errorcount = 0;
-    if (customValue) {
+    if (customValue && customValue.length > 0) {
       let filterUnitSpecificValue = customValue.filter(i => i.matadata.displayOn === 'Movein Tenant Details')
       filterUnitSpecificValue.forEach((item) => {
         let customvalue = document.getElementById(`${item.matadata.type}_${item.fieldId}`);
@@ -451,11 +512,25 @@ export default function TenantDetails() {
         Array.prototype.push.apply(unitDetailCustomField, customFieldValue);
         // updateTenantInfo();
         sessionStorage.setItem('customFieldstorage', JSON.stringify(unitDetailCustomField));
-        SetCreditCheckModal({ open: true });
+        if( JSON.parse(nextpage) === false ){
+          SetCreditCheckModal({ open: true });
+        }else{
+
+          navigateEsign(null);
+        }
+        
+       
         // leaseProfileSave(unitDetailCustomField)
         //sessionStorage.setItem("customFieldstorage",JSON.stringify(customFieldValue))
       } else {
         return;
+      }
+    }else{
+      if( JSON.parse(nextpage) === false ){
+        SetCreditCheckModal({ open: true });
+      }else{
+
+        navigateEsign(null);
       }
     }
   }
@@ -548,7 +623,6 @@ export default function TenantDetails() {
         const tenantInfoGetdata = response.data;
         if (typeof tenantInfoGetdata !== "undefined" && tenantInfoGetdata !== null && tenantInfoGetdata !== "") {
           const tenantInfoGetresult = tenantInfoGetdata.result;
-          console.log(tenantInfoGetresult);
           if (typeof tenantInfoGetresult !== "undefined" && tenantInfoGetresult !== null & tenantInfoGetresult !== "") {
             sessionStorage.setItem("tenantInfo", JSON.stringify(tenantInfoGetresult));
             let tenantMovinData = JSON.parse(sessionStorage.getItem("tenantInfo"));
@@ -831,6 +905,10 @@ export default function TenantDetails() {
 
 
   useEffect(() => {
+    var diff = (Date.now() - startdate) / 60000;
+    if(diff > 40){
+      localStorage.setItem('nextpage',JSON.stringify(false))
+    }
     tenantInfo();
     if (emergencyDetail) {
       SetContactaccordian(JSON.parse(emergencyDetail))
@@ -841,7 +919,7 @@ export default function TenantDetails() {
 
   useEffect(() => {
     setTimeout(() => {
-      if (customFieldAccess) {
+      if (customFieldAccess && customFieldAccess.length > 0) {
         bindCustomFieldValue();
       }
     }, 1000)
@@ -987,13 +1065,13 @@ export default function TenantDetails() {
             </div>
           </div>
           <div className="col-12  col-md-6  px-4 px-sm-2">
-            <div className="points-events-none field w-100  my-3">
+            <div className="points-events-none field w-100  my-3 tenantPhonenumber">
               <label className='fw-500 fs-7 mb-2'>Phone Number <i className="text-danger ">*</i></label>
               <PhoneInput
                 // defaultCountry={DefaultCountryCode}
                 value={TenantInfoDetails.phoneNumber}
                 placeholder="Enter Mobile Number"
-                disabled
+                id="tenantinfophone"
               />
               {/* <Input disabled className="noCounterNumber" type="number" name="phoneNumber" placeholder="Enter Mobile Number" value={TenantInfoDetails.phoneNumber} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo}
                 label={<Dropdown defaultValue='+91' search options={countriecodes} />}
@@ -1286,19 +1364,29 @@ export default function TenantDetails() {
             </>
             }
 
-            {!creditCheckLoader && creditStatus && <>
-              {(!tenantCreditCheckDetails?.credit_check_details?.is_movein_recommended) ? <img width='250' src='/assets/images/poor_credit_score.svg' alt='CreditCheck' /> :
+            {!creditCheckLoader && creditStatus && 
+            <>
+              {
+             
                 BusinessUser ?
-                  <Image width='250' src={`${PHOTO_URl_BUSINESS_USER.tenantCreditCheckDetails?.credit_check_details?.credit_score}`} /> :
-                  <Image width='250' src={`${PHOTO_URl_PERSONAL_USER(tenantCreditCheckDetails?.credit_check_details?.credit_score)}`} />}
+                  <Image width='250' src={`${PHOTO_URl_BUSINESS_USER(tenantCreditCheckDetails?.credit_check_details?.credit_score)}`} /> :
+                  <Image width='250' src={`${PHOTO_URl_PERSONAL_USER(tenantCreditCheckDetails?.credit_check_details?.credit_score)}`} /> 
+                 
+              }
             </>
             }
           </div>
           {!creditStatus && !creditCheckLoader &&
             <>
-              <div className="mb-3">
-                As part of the move-in process, we need to verify your credit score, would you like to proceed for a credit check?
-              </div>
+            { !creditcheckerror ?
+            <div className="mb-3">
+            As part of the move-in process, we need to verify your credit score, would you like to proceed for a credit check?
+          </div> :<div className="mb-3">
+            something went wrong. Please try Again.
+          </div>
+
+            }
+              
               <div className="">
                 <button onClick={() => SetCreditCheckModal({ open: false })} className="ui button bg-secondary  fs-7 fw-400 text-white px-5 mr-1">Cancel</button>
                 <button onClick={(e) => proceedCreditCheck(e)} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">Proceed</button>
@@ -1311,11 +1399,18 @@ export default function TenantDetails() {
             </div>
           }
           {!creditCheckLoader && creditStatus && <>
-            {(!tenantCreditCheckDetails?.credit_check_details?.is_movein_recommended) ? <><div className="mb-3 text-danger">
+            {(!tenantCreditCheckDetails?.credit_check_details?.is_movein_recommended) ? <>
+            {tenantCreditCheckDetails?.credit_check_details === 'TRY_CREDITCHECK_AFTER_SOMETIME'?
+            <div className="mb-3 text-danger">
+            {tenantCreditCheckDetails.credit_check_discription}
+          </div>: <div className="mb-3 text-danger">
               Oops! The customer cannot complete the move-in with this credit score
             </div>
+
+            }
+            
               <div>
-                <button onClick={(e) => navigateEsign(e)} className="ui button bg-secondary  fs-7 fw-400 text-white px-5">Close</button>
+                <button onClick={() => SetCreditCheckModal({ open: false })} className="ui button bg-secondary  fs-7 fw-400 text-white px-5">Close</button>
               </div>
             </> : <>
               <div className="mb-3">

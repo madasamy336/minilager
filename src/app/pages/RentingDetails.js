@@ -306,7 +306,7 @@ export default function RentingDetails() {
   const checkCustomfieldValue = () => {
     let customValue = JSON.parse(localStorage.getItem(`CustomFieldsSetting`));
     let errorcount = 0;
-    if (customValue) {
+    if (customValue && customValue.length > 0) {
       let filterUnitSpecificValue = customValue.filter(i => i.matadata.displayOn === 'Unit specific details')
       filterUnitSpecificValue.forEach((item) => {
         let customvalue = document.getElementById(`${item.matadata.type}_${item.fieldId}`);
@@ -374,6 +374,8 @@ export default function RentingDetails() {
       })
 
 
+    }else{
+      navigate('/preBooking/addOns');
     }
 
 

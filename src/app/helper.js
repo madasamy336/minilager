@@ -222,7 +222,6 @@ class Helper {
 
 
     getMomentLocaleData() {
-        debugger;
         // Get user locale
         let locale = this.culture || window.navigator.userLanguage || window.navigator.language;
         // Set locale to moment
