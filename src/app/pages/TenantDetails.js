@@ -343,6 +343,7 @@ export default function TenantDetails() {
 
             }else{
               localStorage.setItem('nextpage',response.data.body.is_movein_recommended? true:false)
+              localStorage.setItem('eSignature',false)
               // setCreditCheckStatusResponse(response.data)
               setTenantCreditCheckDetails({ ...tenantCreditCheckDetails, credit_check_details: response.data.body, modified_on: new Date() })
               setCreditCheckLoader(false);

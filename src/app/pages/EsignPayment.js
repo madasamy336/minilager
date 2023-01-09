@@ -50,7 +50,7 @@ export default function EsignPayment() {
   const [iFrameResponse, setIframeRespones] = useState(false);
   const [paymentModeId, setpaymentModeId] = useState('');
 
-  const eSignature = localStorage.getItem("eSignature");
+  const eSignature = JSON.parse(localStorage.getItem("eSignature"));
   if (insuranceDetail !== null && insuranceDetail.length > 0) {
 
     insuranceDetail.forEach(element => {
@@ -569,11 +569,13 @@ export default function EsignPayment() {
                         <label className='ml-1'>I have read and understood the contents of the documents listed and I am ready to sign</label>
                       </div>
                     </div>
-                    <div className='pt-4'>
+                   
+                    <div className={`pt-4 ${eSignature === true ? 'd-block': 'd-none'}`}>
+
                       <div className='d-flex justify-content-between flex-wrap bg-primary-light p-1 border-success-dark-1 border-radius-5'>
                         <p className='d-flex align-items-center'><img src='/assets/images/esign.svg' alt='Esign' /><span className='ml-1'>Great! You have successfully signed the documents</span></p>
                         <button className="ui button text-success-dark bg-white card-border fs-7 fw-400 text-dark px-1 mr-2 mt-md-1" onClick={() =>setViewDocumentModal(true)}>View Document</button>
-                      </div>
+                      </div>                     
                       <div className='pt-4 d-flex justify-content-center flex-wrap'>
 
                         {paylaterButton === true ?
@@ -594,7 +596,7 @@ export default function EsignPayment() {
                     </div>
                     {/* {console.log(esignMethod)} */}
                   </div>
-                  {esignMethod || !eSignature &&
+                  {esignMethod  &&
                     <div className='mt-1'>
                       <div className='eSignTitle'>  <img src="/assets/images/bankid.png" alt="Norwegian BankID" /><h5 className='fw-600 '>Sign with Norweigan BankID</h5></div>
                       <div className='py-4 px-3'>
@@ -606,7 +608,7 @@ export default function EsignPayment() {
                     </div>
                   }
                 </div>
-                {!paylaterButton ?
+                {!paylaterButton && eSignature ?
                   <div className='bg-white card-boxshadow px-0 py-2 border-radius-15 mb-3 mt-2'>
                     <h6 className='text-dark fw-500 fs-6 px-4 py-2 px-sm-2 card-border-bottom fw-600 text-success-dark'>
                       <span className='veritical-align-text-top ml-1'>CHOOSE PAYMENT TYPE</span></h6>
