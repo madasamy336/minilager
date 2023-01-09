@@ -400,19 +400,35 @@ export default function MyLeases() {
             <span className="veritical-align-super ml-1">Rental Agreement</span></h6>
         </div>
         <div className="py-1 px-3">
-          <div className='bg-layout'>
-            <div className=' overflow-auto'>
-              <div className="rentalAgreementContainer">
-                {/* for document preview */}
-                {selectedUnitLeasedocument ? <iframe src={selectedUnitLeasedocument} width="100%" height="900px"></iframe> : "No Record Found"}
+          {selectedUnitLeasedocument !== "No Record Found" ?
+            <div className='bg-layout'>
+              <div className=' overflow-auto'>
+                <div className="rentalAgreementContainer">
+                  {/* for document preview */}
+                  {selectedUnitLeasedocument !== "No Record Found" ? <iframe src={selectedUnitLeasedocument} width="100%" height="900px"></iframe> : <div className='text-center'> No Record Found</div>}
+                </div>
               </div>
-            </div>
-            <div className='text-center'>
-              <button className="ui button basic box-shadow-none border-success-dark-light-1 fs-8 px-2 py-1 my-2" onClick={() => download(selectedUnitLeasedocument, "LeaseAgreement")}><a className='text-success'>Preview</a></button>
-              {/* <button className="ui button basic box-shadow-none border-success-dark-light-1 fs-8 px-2 py-1 my-2"><a className='text-success' download={selectedUnitLeasedocument}>Download</a></button> */}
+              <div className='text-center'>
+                <button className="ui button basic box-shadow-none border-success-dark-light-1 fs-8 px-2 py-1 my-2" onClick={() => download(selectedUnitLeasedocument, "LeaseAgreement")}><a className='text-success'>Preview</a></button>
+                {/* <button className="ui button basic box-shadow-none border-success-dark-light-1 fs-8 px-2 py-1 my-2"><a className='text-success' download={selectedUnitLeasedocument}>Download</a></button> */}
+              </div>
+
+            </div> :
+            <div className='bg-layout'>
+              <div className='text-center'>
+                <div className=' overflow-auto'>
+                <div className="rentalAgreementContainer d-flex justify-content-center align-items-center">
+                  <div className='text-center'> No Record Found</div>
+                  </div>
+                </div>
+
+              </div>
+
             </div>
 
-          </div>
+
+          }
+
         </div>
       </div>
       <Modal
