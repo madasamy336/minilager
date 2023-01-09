@@ -200,3 +200,17 @@ li.page-item a.page-link {
 //         height: 35px;
 //     }
 // }
+
+.iframe-container{
+width:100%;
+iframe{
+    height: 100vh !important;
+    width: 100vw !important;
+}
+.close-btn{
+color: $UnitsCardsDesc;
+}
+.download-btn, .download-btn:focus, .download-btn:hover{
+    background:#2A0062;
+}
+}

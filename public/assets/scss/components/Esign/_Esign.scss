@@ -33,6 +33,12 @@
     }
 }
 
+.viewDocumentModal{
+    height: 75vh;
+    iframe{
+        height: 70vh;
+    }
+}
 .ui.dimmer .ui.loader:before {
     border-color: rgb(42 39 39 / 15%);
 }
