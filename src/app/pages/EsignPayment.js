@@ -1,12 +1,11 @@
 import React, { useState } from 'react'
 import { useEffect } from 'react';
-import { json, useNavigate, } from 'react-router-dom';
+import { useNavigate} from 'react-router-dom';
 import PreBookingBreadcrumb from '../components/prebooking breadcrumb/PreBookingBreadcrumb';
 import instance from '../services/instance';
 import request from '../services/request';
+import axios from 'axios';
 import Helper from "../helper";
-import PDFMerger from 'pdf-merger-js/browser';
-import ModalComponent from '../components/modal/ModalComponent';
 import { Modal, Button, Loader, Placeholder, Segment } from 'semantic-ui-react';
 import parse from "html-react-parser";
 let helper = new Helper();
@@ -40,8 +39,10 @@ export default function EsignPayment() {
   const [totalAmount, settotalAmount] = useState(0);
   const [paylaterButton, setPaylaterButton] = useState(false);
   const [OpenPaylaterModal, setPayLaterModal] = useState(false);
+  const [OpenViewDocumentModal, setViewDocumentModal] = useState(false);
   const [paymentLoader, setPaymentLoader] = useState(false);
   const [isLoading, setLoader] = useState(false);
+  const [isButtonLoading, setButtonLoader] = useState(false);
   const [businessName, setbusinessName] = useState();
   const [isSignatureVerified, setisSignatureVerified] = useState(false);
   const [saveCard, setSavecard] = useState(true);
@@ -49,6 +50,7 @@ export default function EsignPayment() {
   const [iFrameResponse, setIframeRespones] = useState(false);
   const [paymentModeId, setpaymentModeId] = useState('');
 
+  const eSignature = localStorage.getItem("eSignature");
   if (insuranceDetail !== null && insuranceDetail.length > 0) {
 
     insuranceDetail.forEach(element => {
@@ -94,7 +96,6 @@ export default function EsignPayment() {
   };
 
   useEffect(() => {
-    console.log(makeSavedCardMandatory);
     unitInfoDetails();
     getSitedetail();
     const ReceiveIframeResponse = (event) => {
@@ -325,6 +326,76 @@ export default function EsignPayment() {
     setPaylaterButton(false)
   }
 
+  // const triggerEsign = (e) => {
+  //   e.preventDefault();
+  //   console.log(changeURL()); 
+  //   // const successUrl = window.location.hostname + '/preBooking/viewEsignDocuments' + "?eSigned=true"
+  //   const successUrl = window.location.host + '/preBooking/viewEsignDocuments' + "?eSigned=true"
+  //   console.log(successUrl);
+  // }
+
+  //   function changeURL() {
+  //     var theURL = window.location.pathname;
+  //    return  theURL.replace("/url_part_to_change/", "/new_url_part/");
+  //     //Set URL
+
+  // }
+
+  const triggerEsign = (e) => {
+    e.preventDefault();
+    console.log("Triggered");
+    setButtonLoader(true)
+    const successUrl = window.location.hostname + '/preBooking/viewEsignDocuments' + "?eSigned=true"
+    console.log(successUrl);
+    const requestBody = {
+      "event_type": "INITIATE_ESIGN_DOCUMENT_CREATION",
+      "country_code": "NOR",
+      "integrated_with": "signicat",
+      "tenant_id": "470c0600-3c51-4da5-8f26-3fc1918b48a5",
+      "initiated_by": tenantInfo.firstName,
+      "request_from": "BOOKING_PORTAL",
+      "redirect_settings": {
+        "success_url": "http://" + window.location.host + '/preBooking/viewEsignDocuments',
+        "abort_url": "http://" + window.location.host,
+        "error_url": "http://" + window.location.host + '/preBooking/documentExpired'
+      },
+      "title": "As simple as that",
+      "description": "This is an important document",
+      "external_id": "ae7b9ca7-3839-4e0d-a070-9f14bffbbf55",
+      "contact_details": {
+        "email": "test@test.com"
+      },
+      "data_to_sign": {
+        "base64_content": "VGhpcyB0ZXh0IGNhbiBzYWZlbHkgYmUgc2lnbmVk",
+        "file_name": "sample.txt"
+      }
+    }
+    let authorizationToken = sessionStorage.getItem('authToken');
+    // console.log("authorizationToken", authorizationToken);
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authorizationToken}`
+      },
+    }
+
+    axios.post('https://qa-digitalsolutions-api.8storage.com/esign', requestBody, config).then(response => {
+      // console.log(response);
+      return response
+    }).then(result => {
+      console.log("result", result.data.body);
+      let redirectUrl = result.data.body.url;
+      // console.log(redirectUrl);
+      window.location.replace(redirectUrl);
+      sessionStorage.setItem("bankIdDocumentId", result.data.body.document_id);
+      sessionStorage.setItem("external_id", result.data.body.external_id);
+      setButtonLoader(false)
+
+    }).catch(err => {
+      console.log(err);
+    })
+  }
+
   return (
     <>
       {isLoading ? (
@@ -480,16 +551,16 @@ export default function EsignPayment() {
                         </div>
                       </div>
                       <div className='d-flex mt-2 align-items-start'>
-                        <input onClick={esignMethodHandler} type="checkbox" />
+                        <input onClick={esignMethodHandler} type="checkbox" checked={esignMethod || eSignature} />
                         <label className='ml-1'>I have read and understood the contents of the documents listed and I am ready to sign</label>
                       </div>
                     </div>
-                    { esignMethod && <div className='pt-4'>
+                    <div className='pt-4'>
                       <div className='d-flex justify-content-between flex-wrap bg-primary-light p-1 border-success-dark-1 border-radius-5'>
                         <p className='d-flex align-items-center'><img src='/assets/images/esign.svg' alt='Esign' /><span className='ml-1'>Great! You have successfully signed the documents</span></p>
-                        <button className="ui button text-success-dark bg-white card-border fs-7 fw-400 text-dark px-1 mr-2 mt-md-1">View Document</button>
+                        <button className="ui button text-success-dark bg-white card-border fs-7 fw-400 text-dark px-1 mr-2 mt-md-1" onClick={() =>setViewDocumentModal(true)}>View Document</button>
                       </div>
-                      <div className={`pt-4 d-flex justify-content-center flex-wrap}`}>
+                      <div className='pt-4 d-flex justify-content-center flex-wrap'>
 
                         {paylaterButton === true ?
                           <button className="ui button bg-white d-flex align-items-center border-radius-5 card-border fs-6 fw-400 text-dark px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1" onClick={(e) => payNow(e)} ><img src='/assets/images/executed-payment.svg' alt='Pay Now' id="paynow" /><span className='ml-1' onClick={(e) => payNow(e)}>Pay Now</span></button>
@@ -506,35 +577,22 @@ export default function EsignPayment() {
 
 
                       </div>
-                    </div>}
+                    </div>
+                    {/* {console.log(esignMethod)} */}
                   </div>
-                  {
-                    <div className='mt-1 d-none'>
-                      <h5 className='fw-600 text-success-dark pb-2 card-border-bottom px-3'>SELECT E-SIGNATURE METHOD TO SIGN THE DOCUMENTS</h5>
+                  {esignMethod || !eSignature &&
+                    <div className='mt-1'>
+                      <div className='eSignTitle'>  <img src="/assets/images/bankid.png" alt="Norwegian BankID" /><h5 className='fw-600 '>Sign with Norweigan BankID</h5></div>
                       <div className='py-4 px-3'>
-                        <div className='card-border bank-div border-radius-5 d-flex align-items-center position-relative mb-3'>
-                          <div className='bank-img px-2 border-right w-25'>
-                            <img className='w-100 h-100' src="/assets/images/bankid.png" alt="Norwegian BankID" />
-                          </div>
-                          <div className='bank-title pl-3'>
-                            <p>Norwegian BankID</p>
-                          </div>
-                          <img className='bankid-img position-absolute r-2' src="/assets/images/arrow-down.png" alt="Arrow" />
+                        <div className='bank-title pl-3'>
+                          <p>{tenantInfo.firstName + " " + tenantInfo.lastName}, you will sign with a Norwegian BankID. Once you have signed, your signature will be registered by the e-signature service Signicat.</p>
                         </div>
-                        <div className='card-border bank-div border-radius-5 d-flex align-items-center position-relative'>
-                          <div className='bank-img px-2 border-right w-25'>
-                            <img className='w-100 h-100' src="/assets/images/BankNorway.png" alt="Norwegian BankID" />
-                          </div>
-                          <div className='bank-title pl-3'>
-                            <p>Norwegian BankID on Mobile</p>
-                          </div>
-                          <img className='bankid-img position-absolute r-2' src="/assets/images/arrow-down.png" alt="Arrow" />
-                        </div>
+                        <div className="text-center mt-2 d-flex justify-content-center"><Button loading={isButtonLoading}  disabled={isButtonLoading} className="ui button bg-success-dark d-flex align-items-center border-radius-5 fs-6 fw-100 text-white px-5 px-md-2 mb-sm-1" onClick={(e) => triggerEsign(e)}>SIGN</Button></div>
                       </div>
                     </div>
                   }
                 </div>
-                {!paylaterButton &&  esignMethod  ?
+                {!paylaterButton ?
                   <div className='bg-white card-boxshadow px-0 py-2 border-radius-15 mb-3 mt-2'>
                     <h6 className='text-dark fw-500 fs-6 px-4 py-2 px-sm-2 card-border-bottom fw-600 text-success-dark'>
                       <span className='veritical-align-text-top ml-1'>CHOOSE PAYMENT TYPE</span></h6>
@@ -562,9 +620,8 @@ export default function EsignPayment() {
 
 
                 }
-
                 <div className="text-center mt-4">
-                  <button onClick={() => navigate('/preBooking/TenantDetails')} className="ui button bg-white text-success-dark border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">BACK</button>
+                  <Button disabled={isButtonLoading} onClick={() => navigate('/preBooking/TenantDetails')} className="ui button bg-white text-success-dark border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">BACK</Button>
                 </div>
               </div>
 
@@ -740,6 +797,24 @@ export default function EsignPayment() {
         </Modal.Actions>
       </Modal>
 
+      <Modal
+        centered={false}
+        open={OpenViewDocumentModal}
+        onClose={() => setViewDocumentModal(false)}
+        onOpen={() => setViewDocumentModal(true)}
+
+      >
+        {/* <Modal.Header>Confirm Movein </Modal.Header> */}
+        <Modal.Content className='viewDocumentModal'>
+         <iframe width={"100%"} height={'70vh'} src={sessionStorage.getItem('eSignDocumentURL')}/>
+        </Modal.Content>
+        <Modal.Actions>
+         
+          <Button onClick={() => setViewDocumentModal(false)}>
+            Close
+          </Button>
+        </Modal.Actions>
+      </Modal>
     </>
   )
 }

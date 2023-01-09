@@ -16,6 +16,8 @@ import RentingDetails from './app/pages/RentingDetails';
 import AddOn from './app/pages/AddOn';
 import TenantDetails from './app/pages/TenantDetails';
 import EsignPayment from './app/pages/EsignPayment';
+import DocumentExpired from './app/pages/DocumentExpired';
+import ViewDocuments from './app/pages/ViewDocuments';
 import ForgotPassword from './app/pages/ForgotPassword';
 import SuccessfulMoveIn from './app/pages/SuccessfulMoveIn';
 import { useSelector, useDispatch } from 'react-redux';
@@ -68,6 +70,8 @@ function App() {
                     <Route path='/preBooking/addOns' element={<AddOn />} />
                     <Route path='/preBooking/TenantDetails' element={<TenantDetails />} />
                     <Route path='/preBooking/esignPayment' element={<EsignPayment />} />
+                    <Route path='/preBooking/viewEsignDocuments' element={<ViewDocuments />} />
+                    <Route path='/preBooking/documentExpired' element={<DocumentExpired />} />
                     <Route path='/preBooking/thankyou' element={<SuccessfulMoveIn />} />
 
                     <Route exact path='/' element={<PrivateRoute />}>
