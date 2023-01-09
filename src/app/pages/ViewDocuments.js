@@ -112,7 +112,7 @@ export default function ViewDocuments(props) {
     return (<> {
         isLoading ? <Loader size='large' active>Loading</Loader> :
             (<>{showEsignDocument ?
-                <div className="iframe-container"><iframe style={mystyle} height="100vh" width="100%" src={eSignData.document_url} title="ESigned Data"></iframe>
+                <div className="iframe-container"><iframe height="100vh" width="100%" src={eSignData.document_url} title="ESigned Data"></iframe>
                     <div className="d-flex justify-content-center mb-2 mt-2"><Button className="ui button text-black close-btn fs-7 fw-400 text-dark px-5 mr-2" onClick={() => setEsignDocument(false)}>Close</Button><Button className="ui button fs-7 fw-400 text-white px-5 mr-2 download-btn" onClick={() =>downloadFile()}>Download</Button></div>
                 </div> :
                 <div className="bg-white border-radius-15 text-center card-boxshadow border-radius-15 border-top-success-4 w-35 mx-auto px-2 py-5 mt-5">
