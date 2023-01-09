@@ -196,8 +196,11 @@ export default function EsignPayment() {
     instance
       .post(request.lease_agreement + `/${leaseProfileId}`, unitinfo, config)
       .then((response) => {
-        if (response.data.result) {
+        if (response.data.result.saveAgreement) {
           setSaveAgreement(response.data.result);
+
+        }else{
+          setSaveAgreement([]);
 
         }
 
@@ -451,17 +454,24 @@ export default function EsignPayment() {
                       }
                       
                       )
-                      : <Segment raised>
-                        <Placeholder>
-                          <Placeholder.Header image>
-                            <Placeholder.Line />
-                            <Placeholder.Line />
-                          </Placeholder.Header>
-                          <Placeholder.Paragraph>
-                            <Placeholder.Line length='medium' />
-                            <Placeholder.Line length='short' />
-                          </Placeholder.Paragraph>
-                        </Placeholder></Segment>
+                      : 
+                      < div key="" className='card-bg-secondary w-100 px-2 py-2 mb-6' >
+                            
+                            <div className="text-center mt-4">
+                             No document found
+                            </div>
+                          </div>
+                      // <Segment raised>
+                      //   <Placeholder>
+                      //     <Placeholder.Header image>
+                      //       <Placeholder.Line />
+                      //       <Placeholder.Line />
+                      //     </Placeholder.Header>
+                      //     <Placeholder.Paragraph>
+                      //       <Placeholder.Line length='medium' />
+                      //       <Placeholder.Line length='short' />
+                      //     </Placeholder.Paragraph>
+                      //   </Placeholder></Segment>
 
                     }
                     <div className='row mt-2'>
