@@ -301,7 +301,6 @@ export default function TenantDetails() {
 
     axios.post('https://login.8storage.com/connect/token', data, config)
       .then(response => {
-        // console.log(JSON.stringify(response.data));
         return response;
       }).then(result => {
         // console.log("data", data);
@@ -315,7 +314,6 @@ export default function TenantDetails() {
           // identity_number: ssn.current.value, 24014021406
           identity_number:  "24014021406",
           initiated_by: `${TenantInfoDetails.firstName} ${TenantInfoDetails.lastName}`,
-          integrated_with: "signicat",
           request_from: "BOOKING_PORTAL",
           tenant_id: `${userid}`,
           tenant_type: BusinessUser ? "BUSINESS" : "PERSON",
@@ -332,7 +330,7 @@ export default function TenantDetails() {
           },
         };
 
-        axios.post('https://qa-digitalsolutions-api.8storage.com/creditcheck', requestBody, creditCheckConfig)
+        axios.post('https://usuat-sixverifier-api.8storage.com/creditcheck', requestBody, creditCheckConfig)
           .then(response => {
             return response;
             // }else {

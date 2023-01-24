@@ -54,7 +54,7 @@ export default function ViewDocuments(props) {
             },
         }
 
-        axios.post('https://qa-digitalsolutions-api.8storage.com/esign', requestBody, config).then(response => {
+        axios.post('https://usuat-sixverifier-api.8storage.com/esign', requestBody, config).then(response => {
             // console.log(response);
             return response
         }).then(result => {
@@ -104,7 +104,7 @@ export default function ViewDocuments(props) {
           });
       }
 
-      const continueToMoveIn = () =>{
+      const continueToMoveIn = () => {
         localStorage.setItem("eSignature", true)
         navigate('/preBooking/eSignPayment')
       }

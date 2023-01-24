@@ -375,16 +375,15 @@ export default function EsignPayment() {
         "file_name": "sample.txt"
       }
     }
-    let authorizationToken = sessionStorage.getItem('authToken');
-    // console.log("authorizationToken", authorizationToken);
+    let authorizationToken = JSON.parse(sessionStorage.getItem('authToken'));
+    console.log("authorizationToken", authorizationToken);
     const config = {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${authorizationToken}`
       },
     }
-
-    axios.post('https://qa-digitalsolutions-api.8storage.com/esign', requestBody, config).then(response => {
+    axios.post('https://usuat-sixverifier-api.8storage.com/esign', requestBody, config).then(response => {
       // console.log(response);
       return response
     }).then(result => {
