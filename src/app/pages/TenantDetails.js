@@ -138,13 +138,12 @@ export default function TenantDetails() {
       message = `${name} is required`;
     }
     let ssnErrormsg = document.getElementById('ssn');
-    if(ssn.current.value  === ''){
+    if (ssn.current.value === '') {
       ssnErrormsg.classList.remove('d-none');
-    }else if(ssn.current.value.length <= 5)
-    {
-      ssnErrormsg.innerHTML=`Please enter at least 6 characters`
+    } else if (ssn.current.value.length <= 5) {
+      ssnErrormsg.innerHTML = `Please enter at least 6 characters`
       ssnErrormsg.classList.remove('d-none');
-    }else{
+    } else {
       ssnErrormsg.classList.add('d-none');
     }
     setTenantInfoError({ ...TenantInfoError, [name]: message });
@@ -230,7 +229,7 @@ export default function TenantDetails() {
     }
     else if (71 < data && data <= 100) {
       return url[71_100]
-    }else{
+    } else {
       return '/assets/images/poor_credit_score.svg'
 
     }
@@ -240,11 +239,11 @@ export default function TenantDetails() {
   const PHOTO_URl_BUSINESS_USER = (data) => {
     const url = {
       A: "/assets/images/A.png",
-     AA: "/assets/images/AA.png",
-     AN: "/assets/images/AN.png",
-     B: "/assets/images/B.png",
-     C: "/assets/images/c.png",
-     NR: "/assets/images/NR.png",
+      AA: "/assets/images/AA.png",
+      AN: "/assets/images/AN.png",
+      B: "/assets/images/B.png",
+      C: "/assets/images/c.png",
+      NR: "/assets/images/NR.png",
     }
     if (data === 'A') {
       return url.A
@@ -263,7 +262,7 @@ export default function TenantDetails() {
     }
     else if (data === 'NR') {
       return url.NR
-    }else{
+    } else {
 
       return '/assets/images/poor_credit_score.svg'
     }
@@ -302,19 +301,19 @@ export default function TenantDetails() {
 
     axios.post('https://login.8storage.com/connect/token', data, config)
       .then(response => {
-        // console.log(JSON.stringify(response.data));
         return response;
       }).then(result => {
         // console.log("data", data);
         authorizationToken = result.data.access_token;
         localStorage.setItem('storedate', Date.now());
         sessionStorage.setItem('authToken', JSON.stringify(result.data.access_token));
-        console.log(authorizationToken);
+        // console.log(authorizationToken);
         const requestBody = {
           country_code: "NOR",
           event_type: "CREDIT_CHECK_ENQUIRY",
-          identity_number: ssn.current.value,
-          initiated_by: `${TenantInfoDetails.firstName}${TenantInfoDetails.lastName}`,
+          // identity_number: ssn.current.value, 24014021406
+          identity_number:  "24014021406",
+          initiated_by: `${TenantInfoDetails.firstName} ${TenantInfoDetails.lastName}`,
           request_from: "BOOKING_PORTAL",
           tenant_id: `${userid}`,
           tenant_type: BusinessUser ? "BUSINESS" : "PERSON",
@@ -331,37 +330,33 @@ export default function TenantDetails() {
           },
         };
 
-        axios.post('https://qa-digitalsolutions-api.8storage.com/creditcheck', requestBody, creditCheckConfig)
+        axios.post('https://usuat-sixverifier-api.8storage.com/creditcheck', requestBody, creditCheckConfig)
           .then(response => {
-            console.log(response.data.body);
-            if(response.data.status === 500){
-              setTenantCreditCheckDetails({ ...tenantCreditCheckDetails, credit_check_details:response.data.message,credit_check_discription: response.data.description, modified_on: new Date() })
-              setCreditCheckLoader(false);
-              SetCreditStatus(true)
-              
-
-
-            }else{
-              localStorage.setItem('nextpage',response.data.body.is_movein_recommended? true:false)
-              localStorage.setItem('eSignature',false)
-              // setCreditCheckStatusResponse(response.data)
-              setTenantCreditCheckDetails({ ...tenantCreditCheckDetails, credit_check_details: response.data.body, modified_on: new Date() })
-              setCreditCheckLoader(false);
-              SetCreditStatus(true)
-
-
-            }
-           
-              
+            return response;
             // }else {
             //   setCreditCheckLoader(false);
             //   setCreditCheckError(true);
-
             // }
-           
+          }).then(result => {
+            console.log("data",result);
+            console.log(result.data.body);
+            if (data.status === 500) {
+              setTenantCreditCheckDetails({ ...tenantCreditCheckDetails, credit_check_details: result.message, credit_check_discription: result.description, modified_on: new Date() })
+              setCreditCheckLoader(false);
+              SetCreditStatus(true)
+            } else {
+              localStorage.setItem('nextpage', result.data.body.is_movein_recommended ? true : false)
+              localStorage.setItem('eSignature', false)
+              // setCreditCheckStatusResponse(response.data)
+              setTenantCreditCheckDetails({ ...tenantCreditCheckDetails, credit_check_details: result.data.body, modified_on: new Date() })
+              setCreditCheckLoader(false);
+              SetCreditStatus(true)
+            }
           })
           .catch((error) => {
             console.log(error);
+            setCreditCheckLoader(false);
+        setCreditCheckError(true);
           });
       })
       .catch((error) => {
@@ -372,7 +367,7 @@ export default function TenantDetails() {
   }
 
   const navigateEsign = (e) => {
-    if(typeof e !== 'undefined' && e !== null){
+    if (typeof e !== 'undefined' && e !== null) {
       e.preventDefault();
     }
     updateTenantInfo();
@@ -513,23 +508,23 @@ export default function TenantDetails() {
         Array.prototype.push.apply(unitDetailCustomField, customFieldValue);
         // updateTenantInfo();
         sessionStorage.setItem('customFieldstorage', JSON.stringify(unitDetailCustomField));
-        if( JSON.parse(nextpage) === false ){
+        if (JSON.parse(nextpage) === false) {
           SetCreditCheckModal({ open: true });
-        }else{
+        } else {
 
           navigateEsign(null);
         }
-        
-       
+
+
         // leaseProfileSave(unitDetailCustomField)
         //sessionStorage.setItem("customFieldstorage",JSON.stringify(customFieldValue))
       } else {
         return;
       }
-    }else{
-      if( JSON.parse(nextpage) === false ){
+    } else {
+      if (JSON.parse(nextpage) === false) {
         SetCreditCheckModal({ open: true });
-      }else{
+      } else {
 
         navigateEsign(null);
       }
@@ -581,8 +576,6 @@ export default function TenantDetails() {
       phoneNumberOne: TenantInfoDetails.phoneNumber,
       dob: TenantInfoDetails.birthDate,
       preferredStorage: preferredStorageValue
-
-
     }
     instance
       .post(request.lease_profile, requestbody, config)
@@ -821,15 +814,15 @@ export default function TenantDetails() {
     }
 
     let ssnErrormsg = document.getElementById('ssn');
-    if(ssn.current.value  === ''){
+    if (ssn.current.value === '') {
       ssnErrormsg.classList.remove('d-none');
       isValid = false;
-    }else if(ssn.current.value.length <= 5){
+    } else if (ssn.current.value.length <= 5) {
       ssnErrormsg.classList.remove('d-none');
       isValid = false;
 
     }
-    else{
+    else {
       ssnErrormsg.classList.add('d-none');
     }
 
@@ -907,8 +900,8 @@ export default function TenantDetails() {
 
   useEffect(() => {
     var diff = (Date.now() - startdate) / 60000;
-    if(diff > 40){
-      localStorage.setItem('nextpage',JSON.stringify(false))
+    if (diff > 40) {
+      localStorage.setItem('nextpage', JSON.stringify(false))
     }
     tenantInfo();
     if (emergencyDetail) {
@@ -967,7 +960,7 @@ export default function TenantDetails() {
     city: cityError,
     state: stateError,
     zipCode: postalError,
-    ssn:ssnError
+    ssn: ssnError
 
   } = TenantInfoError;
 
@@ -1316,6 +1309,8 @@ export default function TenantDetails() {
                   defaultCountry={DefaultCountryCode}
                   value={emergencyContactDetails.emergencyphoneno}
                   placeholder="Enter Mobile Number"
+                  name="emergencyphoneno"
+                  onBlur={(e) => validateemergencycontactInfo(e)}
                   onChange={(e, d) => onChangePhoneInput(e, d)} />
                 <div className="text-danger mt-1">{[phone_err]}</div>
               </div>
@@ -1365,33 +1360,33 @@ export default function TenantDetails() {
             </>
             }
 
-            {!creditCheckLoader && creditStatus && 
-            <>
-              {
-             
-                BusinessUser ?
-                  <Image width='250' src={`${PHOTO_URl_BUSINESS_USER(tenantCreditCheckDetails?.credit_check_details?.credit_score)}`} /> :
-                  <Image width='250' src={`${PHOTO_URl_PERSONAL_USER(tenantCreditCheckDetails?.credit_check_details?.credit_score)}`} /> 
-                 
-              }
-            </>
+            {!creditCheckLoader && creditStatus &&
+              <>
+                {
+
+                  BusinessUser ?
+                    <Image width='250' src={`${PHOTO_URl_BUSINESS_USER(tenantCreditCheckDetails?.credit_check_details?.credit_score)}`} /> :
+                    <Image width='250' src={`${PHOTO_URl_PERSONAL_USER(tenantCreditCheckDetails?.credit_check_details?.credit_score)}`} />
+
+                }
+              </>
             }
           </div>
           {!creditStatus && !creditCheckLoader &&
             <>
-            { !creditcheckerror ?
-            <div className="mb-3">
-            As part of the move-in process, we need to verify your credit score, would you like to proceed for a credit check?
-          </div> :<div className="mb-3">
-            something went wrong. Please try Again.
-          </div>
+              {creditcheckerror ?
+                 <div className="mb-3 text-danger">
+                  Something went wrong. Please try Again.
+                </div> : <div className="mb-3">
+                  As part of the move-in process, we need to verify your credit score, would you like to proceed for a credit check?
+                </div>
 
-            }
-              
-              <div className="">
+              }
+{creditcheckerror ? <button onClick={() => SetCreditCheckModal({ open: false })} className="ui button bg-secondary  fs-7 fw-400 text-white px-5 mr-1">Close</button> :             <div className="">
                 <button onClick={() => SetCreditCheckModal({ open: false })} className="ui button bg-secondary  fs-7 fw-400 text-white px-5 mr-1">Cancel</button>
                 <button onClick={(e) => proceedCreditCheck(e)} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">Proceed</button>
-              </div>
+              </div>  }
+
             </>
           }
           {creditCheckLoader &&
@@ -1401,15 +1396,15 @@ export default function TenantDetails() {
           }
           {!creditCheckLoader && creditStatus && <>
             {(!tenantCreditCheckDetails?.credit_check_details?.is_movein_recommended) ? <>
-            {tenantCreditCheckDetails?.credit_check_details === 'TRY_CREDITCHECK_AFTER_SOMETIME'?
-            <div className="mb-3 text-danger">
-            {tenantCreditCheckDetails.credit_check_discription}
-          </div>: <div className="mb-3 text-danger">
-              Oops! The customer cannot complete the move-in with this credit score
-            </div>
+              {tenantCreditCheckDetails?.credit_check_details === 'TRY_CREDITCHECK_AFTER_SOMETIME' ?
+                <div className="mb-3 text-danger">
+                  {tenantCreditCheckDetails.credit_check_discription}
+                </div> : <div className="mb-3 text-danger">
+                  Oops! The customer cannot complete the move-in with this credit score
+                </div>
 
-            }
-            
+              }
+
               <div>
                 <button onClick={() => SetCreditCheckModal({ open: false })} className="ui button bg-secondary  fs-7 fw-400 text-white px-5">Close</button>
               </div>

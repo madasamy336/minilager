@@ -366,22 +366,14 @@ export default function RentingDetails() {
               navigate('/preBooking/addOns');
             }
           }
-
-
         }
-
-
       })
-
-
-    }else{
+    } else {
       navigate('/preBooking/addOns');
     }
-
-
   }
 
- 
+
 
 
   return (
@@ -420,21 +412,21 @@ export default function RentingDetails() {
                   <div className="ui form px-4 px-sm-2">
                     <div className="field w-100 datePicker my-3">
                       <label className='fw-500 fs-7 mb-2' >Move-In Date</label>
-                      <SemanticDatepicker clearable={false} placeholder='Select date' className='w-100' clearOnSameDateClick ={false} value={movinDate} onChange={movindateOnchange} filterDate={(date) => { const now = new Date(); return date >= now; }} />
+                      <SemanticDatepicker clearable={false} placeholder='Select date' className='w-100' clearOnSameDateClick={false} value={movinDate} onChange={movindateOnchange} filterDate={(date) => { const now = new Date(); return date >= now; }} />
                     </div>
                     {typeof invoice !== "undefined" && invoice !== null && invoice.length > 0 ?
                       <div className="field w-100  my-3">
                         <label className='fw-500 fs-7 mb-2'>Invoice Period</label>
-                        <Dropdown placeholder='Select Invoice Period'  fluid search selection options={invoice} value={invoice.value} defaultValue={invoiceDefault} onChange={invoiceOnchange} />
+                        <Dropdown placeholder='Select Invoice Period' fluid search selection options={invoice} value={invoice.value} defaultValue={invoiceDefault} onChange={invoiceOnchange} />
                       </div> : ""}
                     {typeof recurring !== "undefined" && recurring !== null && recurring.length > 0 ?
                       <div className="field w-100  my-3">
                         <label className='fw-500 fs-7 mb-2'>Invoice Recurring</label>
-                        <Dropdown placeholder='Select Invoice Recurring'  fluid search selection options={recurring} value={recurring.value} defaultValue={recurringDefaultValue} onChange={recurringOnchange} />
+                        <Dropdown placeholder='Select Invoice Recurring' fluid search selection options={recurring} value={recurring.value} defaultValue={recurringDefaultValue} onChange={recurringOnchange} />
                       </div> : ""}
                     <div className="field w-100 datePicker my-3">
                       <label className='fw-500 fs-7 mb-2' >Desired Move Out date</label>
-                      <SemanticDatepicker placeholder='Select date' className='w-100'  value={desiredMoveOutDate} filterDate={(date) => { const now = new Date(movinDate); return date >= now;}} onChange={DesiredMoveoutDateChange}/>
+                      <SemanticDatepicker placeholder='Select date' className='w-100' value={desiredMoveOutDate} filterDate={(date) => { const now = new Date(movinDate); return date >= now; }} onChange={DesiredMoveoutDateChange} />
                     </div>
 
 

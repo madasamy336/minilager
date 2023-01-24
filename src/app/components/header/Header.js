@@ -42,10 +42,10 @@ export default function Header(props) {
               <NavLink to={'/home'} className="item fs-7 fw-700 mx-4 navtext py-3 d-inline-block">
                 ORDER MINI STOCK
               </NavLink>
-              <NavLink to={'/login'} className="item fs-7 fw-700 mx-4 navtext py-3 d-inline-block">
+              <NavLink to={!localStorage.getItem('userid') ? '/login' : '/postBooking/Profile'} className="item fs-7 fw-700 mx-4 navtext py-3 d-inline-block">
                 MY SIDE
               </NavLink>
-              <Dropdown onChange={(e, data)=>changeLanguageHandler(e, data)} placeholder='Choose Language' selection options={Languages} />
+              <Dropdown onChange={(e, data) => changeLanguageHandler(e, data)} placeholder='Choose Language' selection options={Languages} />
 
             </div>
 
