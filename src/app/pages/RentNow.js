@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import Card from "../components/rentnow/Cards";
+import { Input } from 'semantic-ui-react'
 import { useTranslation } from "react-i18next";
 import { useEffect } from 'react';
 import instance from '../services/instance';
@@ -8,6 +9,7 @@ import request from '../services/request';
 const RentNow = () => {
     const searchinput = useRef(null);
     const [LocationResponse, setLocationResponse] = useState(null);
+    const [searchValue, setSearchValue] = useState('');
 
     const fetchFaciltyDetail = () => {
         let config = {
@@ -28,7 +30,7 @@ const RentNow = () => {
                     setLocationResponse(location.result);
                 }
 
-                if(location.returnCode === 'NO_RECORDS_FOUND' ){
+                if (location.returnCode === 'NO_RECORDS_FOUND') {
                     setLocationResponse([])
                 }
             })
@@ -38,7 +40,8 @@ const RentNow = () => {
             })
     }
 
-    const searchFacilityDetail = () => {
+    const searchFacilityDetail = (e) => {
+        e.preventDefault()
         let locationSearch = LocationResponse;
         let filterResult = locationSearch.filter((i) => (i.locationName.toLowerCase().includes(searchinput.current.value.toLowerCase())) || (i.address.addressLine1.toLowerCase().includes(searchinput.current.value.toLowerCase())) || (i.address.zipCode !== null && i.address.zipCode.includes(searchinput.current.value)));
         if (searchinput.current.value === '') {
@@ -51,17 +54,36 @@ const RentNow = () => {
         }
 
     }
-    const facilitycall = () => {
+    const facilitycall = (e) => {
+        e.preventDefault()
         if (searchinput.current.value === '') {
             fetchFaciltyDetail();
         }
 
     }
+    const onChangeSearchValue = (e) => {
+        e.preventDefault()
+        setSearchValue(e.target.value);
 
+    }
+    const clearSearchValue = (e) => {
+        console.log("22222222");
+        e.preventDefault()
+        setSearchValue("")
+        if (searchValue.length > 0) {
+            const newVotes = searchValue;
+            setSearchValue('')
+        }
+
+    }
+    console.log(searchValue);
     const { t } = useTranslation();
     useEffect(() => {
         fetchFaciltyDetail();
     }, [])
+    useEffect(() => {
+        setSearchValue(searchValue)
+    }, [searchValue])
 
 
     return (
@@ -80,7 +102,13 @@ const RentNow = () => {
                                     <path id="Path_4" data-name="Path 4" d="M133.208,79.849a6.729,6.729,0,1,1-6.75-6.719,6.751,6.751,0,0,1,6.75,6.719Zm-2.694,0a4.035,4.035,0,1,0-4.017,4.042A4.073,4.073,0,0,0,130.514,79.852Z" transform="translate(-106.292 -64.907)" fill="#67be5c" />
                                 </g>
                             </svg>
-                            <input ref={searchinput} className='border-0 border-radius-0' placeholder={t('Zip,City or Address')} type="text" /><i aria-hidden="true" className="search icon"></i><button className="ui button" onClick={searchFacilityDetail} onChange={() => { facilitycall }}> {t('Search')}</button>
+                            {/* <Input
+                            ref={searchinput}
+                                value={searchValue}
+                                onChange={onChangeSearchValue}  
+                                label={{ icon: 'remove', onClick: clearSearchValue }}
+                            /> */}
+                            <input ref={searchinput} value={searchValue} onChange={onChangeSearchValue} className='border-0 border-radius-0' placeholder={t('Zip,City or Address')} type="text" /> <i aria-hidden="true" style={{pointerEvents:"all"}} className={`${searchValue.length > 0 ? "cancel" : "search"} icon`} onClick={clearSearchValue} /> <button className="ui button" onClick={searchFacilityDetail} onChange={() => { facilitycall }}> {t('Search')}</button>
                         </div>
                         {LocationResponse ?
                             <Card facilitydetails={LocationResponse} /> :

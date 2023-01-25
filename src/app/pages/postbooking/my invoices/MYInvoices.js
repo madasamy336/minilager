@@ -10,12 +10,13 @@ let helper = new Helper();
 let userid = localStorage.getItem("userid");
 let invoiceId_No_Array = [];
 let TotalAmountArray = [];
-let totalAmount = 0;
+//let totalAmount = 0;
 let currentRecords;
 let pageNumbers;
 let nPages;
 export default function MYInvoices() {
   const [invoiceitems, setInvoiceItems] = useState();
+  const[totalAmount,setTotalAmount] = useState(0);
   const [isCheck, setIsCheck] = useState([]);
   const [invoiceNum, setInvoiceNo] = useState([]);
   const [isCheckAll, setIsCheckAll] = useState(false);
@@ -24,7 +25,7 @@ export default function MYInvoices() {
   const [currentPage, setCurrentPage] = useState(1);
   const [recordsPerPage] = useState(10);
   const [isLoading, setLoader] = useState(false);
-
+  let invoiceFeeid;
   const indexOfLastRecord = currentPage * recordsPerPage;
   const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
   if (typeof invoiceitems !== "undefined" && invoiceitems !== null && invoiceitems !== "" && invoiceitems.length > 0) {
@@ -49,47 +50,55 @@ export default function MYInvoices() {
   }
 
 
-  const selectInvoice = (e, invoiceid, invoiceNo, unPaidBalance) => {
-    const { id, checked } = e.target;
-    const invoiceSelectedId = invoiceid;
-    setIsCheck([...isCheck, id]);
-    setInvoiceNo([...invoiceNum, invoiceNo]);
+  const selectInvoice = (e,unitid, latefees) => {
+   console.log(); 
+    let invoiceNumber = 0;
+    let selectallcheckbox = document.querySelectorAll(`.six-multi-select-check-${unitid}`);
+      if (e.target.checked == true) {
+        selectallcheckbox.forEach((data)=>{
+          if(data.dataset.latefees === e.target.dataset.latefees  ){
+            data.checked =true;
+            if (data.disabled) {
+              data.checked = false;
+          }
+            invoiceId_No_Array.push({
+              invoiceId:data.value,
+              invoiceNumber:data.dataset.invoicenumber,
+              amount: data.dataset.amount,
+              feesid: data.dataset.latefees
+             });
+             selectallcheckbox = [];
+          }
+        })
+      }else{
+        selectallcheckbox.forEach((data)=>{ 
+          if( data.dataset.latefees === e.target.dataset.latefees){
+            data.checked =false;
+             const objWithIdIndex = invoiceId_No_Array.findIndex((obj) => obj.feesid === data.dataset.latefees);
+             if(objWithIdIndex > -1){
+              invoiceId_No_Array.splice(objWithIdIndex, 1);
+             }
+             selectallcheckbox = [];
+             
+          }
+        })
 
-
-    if (checked) {
-      invoiceId_No_Array.push({
-        invoiceId: id,
-        invoiceNumber: invoiceNo
+      }
+      sessionStorage.setItem("invoiceselected", JSON.stringify(invoiceId_No_Array));
+      let invoiceSelected = JSON.parse(sessionStorage.getItem('invoiceselected'));
+      if(invoiceSelected !== 'undefined' && invoiceSelected !== null){
+      invoiceSelected.forEach((item) => {
+        invoiceNumber = invoiceNumber + parseFloat(item.amount);
       })
 
-      for (let k = 0; k < currentRecords.length; k++) {
-        if (currentRecords[k].id === invoiceSelectedId) {
-          TotalAmountArray.push(parseFloat(currentRecords[k].unPaidBalance));
-        }
-        totalAmount = TotalAmountArray.reduce((pre, curr) => pre + curr, 0);
-
-      }
-    } else {
-      setIsCheck(isCheck.filter(i => i !== id));
-      setInvoiceNo(invoiceNum.filter(i => i !== invoiceNo));
-      const objWithIdIndex = invoiceId_No_Array.findIndex((obj) => obj.invoiceId === id);
-      if (objWithIdIndex > -1) {
-        invoiceId_No_Array.splice(objWithIdIndex, 1);
-      }
-
-      let indexunpdaid = TotalAmountArray.indexOf(unPaidBalance);
-      if (indexunpdaid > - 1) {
-        TotalAmountArray.splice(indexunpdaid, 1);
-      }
-      totalAmount = TotalAmountArray.reduce((pre, curr) => pre + curr, 0);
-      if (typeof isCheck !== "undefined" && isCheck !== null && isCheck !== "" && isCheck.length === 1) {
-        document.getElementById("selectedAllCheckbox").checked = false;
-      }
     }
+
+    setTotalAmount(invoiceNumber);
+
   }
 
   const selectAllCheckBox = (e) => {
-   
+
     let unPaidInvoiceStaus = invoiceitems.filter(i => i.invoiceStatus === "UNPAID");
     if (typeof unPaidInvoiceStaus !== "undefined" && unPaidInvoiceStaus !== null && unPaidInvoiceStaus !== "" && unPaidInvoiceStaus.length > 0) {
       setIsCheck(unPaidInvoiceStaus.map(item => item.id));
@@ -99,32 +108,37 @@ export default function MYInvoices() {
     }
     if (e.target.checked) {
       setIsCheckAll(true);
-      TotalAmountArray=[];
+      TotalAmountArray = [];
       unPaidInvoiceStaus.forEach(item => {
         TotalAmountArray.push(item.unPaidBalance);
       });
-      totalAmount = TotalAmountArray.reduce((pre, curr) => pre + curr, 0);
+      //totalAmount = TotalAmountArray.reduce((pre, curr) => pre + curr, 0);
 
     } else {
       setIsCheckAll(false);
       TotalAmountArray = [];
-      totalAmount = 0;
+      //totalAmount = 0;
     }
   }
 
   const paymentProcess = (paymentTransactionResponse) => {
-
     let config = {
       headers: {
         "Content-Type": "application/json",
       },
     };
+    var invoiceNumber =0;
+    let invoiceSelected = JSON.parse(sessionStorage.getItem('invoiceselected'));
+      if(typeof invoiceSelected !== 'undefined' && invoiceSelected !== null){
+      invoiceSelected.forEach((item) => {
+        invoiceNumber = invoiceNumber + parseFloat(item.amount);
+      })
+    }
 
     let paymentProcessRequest;
-
     paymentProcessRequest = {
       leaseInvoices: invoiceId_No_Array,
-      totalPayment: totalAmount,
+      totalPayment: invoiceNumber,
       paymentRefNumber: paymentTransactionResponse.last4Digit,
       paymentType: "CreditCard",
       paymentTransactionResponse: paymentTransactionResponse
@@ -137,10 +151,12 @@ export default function MYInvoices() {
         if (typeof successMsgData !== "undefined" && successMsgData !== null && successMsgData !== "") {
           if (response.data.isSuccess === true && response.data.returnMessage === "SUCCESS") {
             setpaymentModal({ open: false });
-            totalAmount = 0;
+            //totalAmount = 0;
+            setTotalAmount(0);
             TotalAmountArray = [];
             setIsCheck([]);
             customInvoices();
+            sessionStorage.setItem('invoiceselected',JSON.stringify([]))
             invoiceId_No_Array = [];
             setIsCheckAll(false);
           }
@@ -246,7 +262,6 @@ export default function MYInvoices() {
 
   }
 
-
   return (
     <div className="mx-2 mx-sm-1">
       <div>
@@ -290,7 +305,7 @@ export default function MYInvoices() {
               <table className="w-100">
                 <thead>
                   <tr>
-                    <th className="text-center"><input type="checkbox" id="selectedAllCheckbox" onChange={(e) => selectAllCheckBox(e)} /></th>
+                    <th className="text-center d-none"><input type="checkbox" id="selectedAllCheckbox" onChange={(e) => selectAllCheckBox(e)} /></th>
                     <th className="text-center">Invoice Amount</th>
                     <th className="text-center">Invoice Date</th>
                     <th className="text-center">Paid On</th>
@@ -302,15 +317,28 @@ export default function MYInvoices() {
 
                   {typeof currentRecords !== "undefined" && currentRecords !== null && currentRecords !== "" && currentRecords.length > 0 ?
                     currentRecords.map((item) => {
+                      if(item.invoiceItems !== null){
+                       item.invoiceItems.forEach((invoice) => {
+                        if (invoice.invoiceId !== null) {
+                          invoiceFeeid = invoice.invoiceId;
+                        } else {
+                          invoiceFeeid = item.id;
+                        }
+
+                      });
+                    } else{
+                      invoiceFeeid = item.id;
+
+                    }
                       return <tr key={item.id}>
                         <td className="text-center">
-                          {item.invoiceStatus === "PAID" || item.invoiceStatus === "Processing"  ? <input type="checkbox" disabled /> : item.invoiceStatus === "UNPAID" || item.invoiceStatus ==="PARTIALLY-PAID" && item.unPaidBalance > 0 ? <input type="checkbox" name={item.id} id={item.id} checked={isCheck.includes(item.id)} value={item.id} onChange={(e) => selectInvoice(e, e.target.value, item.invoiceNo, item.unPaidBalance)} /> : ''}
+                          {item.invoiceStatus === "PAID" || item.invoiceStatus === "Processing" ? <input type="checkbox" disabled /> : item.invoiceStatus === "UNPAID" || item.invoiceStatus === "PARTIALLY-PAID" && item.unPaidBalance > 0 ? <input className={`six-multi-select-check-${item.unitId}`} type="checkbox" name={item.id} id={item.id}  value={item.id} data-latefees={invoiceFeeid} data-unitId={item.unitId} data-amount={item.unPaidBalance} data-invoicenumber={item.invoiceNo} onChange={(e) => selectInvoice(e,item.unitId,invoiceFeeid)} /> : ''}
                         </td>
                         <td className="text-center">
                           <p className="fw-500">
-                            {item.invoiceStatus === "PAID" ? <label className="success-label">PAID</label> : item.invoiceStatus === "UNPAID" ? <label className="danger-label">NOT-PAID</label> : item.invoiceStatus === "PARTIALLY-PAID"  ? <label className="danger-label" color="orange">PARTIALLY-PAID</label> : item.invoiceStatus ==="Processing" ? <label className="danger-label">PROCESSING</label> : ''}
-                            &nbsp; {item.invoiceStatus === "PARTIALLY-PAID" && item.unPaidBalance > 0 ? helper.displayCurrency(item.unPaidBalance) : helper.displayCurrency(item.invoiceAmount)}</p> 
-                            
+                            {item.invoiceStatus === "PAID" ? <label className="success-label">PAID</label> : item.invoiceStatus === "UNPAID" ? <label className="danger-label">NOT-PAID</label> : item.invoiceStatus === "PARTIALLY-PAID" ? <label className="danger-label" color="orange">PARTIALLY-PAID</label> : item.invoiceStatus === "Processing" ? <label className="danger-label">PROCESSING</label> : ''}
+                            &nbsp; {item.invoiceStatus === "PARTIALLY-PAID" && item.unPaidBalance > 0 ? helper.displayCurrency(item.unPaidBalance) : helper.displayCurrency(item.invoiceAmount)}</p>
+                            {/* <p>{item.invoiceItems[0].name}</p> */}
                         </td>
                         <td className="text-center"><p className="fw-500">{helper.show_date_format2(item.invoiceDate)}</p></td>
                         <td className="text-center">
