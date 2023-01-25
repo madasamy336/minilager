@@ -26,6 +26,7 @@ export default function MYInvoices() {
   const [recordsPerPage] = useState(10);
   const [isLoading, setLoader] = useState(false);
   let invoiceFeeid;
+  
   const indexOfLastRecord = currentPage * recordsPerPage;
   const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
   if (typeof invoiceitems !== "undefined" && invoiceitems !== null && invoiceitems !== "" && invoiceitems.length > 0) {
@@ -49,9 +50,11 @@ export default function MYInvoices() {
     }
   }
 
+  console.log(invoiceId_No_Array);
 
   const selectInvoice = (e,unitid, latefees) => {
-   console.log(); 
+   console.log(totalAmount); 
+   console.log(invoiceId_No_Array);
     let invoiceNumber = 0;
     let selectallcheckbox = document.querySelectorAll(`.six-multi-select-check-${unitid}`);
       if (e.target.checked == true) {
@@ -84,6 +87,7 @@ export default function MYInvoices() {
         })
 
       }
+      console.log(invoiceId_No_Array);
       sessionStorage.setItem("invoiceselected", JSON.stringify(invoiceId_No_Array));
       let invoiceSelected = JSON.parse(sessionStorage.getItem('invoiceselected'));
       if(invoiceSelected !== 'undefined' && invoiceSelected !== null){
@@ -92,6 +96,7 @@ export default function MYInvoices() {
       })
 
     }
+
 
     setTotalAmount(invoiceNumber);
 
@@ -171,6 +176,7 @@ export default function MYInvoices() {
   }
 
   useEffect(() => {
+    setTotalAmount(0);
     customInvoices();
     const ReceiveIframeResponse = (event) => {
       if (event.data.message !== null && typeof event.data.message !== 'undefined') {
@@ -207,6 +213,8 @@ export default function MYInvoices() {
 
       .get(request.invoices + '/' + userid, unitInvoice, config)
       .then(response => {
+        invoiceId_No_Array = [];
+        sessionStorage.setItem('invoiceselected',JSON.stringify([]))
         const invoiceData = response.data;
         if (typeof invoiceData !== "undefined" && invoiceData !== null && invoiceData !== "") {
           const invoiceResult = response.data.result;
@@ -326,6 +334,7 @@ export default function MYInvoices() {
                         }
 
                       });
+                      
                     } else{
                       invoiceFeeid = item.id;
 
@@ -338,7 +347,7 @@ export default function MYInvoices() {
                           <p className="fw-500">
                             {item.invoiceStatus === "PAID" ? <label className="success-label">PAID</label> : item.invoiceStatus === "UNPAID" ? <label className="danger-label">NOT-PAID</label> : item.invoiceStatus === "PARTIALLY-PAID" ? <label className="danger-label" color="orange">PARTIALLY-PAID</label> : item.invoiceStatus === "Processing" ? <label className="danger-label">PROCESSING</label> : ''}
                             &nbsp; {item.invoiceStatus === "PARTIALLY-PAID" && item.unPaidBalance > 0 ? helper.displayCurrency(item.unPaidBalance) : helper.displayCurrency(item.invoiceAmount)}</p>
-                            {/* <p>{item.invoiceItems[0].name}</p> */}
+                            {/* <p>{item?.invoiceItems?.invoiceItems[0]?.name}</p> */}
                         </td>
                         <td className="text-center"><p className="fw-500">{helper.show_date_format2(item.invoiceDate)}</p></td>
                         <td className="text-center">

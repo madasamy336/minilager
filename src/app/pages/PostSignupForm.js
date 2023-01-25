@@ -2,7 +2,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { Dropdown, Input } from "semantic-ui-react";
 import countriecodes from "../components/CountryCode";
 import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from 'react-redux';
+import {useDispatch } from 'react-redux';
+import { useTranslation } from "react-i18next";
 import instance from '../services/instance';
 import request from '../services/request';
 import { ToastContainer, toast } from 'react-toastify';
@@ -15,6 +16,7 @@ let DefaultCountryCode;
 
 export default function PostSignupForm(props) {
     const clientDataconfig = JSON.parse(sessionStorage.getItem("configdata"));
+    const { t, i18n } = useTranslation();
     const culture = clientDataconfig.culture.culture
     const country = culture.substring(culture.indexOf('-') + 1, culture.length).toLowerCase();
     const [toggle, setToggle] = useState(true);
@@ -60,41 +62,42 @@ export default function PostSignupForm(props) {
         switch (name) {
             case 'firstName':
                 if (!value) {
-                    message = 'First Name is Required'
+                    message = `${t("First Name is Required")}`
                 }
                 break;
             case 'lastName':
                 if (!value) {
-                    message = 'Last Name is Required'
+                    message = `${t("Last Name is Required")}`
                 }
                 break;
             case 'phoneNumber':
                 if (!value) {
-                    message = 'Phone Number is Required'
+                    message = `${t("Phone Number is Required")}`
                 } else if (values.phoneNumber.length < 10) {
-                    message = 'Phone Number must be at least 10 characters'
+                    message = `${t('Phone Number must be at least 10 characters')}`
                 }
                 break;
             case 'email':
                 if (!value) {
-                    message = 'Email is Required'
+                    message = `${t("Email is Required")}`
                 } else if (!/\S+@\S+\.\S+/.test(value)) {
-                    message = 'Email format must be as example@mail.com'
+                    message = `${t("Email format must be as example@mail.com")}`
                 }
                 break;
             case 'password':
                 if (!value) {
-                    message = 'Password is Required'
+                    message = `${t("Password is Required")}`;
+                    
                 } else if (value.length < 8) {
-                    message = 'Password must contain at least eight characters!';
+                    message = `${t("Password must contain at least eight characters!")}`;
                 } else if (!/[0-9]/.test(value)) {
-                    message = 'Password must contain at least one number (0-9)';
+                    message = `${t("Password must contain at least one number (0-9)")}`;
                 } else if (!/[a-z]/.test(value)) {
-                    message = 'Password must contain at least one lowercase letter (a-z)';
+                    message = `${t("Password must contain at least one lowercase letter (a-z)")}`;
                 } else if (!/[A-Z]/.test(value)) {
-                    message = 'Password must contain at least one uppercase letter (A-Z)';
+                    message = `${t("Password must contain at least one uppercase letter (A-Z)")}`;
                 } else if (!/[*@!#%&()$^~{}]/.test(value)) {
-                    message = 'Password must contain at least one special character!';
+                    message = `${t("Password must contain at least one special character!")}`;
                 }
                 break;
             default:
@@ -120,27 +123,50 @@ export default function PostSignupForm(props) {
         const validations = { firstName: '', lastName: '', email: '', phoneNumber: '', password: '' }
         let isValid = true;
         if (!firstName) {
-            validations.firstName = 'First Name is required';
+            validations.firstName = `${t("First Name is required")}`;
             isValid = false;
         }
         if (!lastName) {
-            validations.lastName = 'Last Name  is required';
+            validations.lastName = `${t("Last Name  is required")}`;
             isValid = false;
         }
+        
+       
         if (!email) {
-            validations.email = 'Email  is required';
+            validations.email = `${t("Email  is required")}`;
+            isValid = false;
+        }else if(!/\S+@\S+\.\S+/.test(email)){
+            validations.email =`${t("Email format must be as example@mail.com")}`;
+            isValid = false;
+
         }
         if (!phoneNumber) {
-            validations.phoneNumber = 'Phone Number  is required';
+            validations.phoneNumber = `${t("Phone Number  is required")}`;
         }
-
         if (!password) {
-            validations.password = 'Password  is required';
-
+            validations.password = `${t("Password  is required")}`;
+            isValid = false;  
+        } else if (password.length < 8) {
+            validations.password = `${t("Password must contain at least eight characters!")}`;
+            isValid = false;
+        } else if (!/[0-9]/.test(password)) {
+            validations.password =`${t("Password must contain at least one number (0-9)")}`;
+            isValid = false;
+        } else if (!/[a-z]/.test(password)) {
+            validations.password =`${t("Password must contain at least one lowercase letter (a-z)")}`;
+            isValid = false;
+        } else if (!/[A-Z]/.test(password)) {
+            validations.password =`${t("Password must contain at least one uppercase letter (A-Z)")}`;
+            isValid = false;
+        } else if (!/[*@!#%&()$^~{}]/.test(password)) {
+            validations.password =  `${t("Password must contain at least one special character!")}`;
+            isValid = false;
         }
 
         if (!isValid) {
-            setValidations(validations)
+            setValidations(validations);
+            console.log('error call');
+            
         } else {
             values['UserName'] = values['email'];
             values['confirmPassword'] = values['password'];
@@ -174,7 +200,7 @@ export default function PostSignupForm(props) {
                         // 
                     } else if (configData.returnCode === 'FAILED' && configData.returnMessage === "Username/email already exists.") {
 
-                        toast.error('Username / email already exists', {
+                        toast.error(`${t("Username / email already exists")}`, {
                             position: "top-right",
                             autoClose: 3000,
                             duration: 100,
@@ -220,14 +246,14 @@ export default function PostSignupForm(props) {
                     <div className="col-lg-6 col-md-6 col-sm-12">
                         <div className="createAccountform-inputs bg-white h-100">
                             <div className="form-title">
-                                <h2 className="text-success fw-600">CREATE YOUR ACCOUNT</h2>
-                                <p>Already a User? <Link to={'/login'}>Sign in</Link></p>
+                                <h2 className="text-success fw-600">{t("CREATE YOUR ACCOUNT")} </h2>
+                                <p>{t("Already a User?")} <Link to={'/login'}>{t("Sign In")}</Link></p>
                             </div>
                             <form>
                                 <div className="form-control">
-                                    <label className="d-block">First Name <span className="requiredfield">*</span></label>
+                                    <label className="d-block">{t("First Name")} <span className="requiredfield">*</span></label>
                                     <div className="ui input w-100 position-relative">
-                                        <input type="text" placeholder="Enter First Name" name="firstName" value={firstName} onChange={(e) => { handleChange(e) }} onBlur={validateOne} />
+                                        <input type="text" placeholder={`${t("Enter First Name")}`} name="firstName" value={firstName} onChange={(e) => { handleChange(e) }} onBlur={validateOne} />
                                         <svg className="position-absolute l-1 t-1" id="user-svgrepo-com" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 30.667 30.667">
                                             <g id="Group_6355" data-name="Group 6355">
                                                 <path id="Path_18913" data-name="Path 18913" d="M26.176,4.49A15.334,15.334,0,0,0,4.49,26.176,15.334,15.334,0,0,0,26.176,4.49ZM15.333,28.973a13.64,13.64,0,1,1,13.64-13.64A13.658,13.658,0,0,1,15.333,28.973Z" fill="#b5b3b3" />
@@ -239,9 +265,9 @@ export default function PostSignupForm(props) {
                                     <div className="text-danger mt-1"> {nameVal}</div>
                                 </div>
                                 <div className="form-control">
-                                    <label className="d-block">Last Name<span className="requiredfield">*</span></label>
+                                    <label className="d-block">{t("Last Name")}<span className="requiredfield">*</span></label>
                                     <div className="ui input w-100 position-relative">
-                                        <input type="text" placeholder="Enter Last Name" name="lastName" value={lastName} onChange={(e) => { handleChange(e) }} onBlur={validateOne} />
+                                        <input type="text" placeholder={`${t("Enter Last Name")}`} name="lastName" value={lastName} onChange={(e) => { handleChange(e) }} onBlur={validateOne} />
                                         <svg className="position-absolute l-1 t-1" id="user-svgrepo-com" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 30.667 30.667">
                                             <g id="Group_6355" data-name="Group 6355">
                                                 <path id="Path_18913" data-name="Path 18913" d="M26.176,4.49A15.334,15.334,0,0,0,4.49,26.176,15.334,15.334,0,0,0,26.176,4.49ZM15.333,28.973a13.64,13.64,0,1,1,13.64-13.64A13.658,13.658,0,0,1,15.333,28.973Z" fill="#b5b3b3" />
@@ -253,9 +279,9 @@ export default function PostSignupForm(props) {
                                     <div className="text-danger mt-1"> {lastval}</div>
                                 </div>
                                 <div className="form-control">
-                                    <label className="d-block">Email Address<span className="requiredfield">*</span></label>
+                                    <label className="d-block">{t("Email Address")}<span className="requiredfield">*</span></label>
                                     <div className="ui input w-100 position-relative">
-                                        <input type="text" placeholder="Enter Email Address" name="email" value={email} onChange={(e) => { handleChange(e) }} onBlur={validateOne} />
+                                        <input type="text" placeholder={`${t('Enter Email Address')}`} name="email" value={email} onChange={(e) => { handleChange(e) }} onBlur={validateOne} />
                                         <svg className="position-absolute l-1 t-1" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 28.667 28.667">
                                             <path id="email-svgrepo-com_2_" data-name="email-svgrepo-com (2)" d="M24.469,4.2A14.333,14.333,0,0,0,4.2,24.469,14.348,14.348,0,0,0,19.913,27.54l-.691-1.633a12.562,12.562,0,1,1,7.671-11.573c0,3.034-1.864,4.415-3.6,4.415s-3.6-1.382-3.6-4.415a5.374,5.374,0,1,0-1.076,3.221,5.538,5.538,0,0,0,.948,1.366,5.132,5.132,0,0,0,7.448,0,6.494,6.494,0,0,0,1.645-4.587A14.24,14.24,0,0,0,24.469,4.2ZM14.333,17.929a3.6,3.6,0,1,1,3.6-3.6A3.6,3.6,0,0,1,14.333,17.929Z" opacity="0.22" />
                                         </svg>
@@ -263,7 +289,7 @@ export default function PostSignupForm(props) {
                                     <div className="text-danger mt-1"> {emailval}</div>
                                 </div>
                                 <div className="field form-control w-100">
-                                    <label className="d-block">Mobile Number<span className="requiredfield">*</span></label>
+                                    <label className="d-block">{t("Mobile Number")}<span className="requiredfield">*</span></label>
                                     <div className="ui input w-100">
                                         {/* <Input className="noCounterNumber w-100" type="tel" placeholder="Enter Mobile Number" onInput={(e) => { sixStorageCheckPhoneNumber(e) }} name="phoneNumber" value={phoneNumber} onBlur={validateOne} onChange={(e) => { handleChange(e) }}
                                             label={<Dropdown defaultValue='+91' search options={countriecodes} />}
@@ -272,15 +298,15 @@ export default function PostSignupForm(props) {
                                         <PhoneInput
                                             defaultCountry={DefaultCountryCode}
                                             value={values.phoneNumber}
-                                            placeholder="Enter Mobile Number"
+                                            placeholder={`${t('Enter Mobile Number')}`}
                                             onChange={(e, d) => onChangePhoneInput(e, d)} />
                                     </div>
                                     <div className="text-danger mt-1"> {phoneNumberval}</div>
                                 </div>
                                 <div className="form-control">
-                                    <label className="d-block">Password<span className="requiredfield">*</span></label>
+                                    <label className="d-block">{t("Password")}<span className="requiredfield">*</span></label>
                                     <div className="ui input w-100 position-relative">
-                                        <input type={toggle ? "password" : "text"} placeholder="Enter Password" name="password" value={password} onChange={(e) => { handleChange(e) }} onBlur={validateOne} />
+                                        <input type={toggle ? "password" : "text"} placeholder={`${t("Enter Password")}`} name="password" value={password} onChange={(e) => { handleChange(e) }} onBlur={validateOne} />
                                         <svg className="position-absolute l-1 t-1" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 22.036 32">
                                             <g id="password-svgrepo-com" transform="translate(-31.62)" opacity="0.21">
                                                 <path id="Path_18916" data-name="Path 18916" d="M50.9,11.539h-.521v-3.8a7.739,7.739,0,0,0-15.479,0v3.8h-.522A2.761,2.761,0,0,0,31.62,14.3V29.243A2.761,2.761,0,0,0,34.377,32H50.9a2.761,2.761,0,0,0,2.757-2.757V14.3A2.76,2.76,0,0,0,50.9,11.539Zm-13.636-3.8a5.376,5.376,0,0,1,10.752,0v3.8H37.262Zm14.03,21.5a.4.4,0,0,1-.394.394H34.377a.4.4,0,0,1-.394-.394V14.3a.4.4,0,0,1,.394-.394H50.9a.4.4,0,0,1,.394.394Z" />
@@ -312,13 +338,13 @@ export default function PostSignupForm(props) {
                                     </div>
                                     <div className="text-danger mt-1"> {paswordval}</div>
                                 </div>
-                                <button className="ui button w-100 fw-100" onClick={e => ValidateSignin(e)}>Create an account</button>
+                                <button className="ui button w-100 fw-100" onClick={e => ValidateSignin(e)}>{t("Create an account")}</button>
                             </form>
                             <div className="signup-div text-center">
                                 {
                                     props.callingfrom === 'prebooking' ? 
-                                    <p>Already have an Account?  <Link to={'/preBooking/sign-in'}>Sign in</Link></p> :
-                                    <p>Already have an Account?  <Link to={'/login'}>Sign in</Link></p>
+                                    <p>{t("Already have an Account?")}  <Link to={'/preBooking/sign-in'}>{t("Sign in")}</Link></p> :
+                                    <p>{t("Already have an Account?")} <Link to={'/login'}>{t("Sign in")}</Link></p>
                                 }
 
                             </div>

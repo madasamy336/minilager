@@ -10,9 +10,9 @@ import { useRef } from 'react';
 import AddonCard from '../components/AddonCard/AddonCard';
 import instance from '../services/instance';
 import request from '../services/request';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { useFormik } from 'formik';
 import Helper from "../helper";
-import { json } from 'react-router-dom';
 let helper = new Helper();
 let saveThirdPartyInsuranceDetailsValues = [];
 let ownInsuranceArray = [];
@@ -23,6 +23,8 @@ let merchandiseItem = [];
 export default function AddOn() {
   const childRef = useRef(null);
   const navigate = useNavigate();
+  const formik = useFormik({ });
+  const inputRefs = useRef({});
   let unitid = localStorage.getItem('unitid');
   let rentDetailsvalue = JSON.parse(sessionStorage.getItem(`rentDetails`));
   let getMoveindate = sessionStorage.getItem('moveindate');
@@ -142,6 +144,7 @@ export default function AddOn() {
       Object.entries(insuranceValue).forEach(([key, value]) => {
         if (value === '') {
           document.querySelector(`.${key}`).classList.remove("d-none");
+          document.querySelector(`.${key}`).scrollIntoView({ behavior: 'smooth' });
           errorcount = errorcount + 1;
           setLoader(false);
           return
@@ -490,7 +493,7 @@ export default function AddOn() {
                     {ownInsurance && (<div className="ui form px-4 px-sm-2">
                       <div className="field w-100 datePicker my-3">
                         <label className='fw-500 fs-7 mb-2'>Policy Provider Name</label>
-                        <input placeholder='Policy Provider Name' value={insurancePolicyProvider} onChange={(e) => { setPolicyProvider(e.target.value) }} />
+                        <input placeholder='Policy Provider Name' name="ProviderName"  ref ={inputRefs.current.ProviderName}value={insurancePolicyProvider} onChange={(e) => { setPolicyProvider(e.target.value) }} />
                         <p className="error py-1 provider_name d-none">Please Enter Policy Provider Name</p>
                       </div>
                       <div className="field w-100 datePicker my-3">

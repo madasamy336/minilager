@@ -304,6 +304,7 @@ export default function RentingDetails() {
   }
 
   const checkCustomfieldValue = () => {
+    debugger
     let customValue = JSON.parse(localStorage.getItem(`CustomFieldsSetting`));
     let errorcount = 0;
     if (customValue && customValue.length > 0) {
@@ -368,6 +369,7 @@ export default function RentingDetails() {
           }
         }
       })
+      
     } else {
       navigate('/preBooking/addOns');
     }

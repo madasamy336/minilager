@@ -312,7 +312,7 @@ const AccordionExampleStyled = (selectedStorageType) => {
               : ''}
           </ul>
           {typeof Buildingfilter !== 'undefined' && Buildingfilter !== null && Buildingfilter !== '' && Buildingfilter.length > 5 ? (
-            <a className='text-success text-right d-block' href='/'>MORE</a>
+            <a className='text-success text-right d-none' href='/'>MORE</a>
           ) : ''}
         </div>
       </Accordion.Content>
@@ -371,7 +371,7 @@ const AccordionExampleStyled = (selectedStorageType) => {
               : ''}
           </ul>
           {/* onClick={this.props.modal} */}
-          <a href="javascript:void(0);" className='text-success text-right d-block' >MORE</a>
+          <a href="javascript:void(0);" className='text-success text-right d-none' >MORE</a>
         </div>
       </Accordion.Content>
 
@@ -429,7 +429,7 @@ const AccordionExampleStyled = (selectedStorageType) => {
                     })
                     : ''}
                 </ul>
-                <a href="/" className='text-success text-right d-block'>MORE</a>
+                <a href="/" className='text-success text-right d-none'>MORE</a>
               </div>
             </Accordion.Content></>
           : ''

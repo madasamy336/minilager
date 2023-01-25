@@ -7,6 +7,7 @@ import PlaceholderLoader from "../components/placeholder/Placeholder";
 import instance from '../services/instance';
 import request from '../services/request';
 import { ToastContainer, toast } from 'react-toastify';
+import { useTranslation } from "react-i18next";
 import 'react-toastify/dist/ReactToastify.css';
 
 let isBussinessUser;
@@ -322,7 +323,6 @@ const Units = () => {
         }
     ]
 
-
     return (
         <div className="units-wrapper">
             <ToastContainer />
@@ -333,11 +333,11 @@ const Units = () => {
                         <h2 className='text-center'>Find Your Storage Place</h2>
                         <div className='row'>
                             <div className='col-lg-6 col-md-6 col-sm-12'>
-                                {typeof tenantTypeOptions !== "undefined" && tenantTypeOptions !== null && tenantTypeOptions !== "" && tenantTypeOptions.length > 0  ? <Dropdown placeholder="Choose Tenant Type" clearable fluid search selection options={tenantTypeOptions} value={tenantTypes}  onChange={tenantInfoChange} /> : null}
+                                {typeof tenantTypeOptions !== "undefined" && tenantTypeOptions !== null && tenantTypeOptions !== "" && tenantTypeOptions.length > 0  ? <Dropdown placeholder="Choose Tenant Type" clearable fluid  selection options={tenantTypeOptions} value={tenantTypes}  onChange={tenantInfoChange} /> : null}
                             </div>
                             <div className='col-lg-6 col-md-6 col-sm-12'>
                                 {storageTypeOptions !== null && typeof storageTypeOptions !== 'undefined' && storageTypeOptions !== '' && typeof storageTypeOptions[0].value !== 'undefined' && storageTypeOptions[0].value !== null && storageTypeOptions[0].value !== '' ?
-                                    <Dropdown placeholder="Choose Storage Type" value={storageTypeValue} onChange={changeStorageType} fluid search selection options={storageTypeOptions} />
+                                    <Dropdown placeholder="Choose Storage Type" value={storageTypeValue}  clonChange={changeStorageType} fluid selection options={storageTypeOptions} className={`opacity-1`} disabled={storageTypeOptions.length === 1}  />
                                     : ''}
                             </div>
                         </div>

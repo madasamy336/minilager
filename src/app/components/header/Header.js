@@ -12,6 +12,7 @@ export default function Header(props) {
   const { t, i18n } = useTranslation();
   const changeLanguageHandler = (e, data) => {
     const languageValue = data.value;
+    document.documentElement.lang=data.value
     i18n.changeLanguage(languageValue);
   }
   const Languages = [
@@ -45,7 +46,7 @@ export default function Header(props) {
               <NavLink to={!localStorage.getItem('userid') ? '/login' : '/postBooking/Profile'} className="item fs-7 fw-700 mx-4 navtext py-3 d-inline-block">
                 MY SIDE
               </NavLink>
-              <Dropdown onChange={(e, data) => changeLanguageHandler(e, data)} placeholder='Choose Language' selection options={Languages} />
+              <Dropdown  defaultValue={1} className='mr-3' onChange={(e, data) => changeLanguageHandler(e, data)} placeholder='Choose Language' selection options={Languages} />
 
             </div>
 

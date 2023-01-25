@@ -3,7 +3,56 @@
   "RENT NOW":"LEIE NÅ",
   "ORDER MINI STOCK":"ORDER MINI STOCK",
   "Zip,City or Address":"Zip, by eller adresse",
-  "Search":"sghjj",
-  "View Units":"View Units"
+  "Search":"Søke",
+  "View Units":"Vis enheter",
+  "Records Selected":"Valgte poster",
+  "Total":"Totalt",
+  "Pay Now":"Betal nå",
+  "Invoice":"Faktura",
+  "Invoice Amount":"Invoice Amount",
+  "Invoice Date":"Invoice Date",
+  "Paid On":"Paid On",
+  "Invoice Details":"Invoice Details",
+  "Payment Receipt":"Payment Receipt",
+  "WELCOME":"VELKOMMEN",
+  "Don't have an account?":"Har du ikke en konto?",
+  "Signup Now":"Registrer deg nå",
+  "Username is required":"Brukernavn er påkrevd",
+  "Username":"Brukernavn",
+  "Password ":"Passord",
+  "Enter First Name":"Skriv inn fornavn",
+  "Password":"Passord",
+  "Enter Password":"Skriv inn passord",
+  "Remember me":"Husk meg",
+  "Forget your password?":"Glem passordet ditt?",
+  "Sign In":"Logg på",
+  "CREATE YOUR ACCOUNT":"OPPRETT DIN KONTO",
+  "Already a User?":"Allerede en bruker?",
+  "First Name":"Fornavn",
+  "Last Name":"Etternavn",
+  "Enter Last Name":"Skriv inn etternavn",
+  "Email Address":"Epostadresse",
+  "Mobile Number":"Mobilnummer",
+  "Enter Email Address":"Skriv inn e-post adresse",
+  "Enter Mobile Number":"Angi mobilnummer",
+  "Create an account":"Opprett en konto",
+  "Already have an Account?": "Har du allerede en konto?",
+  "First Name is Required":"Fornavn kreves",
+  "Last Name is Required": "Etternavn er påkrevd",
+  "Phone Number is Required":"Telefonnummer er påkrevd",
+  "Email is Required":"E -post kreves",
+  "Email format must be as example@mail.com":"E -postformat må være som eksempel@mail.com",
+  "Password is Required":"Passord er påkrevd",
+  "Password must contain at least eight characters!":"Passordet må inneholde minst åtte tegn!",
+  "Password must contain at least one number (0-9)":"Passordet må inneholde minst ett nummer (0-9)",
+  "Password must contain at least one special character!":"Passordet må inneholde minst ett spesielt tegn!",
+  "Username / email already exists":"Brukernavn / e -post eksisterer allerede"
+
+
+
+
+
+
+
   
 }

@@ -6,12 +6,14 @@ import { useDispatch } from 'react-redux';
 import instance from '../services/instance';
 import request from '../services/request';
 import { ToastContainer, toast } from 'react-toastify';
+import { useTranslation } from "react-i18next";
 import 'react-toastify/dist/ReactToastify.css';
 import { fetchLoginSuccess, fetchLoginFailure, fetchLoginRequest } from '../redux/actions/login/loginAction';
 const PostLoginForm = (props) => {
     let localusername = localStorage.getItem('username');
     let localpassword = localStorage.getItem('password');
     let userid = localStorage.getItem('userid');
+    const { t, i18n } = useTranslation();
     // const { t } = useTranslation(); 
     // const loading = useSelector(state => state.login.loading);
     // const error = useSelector(state => state.login.error);
@@ -56,10 +58,10 @@ const PostLoginForm = (props) => {
         switch (name) {
             case 'username':
                 if (!value) {
-                    message = `Username is required`
+                    message = `${t('Username is required')}`
                 }
                 else if (!/\S+@\S+\.\S+/.test(value)) {
-                    message = 'Email format must be as example@mail.com'
+                    message = `${t("Email format must be as example@mail.com")}`
                 }
                 break;
             case 'password':
@@ -538,20 +540,20 @@ const PostLoginForm = (props) => {
 
                     <div className="postloginform-inputs bg-white">
                         <div className="form-title">
-                            <h2 className="text-success fw-600">WELCOME</h2>
+                            <h2 className="text-success fw-600">  {t('WELCOME')}</h2>
                             {
                                 props.callingfrom === 'prebooking' ?
-                                    <p>Don't have an account? <Link to={'/preBooking/signup'}>Signup Now</Link></p> :
-                                    <p>Don't have an account? <Link to={'/signup'}>Signup Now</Link></p>
+                                    <p>{t("Don't have an account?")}  <Link to={'/preBooking/signup'}>{t("Signup Now")}</Link></p> :
+                                    <p>{t("Don't have an account?")} <Link to={'/signup'}>{t("Signup Now")}</Link></p>
 
                             }
                            
                         </div>
                         <form>
                             <div className="form-control">
-                                <label className="d-block">Username <span className="requiredfield">*</span></label>
+                                <label className="d-block">{t('Username')} <span className="requiredfield">*</span></label>
                                 <div className="ui input w-100 position-relative">
-                                    <input type="text" name="username" placeholder="Enter First Name" value={username}
+                                    <input type="text" name="username" placeholder={`${t('Enter First Name')}`} value={username}
                                         onChange={(e) => { handleChange(e) }}
                                         onBlur={validateOne} />
                                     <svg className="position-absolute l-1 t-1" id="user-svgrepo-com" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 30.667 30.667">
@@ -566,9 +568,9 @@ const PostLoginForm = (props) => {
                                 <div className="text-danger mt-1"> {nameVal}</div>
                             </div>
                             <div className="form-control">
-                                <label className="d-block">Password <span className="requiredfield">*</span></label>
+                                <label className="d-block">{t("Password")} <span className="requiredfield">*</span></label>
                                 <div className="ui input w-100 position-relative">
-                                    <input type="password" placeholder="Enter Password"
+                                    <input type="password" placeholder={`${t('Enter Password')}`}
                                         value={password} name="password"
                                         onChange={(e) => { handleChange(e) }}
                                         onBlur={validateOne} />
@@ -583,16 +585,16 @@ const PostLoginForm = (props) => {
                             </div>
                             <div className="remember-div d-flex justify-content-between">
                                 <p className="d-inline-flex">
-                                    <input type="checkbox" name="rememberPassword" checked={rememberPassword} onChange={(event) => handleChechbox(event)} /><span>Remember me</span></p>
-                                <p> <a href="/" onClick={e => ForgotPassword(e)}>Forget your password?</a> </p>
+                                    <input type="checkbox" name="rememberPassword" checked={rememberPassword} onChange={(event) => handleChechbox(event)} /><span>{t("Remember me")}</span></p>
+                                <p> <a href="/" onClick={e => ForgotPassword(e)}>{t("Forget your password?")}</a> </p>
                             </div>
-                            <button className="ui button w-100 fw-100" onClick={e => ValidateSignin(e)}>Sign In</button>
+                            <button className="ui button w-100 fw-100" onClick={e => ValidateSignin(e)}>{t('Sign In')}</button>
                         </form>
                         <div className="signup-div text-center">
                             {
                                 props.callingfrom === 'prebooking' ?
-                                    <p>Don't have an account? <Link to={'/preBooking/signup'}>Signup Now</Link></p> :
-                                    <p>Don't have an account? <Link to={'/signup'}>Signup Now</Link></p>
+                                    <p>{t("Don't have an account?")} <Link to={'/preBooking/signup'}>{t("Signup Now")}</Link></p> :
+                                    <p>{t("Don't have an account?")} <Link to={'/signup'}>{t("Signup Now")}</Link></p>
 
                             }
 
