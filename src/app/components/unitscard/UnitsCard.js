@@ -1,16 +1,14 @@
-import { useEffect, useState, React } from 'react';
-import { useSelector } from 'react-redux';
+import {useState, React } from 'react';
 import PopupExampleInverted from '../unitstooltip/UnitsTooltip';
 import { useNavigate } from 'react-router-dom';
 import { Popup } from 'semantic-ui-react';
-import instance from '../../services/instance';
-import request from '../../services/request';
 import Helper from "../../helper";
-import PlaceholderLoader from "../placeholder/Placeholder";
+import { useTranslation } from "react-i18next";
 let helper = new Helper();
 const UnitsCard = (props) => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
+    const { t, i18n } = useTranslation();
     const clientDataconfig = JSON.parse(sessionStorage.getItem("configdata"));
     const rentNow = (e, unitid) => {
         props.checkTenantType();
@@ -54,7 +52,7 @@ const UnitsCard = (props) => {
                                             <div className='d-flex align-items-center justify-content-between'>
                                                 <h2 className='fw-700 mb-1'>{helper.displayMeasurementSize(details.unitMeasurement)} <small className='fw-500'>{details.unitTypeName}</small></h2>
                                                 <div className='units-left'>
-                                                    <p className='error'>{`Only ${details.unitIds.length} Units left`}</p>
+                                                    <p className='error'>{`${t("Only")} ${details.unitIds.length} ${t("Units left")}`}</p>
                                                 </div>
                                             </div>
                                             <div className='d-flex align-items-start'>
@@ -105,7 +103,7 @@ const UnitsCard = (props) => {
                                 <div className='card-actions'>
                                     <div className='d-flex justify-content-between align-items-center'>
                                         <h2 className='fw-700'>{helper.displayCurrency(details.netAmount)} <PopupExampleInverted img={<img src='/assets/images/tooltip.png' alt='Price' />} tooltip={`Rent :${helper.displayCurrency(details.unitPrice)} Tax(${helper.displayPercent(details.taxPercentage)}): ${helper.displayCurrency(details.taxAmount)}`} /></h2>
-                                        <button className='ui button btn-success d-inline-flex align-items-center' onClick={e => rentNow(e, details.unitIds)}><img src='/assets/images/password-img.png' alt='Rent Now' /><span>Rent Now</span></button>
+                                        <button className='ui button btn-success d-inline-flex align-items-center' onClick={e => rentNow(e, details.unitIds)}><img src='/assets/images/password-img.png' alt='Rent Now' /><span>{t("Rent Now")}</span></button>
                                     </div>
                                 </div>
                             </div>

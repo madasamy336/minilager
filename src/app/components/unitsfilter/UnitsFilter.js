@@ -1,9 +1,10 @@
 import { t } from 'i18next';
 import { componentsToColor } from 'pdf-lib';
 import { propTypes } from 'pdf-viewer-reactjs';
-import React, { Component, useState, useEffect } from 'react'
-import { Accordion, Item } from 'semantic-ui-react'
-import UnitsRangeSlider from '../unitsrangeslider/UnitsRangeSlider'
+import React, { Component, useState, useEffect } from 'react';
+import { Accordion, Item } from 'semantic-ui-react';
+import UnitsRangeSlider from '../unitsrangeslider/UnitsRangeSlider';
+import { useTranslation } from "react-i18next";
 let Buildingfilter;
 let unitTypeFilter;
 let UnitTypeDimension = [];
@@ -23,6 +24,7 @@ const AccordionExampleStyled = (selectedStorageType) => {
   const [minPriceState, setMinPriceState] = useState();
   const [maxPriceState, setMaxPriceState] = useState();
   const [PriceRangeStatus, setPriceRangeStatus] = useState(true);
+  const { t, i18n } = useTranslation();
   const handleClick = (e, titleProps) => {
     const { index } = titleProps;
     const newIndex = activeIndex === index ? -1 : index
@@ -355,7 +357,7 @@ const AccordionExampleStyled = (selectedStorageType) => {
         onClick={handleClick}
       >
         <div className='d-flex justify-content-between align-items-center'>
-          <img src="/assets/images/dimensions.png" alt="" />Dimensions
+          <img src="/assets/images/dimensions.png" alt="" />{t("Dimensions")}
         </div>
         <div>
           <img src="/assets/images/arrow-down.png" alt="" />
@@ -364,7 +366,7 @@ const AccordionExampleStyled = (selectedStorageType) => {
       <Accordion.Content active={activeIndex === 3}>
         <div>
           <div className='text-success text-right'>
-            {selectAll ? <a onClick={() => selectAllDimension()}>Select All</a> : ""}  | <a onClick={() => clearAllDimension()} >Clear All</a>
+            {selectAll ? <a onClick={() => selectAllDimension()}>{t("Select All")}</a> : ""}  | <a onClick={() => clearAllDimension()} >Clear All</a>
           </div>
           <ul>
 
@@ -389,7 +391,7 @@ const AccordionExampleStyled = (selectedStorageType) => {
           onClick={handleClick}
         >
           <div className='d-flex justify-content-between align-items-center'>
-            <img src="/assets/images/price-range.png" alt="" />Price Range
+            <img src="/assets/images/price-range.png" alt="" />{t("Price Range")}
           </div>
           <div>
             <img src="/assets/images/arrow-down.png" alt="" />
@@ -415,7 +417,7 @@ const AccordionExampleStyled = (selectedStorageType) => {
             onClick={handleClick}
           >
             <div className={`d-flex justify-content-between align-items-center `}>
-              <img src="/assets/images/amenity.png" alt="" />Amenity
+              <img src="/assets/images/amenity.png" alt="" />{t("Amenity")}
             </div>
             <div>
               <img src="/assets/images/arrow-down.png" alt="" />
@@ -425,7 +427,7 @@ const AccordionExampleStyled = (selectedStorageType) => {
               <div>
 
                 <div className='text-success text-right'>
-                  {selectAll ? <a onClick={() => selectAllAmenityCheckbox()} >Select All</a> : ""} | <a onClick={() => clearAllAmenityCheckbox()}>Clear All</a>
+                  {selectAll ? <a onClick={() => selectAllAmenityCheckbox()} >{t("Select All")}</a> : ""} | <a onClick={() => clearAllAmenityCheckbox()}>Clear All</a>
                 </div>
 
                 <ul>
@@ -442,8 +444,8 @@ const AccordionExampleStyled = (selectedStorageType) => {
       }
 
       <div className='text-center my-2'>
-        <button className='ui button bg-white border-success-dark-light-1 text-success fs-7 fw-400 px-5 mx-1 mb-1 mb-sm-1 px-sm-2' onClick={() => clearAllFilters()}>Clear All</button>
-        <button className='ui button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-1 mb-sm-1 px-sm-2' onClick={() => applyAllFiterValues()} >Apply</button>
+        <button className='ui button bg-white border-success-dark-light-1 text-success fs-7 fw-400 px-5 mx-1 mb-1 mb-sm-1 px-sm-2' onClick={() => clearAllFilters()}>{t("Clear All")}</button>
+        <button className='ui button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-1 mb-sm-1 px-sm-2' onClick={() => applyAllFiterValues()} >{t("Apply")}</button>
       </div>
     </Accordion >
 

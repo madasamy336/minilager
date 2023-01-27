@@ -13,6 +13,7 @@ import request from '../services/request';
 import { useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import Helper from "../helper";
+import { useTranslation } from "react-i18next";
 let helper = new Helper();
 let saveThirdPartyInsuranceDetailsValues = [];
 let ownInsuranceArray = [];
@@ -25,6 +26,7 @@ export default function AddOn() {
   const navigate = useNavigate();
   const formik = useFormik({ });
   const inputRefs = useRef({});
+  const { t, i18n } = useTranslation();
   let unitid = localStorage.getItem('unitid');
   let rentDetailsvalue = JSON.parse(sessionStorage.getItem(`rentDetails`));
   let getMoveindate = sessionStorage.getItem('moveindate');
@@ -416,7 +418,7 @@ export default function AddOn() {
                         <path id="Path_15982" data-name="Path 15982" d="M150.912,130.038c-.743,0-1.487,0-2.231,0-.432,0-.726-.155-.748-.629s.273-.687.694-.689c1.534-.014,3.067-.008,4.6,0a.624.624,0,0,1,.685.706c-.024.452-.336.62-.772.613-.743-.011-1.487,0-2.231,0Z" transform="translate(-127.242 -110.71)" fill="#328128" />
                         <path id="Path_15983" data-name="Path 15983" d="M103.106,152.536c.745,0,1.491-.007,2.235,0,.413.006.745.154.765.629.022.517-.317.7-.761.7q-2.234.019-4.47,0c-.448,0-.787-.193-.769-.7.017-.467.348-.631.764-.636.745-.01,1.491,0,2.235,0Z" transform="translate(-86.105 -131.2)" fill="#328128" />
                       </svg>
-                      <span className='veritical-align-text-top ml-1'>Insurance</span></h6>
+                      <span className='veritical-align-text-top ml-1'>{t("Insurance")}</span></h6>
                     {!ownInsurance && (
                       <div className=" p-3 AddonsInsurance">
 
@@ -439,8 +441,8 @@ export default function AddOn() {
                             }
                             <div className='col-lg-3 col-md-6 col-sm-12 px-1 mb-1'>
                               <div className={`card changePlanCard cursor-pointer  border-radius-10 text-center p-2  ${activePlan === 'Own Insurance' && 'active'}`} onClick={(e) => ownInsuranceHandler(e)} >
-                                <p className=' fs-7 fw-500 pb-1 mt-1'>I HAVE A</p>
-                                <h4 className={` fs-6 fw-500 pb-2 ${activePlan === 'Own Insurance' ? 'text-white' : 'text-success-dark'}`}>OWN INSURANCE</h4>
+                                <p className=' fs-7 fw-500 pb-1 mt-1'>{t("I HAVE A")}</p>
+                                <h4 className={` fs-6 fw-500 pb-2 ${activePlan === 'Own Insurance' ? 'text-white' : 'text-success-dark'}`}>{t("OWN INSURANCE")}</h4>
 
                               </div>
                             </div>
@@ -492,24 +494,24 @@ export default function AddOn() {
                     )}
                     {ownInsurance && (<div className="ui form px-4 px-sm-2">
                       <div className="field w-100 datePicker my-3">
-                        <label className='fw-500 fs-7 mb-2'>Policy Provider Name</label>
-                        <input placeholder='Policy Provider Name' name="ProviderName"  ref ={inputRefs.current.ProviderName}value={insurancePolicyProvider} onChange={(e) => { setPolicyProvider(e.target.value) }} />
-                        <p className="error py-1 provider_name d-none">Please Enter Policy Provider Name</p>
+                        <label className='fw-500 fs-7 mb-2'>{t("Policy Provider Name")}</label>
+                        <input placeholder={`${t("Policy Provider Name")}`} name="ProviderName"  ref ={inputRefs.current.ProviderName}value={insurancePolicyProvider} onChange={(e) => { setPolicyProvider(e.target.value) }} />
+                        <p className="error py-1 provider_name d-none">{t("Please Enter Policy Provider Name")}</p>
                       </div>
                       <div className="field w-100 datePicker my-3">
-                        <label className='fw-500 fs-7 mb-2'>Policy Number</label>
-                        <input placeholder='Policy Number' value={policyNumber} onChange={(e) => { setPolicyNumber(e.target.value) }} />
-                        <p className="error py-1 policy_number d-none">Please Enter Policy Number</p>
+                        <label className='fw-500 fs-7 mb-2'>{t("Policy Number")}</label>
+                        <input placeholder={`${t("Policy Number")}`} value={policyNumber} onChange={(e) => { setPolicyNumber(e.target.value) }} />
+                        <p className="error py-1 policy_number d-none">{t("Please Enter Policy Number")}</p>
                       </div>
                       <div className="field w-100 datePicker my-3">
-                        <label className='fw-500 fs-7 mb-2' >Effective From Date</label>
-                        <SemanticDatepicker placeholder='Effective From Date' value={effectiveFromDate} className='w-100' onChange={(e, item) => setEffectiveFromDate(item.value)} />
-                        <p className="error py-1 effective_from_date  d-none">Please Enter Effective From Date</p>
+                        <label className='fw-500 fs-7 mb-2' >{t("Effective From Date")}</label>
+                        <SemanticDatepicker placeholder={`${t("Effective From Date")}`} value={effectiveFromDate} className='w-100' onChange={(e, item) => setEffectiveFromDate(item.value)} />
+                        <p className="error py-1 effective_from_date  d-none">{t("Please Enter Effective From Date")}</p>
                       </div>
                       <div className="field w-100 datePicker my-3">
-                        <label className='fw-500 fs-7 mb-2' >Effective To Date</label>
-                        <SemanticDatepicker placeholder='Effective To Date' value={effectiveToDate} className='w-100' onChange={(e, item) => setEffectiveToDate(item.value)} />
-                        <p className="error py-1 effective_to_date d-none">Please Enter Effective To Date</p>
+                        <label className='fw-500 fs-7 mb-2' >{t("Effective To Date")}</label>
+                        <SemanticDatepicker placeholder={t("Effective To Date")} value={effectiveToDate} className='w-100' onChange={(e, item) => setEffectiveToDate(item.value)} />
+                        <p className="error py-1 effective_to_date d-none">{t("Please Enter Effective To Date")}</p>
                       </div>
                       {/* <div className="field w-100 datePicker my-3">
                         <label className='fw-500 fs-7 mb-2'>Document Upload</label>
@@ -525,7 +527,7 @@ export default function AddOn() {
                         </div>
                       </div> */}
                       <div className='text-center my-4'>
-                        <button className="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2 mb-sm-1" onClick={cancelInsuranceHandler}>Change</button>
+                        <button className="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2 mb-sm-1" onClick={cancelInsuranceHandler}>{t("Change")}</button>
                       </div>
                     </div>)}
                   </div>
@@ -536,7 +538,7 @@ export default function AddOn() {
                         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 41.477 41.085">
                           <path id="servicess" d="M5.542,39.707H.989c-.77,0-.979-.206-.979-.964V29.626c0-.772.2-.981.962-.982h4.57c0-.251-.009-.463,0-.674a.674.674,0,0,1,.713-.7q2.743-.014,5.487,0a.675.675,0,0,1,.707.711c.01.187,0,.374,0,.561v.6l1.358-.331V20.346c-.626,0-1.241,0-1.855,0-.779,0-1.07-.465-.726-1.161.838-1.688,1.7-3.364,2.514-5.062a1,1,0,0,1,1.138-.694,2.429,2.429,0,0,0,.32,0c0-.595.035-1.154-.009-1.708a2.257,2.257,0,0,0-.823-1.423,6.18,6.18,0,0,1,.252-9.185,7.9,7.9,0,0,1,1.6-1c.593-.3,1.061.029,1.065.7.007,1.426.009,2.852,0,4.278a.552.552,0,0,0,.3.557c.372.214.728.636,1.091.637s.719-.421,1.092-.634a.546.546,0,0,0,.3-.555c-.013-1.4-.008-2.794-.006-4.192,0-.8.455-1.084,1.189-.758a6.175,6.175,0,0,1,1.926,9.911,3.737,3.737,0,0,0-1,3.369c1.266,0,2.531.032,3.792-.025.268-.013.521-.348.781-.536l-.037-.13c-.331,0-.663,0-.993,0-.563-.009-.812-.257-.816-.824q-.009-1.253,0-2.506c0-.565.255-.809.822-.817.325,0,.651,0,1.081,0-.313-.313-.559-.547-.793-.794A.7.7,0,0,1,26,6.7q.9-.93,1.833-1.833a.707.707,0,0,1,1.13.017c.236.227.459.469.775.8,0-.47-.008-.822,0-1.172a.689.689,0,0,1,.756-.751q1.317-.016,2.635,0a.689.689,0,0,1,.752.755,5.755,5.755,0,0,0,.09,1.1c.219-.235.431-.477.658-.7A.723.723,0,0,1,35.826,4.9q.894.878,1.771,1.772a.716.716,0,0,1-.013,1.163c-.226.234-.459.459-.762.762.447,0,.787-.007,1.127,0a.7.7,0,0,1,.775.777q.014,1.3,0,2.592a.7.7,0,0,1-.775.777c-.34.008-.681,0-1.1,0,.364.391.6.763,1.167.717a.838.838,0,0,1,.637.4c.934,1.8,1.839,3.616,2.735,5.435a.69.69,0,0,1-.677,1.057c-.644.012-1.289,0-1.956,0v7.515a2.064,2.064,0,0,0,.234.075,2.753,2.753,0,0,1,.886,5.117c-1.774,1.04-3.56,2.062-5.342,3.091-2.006,1.158-4.018,2.307-6.016,3.477a5.581,5.581,0,0,1-2.916.785c-3.2-.015-6.395-.022-9.591,0a6.085,6.085,0,0,1-3.069-.721c-.113-.062-.233-.114-.35-.167a.6.6,0,0,0-.133-.01c0,.283.009.565,0,.846a.682.682,0,0,1-.733.73q-2.722.012-5.443,0a.682.682,0,0,1-.733-.73c-.009-.2,0-.4,0-.649Zm6.913-9.14v.507c0,2.059.017,4.119-.013,6.178a.853.853,0,0,0,.576.938,6.26,6.26,0,0,0,2.6.832c3.4-.017,6.8.013,10.2-.025a3.645,3.645,0,0,0,1.688-.422c3.906-2.211,7.786-4.465,11.669-6.716a1.367,1.367,0,0,0,.528-1.9,1.384,1.384,0,0,0-1.885-.49q-3.374,1.924-6.726,3.885a.522.522,0,0,0-.211.366A2.749,2.749,0,0,1,27.3,36.331c-2.668-.7-5.332-1.426-8-2.143-.523-.141-.747-.467-.628-.9.111-.4.474-.567.972-.434q2.229.593,4.458,1.191c1.194.32,2.385.652,3.582.961a1.38,1.38,0,0,0,1.79-1.522,1.455,1.455,0,0,0-1.251-1.2c-3-.8-6-1.611-9-2.41a5.329,5.329,0,0,0-2.626-.335c-1.371.323-2.735.676-4.146,1.029ZM37.345,20.346h-.522c-2.5,0-5.01-.01-7.513.008a.969.969,0,0,1-1.006-.631c-.348-.757-.739-1.494-1.115-2.239-.045-.089-.107-.168-.2-.306V30.512c1.2.426,2.594.389,3.378,1.6a.945.945,0,0,0,.158-.051q3.308-1.908,6.608-3.826a.558.558,0,0,0,.2-.408c.02-.748.009-1.5.009-2.246V20.346Zm-11.77-3.083-.069-.033c-.417.83-.85,1.652-1.243,2.492a.971.971,0,0,1-1.006.631c-2.52-.018-5.04-.008-7.561-.008h-.461v8.087c.173-.039.325-.067.472-.108a5.47,5.47,0,0,1,3.023-.016c1.33.371,2.664.722,4,1.078.939.251,1.88.5,2.847.754V17.262ZM21.443,1.855v.5c0,1.095-.009,2.188,0,3.283a.925.925,0,0,1-.457.863q-.925.595-1.832,1.22a.761.761,0,0,1-.955,0c-.6-.416-1.213-.826-1.832-1.22a.949.949,0,0,1-.464-.9c.016-1.122.007-2.246,0-3.369a3.2,3.2,0,0,0-.036-.331,4.792,4.792,0,0,0-.537,7.405A3.737,3.737,0,0,1,16.6,12.3c-.015.369,0,.737,0,1.1h1.383c0-.636,0-1.24,0-1.843,0-.573.264-.9.707-.887.427.01.672.325.674.877,0,.615,0,1.229,0,1.858h1.383c0-.326.016-.627,0-.925a3.923,3.923,0,0,1,1.322-3.23,4.584,4.584,0,0,0,1.339-4.427,4.711,4.711,0,0,0-1.966-2.969Zm-10.4,37.832V28.677h-4.1V39.687ZM25.16,14.814c-3.387,0-6.685,0-9.983.013a.537.537,0,0,0-.358.28c-.478.918-.936,1.848-1.4,2.776-.171.343-.336.688-.527,1.081h.533c2.809,0,5.618-.053,8.425.029a1.6,1.6,0,0,0,1.816-1.141c.408-1.022.966-1.983,1.491-3.037Zm14.493,4.149c-.068-.162-.111-.281-.166-.393-.566-1.133-1.144-2.258-1.693-3.4a.551.551,0,0,0-.586-.364c-3.125.012-6.251.007-9.376.008-.121,0-.243.013-.417.023.641,1.28,1.266,2.508,1.865,3.748a.582.582,0,0,0,.618.384c3.1-.013,6.193-.008,9.29-.008h.464ZM5.509,38.305V30.061H1.415v8.244H5.509ZM31.122,5.152c0,.514-.012.987,0,1.461a.823.823,0,0,1-.583.854.848.848,0,0,1-1.1-.142c-.33-.362-.677-.705-.978-1.015l-1.038.949c.335.336.638.666.97.963a.89.89,0,0,1,.226,1.156.89.89,0,0,1-.974.6c-.441-.021-.885,0-1.342,0v1.383c.513,0,1,.006,1.487,0a.758.758,0,0,1,.778.5c.294.672.277.789-.248,1.327a3,3,0,0,0-.195.253h3.033a2.917,2.917,0,0,1-2.089-3.172,2.762,2.762,0,0,1,5.442-.139c.3,1.432-.447,2.606-2.106,3.286h3.1c-.136-.145-.224-.256-.327-.345A.831.831,0,0,1,35,11.978a.86.86,0,0,1,.913-.624c.469.02.939,0,1.4,0V9.975c-.507,0-.982-.01-1.456,0a.824.824,0,0,1-.847-.592.843.843,0,0,1,.151-1.092c.362-.326.705-.673,1.065-1.016l-1.01-1.009c-.347.354-.7.691-1.025,1.051a.847.847,0,0,1-1.093.153.825.825,0,0,1-.593-.846c.014-.485,0-.97,0-1.472H31.125Zm.7,4.133A1.38,1.38,0,1,0,33.2,10.667a1.386,1.386,0,0,0-1.369-1.381Z" transform="translate(-0.01 -0.007)" fill="#328128" />
                         </svg>
-                        <span className='veritical-align-text-top ml-1'>Services</span></h6>
+                        <span className='veritical-align-text-top ml-1'>{t("Services")}</span></h6>
 
                       <div className="row services p-3">
                         {typeof addOnsResponse !== 'undefined' && addOnsResponse !== null && typeof addOnsResponse.services !== 'undefined' && addOnsResponse.services !== null ?
@@ -624,7 +626,7 @@ export default function AddOn() {
                               <path id="Path_19749" data-name="Path 19749" d="M63,206.135c-.552,0-1.1.014-1.655,0a1.225,1.225,0,0,1-1.312-1.219,1.2,1.2,0,0,1,1.295-1.179c1.153-.018,2.308-.02,3.462,0a1.2,1.2,0,1,1,.017,2.392c-.6.025-1.2.005-1.806.005v0Z" transform="translate(-53.999 -183.273)" fill="#328128" />
                             </g>
                           </svg>
-                          <span className='veritical-align-text-top ml-1'>Merchandise</span></h6>
+                          <span className='veritical-align-text-top ml-1'>{t("Merchandise")}</span></h6>
                         <div className='text-dark fw-500 fs-6 px-4 py-2 px-sm-2'>
                           <a href="javascript:void(0)">                  <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 33.547 31.336">
                             <g id="add-to-cart_1_" data-name="add-to-cart (1)" transform="translate(0.062 -0.009)">
@@ -680,49 +682,49 @@ export default function AddOn() {
                             transform="translate(-121.901 -177.054)"
                           ></path>
                         </g>
-                      </svg><span className='veritical-align-text-top ml-1'>Vehicle Details</span></h6>
+                      </svg><span className='veritical-align-text-top ml-1'>{t("Vehicle Details")}</span></h6>
 
                     {vehicleaccordian.length < 3 && (
                       <div className="ui form px-4 px-sm-2 vehicledetail">
                         <div className="field w-100 datePicker my-3">
-                          <label className='fw-500 fs-7 mb-2'>Vehicle Type</label>
-                          <input placeholder='Vehicle Type' value={vehicleType} onChange={(e) => setVehicleType(e.target.value)} />
+                          <label className='fw-500 fs-7 mb-2'>{t("Vehicle Type")}</label>
+                          <input placeholder={t("Vehicle Type ")} value={vehicleType} onChange={(e) => setVehicleType(e.target.value)} />
                         </div>
                         <div className="field w-100 datePicker my-3">
-                          <label className='fw-500 fs-7 mb-2'>Year</label>
+                          <label className='fw-500 fs-7 mb-2'>{t("Year")}</label>
 
                           {/* <SemanticDatepicker placeholder='Year' formatOptions="yyyy" type='date' className='w-100' /> */}
                           <input placeholder='Year' className='w-100' minLength={1900} maxLength={2099}  value={year} onChange={(e) => setYear(e.target.value)} />
                         </div>
                         <div className="field w-100 datePicker my-3">
-                          <label className='fw-500 fs-7 mb-2'>Brand</label>
+                          <label className='fw-500 fs-7 mb-2'>{t("Brand")}</label>
                           <input placeholder='Brand' value={brand} onChange={(e) => setBrand(e.target.value)} />
                         </div>
                         <div className="field w-100 datePicker my-3">
-                          <label className='fw-500 fs-7 mb-2'>Model</label>
-                          <input placeholder='Model' value={model} onChange={(e) => setModel(e.target.value)} />
+                          <label className='fw-500 fs-7 mb-2'>{t("Model")}</label>
+                          <input placeholder={t("Model")} value={model} onChange={(e) => setModel(e.target.value)} />
                         </div>
                         <div className="field w-100 datePicker my-3">
-                          <label className='fw-500 fs-7 mb-2'>Color</label>
-                          <input placeholder='Color' value={color} onChange={(e) => setColor(e.target.value)} />
+                          <label className='fw-500 fs-7 mb-2'>{t("Color")}</label>
+                          <input placeholder={'Color'} value={color} onChange={(e) => setColor(e.target.value)} />
                         </div>
                         <div className="field w-100 datePicker my-3">
-                          <label className='fw-500 fs-7 mb-2'>Vehicle State</label>
-                          <input placeholder='Vehicle State' value={vehicleState} onChange={(e) => setVehicleState(e.target.value)} />
+                          <label className='fw-500 fs-7 mb-2'>{t("Vehicle State")}</label>
+                          <input placeholder={t("Vehicle State")} value={vehicleState} onChange={(e) => setVehicleState(e.target.value)} />
                         </div>
                         <div className="field w-100 datePicker my-3">
-                          <label className='fw-500 fs-7 mb-2'>Registration No</label>
-                          <input placeholder='Registration No' value={registrationNo} onChange={(e) => setRegistrationNo(e.target.value)} />
+                          <label className='fw-500 fs-7 mb-2'>{t("Registration No")}</label>
+                          <input placeholder={t("Registration No")} value={registrationNo} onChange={(e) => setRegistrationNo(e.target.value)} />
                         </div>
                         <div className="field w-100 datePicker my-3">
-                          <label className='fw-500 fs-7 mb-2'>License No</label>
-                          <input placeholder='License No' value={licenseNo} onChange={(e) => setLicenseNo(e.target.value)} />
+                          <label className='fw-500 fs-7 mb-2'>{t("License No")}</label>
+                          <input placeholder={t("License No")} value={licenseNo} onChange={(e) => setLicenseNo(e.target.value)} />
                         </div>
                         <div className={`text-success-dark mb-2 ${(vehicleType === '' && year === '' && brand === '' && color === '' && vehicleState === '' && registrationNo === '' && licenseNo === '') && `d-none`}`}>
                           <a onClick={e => VehicleFormSubmitHandler(e)} href="/" className='text-success fs-7 cursor-pointer'> <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 27.505 27.5">
                             <path id="floating" d="M577.346,2164.47h1.719c.468.061.939.108,1.4.186a13.8,13.8,0,0,1,11.276,11.2c.089.5.142,1.006.211,1.51v1.719c-.04.327-.075.656-.122.981a13.749,13.749,0,1,1-23.4-11.494,13.464,13.464,0,0,1,7.4-3.886C576.337,2164.593,576.843,2164.539,577.346,2164.47Zm2,14.892h4.82a1.14,1.14,0,1,0,.027-2.278c-1.5-.009-3.007,0-4.51,0h-.336v-4.813a1.118,1.118,0,0,0-.693-1.111,1.131,1.131,0,0,0-1.588,1.07c-.01,1.5,0,3.007,0,4.51v.344h-4.806a1.141,1.141,0,1,0-.055,2.28c1.512.011,3.025,0,4.537,0h.323v.364c0,1.477,0,2.953,0,4.43a1.141,1.141,0,1,0,2.28.068c.012-1.5,0-3.007,0-4.51Z" transform="translate(-564.451 -2164.47)" fill="#328128" />
                           </svg>
-                            <span className='veritical-align-text-top ml-1 fs-7'>Add more</span></a>
+                            <span className='veritical-align-text-top ml-1 fs-7'>{t("Add more")}</span></a>
                         </div>
                       </div>
                     )}

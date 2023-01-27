@@ -1,5 +1,7 @@
 import React from 'react';
+import { useTranslation } from "react-i18next";
 export default function PreBookingBreadcrumb(props) {
+  const { t, i18n } = useTranslation();
   return (
   <div className="py-1">
       <div className="text-center my-6">
@@ -29,7 +31,7 @@ export default function PreBookingBreadcrumb(props) {
                     ></path>
                   </g>
                 </svg>
-          <span className={`veritical-align-text-top  ${props.activeStep.startsWith(1)? ' text-success':'text-secondary'}`}> RENTING DETAILS</span>
+          <span className={`veritical-align-text-top  ${props.activeStep.startsWith(1)? ' text-success':'text-secondary'}`}> {t("RENTING DETAILS")}</span>
               </div>
               <i className="right chevron icon divider veritical-align-text-top "></i>
               <div className={`section mb-1 ` }>
@@ -53,7 +55,7 @@ export default function PreBookingBreadcrumb(props) {
         transform="translate(-635.609 1123.713)"
       ></path>
     </svg>
-    <span className={`veritical-align-text-top  ${props.activeStep.startsWith(12)? ' text-success':'text-secondary'}`}> ADD ON</span>
+    <span className={`veritical-align-text-top  ${props.activeStep.startsWith(12)? ' text-success':'text-secondary'}`}>{t("ADD ON")}</span>
 
     
               </div>
@@ -75,7 +77,7 @@ export default function PreBookingBreadcrumb(props) {
   </g>
 </svg>
                 
-                <span className={`ml-4px veritical-align-text-top  ${props.activeStep.startsWith(123)? ' text-success':'text-secondary'}`}>TENANT DEATILS</span>
+                <span className={`ml-4px veritical-align-text-top  ${props.activeStep.startsWith(123)? ' text-success':'text-secondary'}`}>{t("TENANT DEATILS")}</span>
   
                 </div>
               <i className="right chevron icon divider veritical-align-text-top "></i>
@@ -86,7 +88,7 @@ export default function PreBookingBreadcrumb(props) {
                 <path id="Path_15985" data-name="Path 15985" d="M416.053-694.14a14.166,14.166,0,0,1-2.843-1.555c-2.008-1.176-4-2.379-5.995-3.579a1.765,1.765,0,0,1-.277-2.877,1.757,1.757,0,0,1,2.029-.189q2.164,1.162,4.322,2.335c.045.024.091.047.162.082a2.082,2.082,0,0,1,1.66-1.24c1.5-.383,2.993-.811,4.495-1.194a6.568,6.568,0,0,1,1.276-.166c.481-.028.966,0,1.449-.009a2.469,2.469,0,0,1,1.421.4c.3.193.619.371.973.583v-1.439h4.427v8.854h-4.4c-.009-.208-.018-.416-.028-.639l-1.784.639Zm4.365-4.811c-.032.025-.043.041-.058.045-1.614.431-3.221.891-4.845,1.28a1.7,1.7,0,0,1-2.106-1.211.455.455,0,0,0-.2-.208c-.573-.318-1.15-.625-1.727-.937-.978-.528-1.954-1.06-2.933-1.582a.884.884,0,0,0-1.328.593.9.9,0,0,0,.517.978l7.9,4.728a1.712,1.712,0,0,0,.907.242c1.8,0,3.606-.017,5.409.006a3.931,3.931,0,0,0,1.78-.34,6.951,6.951,0,0,1,.769-.3.31.31,0,0,0,.243-.354c-.01-1.217-.049-2.435.012-3.649a1.232,1.232,0,0,0-.753-1.319c-1.4-.764-.941-.67-2.5-.664a7.3,7.3,0,0,0-1.59.128c-1.051.235-2.082.545-3.122.823q-.936.249-1.871.5a.9.9,0,0,0-.668,1.071.844.844,0,0,0,.389.544.844.844,0,0,0,.662.091c1.17-.289,2.334-.6,3.5-.91l1.4-.37C420.282-699.469,420.351-699.206,420.418-698.951Zm5.226-3.133v7.049h2.61v-7.049Z" transform="translate(-402.665 720.63)" />
               </g>
             </svg>
-              <span className={`veritical-align-text-top ml-4px  ${props.activeStep.startsWith(1234)? ' text-success':'text-secondary'}`}>E-SIGN &PAY NOW</span>
+              <span className={`veritical-align-text-top ml-4px  ${props.activeStep.startsWith(1234)? ' text-success':'text-secondary'}`}>{t("E-SIGN &PAY NOW")}</span>
 
               </div>
           </div>
