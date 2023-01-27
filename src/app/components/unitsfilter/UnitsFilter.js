@@ -1,3 +1,4 @@
+import { t } from 'i18next';
 import { componentsToColor } from 'pdf-lib';
 import { propTypes } from 'pdf-viewer-reactjs';
 import React, { Component, useState, useEffect } from 'react'
@@ -109,6 +110,7 @@ const AccordionExampleStyled = (selectedStorageType) => {
     } else {
       setfilterDimensions((item) => item.filter((i) => i.unitTypeid !== unitTypeId));
     }
+
   }
 
   const selectAllBuilding = () => {
@@ -204,10 +206,12 @@ const AccordionExampleStyled = (selectedStorageType) => {
     setMinPriceState(0);
   }
 
+
   const applyAllFiterValues = () => {
     let selectedbuildingId;
     let selectedUnitTypeId;
     let selectedAmenitiesId;
+    
     if (typeof filterBuilding !== "undefined" && filterBuilding !== "" && filterBuilding !== null) {
       selectedbuildingId = filterBuilding.filter((i) => i.buildingid).map((item) => {
         return item.buildingid;
@@ -233,6 +237,8 @@ const AccordionExampleStyled = (selectedStorageType) => {
 
     selectedStorageType.unitsearchFilters(FilterSearchId);
 
+
+
   }
 
   return (
@@ -241,10 +247,10 @@ const AccordionExampleStyled = (selectedStorageType) => {
       <Accordion.Title active={activeIndex === 0} index={0}>
         <div className='d-flex justify-content-between align-items-center'>
           <div className='d-flex justify-content-between align-items-center'>
-            <img src="/assets/images/filter.png" alt="" />Filters
+            <img src="/assets/images/filter.png" alt="" />{t("Filters")}
           </div>
           <div>
-            <p className='fs-8 text-success' onClick={() => clearAllFilters()}>Clear All</p>
+            <p className='fs-8 text-success' onClick={() => clearAllFilters()}>{t("Clear All")}</p>
           </div>
         </div>
         <div className='row mt-3 selectedFilter'>
@@ -291,7 +297,7 @@ const AccordionExampleStyled = (selectedStorageType) => {
         onClick={handleClick}
       >
         <div className='d-flex justify-content-between align-items-center'>
-          <img src="/assets/images/building.png" alt="" />Building
+          <img src="/assets/images/building.png" alt="" />{t("Building")}
         </div>
         <div>
           <img src="/assets/images/arrow-down.png" alt="" />
@@ -301,7 +307,7 @@ const AccordionExampleStyled = (selectedStorageType) => {
         <div>
           {/* <h6 className='fw-600 mb-1'>Building</h6> */}
           <div className='text-success text-right'>
-            {selectAll ? <a onClick={() => selectAllBuilding()} >Select All</a> : ""} | <a onClick={() => clearAllBuilding()}>Clear All</a>
+            {selectAll ? <a onClick={() => selectAllBuilding()} >{t("Select All")}</a> : ""} | <a onClick={() => clearAllBuilding()}>{t("Clear All")}</a>
           </div>
           <ul>
             {typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof filters.building !== 'undefined' && filters.building !== null && filters.building !== "" && filters.building.length > 0 ?
@@ -322,7 +328,7 @@ const AccordionExampleStyled = (selectedStorageType) => {
         onClick={handleClick}
       >
         <div className='d-flex justify-content-between align-items-center'>
-          <img src="/assets/images/unit-type.png" alt="" />Unit Type
+          <img src="/assets/images/unit-type.png" alt="" />{t("Unit Type")}
         </div>
         <div>
           <img src="/assets/images/arrow-down.png" alt="" />
@@ -332,7 +338,7 @@ const AccordionExampleStyled = (selectedStorageType) => {
         <div>
           {/* <h6 className='fw-600 mb-1'>LARGE</h6> */}
           <div className='text-success text-right'>
-            {selectAll ? <a onClick={() => selectAllUnitType()}>Select All</a> : ""}  | <a onClick={() => clearAllUnitType()}>Clear All</a>
+            {selectAll ? <a onClick={() => selectAllUnitType()}>{t("Select All")}</a> : ""}  | <a onClick={() => clearAllUnitType()}>{t("Clear All")}</a>
           </div>
           <ul>
             {typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof filters.unitType !== 'undefined' && filters.unitType !== null && filters.unitType !== "" && filters.unitType.length > 0 ?

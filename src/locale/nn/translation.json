@@ -46,7 +46,13 @@
   "Password must contain at least eight characters!":"Passordet må inneholde minst åtte tegn!",
   "Password must contain at least one number (0-9)":"Passordet må inneholde minst ett nummer (0-9)",
   "Password must contain at least one special character!":"Passordet må inneholde minst ett spesielt tegn!",
-  "Username / email already exists":"Brukernavn / e -post eksisterer allerede"
+  "Username / email already exists":"Brukernavn / e -post eksisterer allerede",
+  "Find Your Storage Place":"Finn lagringsstedet ditt",
+  "Filters":"Filtre",
+  "Clear All":"Rydd alt",
+  "Building":"Bygg inng",
+  "Select All":"Velg alle"
+  
 
 
 

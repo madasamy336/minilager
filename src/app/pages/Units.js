@@ -28,6 +28,7 @@ const Units = () => {
     const [filterRequest, setFilterRequest] = useState('')
     const [loader, setLoading] = useState(true);
     const [filtercall, setFilterCall] = useState(false);
+    const { t, i18n } = useTranslation();
 
 
     const [unitTypeModal, SetunitTypeModal] = useState({
@@ -330,7 +331,7 @@ const Units = () => {
                 <div className="units-banner position-relative">
                     <img className='w-100' src='/assets/images/rentnow-img.png' alt="Storage Units" />
                     <div className='dropdown-div mx-auto position-absolute'>
-                        <h2 className='text-center'>Find Your Storage Place</h2>
+                        <h2 className='text-center'>{t("Find Your Storage Place")}</h2>
                         <div className='row'>
                             <div className='col-lg-6 col-md-6 col-sm-12'>
                                 {typeof tenantTypeOptions !== "undefined" && tenantTypeOptions !== null && tenantTypeOptions !== "" && tenantTypeOptions.length > 0  ? <Dropdown placeholder="Choose Tenant Type" clearable fluid  selection options={tenantTypeOptions} value={tenantTypes}  onChange={tenantInfoChange} /> : null}
