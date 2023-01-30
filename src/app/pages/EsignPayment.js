@@ -350,7 +350,8 @@ export default function EsignPayment() {
     e.preventDefault();
     console.log("Triggered");
     setButtonLoader(true)
-    const successUrl = window.location.hostname + '/preBooking/viewEsignDocuments' + "?eSigned=true"
+    //const successUrl = window.location.hostname + '/preBooking/viewEsignDocuments' + "?eSigned=true"
+    const successUrl = `https://${window.location.hostname}/preBooking/viewEsignDocuments?eSigned=true`
     console.log(successUrl);
     const requestBody = {
       "event_type": "INITIATE_ESIGN_DOCUMENT_CREATION",
@@ -360,9 +361,9 @@ export default function EsignPayment() {
       "initiated_by": tenantInfo.firstName,
       "request_from": "BOOKING_PORTAL",
       "redirect_settings": {
-        "success_url": "http://" + window.location.host + '/preBooking/viewEsignDocuments',
-        "abort_url": "http://" + window.location.host,
-        "error_url": "http://" + window.location.host + '/preBooking/documentExpired'
+        "success_url": "https://" + window.location.host + '/preBooking/viewEsignDocuments',
+        "abort_url": "https://" + window.location.host,
+        "error_url": "https://" + window.location.host + '/preBooking/documentExpired'
       },
       "title": "As simple as that",
       "description": "This is an important document",

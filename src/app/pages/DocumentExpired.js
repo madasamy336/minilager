@@ -15,11 +15,13 @@ export default function DocumentExpired(props) {
     const navigate = useNavigate();
 
     const triggerEsign = (e) => {
+        debugger
         e.preventDefault();
         console.log("Triggered");
         const currentsession = JSON.parse(sessionStorage.getItem('tenantInfo'));
         setButtonLoader(true)
-        const successUrl = window.location.hostname + '/preBooking/viewEsignDocuments' + "?eSigned=true"
+        const successUrl = `https://${window.location.hostname}/preBooking/viewEsignDocuments?eSigned=true`
+        //const successUrl = window.location.hostname + '/preBooking/viewEsignDocuments' + "?eSigned=true"
         console.log(successUrl);
         const requestBody = {
             "event_type": "INITIATE_ESIGN_DOCUMENT_CREATION",
@@ -29,9 +31,9 @@ export default function DocumentExpired(props) {
             "initiated_by": currentsession.firstName,
             "request_from": "BOOKING_PORTAL",
             "redirect_settings": {
-                "success_url": "http://" + window.location.host + '/preBooking/viewEsignDocuments',
-                "abort_url": "http://" + window.location.host,
-                "error_url": "http://" + window.location.host + '/preBooking/documentExpired'
+                "success_url": "https://" + window.location.host + '/preBooking/viewEsignDocuments',
+                "abort_url": "https://" + window.location.host,
+                "error_url": "https://" + window.location.host + '/preBooking/documentExpired'
             },
             "title": "As simple as that",
             "description": "This is an important document",

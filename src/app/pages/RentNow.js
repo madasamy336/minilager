@@ -67,16 +67,20 @@ const RentNow = () => {
 
     }
     const clearSearchValue = (e) => {
-        console.log("22222222");
         e.preventDefault()
-        setSearchValue("")
         if (searchValue.length > 0) {
             const newVotes = searchValue;
             setSearchValue('')
+            fetchFaciltyDetail();
         }
 
     }
-    console.log(searchValue);
+    // searchinput.current.addEventListener("keydown",(e)=> {
+    //     if(e.code === "Enter"){
+    //         console.log("test")
+    //     }
+    // })
+    console.log(searchinput.current)
     const { t } = useTranslation();
     useEffect(() => {
         fetchFaciltyDetail();

@@ -270,6 +270,7 @@ const Units = () => {
 
 
     const tenantInfoChange = (event, data) => {
+        console.log(data)
         setTenantTypes(data.value);
         if(data.value ==="true" || data.value ==="false"){
             document.getElementById('tenantTypeError').style.display = 'none'
@@ -322,15 +323,15 @@ const Units = () => {
     const sortUnitOptions = [
         {
             key: 'Ascending',
-            text: 'Price Low to High',
+            text: `${t("Price Low to High")}`,
             value: 'Ascending',
-            content: 'Price Low to High',
+            content: `${t("Price Low to High")}`,
         },
         {
             key: 'Descending',
-            text: 'Price High to Low',
+            text: `${t("Price High to Low")}`,
             value: 'Descending',
-            content: 'Price High to Low',
+            content: `${t("Price High to Low")}`,
             
         }
     ]
@@ -345,7 +346,7 @@ const Units = () => {
                         <h2 className='text-center'>{t("Find Your Storage Place")}</h2>
                         <div className='row'>
                             <div className='col-lg-6 col-md-6 col-sm-12'>
-                                {typeof tenantTypeOptions !== "undefined" && tenantTypeOptions !== null && tenantTypeOptions !== "" && tenantTypeOptions.length > 0  ? <Dropdown placeholder="Choose Tenant Type" clearable fluid  selection options={tenantTypeOptions} value={tenantTypes}  onChange={tenantInfoChange} /> : null}
+                                {typeof tenantTypeOptions !== "undefined" && tenantTypeOptions !== null && tenantTypeOptions !== "" && tenantTypeOptions.length > 0  ? <Dropdown placeholder={`${t("Choose Tenant Type")}`} clearable fluid  selection options={tenantTypeOptions} value={tenantTypes}  onChange={tenantInfoChange} /> : null}
                             </div>
                             <div className='col-lg-6 col-md-6 col-sm-12'>
                                 {storageTypeOptions !== null && typeof storageTypeOptions !== 'undefined' && storageTypeOptions !== '' && typeof storageTypeOptions[0].value !== 'undefined' && storageTypeOptions[0].value !== null && storageTypeOptions[0].value !== '' ?
@@ -370,7 +371,7 @@ const Units = () => {
                                 <div className='sort-div text-right py-1'>
                                     <Header as='h4'>
                                         <Header.Content>
-                                            Sort by:{' '}
+                                            {t("Sort by")}:{' '}
                                             <Dropdown
                                                 floating
                                                 inline

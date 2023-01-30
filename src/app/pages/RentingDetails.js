@@ -8,7 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Pricesummary from '../components/pricesummary/pricesummary';
 import { useRef } from 'react';
 import { useForm } from 'react-hook-form';
-// import { useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import instance from '../services/instance';
 import request from '../services/request';
 import Helper from "../helper";
@@ -35,6 +35,7 @@ export default function RentingDetails() {
     errors
   } = useForm();
   const [TestT, SetCustomS] = useState([]);
+  const { t, i18n } = useTranslation();
   const [invoice, setInvoice] = useState();
   const [invoiceDefault, setInvoiceDefault] = useState();
   const [recurring, setRecurring] = useState();
@@ -410,24 +411,24 @@ export default function RentingDetails() {
                         transform="translate(-121.901 -177.054)"
                       ></path>
                     </g>
-                  </svg><span className='veritical-align-text-top ml-1'>Renting Details</span></h6>
+                  </svg><span className='veritical-align-text-top ml-1'>{t("Renting Details")}</span></h6>
                   <div className="ui form px-4 px-sm-2">
                     <div className="field w-100 datePicker my-3">
-                      <label className='fw-500 fs-7 mb-2' >Move-In Date</label>
+                      <label className='fw-500 fs-7 mb-2' >{t("Move-In Date")}</label>
                       <SemanticDatepicker clearable={false} placeholder='Select date' className='w-100' clearOnSameDateClick={false} value={movinDate} onChange={movindateOnchange} filterDate={(date) => { const now = new Date(); return date >= now; }} />
                     </div>
                     {typeof invoice !== "undefined" && invoice !== null && invoice.length > 0 ?
                       <div className="field w-100  my-3">
-                        <label className='fw-500 fs-7 mb-2'>Invoice Period</label>
+                        <label className='fw-500 fs-7 mb-2'>{t("Invoice Period")}</label>
                         <Dropdown placeholder='Select Invoice Period' fluid search selection options={invoice} value={invoice.value} defaultValue={invoiceDefault} onChange={invoiceOnchange} />
                       </div> : ""}
                     {typeof recurring !== "undefined" && recurring !== null && recurring.length > 0 ?
                       <div className="field w-100  my-3">
-                        <label className='fw-500 fs-7 mb-2'>Invoice Recurring</label>
+                        <label className='fw-500 fs-7 mb-2'>{t("Invoice Recurring")}</label>
                         <Dropdown placeholder='Select Invoice Recurring' fluid search selection options={recurring} value={recurring.value} defaultValue={recurringDefaultValue} onChange={recurringOnchange} />
                       </div> : ""}
                     <div className="field w-100 datePicker my-3">
-                      <label className='fw-500 fs-7 mb-2' >Desired Move Out date</label>
+                      <label className='fw-500 fs-7 mb-2' >{t("Desired Move Out date")}</label>
                       <SemanticDatepicker placeholder='Select date' className='w-100' value={desiredMoveOutDate} filterDate={(date) => { const now = new Date(movinDate); return date >= now; }} onChange={DesiredMoveoutDateChange} />
                     </div>
 

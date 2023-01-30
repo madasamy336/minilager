@@ -4,11 +4,10 @@ import { Dropdown, Modal, Placeholder } from 'semantic-ui-react';
 import { json, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-// import { useTranslation } from "react-i18next";
+ import { useTranslation } from "react-i18next";
 import instance from '../../services/instance';
 import request from '../../services/request';
 import Helper from "../../helper";
-import { composeInitialProps } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useRef } from 'react';
 let helper = new Helper();
 let storageTypeId;
@@ -17,6 +16,7 @@ const Pricesummary = forwardRef((props, ref) => {
   let recurringData = JSON.parse(sessionStorage.getItem("recurringData"));
   let BusinessUser =  JSON.parse(sessionStorage.getItem('isBussinessUser'));
   let promocheck = JSON.parse(sessionStorage.getItem('promoApplied'));
+  const { t, i18n } = useTranslation();
   let promoAppliedsession;
   promoAppliedsession = sessionStorage.getItem("applypromo");
   useImperativeHandle(ref, () => ({
@@ -250,43 +250,43 @@ console.log(promoAppliedsession);
         unitInfoDetails.map((item) => {
           return (<div key={item.unitInfo.id} className='col-12 col-md-5 pl-1 pl-sm-0 mb-3'>
             <div className='bg-white px-0 py-2 border-radius-15 border-top-success-4 card-boxshadow'>
-              <h6 className='text-success-dark fw-600 fs-6 px-4 pt-2 mb-1  px-sm-2'>Invoice Details</h6>
-              <p className='px-4 mb-2 px-sm-2 fw-400 text-light-gray'>Please see the breakdown below</p>
+              <h6 className='text-success-dark fw-600 fs-6 px-4 pt-2 mb-1  px-sm-2'>{t("Invoice Details")}</h6>
+              <p className='px-4 mb-2 px-sm-2 fw-400 text-light-gray'>{t("Please see the breakdown below")}</p>
               <div className='px-4  px-sm-2'>
                 <div className="py-2 card-border-secondary border-radius-10 mb-2">
                   <div className="content">
                     <p className='text-success-dark mb-1 fw-600 fs-6 px-1'>{item.unitInfo.storageType.name} - {item.unitInfo.unitNumber} ({item.unitInfo.unitMeasurement} {helper.measurementDisplayFormat(item.unitInfo.measurementType)}) </p>
-                    <div className="text-dark fw-500 mb-2 px-1">Payment Period: ({item.estimation.startsOn} to {item.estimation.endsOn})</div>
+                    <div className="text-dark fw-500 mb-2 px-1">{t("Payment Period")}: ({item.estimation.startsOn} to {item.estimation.endsOn})</div>
                     <div className='mb-2 d-flex px-1 justify-content-between text-light-gray fw-500'>
-                      <span>Rent for the payment period</span><span>{helper.displayCurrency(item.estimation.rentAmount)}</span>
+                      <span>{t("Rent for the payment period")}</span><span>{helper.displayCurrency(item.estimation.rentAmount)}</span>
                     </div>
                     {item.estimation.serviceCharges !== '' && item.estimation.serviceCharges > 0 ? <div className='mb-2 d-flex px-1 justify-content-between text-light-gray fw-500'>
-                      <span>Services</span><span>{helper.displayCurrency(item.estimation.serviceCharges)}</span>
+                      <span>{t("Services")}</span><span>{helper.displayCurrency(item.estimation.serviceCharges)}</span>
                     </div> : ""}
 
                     <div className='mb-2 d-flex px-1 justify-content-between text-light-gray fw-500'>
-                      <span>Tax {(helper.displayPercent(item.unitInfo.taxPercentage))}</span><span >{helper.displayCurrency(item.estimation.taxAmount)}</span>
+                      <span>{t("Tax")} {(helper.displayPercent(item.unitInfo.taxPercentage))}</span><span >{helper.displayCurrency(item.estimation.taxAmount)}</span>
                     </div>
                     <div className='mb-2 d-flex px-1 justify-content-between text-light-gray fw-500'>
-                      <span>Total rent for the payment period</span><span >{helper.displayCurrency(item.estimation.netAmount)}</span>
+                      <span>{t("Total rent for the payment period")}</span><span >{helper.displayCurrency(item.estimation.netAmount)}</span>
                     </div>
                     <div className='mb-2 d-flex px-1 justify-content-between text-light-gray fw-500'>
-                      <span>Total Due</span><span >{helper.displayCurrency(item.estimation.grossAmount)}</span>
+                      <span>{t("Total Due")}</span><span >{helper.displayCurrency(item.estimation.grossAmount)}</span>
                     </div>
 
 
 
                     <div className='mb-2 d-flex px-1 justify-content-between text-light-gray fw-500'>
-                      <p className='fs-6 fw-500 text-dark'>Promo Code</p>
+                      <p className='fs-6 fw-500 text-dark'>{t("Promo Code")}</p>
                     </div>
                     { !promocheck ?
                     <div className="field w-100 px-1 mt-3 mb-2" id ="promoInputbox">
                     <div className='row mt-1'>
                       <div className='col-9 ui input'>
-                        <input placeholder='Enter the code' className='border-bottom-only border-radius-0' value={promoValidate} onChange={e => setPromoValidate(e.target.value)} />
+                        <input placeholder={`${t("Enter the code")}`} className='border-bottom-only border-radius-0' value={promoValidate} onChange={e => setPromoValidate(e.target.value)} />
                       </div>
                       <div className='col-3 d-flex align-items-end justify-content-center'>
-                        <button className='ui button bg-success-dark fs-8 fw-400 text-white py-1 px-2' onClick={applyCoupon}>Apply</button>
+                        <button className='ui button bg-success-dark fs-8 fw-400 text-white py-1 px-2' onClick={applyCoupon}>{t("Apply")}</button>
                       </div>
                     </div>
                   </div>:""
@@ -301,7 +301,7 @@ console.log(promoAppliedsession);
                           <path id="Path_16042" data-name="Path 16042" d="M224.734,249.857a1.093,1.093,0,0,1-1.106-1.082,1.1,1.1,0,1,1,2.2-.015A1.1,1.1,0,0,1,224.734,249.857Z" transform="translate(-211.069 -233.745)" fill="#67be5c" />
                           <path id="Path_16043" data-name="Path 16043" d="M131.451,123.107a1.1,1.1,0,1,1-2.2.006,1.1,1.1,0,0,1,2.2-.006Z" transform="translate(-121.987 -115.154)" fill="#67be5c" />
                         </g>
-                      </svg> Use Promocode</span> {typeof promoOnchangebutton !== "undefined" && promoOnchangebutton !== null && promoOnchangebutton !== "" && promoOnchangebutton ? <span className='text-danger text-right cursor-pointer' onClick={() => promoOnchange()}>Change</span> : ""}
+                      </svg> {t("Use Promocode")}</span> {typeof promoOnchangebutton !== "undefined" && promoOnchangebutton !== null && promoOnchangebutton !== "" && promoOnchangebutton ? <span className='text-danger text-right cursor-pointer' onClick={() => promoOnchange()}>Change</span> : ""}
                     </div>
 
 
@@ -317,16 +317,16 @@ console.log(promoAppliedsession);
 
                     {typeof totalAmount !== "undefined" && totalAmount !== null && typeof totalAmount.netAmount !== "undefined" && totalAmount.netAmount !== null ?
                       <div className='mb-2 mt-3 d-flex px-1 justify-content-between text-light-gray fw-500'>
-                        <span>Net Amount</span><span >{helper.displayCurrency(totalAmount.netAmount)}</span>
+                        <span>{t("Net Amount")}</span><span >{helper.displayCurrency(totalAmount.netAmount)}</span>
                       </div> : ''}
 
                     {typeof totalAmount !== "undefined" && totalAmount !== null && typeof totalAmount.discount !== "undefined" && totalAmount.discount !== null && totalAmount.discount > 0 ?
                       <div className='mb-2 d-flex px-1 justify-content-between text-light-gray fw-500'>
-                        <span>Discount</span><span > - {helper.displayCurrency(totalAmount.discount)}</span>
+                        <span>{t("Discount")}</span><span > - {helper.displayCurrency(totalAmount.discount)}</span>
                       </div> : ''}
 
                     <div className='fw-700 px-1 d-flex justify-content-between'>
-                      <span>Total</span><span >{helper.displayCurrency(item.estimation.grossAmount)}</span>
+                      <span>{t("Total")}</span><span >{helper.displayCurrency(item.estimation.grossAmount)}</span>
                     </div>
                   </div>
                 </div>
@@ -368,7 +368,7 @@ console.log(promoAppliedsession);
         dimmer={applyDiscountModal.dimmer}
         open={applyDiscountModal.open}
         onClose={() => SetApplyDiscountModal({ open: false })} >
-        <Modal.Header className='bg-success-dark text-white text-center fs-6 py-2 fw-400 position-relative'>PROMO CODES
+        <Modal.Header className='bg-success-dark text-white text-center fs-6 py-2 fw-400 position-relative'>{t("PROMO CODES")}
 
           <svg onClick={() => SetApplyDiscountModal({ open: false })} className='r-3 cursor-pointer position-absolute' xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 17.473 17.47">
             <path id="wrong-5" d="M978.609-438.353l-2.052-2.043-4.37-4.366a1.33,1.33,0,0,1-.4-1.425,1.3,1.3,0,0,1,.833-.843,1.3,1.3,0,0,1,1.171.183,3.019,3.019,0,0,1,.353.321q3.009,3,6.009,6.01c.088.088.159.193.254.309.127-.118.217-.2.3-.281l6.156-6.156a1.332,1.332,0,0,1,1.325-.431,1.3,1.3,0,0,1,.927.828,1.3,1.3,0,0,1-.188,1.228,3.412,3.412,0,0,1-.325.35q-3,3.009-6.011,6.009a3.233,3.233,0,0,1-.317.244c.132.14.213.23.3.316q3.052,3.053,6.108,6.1a1.36,1.36,0,0,1,.441,1.387,1.305,1.305,0,0,1-2.205.564c-.59-.568-1.163-1.157-1.74-1.736l-4.487-4.491a2.068,2.068,0,0,1-.183-.248l-.142-.051a1.52,1.52,0,0,1-.191.325q-3.047,3.059-6.1,6.111a1.341,1.341,0,0,1-1.45.419,1.3,1.3,0,0,1-.851-.866,1.3,1.3,0,0,1,.235-1.19,3.215,3.215,0,0,1,.257-.274l6.034-6.033C978.386-438.167,978.484-438.245,978.609-438.353Z" transform="translate(-971.716 447.116)" fill="#fff" />
@@ -393,7 +393,7 @@ console.log(promoAppliedsession);
                     </div>
                   </div>
                 </div>
-              }) : <div className='d-flex align-items-center justify-content-center mx-auto'>"No Promo Codes Available" </div>}
+              }) : <div className='d-flex align-items-center justify-content-center mx-auto'>{t("No Promo Codes Available")} </div>}
           </div>
         </Modal.Content>
       </Modal>

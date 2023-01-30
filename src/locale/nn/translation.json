@@ -6,14 +6,14 @@
   "Search":"Søke",
   "View Units":"Vis enheter",
   "Records Selected":"Valgte poster",
-  "Total":"Totalt",
+  "Total":"totalt",
   "Pay Now":"Betal nå",
   "Invoice":"Faktura",
-  "Invoice Amount":"Invoice Amount",
-  "Invoice Date":"Invoice Date",
-  "Paid On":"Paid On",
-  "Invoice Details":"Invoice Details",
-  "Payment Receipt":"Payment Receipt",
+  "Invoice Amount":"Fakturabeløp",
+  "Invoice Date":"Fakturadato",
+  "Paid On":"Betalt på",
+  "Invoice Details":"Fakturedetaljer",
+  "Payment Receipt":"Kvittering",
   "WELCOME":"VELKOMMEN",
   "Don't have an account?":"Har du ikke en konto?",
   "Signup Now":"Registrer deg nå",
@@ -51,7 +51,78 @@
   "Filters":"Filtre",
   "Clear All":"Rydd alt",
   "Building":"Bygg inng",
-  "Select All":"Velg alle"
+  "Select All":"Velg alle",
+  "Unit Type":"Enhets type",
+  "Dimensions":"Dimensjoner",
+  "Price Range":"Prisklasse",
+  "Amenity":"Bekvemmelighet",
+  "Apply":"Søke om",
+  "Choose Tenant Type":"Velg leietype",
+  "Sort by":"Sorter etter",
+  "Price Low to High":"Pris lav til høy",
+  "Price High to Low":"Prisen høy til lav",
+  "Rent Now":"Leie nå",
+  "Only":"Bare",
+  "Units left":"Enheter igjen",
+  "Renting Details":"Leie detaljer",
+  "Move-In Date":"Innflyttingsdato",
+  "Invoice Period":"Fakturaperiode",
+  "Invoice Recurring":"Faktura tilbakevendende",
+  "Desired Move Out date":"Ønsket flytt ut dato",
+  "RENTING DETAILS":"Leie detaljer",
+  "ADD ON":"TILLEGG",
+  "TENANT DEATILS":"Leietakerdetaljer",
+  "E-SIGN &PAY NOW":"E-SIGN & BETAL NÅ",
+  "Please see the breakdown below":"Se sammenbruddet nedenfor",
+  "Payment Period":"Betalingsperiode",
+  "Rent for the payment period":"Leie for betalingsperioden",
+  "Services":"Tjenester",
+  "Tax":"Skatt",
+  "Total rent for the payment period":"Total leie for betalingsperioden",
+  "Total Due":"Totalt forfalt",
+  "Promo Code":"Rabattkode",
+  "Use Promocode":"Bruk promokode",
+  "Enter the code":"Tast inn koden",
+  "Net Amount":"Nettobeløp",
+  "PROMO CODES":"Kampanjekoder",
+  "No Promo Codes Available":"Ingen kampanjekoder tilgjengelig",
+  "Insurance":"Forsikring",
+  "I HAVE A":"JEG HAR EN",
+  "OWN INSURANCE":"Egen forsikring",
+  "Policy Provider Name":"Policy leverandørnavn",
+  "Please Enter Policy Provider Name":"Vennligst skriv inn navnet på policyleverandøren",
+  "Policy Number":"Policynummer",
+  "Please Enter Policy Number":"Vennligst skriv inn policynummer",
+  "Effective From Date":"Effektivt fra dato",
+  "Please Enter Effective From Date":"Vennligst skriv inn fra date fra dato",
+  "Effective To Date":"Effektiv til dags dato",
+  "Please Enter Effective To Date":"Vennligst legg inn i kraft til dags dato",
+  "Change":"Endring",
+  "Merchandise":"Handelsvarer",
+  "Vehicle Details":"Kjøretøydetaljer",
+  "Vehicle Type":"Bil type",
+  "Year ":"År",
+  "Brand ":"Merke",
+  "Model":"Modell",
+  "Color":"Farge",
+  "Vehicle State":"Kjøretøystat",
+  "Registration No":"registreringsnummer",
+  "License No":"Lisens nr",
+  "Add more":"Legg til mer"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
 
 
