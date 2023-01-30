@@ -8,8 +8,11 @@ import axios from 'axios';
 import Helper from "../helper";
 import { Modal, Button, Loader, Placeholder, Segment } from 'semantic-ui-react';
 import parse from "html-react-parser";
+import { useTranslation } from "react-i18next";
+
 let helper = new Helper();
 let unitDetailRespones = {};
+
 export default function EsignPayment() {
   const [unitdetail, setUnitdetail] = useState();
   let unitid = localStorage.getItem('unitid');
@@ -49,6 +52,7 @@ export default function EsignPayment() {
   const [autoPayEnabled, setAutopayEnabled] = useState(true);
   const [iFrameResponse, setIframeRespones] = useState(false);
   const [paymentModeId, setpaymentModeId] = useState('');
+  const { t, i18n } = useTranslation();
 
   const eSignature = JSON.parse(localStorage.getItem("eSignature"));
   if (insuranceDetail !== null && insuranceDetail.length > 0) {
