@@ -6,6 +6,8 @@ import request from '../../../services/request';
 import Helper from "../../../helper";
 import { json } from "react-router-dom";
 import ReactDOM from 'react-dom';
+import { useTranslation } from "react-i18next";
+
 let helper = new Helper();
 let userid = localStorage.getItem("userid");
 let invoiceId_No_Array = [];
@@ -15,6 +17,7 @@ let currentRecords;
 let pageNumbers;
 let nPages;
 export default function MYInvoices() {
+  const { t, i18n } = useTranslation();
   const [invoiceitems, setInvoiceItems] = useState();
   const[totalAmount,setTotalAmount] = useState(0);
   const [isCheck, setIsCheck] = useState([]);
