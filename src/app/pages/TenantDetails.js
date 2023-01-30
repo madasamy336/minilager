@@ -8,6 +8,7 @@ import { json, useNavigate } from "react-router-dom";
 import countriecodes from "../components/CountryCode";
 import instance from '../services/instance';
 import request from '../services/request';
+import { useTranslation } from "react-i18next";
 import Helper from "../helper";
 import axios from "axios";
 var qs = require('qs');
@@ -22,6 +23,7 @@ let customInputFieldValue;
 let DefaultCountryCode;
 
 export default function TenantDetails() {
+  const { t, i18n } = useTranslation();
   let unitid = localStorage.getItem('unitid');
   let userid = localStorage.getItem("userid");
   let preferredStorageValue = JSON.parse(sessionStorage.getItem("preferredStorage"));
@@ -111,16 +113,16 @@ export default function TenantDetails() {
     const value = emergencyContactDetails[name];
     let message = '';
     if (!value && name === "emergencyFname") {
-      message = 'First Name is Required';
+      message = `${t("First Name is Required")}`;
     }
     if (!value && name === "emergencyemail") {
-      message = 'Email is Required';
+      message = `${t("Email is Required")}`;
     }
     if (value && name === "emergencyemail" && !/\S+@\S+\.\S+/.test(value)) {
-      message = 'Email format must be as example@mail.com';
+      message = `${("Email format must be as example@mail.com")}`;
     }
     if (!value && name === "emergencyphoneno") {
-      message = 'Phone No is Required';
+      message = `${t('Phone No is Required')}`;
     }
 
     setEmergencyContactErr({ ...emergencyContactErr, [name]: message })
@@ -161,19 +163,19 @@ export default function TenantDetails() {
     let isValid = true;
 
     if (!emergencyContactDetails.emergencyFname) {
-      emergencyContactErr.emergencyFname = "First Name is Required ";
+      emergencyContactErr.emergencyFname = `${t("First Name is Required ")}`;
       isValid = false;
     }
     if (!emergencyContactDetails.emergencyemail) {
-      emergencyContactErr.emergencyemail = "Email is Required";
+      emergencyContactErr.emergencyemail = `${t("Email is Required")}`;
       isValid = false;
     }
     if (emergencyContactDetails.emergencyemail && !/\S+@\S+\.\S+/.test(emergencyContactDetails.emergencyemail)) {
-      emergencyContactErr.emergencyemail = "Email format must be as example@mail.com ";
+      emergencyContactErr.emergencyemail = `${t("Email format must be as example@mail.com ")}`;
       isValid = false;
     }
     if (!emergencyContactDetails.emergencyphoneno) {
-      emergencyContactErr.emergencyphoneno = "Phone No is Required";
+      emergencyContactErr.emergencyphoneno = `${t("Phone No is Required")}`;
       isValid = false;
     }
     if (!isValid) {
@@ -774,27 +776,27 @@ export default function TenantDetails() {
     }
     let isValid = true;
     if (!TenantInfoDetails.firstName) {
-      TenantInfoError.firstName = "first Name is Required";
+      TenantInfoError.firstName = `${t("First Name is Required")}`;
       isValid = false;
     }
     if (!TenantInfoDetails.lastName) {
-      TenantInfoError.lastName = "Last Name is Required";
+      TenantInfoError.lastName = `${t("Last Name is Required")}`;
       isValid = false;
     }
     if (!TenantInfoDetails.addressLineOne) {
-      TenantInfoError.addressLineOne = "address is Required";
+      TenantInfoError.addressLineOne = `${t("Address is Required")}`;
       isValid = false;
     }
     if (!TenantInfoDetails.city) {
-      TenantInfoError.city = "city is Required";
+      TenantInfoError.city =`${t("City is Required")}`;
       isValid = false;
     }
     if (!TenantInfoDetails.zipCode) {
-      TenantInfoError.zipCode = "zipcode is Required";
+      TenantInfoError.zipCode = `${t("Zipcode is Required")}`;
       isValid = false;
     }
     if (!TenantInfoDetails.state) {
-      TenantInfoError.state = "state is Required";
+      TenantInfoError.state = `${t("State is Required")}`;
       isValid = false;
     }
     if (BusinessUser) {
@@ -848,27 +850,27 @@ export default function TenantDetails() {
     }
     let isValid = true;
     if (!TenantInfoDetails.firstName) {
-      TenantInfoError.firstName = "first Name is Required";
+      TenantInfoError.firstName = `${t("First Name is Required")}`;
       isValid = false;
     }
     if (!TenantInfoDetails.lastName) {
-      TenantInfoError.lastName = "Last Name is Required";
+      TenantInfoError.lastName = `${t("Last Name is Required")}`;
       isValid = false;
     }
     if (!TenantInfoDetails.addressLineOne) {
-      TenantInfoError.addressLineOne = "address is Required";
+      TenantInfoError.addressLineOne = `${t("Address is Required")}`;
       isValid = false;
     }
     if (!TenantInfoDetails.city) {
-      TenantInfoError.city = "city is Required";
+      TenantInfoError.city = `${t("City is Required")}`;
       isValid = false;
     }
     if (!TenantInfoDetails.zipCode) {
-      TenantInfoError.zipCode = "zipcode is Required";
+      TenantInfoError.zipCode = `${t("Zipcode is Required")}`;
       isValid = false;
     }
     if (!TenantInfoDetails.state) {
-      TenantInfoError.state = "state is Required";
+      TenantInfoError.state = "State is Required";
       isValid = false;
     }
 
@@ -1001,20 +1003,20 @@ export default function TenantDetails() {
             ></path>
           </g>
         </svg>
-          <span className='veritical-align-text-top ml-1'>Tenant Details</span></h6>
+          <span className='veritical-align-text-top ml-1'>{t("Tenant Details")}</span></h6>
         <div className="row reverse-sm">
           <div className="col-12 col-md-6 ui form">
             <div className="col-12 px-4 px-sm-2">
               <div className="field w-100  my-3">
-                <label className='fw-500 fs-7 mb-2'>First Name <i className="text-danger ">*</i></label>
-                <input type='text' placeholder='Enter Name' name="firstName" value={TenantInfoDetails.firstName} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
+                <label className='fw-500 fs-7 mb-2'>{t("First Name")}<i className="text-danger ">*</i></label>
+                <input type='text' placeholder={t('Enter First Name')} name="firstName" value={TenantInfoDetails.firstName} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
                 <div className="text-danger mt-1">{fname_Data}</div>
               </div>
             </div>
             <div className="col-12  px-4 px-sm-2">
               <div className="field w-100  my-3">
-                <label className='fw-500 fs-7 mb-2'>Last Name</label>
-                <input type='text' placeholder='Enter Name' name="lastName" value={TenantInfoDetails.lastName} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
+                <label className='fw-500 fs-7 mb-2'>{t("Last Name")}</label>
+                <input type='text' placeholder={t('Enter Last Name')} name="lastName" value={TenantInfoDetails.lastName} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
                 <div className="text-danger mt-1">{lastNameError}</div>
               </div>
             </div>
@@ -1032,7 +1034,7 @@ export default function TenantDetails() {
 
               <div className="text-center mt-1">
                 {!imguploadStatus &&
-                  <label htmlFor="photoUpload" className="text-success fw-500 cursor-pointer">Upload Photo</label>
+                  <label htmlFor="photoUpload" className="text-success fw-500 cursor-pointer">{t("Upload Photo")}</label>
                 }
                 <input id='photoUpload' onChange={e => profileImageUpload(e)} type="file" hidden />
               </div>
@@ -1043,28 +1045,28 @@ export default function TenantDetails() {
         <div className="row ui form mb-1">
           <div className="col-12  col-md-6  px-4 px-sm-2">
             <div className="field datePicker w-100 my-3">
-              <label className='fw-500 fs-7 mb-2' >Date of Birth</label>
+              <label className='fw-500 fs-7 mb-2' >{t("Date of Birth")}</label>
               {TenantInfoDetails && TenantInfoDetails.birthDate ?
-                <SemanticDatepicker placeholder='Select date' name="birthDate" className='w-100' format="DD-MM-YYYY" value={new Date(TenantInfoDetails.birthDate)} onChange={dateOfBirthChange} /> :
-                <SemanticDatepicker placeholder='Select date' name="birthDate" className='w-100' format="DD-MM-YYYY" value={new Date()} onChange={dateOfBirthChange} />
+                <SemanticDatepicker placeholder={t('Select date')} name="birthDate" className='w-100' format="DD-MM-YYYY" value={new Date(TenantInfoDetails.birthDate)} onChange={dateOfBirthChange} /> :
+                <SemanticDatepicker placeholder={t('Select date')} name="birthDate" className='w-100' format="DD-MM-YYYY" value={new Date()} onChange={dateOfBirthChange} />
               }
 
             </div>
           </div>
           <div className="col-12  col-md-6  px-4 px-sm-2">
             <div className="field w-100  my-3">
-              <label className='fw-500 fs-7 mb-2'>Email <i className="text-danger ">*</i></label>
-              <input disabled type='email' placeholder='Enter Email' name="email" value={TenantInfoDetails.email} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
+              <label className='fw-500 fs-7 mb-2'>{t("Email Address")} <i className="text-danger ">*</i></label>
+              <input disabled type='email' placeholder={t('Enter Email Address')} name="email" value={TenantInfoDetails.email} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
               <div className="text-danger mt-1">{email_Data}</div>
             </div>
           </div>
           <div className="col-12  col-md-6  px-4 px-sm-2">
             <div className="points-events-none field w-100  my-3 tenantPhonenumber">
-              <label className='fw-500 fs-7 mb-2'>Phone Number <i className="text-danger ">*</i></label>
+              <label className='fw-500 fs-7 mb-2'>{t("Phone Number")} <i className="text-danger ">*</i></label>
               <PhoneInput
                 // defaultCountry={DefaultCountryCode}
                 value={TenantInfoDetails.phoneNumber}
-                placeholder="Enter Mobile Number"
+                placeholder={t("Enter Mobile Number")}
                 id="tenantinfophone"
               />
               {/* <Input disabled className="noCounterNumber" type="number" name="phoneNumber" placeholder="Enter Mobile Number" value={TenantInfoDetails.phoneNumber} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo}
@@ -1075,17 +1077,17 @@ export default function TenantDetails() {
           </div>
           <div className="col-12  col-md-6  px-4 px-sm-2">
             <div className="field w-100  my-3">
-              <label className='fw-500 fs-7 mb-2'>Social Security Number <i className="text-danger ">*</i></label>
-              <input className="noCounterNumber" ref={ssn} type='number' name="ssn" value={TenantInfoDetails.ssn} placeholder='Social Security Number' onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
-              <div id="ssn" className="text-danger mt-1 d-none"> Please Enter Social Security Number </div>
+              <label className='fw-500 fs-7 mb-2'>{t("Social Security Number")} <i className="text-danger ">*</i></label>
+              <input className="noCounterNumber" ref={ssn} type='number' name="ssn" value={TenantInfoDetails.ssn} placeholder={t("Social Security Number")} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
+              <div id="ssn" className="text-danger mt-1 d-none"> {t("Please Enter Social Security Number")} </div>
             </div>
           </div>
           {BusinessUser ?
             <div className="col-12  col-md-6  px-4 px-sm-2">
               <div className="field w-100  my-3">
-                <label className='fw-500 fs-7 mb-2'>Company Name <i className="text-danger ">*</i></label>
+                <label className='fw-500 fs-7 mb-2'>{t("Company Name")}<i className="text-danger ">*</i></label>
                 <input className="noCounterNumber" ref={companyName} type='text' name="companyname" placeholder='Company Name' />
-                <div id="companyname" className="text-danger mt-1 d-none"> Please Enter Company Name </div>
+                <div id="companyname" className="text-danger mt-1 d-none">{t("Please Enter Company Name")}</div>
               </div>
             </div>
             : ""
@@ -1094,9 +1096,9 @@ export default function TenantDetails() {
           {BusinessUser ?
             <div className="col-12  col-md-6  px-4 px-sm-2">
               <div className="field w-100  my-3">
-                <label className='fw-500 fs-7 mb-2'>Company registration No <i className="text-danger ">*</i></label>
+                <label className='fw-500 fs-7 mb-2'>{t("Company registration No")} <i className="text-danger ">*</i></label>
                 <input className="noCounterNumber" ref={companyRegistrationNumber} type='text' name="companyregistration" placeholder='Company registration No' />
-                <div id="registration" className="text-danger mt-1 d-none"> Please Enter registration No </div>
+                <div id="registration" className="text-danger mt-1 d-none"> {t("Please Enter registration No")} </div>
               </div>
             </div> : ""
 
@@ -1118,8 +1120,8 @@ export default function TenantDetails() {
                     <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}
                     </label>
                     <input type='text' id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-datatype={item.matadata.dataType} data-type={item.matadata.type} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
-                    <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
-                    <div className="text-danger mt-1" id={item.matadata.dataType} style={{ display: 'none' }}>It should allow Alphabet Only</div>
+                    <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
+                    <div className="text-danger mt-1" id={item.matadata.dataType} style={{ display: 'none' }}>{t("It should allow Alphabet Only")}</div>
                   </div>
                 </div>
 
@@ -1130,7 +1132,7 @@ export default function TenantDetails() {
                     <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}
                     </label>
                     <input type='text' id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} value={customInputFieldValue} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
-                    <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
+                    <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
                   </div>
                 </div>
 
@@ -1141,7 +1143,7 @@ export default function TenantDetails() {
                   <div className="field w-100 datePicker my-2">
                     <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}</label>
                     <SemanticDatepicker id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} className='w-100' data-name={item.fieldName} fieldId={item.fieldId} unitId={unitid} required={item.matadata.isMandatory} fieldpage={item.matadata.displayOn} type={item.matadata.type} onChange={(e, data) => customhandlechange(e, data, "date")} />
-                    <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
+                    <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
                   </div>
                 </div>
               }
@@ -1157,7 +1159,7 @@ export default function TenantDetails() {
                       <label>{item.options[1].option}</label>
                     </span>
                   </span>
-                  <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
+                  <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
                 </div>
               }
 
@@ -1167,7 +1169,7 @@ export default function TenantDetails() {
                   <div className="field w-100 my-2">
                     <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}</label>
                     <textarea id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} data-name={item.fieldName} data-type={item.matadata.type} value={customInputFieldValue} rows="3" data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)}></textarea>
-                    <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
+                    <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
                   </div>
                 </div>
 
@@ -1181,7 +1183,7 @@ export default function TenantDetails() {
                       <label>{item.fieldName}{item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}</label>
                     </span>
                   </span>
-                  <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
+                  <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
                 </div>
 
               } else if (item.matadata.displayOn === "Movein Tenant Details" && item.matadata.type === "textbox" && item.matadata.dataType === "Digits (0-9)") {
@@ -1191,7 +1193,7 @@ export default function TenantDetails() {
                     <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}
                     </label>
                     <input type='number' id={`${item.matadata.type}_${item.fieldId}`} name={item.fieldId} placeholder={item.fieldName} value={cusomfieldPhone} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
-                    <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
+                    <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
                   </div>
                 </div>
 
@@ -1207,7 +1209,7 @@ export default function TenantDetails() {
                       <label>{item.options[1].option}</label>
                     </span>
                   </span>
-                  <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
+                  <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
                 </div>
               }
             }) : ''}
@@ -1226,39 +1228,39 @@ export default function TenantDetails() {
                   </g>
                 </g>
               </svg>
-              <span className='veritical-align-text-top ml-1'>Address Deatils</span></h6>
+              <span className='veritical-align-text-top ml-1'>{t("Address Details")}</span></h6>
           </div>
           <div className="col-12 col-md-6 px-4 px-sm-2">
             <div className="field w-100  my-3">
-              <label className='fw-500 fs-7 mb-2'>Address Line 1</label>
-              <input type='text' placeholder='Address Line 1' name="addressLineOne" value={TenantInfoDetails.addressLineOne} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
+              <label className='fw-500 fs-7 mb-2'>{t("Address Line 1")}</label>
+              <input type='text' placeholder={t("Address Line 1")} name="addressLineOne" value={TenantInfoDetails.addressLineOne} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
               <div className="text-danger mt-1">{addressLine1Error}</div>
             </div>
           </div>
           <div className="col-12 col-md-6 px-4 px-sm-2">
             <div className="field w-100  my-3">
-              <label className='fw-500 fs-7 mb-2'>Address Line 2</label>
-              <input type='text' placeholder='Address Line 2' name="addressLineTwo" value={TenantInfoDetails.addressLineTwo} onChange={(e) => handlechange(e)} />
+              <label className='fw-500 fs-7 mb-2'>{t("Address Line 2")}</label>
+              <input type='text' placeholder={t("Address Line 2")} name="addressLineTwo" value={TenantInfoDetails.addressLineTwo} onChange={(e) => handlechange(e)} />
             </div>
           </div>
           <div className="col-12 col-md-6 px-4 px-sm-2">
             <div className="field w-100  my-3">
-              <label className='fw-500 fs-7 mb-2'>City</label>
-              <input type='text' placeholder='City' name="city" value={TenantInfoDetails.city} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
+              <label className='fw-500 fs-7 mb-2'>{t("City")}</label>
+              <input type='text' placeholder={t("City")} name="city" value={TenantInfoDetails.city} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
               <div className="text-danger mt-1">{cityError}</div>
             </div>
           </div>
           <div className="col-12 col-md-6 px-4 px-sm-2">
             <div className="field w-100  my-3">
-              <label className='fw-500 fs-7 mb-2'>State/Provine</label>
-              <input type='text' placeholder='State/Provine' name="state" value={TenantInfoDetails.state} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
+              <label className='fw-500 fs-7 mb-2'>{t("State/Provine")}</label>
+              <input type='text' placeholder={t("State/Provine")} name="state" value={TenantInfoDetails.state} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
               <div className="text-danger mt-1">{stateError}</div>
             </div>
           </div>
           <div className="col-12 col-md-6 px-4 px-sm-2">
             <div className="field w-100  my-3">
-              <label className='fw-500 fs-7 mb-2'>Zip/Postal Code</label>
-              <input className="noCounterNumber" type='number' name="zipCode" placeholder='Zip/Postal Code' defaultValue={TenantInfoDetails.zipCode} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
+              <label className='fw-500 fs-7 mb-2'>{t("Zip/Postal Code")}</label>
+              <input className="noCounterNumber" type='number' name="zipCode" placeholder={t("Zip/Postal Code")} defaultValue={TenantInfoDetails.zipCode} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
               <div className="text-danger mt-1">{postalError}</div>
             </div>
           </div>
@@ -1273,34 +1275,34 @@ export default function TenantDetails() {
                   <path id="Path_19734" data-name="Path 19734" d="M222.906,60.392c-.867,0-1.721.093-2.344-.644a2.4,2.4,0,0,1-.426-1.726,1.805,1.805,0,0,1,.878-1.583c.574-.369,1.225-.21,1.89-.271,0-.288,0-.565,0-.842a1.806,1.806,0,0,1,1.917-1.917,4.155,4.155,0,0,1,.943.064,1.763,1.763,0,0,1,1.34,1.688c.008.326,0,.652,0,1.024.327,0,.628,0,.927,0a1.781,1.781,0,0,1,1.846,1.73,5.631,5.631,0,0,1,0,.667,1.8,1.8,0,0,1-1.82,1.8c-.3.012-.606,0-.956,0,0,.317,0,.605,0,.894a1.79,1.79,0,0,1-1.881,1.873,4.726,4.726,0,0,1-.841-.03,1.8,1.8,0,0,1-1.479-1.8c-.009-.292,0-.584,0-.936Zm3,.2h0c0-.234,0-.469,0-.7.008-.475.213-.69.684-.7s.938.007,1.407-.006a.613.613,0,0,0,.682-.674c.007-.14,0-.281,0-.422-.016-.5-.223-.7-.715-.706-.434,0-.867,0-1.3,0-.551,0-.754-.211-.757-.772,0-.422,0-.844,0-1.266,0-.517-.206-.722-.721-.734-.129,0-.258,0-.387,0-.471.016-.682.221-.692.7-.01.457,0,.914,0,1.371-.008.492-.221.7-.715.7-.469,0-.938-.006-1.407,0a.6.6,0,0,0-.645.631c-.006.14,0,.281,0,.422,0,.532.21.74.749.748.422.007.844,0,1.266,0,.564,0,.749.194.755.767,0,.3,0,.61,0,.914,0,.993.122,1.112,1.113,1.087.035,0,.07,0,.105,0a.593.593,0,0,0,.58-.59c.013-.257,0-.516,0-.773Z" transform="translate(-199.444 -48.387)" fill="#328128" />
                 </g>
               </svg>
-              <span className='veritical-align-text-top ml-1'>Emergency Conatct</span></h6>
+              <span className='veritical-align-text-top ml-1'>{t("Emergency Contact")}</span></h6>
           </div>
         </div>
         {contactaccordian.length < 3 &&
           <div className="row ui form mb-4 emergencycontact">
             <div className="col-12 col-md-6 px-4 px-sm-2">
               <div className="field w-100  my-3">
-                <label className='fw-500 fs-7 mb-2'>First Name <i className="text-danger ">*</i></label>
-                <input value={emergencyContactDetails.emergencyFname} onChange={(e) => emergencyhandlechange(e)} onBlur={(e) => validateemergencycontactInfo(e)} name="emergencyFname" type='text' placeholder='Enter Name' />
+                <label className='fw-500 fs-7 mb-2'>{t("First Name")}<i className="text-danger ">*</i></label>
+                <input value={emergencyContactDetails.emergencyFname} onChange={(e) => emergencyhandlechange(e)} onBlur={(e) => validateemergencycontactInfo(e)} name="emergencyFname" type='text' placeholder={t("First Name")} />
                 <div className="text-danger mt-1">{fname_err}</div>
               </div>
             </div>
             <div className="col-12 col-md-6 px-4 px-sm-2">
               <div className="field w-100  my-3">
-                <label className='fw-500 fs-7 mb-2'>Last Name</label>
-                <input value={emergencyContactDetails.emergencylname} onChange={(e) => emergencyhandlechange(e)} onBlur={(e) => validateemergencycontactInfo(e)} type='text' name="emergencylname" placeholder='Last Name' />
+                <label className='fw-500 fs-7 mb-2'>{t("Last Name")}</label>
+                <input value={emergencyContactDetails.emergencylname} onChange={(e) => emergencyhandlechange(e)} onBlur={(e) => validateemergencycontactInfo(e)} type='text' name="emergencylname" placeholder={t('Last Name')} />
               </div>
             </div>
             <div className="col-12 col-md-6 px-4 px-sm-2">
               <div className="field w-100  my-3">
-                <label className='fw-500 fs-7 mb-2'>Email <i className="text-danger ">*</i></label>
-                <input value={emergencyContactDetails.emergencyemail} onChange={(e) => emergencyhandlechange(e)} onBlur={(e) => validateemergencycontactInfo(e)} type='email' name="emergencyemail" placeholder='Enter Email' />
+                <label className='fw-500 fs-7 mb-2'>{t("Email")} <i className="text-danger ">*</i></label>
+                <input value={emergencyContactDetails.emergencyemail} onChange={(e) => emergencyhandlechange(e)} onBlur={(e) => validateemergencycontactInfo(e)} type='email' name="emergencyemail" placeholder={t('Enter Email')} />
                 <div className="text-danger mt-1">{email_err}</div>
               </div>
             </div>
             <div className="col-12 col-md-6 px-4 px-sm-2">
               <div className="field w-100  my-3">
-                <label className='fw-500 fs-7 mb-2'>Phone Number <i className="text-danger ">*</i></label>
+                <label className='fw-500 fs-7 mb-2'>{t("Phone Number")} <i className="text-danger ">*</i></label>
                 {/* <input value={contactPhone} onChange={e=>SetContactPhone(e.target.value)} className="noCounterNumber" type='number' placeholder='Enter Phone Number' /> */}
                 {/* <Input value={emergencyContactDetails.emergencyphoneno} onChange={(e) => emergencyhandlechange(e)} className="noCounterNumber" onBlur={(e) => validateemergencycontactInfo(e)} type="number" name="emergencyphoneno" placeholder="Enter Mobile Number"
                   label={<Dropdown defaultValue='+91' search options={countriecodes} />}
@@ -1308,7 +1310,7 @@ export default function TenantDetails() {
                 <PhoneInput
                   defaultCountry={DefaultCountryCode}
                   value={emergencyContactDetails.emergencyphoneno}
-                  placeholder="Enter Mobile Number"
+                  placeholder={t("Enter Mobile Number")}
                   name="emergencyphoneno"
                   onBlur={(e) => validateemergencycontactInfo(e)}
                   onChange={(e, d) => onChangePhoneInput(e, d)} />
@@ -1319,7 +1321,7 @@ export default function TenantDetails() {
               <a onClick={(e) => addEmergencyContact(e)} className="text-success fs-7 px-4 px-sm-2 cursor-pointer">
                 <svg xmlns="http://www.w3.org/2000/svg" width="15" height="18" viewBox="0 0 27.505 27.5">
                   <path id="floating" d="M577.346,2164.47h1.719c.468.061.939.108,1.4.186a13.8,13.8,0,0,1,11.276,11.2c.089.5.142,1.006.211,1.51v1.719c-.04.327-.075.656-.122.981a13.749,13.749,0,1,1-23.4-11.494,13.464,13.464,0,0,1,7.4-3.886C576.337,2164.593,576.843,2164.539,577.346,2164.47Zm2,14.892h4.82a1.14,1.14,0,1,0,.027-2.278c-1.5-.009-3.007,0-4.51,0h-.336v-4.813a1.118,1.118,0,0,0-.693-1.111,1.131,1.131,0,0,0-1.588,1.07c-.01,1.5,0,3.007,0,4.51v.344h-4.806a1.141,1.141,0,1,0-.055,2.28c1.512.011,3.025,0,4.537,0h.323v.364c0,1.477,0,2.953,0,4.43a1.141,1.141,0,1,0,2.28.068c.012-1.5,0-3.007,0-4.51Z" transform="translate(-564.451 -2164.47)" fill="#328128" />
-                </svg><span className="veritical-align-text-top ml-1">Add more</span>
+                </svg><span className="veritical-align-text-top ml-1">{t("Add more")}</span>
               </a>
             </div>
           </div>
@@ -1348,7 +1350,7 @@ export default function TenantDetails() {
         size='tiny'
         onClose={() => SetCreditCheckModal({ open: false })}
       >
-        <Modal.Header className='header text-success-dark text-center fw-601 fs-5 border-0 pb-1'>CREDIT CHECK</Modal.Header>
+        <Modal.Header className='header text-success-dark text-center fw-601 fs-5 border-0 pb-1'>{t("CREDIT CHECK")}</Modal.Header>
         <Modal.Content className='mh-400 overflow-y-auto text-center pt-2'>
           <div className="d-flex justify-content-center mb-2">
             {(!creditCheckLoader && !creditStatus) && <Image width='250' src="/assets/images/creditCheck.svg" />}
@@ -1376,22 +1378,22 @@ export default function TenantDetails() {
             <>
               {creditcheckerror ?
                  <div className="mb-3 text-danger">
-                  Something went wrong. Please try Again.
+                 {t("Something went wrong. Please try Again")}.
                 </div> : <div className="mb-3">
-                  As part of the move-in process, we need to verify your credit score, would you like to proceed for a credit check?
+                 {t("As part of the move-in process, we need to verify your credit score, would you like to proceed for a credit check?")}
                 </div>
 
               }
-{creditcheckerror ? <button onClick={() => SetCreditCheckModal({ open: false })} className="ui button bg-secondary  fs-7 fw-400 text-white px-5 mr-1">Close</button> :             <div className="">
-                <button onClick={() => SetCreditCheckModal({ open: false })} className="ui button bg-secondary  fs-7 fw-400 text-white px-5 mr-1">Cancel</button>
-                <button onClick={(e) => proceedCreditCheck(e)} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">Proceed</button>
+{creditcheckerror ? <button onClick={() => SetCreditCheckModal({ open: false })} className="ui button bg-secondary  fs-7 fw-400 text-white px-5 mr-1">{t("Close")}</button> :             <div className="">
+                <button onClick={() => SetCreditCheckModal({ open: false })} className="ui button bg-secondary  fs-7 fw-400 text-white px-5 mr-1">{t("Cancel")}</button>
+                <button onClick={(e) => proceedCreditCheck(e)} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">{t("Proceed")}</button>
               </div>  }
 
             </>
           }
           {creditCheckLoader &&
             <div className="mb-3">
-              Please tie your shoes while we check your credit score. Please do not perform any actions until we prompt
+              {t("Please tie your shoes while we check your credit score. Please do not perform any actions until we prompt")}
             </div>
           }
           {!creditCheckLoader && creditStatus && <>
@@ -1400,20 +1402,20 @@ export default function TenantDetails() {
                 <div className="mb-3 text-danger">
                   {tenantCreditCheckDetails.credit_check_discription}
                 </div> : <div className="mb-3 text-danger">
-                  Oops! The customer cannot complete the move-in with this credit score
+                  {t("Oops! The customer cannot complete the move-in with this credit score")}
                 </div>
 
               }
 
               <div>
-                <button onClick={() => SetCreditCheckModal({ open: false })} className="ui button bg-secondary  fs-7 fw-400 text-white px-5">Close</button>
+                <button onClick={() => SetCreditCheckModal({ open: false })} className="ui button bg-secondary  fs-7 fw-400 text-white px-5">{t("Close")}</button>
               </div>
             </> : <>
               <div className="mb-3">
-                Congratulations! You have sufficient credit score to proceed further with us
+                {t("Congratulations! You have sufficient credit score to proceed further with us")}
               </div>
               <div>
-                <button onClick={(e) => navigateEsign(e)} className="ui button bg-secondary  fs-7 fw-400 text-white px-5">Continue</button>
+                <button onClick={(e) => navigateEsign(e)} className="ui button bg-secondary  fs-7 fw-400 text-white px-5">{t("Continue")}</button>
               </div></>
             }
           </>
