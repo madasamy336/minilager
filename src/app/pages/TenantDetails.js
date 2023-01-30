@@ -1393,7 +1393,7 @@ export default function TenantDetails() {
           }
           {creditCheckLoader &&
             <div className="mb-3">
-              {t("Please tie your shoes while we check your credit score. Please do not perform any actions until we prompt")}
+              {t("Please tie your shoes while we check your credit score.")} {t("Please do not perform any actions until we prompt")}
             </div>
           }
           {!creditCheckLoader && creditStatus && <>
