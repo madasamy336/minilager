@@ -77,7 +77,7 @@ export default function PreBookingBreadcrumb(props) {
   </g>
 </svg>
                 
-                <span className={`ml-4px veritical-align-text-top  ${props.activeStep.startsWith(123)? ' text-success':'text-secondary'}`}>{t("TENANT DEATILS")}</span>
+                <span className={`ml-4px veritical-align-text-top  ${props.activeStep.startsWith(123)? ' text-success':'text-secondary'}`}>{t("TENANT DETAILS")}</span>
   
                 </div>
               <i className="right chevron icon divider veritical-align-text-top "></i>

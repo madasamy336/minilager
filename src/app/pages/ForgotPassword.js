@@ -6,10 +6,12 @@ import instance from '../services/instance';
 import request from '../services/request';
 import React from 'react';
 import { ToastContainer, toast } from 'react-toastify';
+import { useTranslation } from "react-i18next";
 import 'react-toastify/dist/ReactToastify.css';
 
 const ForgotPassword = (props) => {
     const navigate = useNavigate();
+    const { t, i18n } = useTranslation();
     // Username value
     const [username, setUserName] = useState({ userName: '' });
     const { userName } = username;

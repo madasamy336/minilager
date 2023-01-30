@@ -41,9 +41,9 @@ const RentNow = () => {
     }
 
     const searchFacilityDetail = (e) => {
-        e.preventDefault()
         let locationSearch = LocationResponse;
-        let filterResult = locationSearch.filter((i) => (i.locationName.toLowerCase().includes(searchinput.current.value.toLowerCase())) || (i.address.addressLine1.toLowerCase().includes(searchinput.current.value.toLowerCase())) || (i.address.zipCode !== null && i.address.zipCode.includes(searchinput.current.value)));
+        let filterResult = locationSearch.filter(
+            (i) =>(i.locationName !== null && i.locationName.toLowerCase().includes(searchinput.current.value.toLowerCase())) || (i.address !== null && i.address.addressLine1 !== null  && i.address.addressLine1.toLowerCase().includes(searchinput.current.value.toLowerCase())) || (i.address !== null && i.address.zipCode !== null && i.address.zipCode.includes(searchinput.current.value)));
         if (searchinput.current.value === '') {
             filterResult = [];
         }
