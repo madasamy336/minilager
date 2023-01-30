@@ -449,8 +449,8 @@ export default function RentingDetails() {
                             <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}
                             </label>
                             <input type='text' id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-datatype={item.matadata.dataType} data-type={item.matadata.type} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
-                            <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
-                            <div className="text-danger mt-1" id={item.matadata.dataType} style={{ display: 'none' }}>It should allow Alphabet Only</div>
+                            <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
+                            <div className="text-danger mt-1" id={item.matadata.dataType} style={{ display: 'none' }}>{t("It should allow Alphabet Only")}</div>
                           </div>
 
                         } else if (item.matadata.displayOn === "Unit specific details" && item.matadata.type === "textbox" && item.matadata.dataType === "Alphanumeric") {
@@ -458,7 +458,7 @@ export default function RentingDetails() {
                             <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}
                             </label>
                             <input type='text' id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} value={item.fieldId === customFieldId ? customFieldValue : customInputFieldValue} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
-                            <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
+                            <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{("Required Field")}</div>
                           </div>
 
                         }
@@ -469,7 +469,7 @@ export default function RentingDetails() {
                               <div className="field w-100 datePicker my-2">
                                 <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}</label>
                                 <SemanticDatepicker id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} className='w-100' data-name={item.fieldName} fieldId={item.fieldId} unitId={unitid} required={item.matadata.isMandatory} fieldpage={item.matadata.displayOn} type={item.matadata.type} onChange={(e, data) => customhandlechange(e, data, "date")} />
-                                <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
+                                <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
                               </div>
                             </div>
                           </div>
@@ -488,7 +488,7 @@ export default function RentingDetails() {
                                 <label>{item.options[1].option}</label>
                               </span>
                             </span>
-                            <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
+                            <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
                           </div>
                         }
 
@@ -499,7 +499,7 @@ export default function RentingDetails() {
                               <div className="field w-100 my-2">
                                 <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}</label>
                                 <textarea id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} data-name={item.fieldName} data-type={item.matadata.type} value={customInputFieldValue} rows="3" data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)}></textarea>
-                                <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
+                                <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
                               </div>
                             </div>
                           </div>
@@ -516,7 +516,7 @@ export default function RentingDetails() {
                                   <label>{item.fieldName}{item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}</label>
                                 </span>
                               </span>
-                              <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
+                              <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
                             </div>
                           </div>
 
@@ -526,7 +526,7 @@ export default function RentingDetails() {
                             <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}
                             </label>
                             <input type='number' id={`${item.matadata.type}_${item.fieldId}`} name={item.fieldId} placeholder={item.fieldName} value={cusomfieldPhone} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
-                            <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
+                            <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
                           </div>
 
                         } else if (item.matadata.displayOn === "Unit specific details" && item.matadata.type === "radio") {
@@ -541,7 +541,7 @@ export default function RentingDetails() {
                                 <label>{item.options[1].option}</label>
                               </span>
                             </span>
-                            <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>Required Field</div>
+                            <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
                           </div>
                         }
                       }) : ''}

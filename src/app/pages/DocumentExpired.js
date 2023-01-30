@@ -83,11 +83,11 @@ export default function DocumentExpired(props) {
                     style={{ width: 250, height: 200, margin: '0 auto' }}
                 />
             </div>
-            <h6 className="text-danger fs-6 fw-500 mb-1">The document has expired</h6>
-            <p className="mb-2">This document has expired and can no longer be signed. Please start the E-Sign process by Clicking on the link again</p>
+            <h6 className="text-danger fs-6 fw-500 mb-1">{t("The document has expired")}</h6>
+            <p className="mb-2">{t("This document has expired and can no longer be signed. Please start the E-Sign process by Clicking on the link again")}</p>
             <div className="text-center">
-                <Button className="ui button bg-secondary text-white fw-100 mr-2 mb-1" disabled={isButtonLoading} onClick={() => navigate('/')}>Cancel</Button>
-                <Button className="ui button bg-danger-light text-white fw-100 mb-1" disabled={isButtonLoading} loading={isButtonLoading} onClick={(e) =>triggerEsign(e)}>Try Again</Button>
+                <Button className="ui button bg-secondary text-white fw-100 mr-2 mb-1" disabled={isButtonLoading} onClick={() => navigate('/')}>{t("Cancel")}</Button>
+                <Button className="ui button bg-danger-light text-white fw-100 mb-1" disabled={isButtonLoading} loading={isButtonLoading} onClick={(e) =>triggerEsign(e)}>{t("Try Again")}</Button>
             </div>
         </div>
     )

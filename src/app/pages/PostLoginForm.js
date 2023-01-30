@@ -96,16 +96,16 @@ const PostLoginForm = (props) => {
         let isValid = true
 
         if (!username) {
-            validations.username = 'Username is required'
+            validations.username = `${t('Username is required')}`
             isValid = false
         }
         if (username && !/\S+@\S+\.\S+/.test(username)) {
-            validations.username = 'Username format must be as example@mail.com'
+            validations.username = `${t('Username format must be as example@mail.com')}`
             isValid = false
         }
 
         if (!password) {
-            validations.password = 'Password is required'
+            validations.password = `${t('Password is required')}`
             isValid = false
         }
 
@@ -136,7 +136,7 @@ const PostLoginForm = (props) => {
                 if (configData.result !== null && typeof configData.result !== 'undefined' && configData.result !== '') {
                     // to emulate some network delay
                     if (configData.returnMessage === 'SUCCESS') {
-                        toast.success('You are logged in successfully', {
+                        toast.success(`${t('You are logged in successfully')}`, {
                             position: "top-right",
                             autoClose: 3000,
                             duration: 100,
@@ -168,7 +168,7 @@ const PostLoginForm = (props) => {
 
 
                 } else if (configData.result === null && configData.returnCode === "INVALID_PARAM" && configData.returnMessage === "Invalid user name or password") {
-                    toast.error('Invalid UserName or Password', {
+                    toast.error(`${t('Invalid UserName or Password')}`, {
                         position: "top-right",
                         autoClose: 3000,
                         duration: 100,
@@ -182,7 +182,7 @@ const PostLoginForm = (props) => {
                 }
 
                 else {
-                    dispatch(fetchLoginFailure('There is no record found'))
+                    dispatch(fetchLoginFailure(`${t('There is no record found')}`))
                 }
             })
             .catch(error => {
