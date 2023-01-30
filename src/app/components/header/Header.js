@@ -1,20 +1,27 @@
-import React from 'react'
+import React from "react";
+import { useEffect, useState } from "react";
 import { NavLink } from 'react-router-dom'
 import { useTranslation } from "react-i18next";
 import { Dropdown, Icon, Menu } from 'semantic-ui-react'
 import { useLocation } from 'react-router-dom'
 export default function Header(props) {
   const location = useLocation()
+  const [selectedLanguage, setSelectedLanguage] = useState("nn");
+
   const openSidebar = (e) => {
     e.preventDefault();
     props.showSidebar(!props.sidebar)
   }
   const { t, i18n } = useTranslation();
-  const changeLanguageHandler = (e, data) => {
-    const languageValue = data.value;
-    document.documentElement.lang=data.value
-    i18n.changeLanguage(languageValue);
-  }
+  useEffect(() => {
+    i18n.changeLanguage(selectedLanguage)
+  }, [selectedLanguage])
+
+  const handleLanguageChange = (e_, data) => {
+    setSelectedLanguage(data.value);
+    i18n.changeLanguage(data.value)
+  };
+
   const Languages = [
 
     { key: 'nn', text: 'Norwegian', value: 'nn' }
@@ -38,15 +45,15 @@ export default function Header(props) {
             <div className='right menu d-inline-block float-right'>
 
               <a href="https://123minilager.no" className="item fs-7 fw-700 mx-4 navtext py-3 d-inline-block">
-                HOME
+                {t('HOME')}
               </a>
               <NavLink to={'/home'} className="item fs-7 fw-700 mx-4 navtext py-3 d-inline-block">
-                ORDER MINI STOCK
+                {t('ORDER MINI STOCK')}
               </NavLink>
               <NavLink to={!localStorage.getItem('userid') ? '/login' : '/postBooking/Profile'} className="item fs-7 fw-700 mx-4 navtext py-3 d-inline-block">
-                MY SIDE
+                {t("MY SIDE")}
               </NavLink>
-              <Dropdown  defaultValue={1} className='mr-3' onChange={(e, data) => changeLanguageHandler(e, data)} placeholder='Choose Language' selection options={Languages} />
+              <Dropdown defaultValue={selectedLanguage} className='mr-3' onChange={(e, data) => handleLanguageChange(e, data)} placeholder='Choose Language' selection options={Languages} />
 
             </div>
 
@@ -70,7 +77,7 @@ export default function Header(props) {
                     </Dropdown.Item>
                     <Dropdown.Item>
                       <NavLink to={'/login'} className="item fs-7 fw-700 mx-4 navtext">
-                        MY SIDE
+                        {t("MY SIDE")}
                       </NavLink>
                     </Dropdown.Item>
                   </Dropdown.Menu>
