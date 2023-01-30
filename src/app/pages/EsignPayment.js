@@ -463,14 +463,14 @@ export default function EsignPayment() {
                     <div className="col-lg-4 col-md-4 col-12 px-1">
                       <div className="card-details">
                         <div className="mb-2">
-                          <h6 className="fs-6 fw-400 text-success mb-1">Personal Details</h6>
+                          <h6 className="fs-6 fw-400 text-success mb-1">{t("Personal Details")}</h6>
                           <p className="mb-1">{tenantInfo.firstName} {tenantInfo.lastName}</p>
                           <p className="mb-1">{tenantInfo.email}</p>
                           <p className="mb-1">{tenantInfo.phoneNumber}</p>
                         </div>
                         {facilityaddress !== null && typeof facilityaddress !== 'undefined' ?
                           <div>
-                            <h6 className="fs-6 fw-400 text-success mb-1">Facility Address</h6>
+                            <h6 className="fs-6 fw-400 text-success mb-1">{t("Facility Address")}</h6>
                             <p>{facilityaddress.addressLine1} {facilityaddress.city} {facilityaddress.state} <br />{facilityaddress.zipCode}</p>
 
                           </div>
@@ -509,7 +509,7 @@ export default function EsignPayment() {
                       <path id="Path_15982" data-name="Path 15982" d="M150.912,130.038c-.743,0-1.487,0-2.231,0-.432,0-.726-.155-.748-.629s.273-.687.694-.689c1.534-.014,3.067-.008,4.6,0a.624.624,0,0,1,.685.706c-.024.452-.336.62-.772.613-.743-.011-1.487,0-2.231,0Z" transform="translate(-127.242 -110.71)" fill="#328128" />
                       <path id="Path_15983" data-name="Path 15983" d="M103.106,152.536c.745,0,1.491-.007,2.235,0,.413.006.745.154.765.629.022.517-.317.7-.761.7q-2.234.019-4.47,0c-.448,0-.787-.193-.769-.7.017-.467.348-.631.764-.636.745-.01,1.491,0,2.235,0Z" transform="translate(-86.105 -131.2)" fill="#328128" />
                     </svg>
-                    <span className='veritical-align-text-top ml-1'>Rental Agreement</span>
+                    <span className='veritical-align-text-top ml-1'>{t("Rental Agreement")}</span>
                   </h6>
                   <div className='p-3 px-sm-1'>
                     {saveAgreement && saveAgreement.previewLease ?
@@ -529,7 +529,7 @@ export default function EsignPayment() {
                       < div key="" className='card-bg-secondary w-100 px-2 py-2 mb-6' >
                             
                             <div className="text-center mt-4">
-                             No document found
+                             {t("No document found")}
                             </div>
                           </div>
                       // <Segment raised>
@@ -548,46 +548,46 @@ export default function EsignPayment() {
                     <div className='row mt-2'>
                       <div className='col-lg-6 col-md-12 col-sm-12'>
                         <div className='card-border border-radius-5 mr-2 mr-md-0 mb-md-1'>
-                          <h6 className='card-bg-secondary p-2 text-success-dark fs-6'>INITIATOR</h6>
+                          <h6 className='card-bg-secondary p-2 text-success-dark fs-6'>{t("INITIATOR")}</h6>
                           <div className='py-2 px-1'>
                             <p className='fw-600 fs-6 mb-1'>{businessName}</p>
-                            <p>Non Signatory Party</p>
+                            <p>{t("Non Signatory Party")}</p>
                           </div>
                         </div>
                       </div>
                       <div className='col-lg-6 col-md-12 col-sm-12'>
                         <div className='card-border border-radius-5 ml-2 ml-md-0'>
-                          <h6 className='card-bg-secondary p-2 text-success-dark fs-6'>INITIATOR</h6>
+                          <h6 className='card-bg-secondary p-2 text-success-dark fs-6'>{t("INITIATOR")}</h6>
                           <div className='py-2 px-1'>
                             <p className='fw-600 fs-6 mb-1'>{tenantInfo.firstName} {tenantInfo.lastName}</p>
-                            <p>Non Signatory Party</p>
+                            <p>{t("Non Signatory Party")}</p>
                           </div>
                         </div>
                       </div>
                       <div className='d-flex mt-2 align-items-start'>
                         <input onClick={esignMethodHandler} type="checkbox" checked={esignMethod || eSignature} />
-                        <label className='ml-1'>I have read and understood the contents of the documents listed and I am ready to sign</label>
+                        <label className='ml-1'>{t("I have read and understood the contents of the documents listed and I am ready to sign")}</label>
                       </div>
                     </div>
                    
                     <div className={`pt-4 ${eSignature === true ? 'd-block': 'd-none'}`}>
 
                       <div className='d-flex justify-content-between flex-wrap bg-primary-light p-1 border-success-dark-1 border-radius-5'>
-                        <p className='d-flex align-items-center'><img src='/assets/images/esign.svg' alt='Esign' /><span className='ml-1'>Great! You have successfully signed the documents</span></p>
-                        <button className="ui button text-success-dark bg-white card-border fs-7 fw-400 text-dark px-1 mr-2 mt-md-1" onClick={() =>setViewDocumentModal(true)}>View Document</button>
+                        <p className='d-flex align-items-center'><img src='/assets/images/esign.svg' alt='Esign' /><span className='ml-1'>{t("Great! You have successfully signed the documents")}</span></p>
+                        <button className="ui button text-success-dark bg-white card-border fs-7 fw-400 text-dark px-1 mr-2 mt-md-1" onClick={() =>setViewDocumentModal(true)}>{t("View Document")}</button>
                       </div>                     
                       <div className='pt-4 d-flex justify-content-center flex-wrap'>
 
                         {paylaterButton === true ?
-                          <button className="ui button bg-white d-flex align-items-center border-radius-5 card-border fs-6 fw-400 text-dark px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1" onClick={(e) => payNow(e)} ><img src='/assets/images/executed-payment.svg' alt='Pay Now' id="paynow" /><span className='ml-1' onClick={(e) => payNow(e)}>Pay Now</span></button>
+                          <button className="ui button bg-white d-flex align-items-center border-radius-5 card-border fs-6 fw-400 text-dark px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1" onClick={(e) => payNow(e)} ><img src='/assets/images/executed-payment.svg' alt='Pay Now' id="paynow" /><span className='ml-1' onClick={(e) => payNow(e)}>{t("Pay Now")}</span></button>
                           :
-                          <button className="ui button bg-success-dark d-flex align-items-center border-radius-5 fs-6 fw-100 text-white px-5 px-md-2 mb-sm-1" onClick={(e) => payNow(e)}><img className='executed-img' src='/assets/images/executed-payment.svg' alt='Pay Now' id="paynow" /><span className='ml-1' onClick={(e) => payNow(e)} >Pay Now</span></button>
+                          <button className="ui button bg-success-dark d-flex align-items-center border-radius-5 fs-6 fw-100 text-white px-5 px-md-2 mb-sm-1" onClick={(e) => payNow(e)}><img className='executed-img' src='/assets/images/executed-payment.svg' alt='Pay Now' id="paynow" /><span className='ml-1' onClick={(e) => payNow(e)} >{t("Pay Now")}</span></button>
 
                         }
                         {paylaterButton ?
-                          <button className="ui button bg-success-dark d-flex align-items-center border-radius-5 card-border fs-6 fw-400 text-white px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1" onClick={(e) => payLater(e)} ><img src='/assets/images/pay.svg' alt='Pay Later' id="paylater" /><span className='ml-1' onClick={(e) => payLater(e)}>Pay Later</span></button>
+                          <button className="ui button bg-success-dark d-flex align-items-center border-radius-5 card-border fs-6 fw-400 text-white px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1" onClick={(e) => payLater(e)} ><img src='/assets/images/pay.svg' alt='Pay Later' id="paylater" /><span className='ml-1' onClick={(e) => payLater(e)}>{t("Pay Later")}</span></button>
                           :
-                          <button className="ui button bg-white d-flex align-items-center border-radius-5 card-border fs-6 fw-400 text-dark px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1" onClick={(e) => payLater(e)} ><img src='/assets/images/pay.svg' alt='Pay Later' id="paylater" /><span className='ml-1' onClick={(e) => payLater()}>Pay Later</span></button>
+                          <button className="ui button bg-white d-flex align-items-center border-radius-5 card-border fs-6 fw-400 text-dark px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1" onClick={(e) => payLater(e)} ><img src='/assets/images/pay.svg' alt='Pay Later' id="paylater" /><span className='ml-1' onClick={(e) => payLater()}>{t("Pay Later")}</span></button>
 
                         }
 
@@ -601,7 +601,7 @@ export default function EsignPayment() {
                       <div className='eSignTitle'>  <img src="/assets/images/bankid.png" alt="Norwegian BankID" /><h5 className='fw-600 '>Sign with Norweigan BankID</h5></div>
                       <div className='py-4 px-3'>
                         <div className='bank-title pl-3'>
-                          <p>{tenantInfo.firstName + " " + tenantInfo.lastName}, you will sign with a Norwegian BankID. Once you have signed, your signature will be registered by the e-signature service Signicat.</p>
+                          <p>{tenantInfo.firstName + " " + tenantInfo.lastName}, {t("you will sign with a Norwegian BankID. Once you have signed, your signature will be registered by the e-signature service Signicat.")}</p>
                         </div>
                         <div className="text-center mt-2 d-flex justify-content-center"><Button loading={isButtonLoading}  disabled={isButtonLoading} className="ui button bg-success-dark d-flex align-items-center border-radius-5 fs-6 fw-100 text-white px-5 px-md-2 mb-sm-1" onClick={(e) => triggerEsign(e)}>SIGN</Button></div>
                       </div>
@@ -611,7 +611,7 @@ export default function EsignPayment() {
                 {!paylaterButton && eSignature ?
                   <div className='bg-white card-boxshadow px-0 py-2 border-radius-15 mb-3 mt-2'>
                     <h6 className='text-dark fw-500 fs-6 px-4 py-2 px-sm-2 card-border-bottom fw-600 text-success-dark'>
-                      <span className='veritical-align-text-top ml-1'>CHOOSE PAYMENT TYPE</span></h6>
+                      <span className='veritical-align-text-top ml-1'>{t("CHOOSE PAYMENT TYPE")}</span></h6>
                     <div className='py-4 px-3'>
                       {checkPaymentModes && checkPaymentModes.length > 0 ?
                         checkPaymentModes.filter(i => i.value !== "PayLater").map((e) => {
@@ -637,7 +637,7 @@ export default function EsignPayment() {
 
                 }
                 <div className="text-center mt-4">
-                  <Button disabled={isButtonLoading} onClick={() => navigate('/preBooking/TenantDetails')} className="ui button bg-white text-success-dark border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">BACK</Button>
+                  <Button disabled={isButtonLoading} onClick={() => navigate('/preBooking/TenantDetails')} className="ui button bg-white text-success-dark border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">{t("BACK")}</Button>
                 </div>
               </div>
 
@@ -646,36 +646,36 @@ export default function EsignPayment() {
                   <div className='row date-div'>
                     <div className='col-lg-6 col-md-12 col-sm-12 mb-1 px-2'>
                       <div className='card-border-primary text-center p-1'>
-                        <p>Your move in date</p>
+                        <p>{t("Your move in date")}</p>
                         <p className='fw-500 text-purple'>{helper.show_date_format2(getMoveindate)}</p>
                       </div>
                     </div>
                     <div className='col-lg-6 col-md-12 col-sm-12 mb-1 px-2'>
                       {unitdetail !== null && typeof unitdetail !== 'undefined' ?
                         <div className='card-border-primary text-center p-1'>
-                          <p>Billing Period</p>
-                          <p className='fw-500 text-success-dark'>{unitdetail.startsOn} to {unitdetail.endsOn}</p>
+                          <p>{t("Billing Period")}</p>
+                          <p className='fw-500 text-success-dark'>{unitdetail.startsOn} {t("to")} {unitdetail.endsOn}</p>
                         </div>
                         :
                         <div className="ui active centered inline loader"></div>
                       }
                     </div>
                   </div>
-                  <h6 className='text-dark text-center fw-500 fs-6 px-4 pt-2 mb-1 px-sm-2'>Recurring charges</h6>
-                  <p className='text-dark text-center px-4 mb-2 px-sm-2'>This will be your recurring charges until you decide to move out.</p>
+                  <h6 className='text-dark text-center fw-500 fs-6 px-4 pt-2 mb-1 px-sm-2'>{t('Recurring charges')}</h6>
+                  <p className='text-dark text-center px-4 mb-2 px-sm-2'>{t("This will be your recurring charges until you decide to move out.")}</p>
                   {unitdetail !== null && typeof unitdetail !== 'undefined' ?
                     <div className='mt-2 card-border border-radius-5 py-2 m-2'>
-                      <h6 className='fw-600 fs-6 mb-1 px-2'>Total Amount</h6>
+                      <h6 className='fw-600 fs-6 mb-1 px-2'>{t("Total Amount")}</h6>
                       {unitdetail.rentAmount !== null && unitdetail.rentAmount > 0
                         ? <div className='d-flex justify-content-between dashed-bottom py-1 px-2'>
-                          <p>Rent Amount</p>
+                          <p>{t("Rent Amount")}</p>
                           <p>{helper.displayCurrency(unitdetail.rentAmount)}</p>
                         </div>
                         : "loading"
                       }
                       {unitdetail.serviceCharges !== null && unitdetail.serviceCharges > 0 ?
                         <div className='d-flex justify-content-between dashed-bottom py-1 px-2'>
-                          <p>Service:</p>
+                          <p>{t("Service")}:</p>
                           <p>{helper.displayCurrency(unitdetail.serviceCharges)}</p>
                         </div>
                         :
@@ -683,14 +683,14 @@ export default function EsignPayment() {
                       }
                       {unitdetail.insuranceCharges !== null && unitdetail.insuranceCharges > 0 ?
                         <div className='d-flex justify-content-between dashed-bottom py-1 px-2'>
-                          <p>Protection Plan:</p>
+                          <p>{t("Protection Plan")}:</p>
                           <p>{helper.displayCurrency(unitdetail.insuranceCharges)}</p>
                         </div>
                         : ""
                       }
                       {unitdetail.merchandise !== null && unitdetail.merchandise > 0 ?
                         <div className='d-flex justify-content-between dashed-bottom py-1 px-2'>
-                          <p>Merchandise:</p>
+                          <p>{t("Merchandise")}:</p>
                           <p>{helper.displayCurrency(unitdetail.merchandise)}</p>
                         </div>
 
@@ -716,7 +716,7 @@ export default function EsignPayment() {
                       }
                       {unitdetail.discount !== null && unitdetail.discount > 0 ?
                         <div className='d-flex justify-content-between  py-1 px-2'>
-                          <p>Discount:</p>
+                          <p>{t("Discount")}:</p>
                           <p>{helper.displayCurrency(unitdetail.discount)}</p>
                         </div>
 
@@ -725,7 +725,7 @@ export default function EsignPayment() {
                       }{unitdetail.grossAmount !== null && unitdetail.grossAmount > 0
                         ?
                         <div className='d-flex justify-content-between border-top pt-1 px-2'>
-                          <p className='fw-600'>Net Amount</p>
+                          <p className='fw-600'>{t("Net Amount")}</p>
                           <p className='fw-600'>{helper.displayCurrency(unitdetail.grossAmount)}</p>
                         </div>
 
@@ -760,19 +760,19 @@ export default function EsignPayment() {
             makeSavedCardMandatory
               ?
               <div className='d-flex align-items-center justify-content-center error'>
-                Note: The Card will be saved for auto payments
+                {t("Note")}: {t("The Card will be saved for auto payments")}
               </div>
               : <div>
                 <div className='d-flex align-items-center justify-content-center'>
                   <input type="checkbox" id="savedcard" checked={saveCard} onChange={(e) => { changeSavedCard(e) }} />
                   <div className='ml-2'>
-                    <p>Save this card for future transaction</p>
+                    <p>{t("Save this card for future transaction")}</p>
                   </div>
                 </div>
                 <div className='d-flex align-items-center justify-content-center'>
                   <input type="checkbox" id="autopayenabled" checked={autoPayEnabled} onChange={(e) => { changeAutoPayEnabled(e) }} />
                   <div className='ml-2'>
-                    <p>Use the saved card for future recurring payments </p>
+                    <p>{t("Use the saved card for future recurring payments")} </p>
                   </div>
                 </div>
               </div>
@@ -794,16 +794,16 @@ export default function EsignPayment() {
         onOpen={() => setPayLaterModal(true)}
 
       >
-        <Modal.Header>Confirm Movein </Modal.Header>
+        <Modal.Header>{t("Confirm Movein")} </Modal.Header>
         <Modal.Content>
-          <p>Are you sure you want to do payLater?</p>
+          <p>{t("Are you sure you want to do payLater?")}</p>
         </Modal.Content>
         <Modal.Actions>
           <Button onClick={() => setPayLaterModal(false)} negative>
-            No
+            {t("No")}
           </Button>
           <Button onClick={() => saveMoveinDetails('', leaseProfileIdValue, true)} positive>
-            Yes
+            {t("Yes")}
           </Button>
         </Modal.Actions>
       </Modal>
@@ -822,7 +822,7 @@ export default function EsignPayment() {
         <Modal.Actions>
          
           <Button onClick={() => setViewDocumentModal(false)}>
-            Close
+            {t("Close")}
           </Button>
         </Modal.Actions>
       </Modal>

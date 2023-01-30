@@ -14,9 +14,9 @@ const SuccessfulMoveIn = () => {
             <div className="success-img text-center mb-2">
                 <img className="w-75" src="/assets/images/success-movein.svg" alt="Successfully Moved In" />
             </div>
-            <h6 className="text-success-dark fs-7 fw-500 mb-1">You have successfully Moved In</h6>
-            <p className="mb-2">Check your inbox for lease-related information</p>
-            <button onClick={e=>RentNow(e)} className="ui button bg-success-dark text-white fw-100">Go to Dashboard</button>
+            <h6 className="text-success-dark fs-7 fw-500 mb-1">{t("You have successfully Moved In")}</h6>
+            <p className="mb-2">{t("Check your inbox for lease-related information")}</p>
+            <button onClick={e=>RentNow(e)} className="ui button bg-success-dark text-white fw-100">{t("Go to Dashboard")}</button>
         </div>
     )
 }
