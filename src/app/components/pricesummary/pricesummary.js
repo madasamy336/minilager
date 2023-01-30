@@ -33,6 +33,7 @@ const Pricesummary = forwardRef((props, ref) => {
   const [totalAmount, setTotalAmount] = useState();
   const [movinDate, setMovinDate] = useState(new Date());
   const [promoOnchangebutton, setpromoOnchangebutton] = useState();
+  const[promcodeError, setpromcodeError] = useState();
 
   let unitid = localStorage.getItem('unitid');
   const navigate = useNavigate()
@@ -169,7 +170,14 @@ const Pricesummary = forwardRef((props, ref) => {
   /**  Validate Promocode Discount Start **/
 
   const applyCoupon = () => {
-    
+    if(promoValidate.length === 0){
+
+      setpromcodeError(`${t("Please Enter Promocode")}`)
+      return
+
+    } else{
+      setpromcodeError("")
+    }
     let config = {
       headers: {
         "Content-Type": "application/json",
@@ -195,6 +203,7 @@ const Pricesummary = forwardRef((props, ref) => {
         const validatePromoMessage = response.data;
         setValidateMsg(validatePromoMessage);
         if (typeof validatePromoMessage !== "undefined" && validatePromoMessage !== null && validatePromoMessage !== "" && validatePromoMessage.returnMessage === "SUCCESS") {
+          debugger
           toast.success('Promo Code Applied Successfully', {
             position: "top-right",
             autoClose: 3000,
@@ -246,6 +255,7 @@ console.log(promoAppliedsession);
 
   return (
     <>
+    <ToastContainer/>
       {typeof unitInfoDetails !== "undefined" && unitInfoDetails !== null && unitInfoDetails.length > 0 ?
         unitInfoDetails.map((item) => {
           return (<div key={item.unitInfo.id} className='col-12 col-md-5 pl-1 pl-sm-0 mb-3'>
@@ -288,6 +298,7 @@ console.log(promoAppliedsession);
                       <div className='col-3 d-flex align-items-end justify-content-center'>
                         <button className='ui button bg-success-dark fs-8 fw-400 text-white py-1 px-2' onClick={applyCoupon}>{t("Apply")}</button>
                       </div>
+                      <p className="error py-1 effective_from_date">{promcodeError}</p>
                     </div>
                   </div>:""
 

@@ -80,7 +80,6 @@ const RentNow = () => {
     //         console.log("test")
     //     }
     // })
-    console.log(searchinput.current)
     const { t } = useTranslation();
     useEffect(() => {
         fetchFaciltyDetail();

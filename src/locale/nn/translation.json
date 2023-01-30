@@ -75,7 +75,7 @@
   "Desired Move Out date":"Ønsket flytt ut dato",
   "RENTING DETAILS":"Leie detaljer",
   "ADD ON":"TILLEGG",
-  "TENANT DEATILS":"Leietakerdetaljer",
+  "TENANT DETAILS":"Leietakerdetaljer",
   "E-SIGN &PAY NOW":"E-SIGN & BETAL NÅ",
   "Please see the breakdown below":"Se sammenbruddet nedenfor",
   "Payment Period":"Betalingsperiode",
@@ -176,10 +176,10 @@
   "Pay Later": "Betale senere",
   "you will sign with a Norwegian BankID. Once you have signed, your signature will be registered by the e-signature service Signicat.": "Du vil signere med en norsk Bankid.Når du har signert, vil signaturen din bli registrert av e-signaturtjenesten Signicat.",
   "CHOOSE PAYMENT TYPE": "Velg betalingstype",
-  "Your move in date": "Your move in date",
-  "Billing Period": "Billing Period",
-  "Recurring charges": "Recurring charges",
-  "This will be your recurring charges until you decide to move out.": "This will be your recurring charges until you decide to move out.",
+  "Your move in date": "Ditt trekk i dato",
+  "Billing Period": "Faktura periode",
+  "Recurring charges": "Gjentakende anklager",
+  "This will be your recurring charges until you decide to move out.": "Dette vil være dine tilbakevendende kostnader til du bestemmer deg for å flytte ut.",
   "Total Amount": "Totale mengden",
   "Rent Amount": "Leiebeløp",
   "Discount": "Rabatt",
@@ -190,7 +190,14 @@
   "Confirm Movein": "Bekreft Movein",
   "Are you sure you want to do payLater?": "Er du sikker på at du vil gjøre Paylater?",
   "Yes": "Ja",
-  "No": "Nei"
+  "No": "Nei",
+  "Credit Card":"Kredittkort",
+  "Service":"service",
+  "Please Enter Promocode":"Vennligst skriv inn kampanjekode",
+  "Something Went wrong":"Noe gikk galt",
+  "SIGN":"SKILT",
+  "BACK":"TILBAKE",
+  "Please Select Tenant Type":"Velg leietype"
   
 
 

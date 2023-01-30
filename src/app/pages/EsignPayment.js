@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { useEffect } from 'react';
 import { useNavigate} from 'react-router-dom';
 import PreBookingBreadcrumb from '../components/prebooking breadcrumb/PreBookingBreadcrumb';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import instance from '../services/instance';
 import request from '../services/request';
 import axios from 'axios';
@@ -281,9 +283,12 @@ export default function EsignPayment() {
       unitDetailRespones['paymentModeId'] = paymentModeId;
     }
     if (thirtparty) {
+      if( insuranceDetail !== null && insuranceDetail.length > 0){
+     
       insuranceDetail.forEach((element) => {
         unitDetailRespones.units[0]['insuranceInfo'] = element['insuranceInfo'];
       })
+    }
 
     }
 
@@ -392,6 +397,7 @@ export default function EsignPayment() {
       // console.log(response);
       return response
     }).then(result => {
+      if(result.data.success){
       console.log("result", result.data.body);
       let redirectUrl = result.data.body.url;
       // console.log(redirectUrl);
@@ -399,6 +405,19 @@ export default function EsignPayment() {
       sessionStorage.setItem("bankIdDocumentId", result.data.body.document_id);
       sessionStorage.setItem("external_id", result.data.body.external_id);
       setButtonLoader(false)
+      }else{
+        toast.error(`${t("Something Went wrong")}`, {
+          position: "top-right",
+          autoClose: 3000,
+          duration: 100,
+          hideProgressBar: false,
+          closeOnClick: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+        setButtonLoader(false)
+      }
 
     }).catch(err => {
       console.log(err);
@@ -407,6 +426,7 @@ export default function EsignPayment() {
 
   return (
     <>
+     <ToastContainer/>
       {isLoading ? (
         <Loader size='large' active>Loading</Loader>
       ) : (<div>
@@ -607,7 +627,7 @@ export default function EsignPayment() {
                         <div className='bank-title pl-3'>
                           <p>{tenantInfo.firstName + " " + tenantInfo.lastName}, {t("you will sign with a Norwegian BankID. Once you have signed, your signature will be registered by the e-signature service Signicat.")}</p>
                         </div>
-                        <div className="text-center mt-2 d-flex justify-content-center"><Button loading={isButtonLoading}  disabled={isButtonLoading} className="ui button bg-success-dark d-flex align-items-center border-radius-5 fs-6 fw-100 text-white px-5 px-md-2 mb-sm-1" onClick={(e) => triggerEsign(e)}>SIGN</Button></div>
+                        <div className="text-center mt-2 d-flex justify-content-center"><Button loading={isButtonLoading}  disabled={isButtonLoading} className="ui button bg-success-dark d-flex align-items-center border-radius-5 fs-6 fw-100 text-white px-5 px-md-2 mb-sm-1" onClick={(e) => triggerEsign(e)}>{t("SIGN")}</Button></div>
                       </div>
                     </div>
                   }
@@ -627,7 +647,7 @@ export default function EsignPayment() {
                               }
                             </div>
                             <div className='bank-title'>
-                              <p>{e.text}</p>
+                              <p>{t(e.text)}</p>
                             </div>
                             <img className='bankid-img position-absolute r-2' src="/assets/images/arrow-down.png" alt="Arrow" />
                           </div>
@@ -672,7 +692,7 @@ export default function EsignPayment() {
                       <h6 className='fw-600 fs-6 mb-1 px-2'>{t("Total Amount")}</h6>
                       {unitdetail.rentAmount !== null && unitdetail.rentAmount > 0
                         ? <div className='d-flex justify-content-between dashed-bottom py-1 px-2'>
-                          <p>{t("Rent Amount")}</p>
+                          <p>{t("Rent Amount")}:</p>
                           <p>{helper.displayCurrency(unitdetail.rentAmount)}</p>
                         </div>
                         : "loading"
@@ -707,11 +727,11 @@ export default function EsignPayment() {
                           taxpecentage !== null && taxpecentage > 0
                             ?
                             <div className='d-flex justify-content-between py-1 px-2'>
-                              <p>{`Tax(${helper.displayPercent(taxpecentage)})`}</p>
+                              <p>{`${t("Tax")}(${helper.displayPercent(taxpecentage)})`}:</p>
                               <p>{helper.displayCurrency(unitdetail.taxAmount)}</p>
                             </div>
                             : <div className='d-flex justify-content-between py-1 px-2'>
-                              <p>{`Tax`}</p>
+                              <p>{`${t("Tax")}`}:</p>
                               <p>{helper.displayCurrency(unitdetail.taxAmount)}</p>
                             </div>
 
@@ -729,7 +749,7 @@ export default function EsignPayment() {
                       }{unitdetail.grossAmount !== null && unitdetail.grossAmount > 0
                         ?
                         <div className='d-flex justify-content-between border-top pt-1 px-2'>
-                          <p className='fw-600'>{t("Net Amount")}</p>
+                          <p className='fw-600'>{t("Net Amount")}:</p>
                           <p className='fw-600'>{helper.displayCurrency(unitdetail.grossAmount)}</p>
                         </div>
 
