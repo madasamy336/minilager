@@ -4,6 +4,7 @@ import { Button } from "semantic-ui-react";
 import { useNavigate } from 'react-router-dom';
 import DocumentExpiredLottie from '../../json/documentExpired.json'
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
 
 
@@ -13,6 +14,7 @@ export default function DocumentExpired(props) {
     const [isButtonLoading, setButtonLoader] = useState(false);
 
     const navigate = useNavigate();
+    const { t, i18n } = useTranslation();
 
     const triggerEsign = (e) => {
         debugger
