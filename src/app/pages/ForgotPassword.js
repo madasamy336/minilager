@@ -53,7 +53,7 @@ const ForgotPassword = (props) => {
         const validations = { userName: '' };
         let isValid = true;
         if (!userName) {
-            validations.userName = 'Username is required';
+            validations.userName = `${t('Username is required')}`;
             isValid = false;
         }
         if (!isValid) {
@@ -83,7 +83,7 @@ const ForgotPassword = (props) => {
                 if ( configData.isSuccess === true && configData.returnCode === "SUCCESS" &&  configData.returnMessage === "SUCCESS") {
                     // to emulate some network delay
 
-                    toast.success('Password has been sent successfully. Please check your inbox for the password', {
+                    toast.success(`${t('Password has been sent successfully. Please check your inbox for the password')}`, {
                         position: "top-right",
                         autoClose: 3000,
                         duration:100,
@@ -96,7 +96,7 @@ const ForgotPassword = (props) => {
                    
                 } else {
 
-                    toast.error('Email not exits. Please verify your email', {
+                    toast.error(`${('Email not exits. Please verify your email')}`, {
                         position: "top-right",
                         autoClose: 3000,
                         duration:100,
@@ -126,7 +126,7 @@ const ForgotPassword = (props) => {
                 <div className="row justify-content-center mt-3">
                     <div className="col-12 col-lg-4">
                         <div className='bg-white card-boxshadow px-0 pt-2 pb-4 border-radius-15 border-top-success-4'>
-                            <h6 className='text-success-dark text-center fw-500 fs-6 px-4 pt-2 mb-1  px-sm-2'>FORGOT PASSWORD</h6>
+                            <h6 className='text-success-dark text-center fw-500 fs-6 px-4 pt-2 mb-1  px-sm-2'>{t("FORGOT PASSWORD")}</h6>
                             <div className='px-4 px-sm-2'>
                                 <div className="forgot-img text-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 274 182.092">
@@ -162,7 +162,7 @@ const ForgotPassword = (props) => {
                                     </svg>
                                 </div>
                                 <div className="form-control mb-2">
-                                    <label className="d-block mb-1">Email/User Name <span className="requiredfield">*</span></label>
+                                    <label className="d-block mb-1">{t("Email/User Name")} <span className="requiredfield">*</span></label>
                                     <div className="ui input w-100 position-relative">
                                         <input type="text" className="pl-5" placeholder="Enter Email/User Name" name="userName" value={userName} onChange={(e) => { handleChange(e) }} onBlur={validateOne} />
                                         <svg className="position-absolute l-1 t-1" id="user-svgrepo-com" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 30.667 30.667">
@@ -176,10 +176,10 @@ const ForgotPassword = (props) => {
                                     <div className="text-danger mt-1"> {nameVal}</div>
                                 </div>
                                 <div className="text-center mb-2 mt-4">
-                                    <button onClick={e => passWordReset(e)} className="ui button bg-success-dark text-white fw-100 py-1">Submit</button>
+                                    <button onClick={e => passWordReset(e)} className="ui button bg-success-dark text-white fw-100 py-1">{t("Submit")}</button>
                                 </div>
                                 <div className="signup-div text-center">
-                                    <p className="fs-8">Already have an Account? <a href="/" onClick={e => ValidateSignin(e)}>Sign in</a></p>
+                                    <p className="fs-8">{t("Already have an Account?")} <a href="/" onClick={e => ValidateSignin(e)}>{t("Sign in")}</a></p>
                                 </div>
                             </div>
                         </div>
