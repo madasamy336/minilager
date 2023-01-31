@@ -147,7 +147,7 @@
   "Name": "Navn",
   "Address": "Adresse",
   "State/Province": "State/Province",
-  "Personal User": "Personal User",
+  "Personal User": "Personlig bruker",
   "CANCEL": "AVBRYT",
   "SAVE": "LAGRE",
   "Unit Details": "Enhetsdetaljer",
@@ -197,7 +197,9 @@
   "Something Went wrong":"Noe gikk galt",
   "SIGN":"SKILT",
   "BACK":"TILBAKE",
-  "Please Select Tenant Type":"Velg leietype"
+  "Please Select Tenant Type":"Velg leietype",
+  "Business User":"Forretningsbruker",
+  "MY SIDE":"MIN SIDE"
   
 
 

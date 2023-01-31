@@ -258,12 +258,12 @@ const Units = () => {
     const tenantTypeOptions = [
         {
             key: 1,
-            text: 'Personal User',
+            text: `${t("Personal User")}`,
             value: 'false'
         },
         {
             key: 2,
-            text: 'Business User',
+            text: `${t("Business User")}`,
             value: 'true',
         },
     ]

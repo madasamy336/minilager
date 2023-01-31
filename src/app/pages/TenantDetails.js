@@ -287,8 +287,8 @@ export default function TenantDetails() {
     setCreditCheckLoader(true);
     let authorizationToken = "";
     var data = {
-      client_id: 'te844ecc-b342-8eca-313b-93e8547e7254',
-      client_secret: '2557c303-005e-53d6-78fd-8980c46633e5',
+      client_id: '6StorageTenantPortal',
+      client_secret: 'eea7aee6-e7fd-976b-164a-20b9a5b75166',
       grant_type: 'client_credentials',
       acr_values: `tenant:${clientDataconfig.clientId}`,
       scopes: 'sixstorage_admin_api_scope'
@@ -301,7 +301,7 @@ export default function TenantDetails() {
       },
     };
 
-    axios.post('https://login.8storage.com/connect/token', data, config)
+    axios.post('https://id.8storage.com/connect/token', data, config)
       .then(response => {
         return response;
       }).then(result => {
