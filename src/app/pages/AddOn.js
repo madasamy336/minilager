@@ -796,8 +796,8 @@ export default function AddOn() {
               </div>
               <div className='row'>
                 <div className='text-center col-12 my-2'>
-                  <button onClick={() => navigate('/preBooking/rentingDetails')} className="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">BACK</button>
-                  <button className="ui button bg-success-dark   fs-7 fw-400 text-white px-5" onClick={e => navigateTenantDEtails(e)}>NEXT</button>
+                  <button onClick={() => navigate('/preBooking/rentingDetails')} className="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">{t("BACK")}</button>
+                  <button className="ui button bg-success-dark   fs-7 fw-400 text-white px-5" onClick={e => navigateTenantDEtails(e)}>{t("NEXT")}</button>
                 </div>
               </div>
             </div>

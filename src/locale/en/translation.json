@@ -72,8 +72,10 @@
   "Yes": "Yes",
   "No": "No",
   "Close": "Close",
-  "Please tie your shoes while we check your credit score.":"",
-  "Please do not perform any actions until we prompt":"",
-  " RENTING DETAILS":"",
-  "Records Selected":""
+  "Please tie your shoes while we check your credit score.":"Please tie your shoes while we check your credit score.",
+  "Please do not perform any actions until we prompt":"Please do not perform any actions until we prompt",
+  "RENTING DETAILS":"RENTING DETAILS",
+  "Records Selected":"Records Selected",
+  "NEXT": "NEXT"
+
 }

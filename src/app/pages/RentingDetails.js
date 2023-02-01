@@ -558,8 +558,8 @@ export default function RentingDetails() {
             </div>
             <div className='row'>
               <div className='col-12 text-center my-2'>
-                <button onClick={() => navigate('/preBooking/units')} className="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">BACK</button>
-                <button className="ui button bg-success-dark   fs-7 fw-400 text-white px-5" type="submit" onClick={e => navigateAddon(e)}>NEXT</button>
+                <button onClick={() => navigate('/preBooking/units')} className="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">{t("BACK")}</button>
+                <button className="ui button bg-success-dark   fs-7 fw-400 text-white px-5" type="submit" onClick={e => navigateAddon(e)}>{t("NEXT")}</button>
               </div>
             </div>
           </div>
