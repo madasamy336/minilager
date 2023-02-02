@@ -16,12 +16,13 @@ let pagesizepagination = 10;
 let pages = 0;
 
 const Units = () => {
-    const [tenantTypes, setTenantTypes] = useState();
+    const [tenantTypes, setTenantTypes] = useState(null);
     const [tenantTypeError, setTenantTypeError] = useState(false);
     const [SortByPriceRange, setSortByPriceRange] = useState("Ascending");
     const [unitLoadMoreButtonVal, setUnitLoadMoreButtonVal] = useState();
     const [pageNumber, setPageNumber] = useState(1);
     const [noUnits, setNoUnits] = useState(false);
+    const [isRendered, setIsRendered] = useState(false);
 
     const [UnitResponse, setUnitResponse] = useState(null);
     const [storageTypeValue, setStorageTypeValue] = useState('');
@@ -39,27 +40,30 @@ const Units = () => {
     });
     const filters = JSON.parse(localStorage.getItem('Units'));
     let locationId = localStorage.getItem('locationid');
-   let userInfo = JSON.parse(localStorage.getItem('tenantInfo'));
+    let userInfo = JSON.parse(localStorage.getItem('tenantInfo'));
     useEffect(() => {
-        fetchUnitFilter(locationId);
+        if (!isRendered) {
+            fetchUnitFilter(locationId);
+            setIsRendered(true);
+        }
     }, [storageTypeValue]);
 
     useEffect(() => {
-       
-        if (typeof userInfo !=="undefined" && userInfo !==null && userInfo !=="") {
-            if(userInfo.businessUser === true){
+
+        if (typeof userInfo !== "undefined" && userInfo !== null && userInfo !== "") {
+            if (userInfo.businessUser === true) {
                 setTenantTypes(tenantTypeOptions[1].value);
                 sessionStorage.setItem("isBussinessUser", tenantTypeOptions[1].value);
-            }else{
+            } else {
                 setTenantTypes(tenantTypeOptions[0].value);
                 sessionStorage.setItem("isBussinessUser", tenantTypeOptions[0].value);
             }
             sessionStorage.removeItem("applypromo");
-          }
+        }
         sixStorageLoadUnitList(storageTypeValue);
     }, [pageNumber]);
 
-    const fetchUnitFilter = (loactionid) => {   
+    const fetchUnitFilter = (loactionid) => {
         let config = {
             headers: {
                 "Content-Type": "application/json",
@@ -69,13 +73,12 @@ const Units = () => {
             .get(request.unit_filters + `&LocationId=${loactionid} `, config)
             .then(response => {
                 const unitFilterResponse = response.data;
-                if(unitFilterResponse.returnMessage === "NO_RECORDS_FOUND" && unitFilterResponse.isSuccess === true){
+                if (unitFilterResponse.returnMessage === "NO_RECORDS_FOUND" && unitFilterResponse.isSuccess === true) {
                     setNoUnits(true);
                     setLoading(false);
                 }
                 if (typeof unitFilterResponse !== 'undefined' && unitFilterResponse !== null && unitFilterResponse !== '' && unitFilterResponse.isSuccess === true && unitFilterResponse.result.length > 0) {
                     let data = constructFilterValues(unitFilterResponse.result);
-                  
                     localStorage.setItem("Units", JSON.stringify(data));
                     if (typeof data !== 'undefined' && data !== null && data !== '' && typeof data.storageType !== 'undefined' && data.storageType !== null && data.storageType !== "" && data.storageType.length > 0) {
                         if (typeof storageTypeValue === "undefined" || storageTypeValue === null || storageTypeValue === "") {
@@ -226,8 +229,8 @@ const Units = () => {
             sortDirection: SortByPriceRange,
             pageNumber: pageNumber,
             pageSize: 10,
-            isBusinessUser: isBussinessUser ==="true" ? true : false,
-            unitSort: "UnitNumber",
+            isBusinessUser: isBussinessUser === "true" ? true : false,
+            unitSort: "UnitPrice",
             unitVisibility: 1,
             availability: 2
         }
@@ -272,9 +275,9 @@ const Units = () => {
     const tenantInfoChange = (event, data) => {
         console.log(data)
         setTenantTypes(data.value);
-        if(data.value ==="true" || data.value ==="false"){
+        if (data.value === "true" || data.value === "false") {
             document.getElementById('tenantTypeError').style.display = 'none'
-        }else{
+        } else {
             document.getElementById('tenantTypeError').style.display = 'block'
         }
         sessionStorage.setItem("isBussinessUser", data.value);
@@ -285,13 +288,13 @@ const Units = () => {
         setTenantTypeError(data);
     }
 
-    const sortByPriceRange = (event, data) => {
+    const sortByPriceRange = (event_, data) => {
         setSortByPriceRange(data.value);
         sixStorageLoadUnitList(storageTypeValue);
     }
 
     const PaginationHandleChange = (event, value) => {
-        window.scroll(0,300);
+        window.scroll(0, 300);
         setPageNumber(value.activePage);
     }
 
@@ -332,7 +335,6 @@ const Units = () => {
             text: `${t("Price High to Low")}`,
             value: 'Descending',
             content: `${t("Price High to Low")}`,
-            
         }
     ]
 
@@ -346,11 +348,11 @@ const Units = () => {
                         <h2 className='text-center'>{t("Find Your Storage Place")}</h2>
                         <div className='row'>
                             <div className='col-lg-6 col-md-6 col-sm-12'>
-                                {typeof tenantTypeOptions !== "undefined" && tenantTypeOptions !== null && tenantTypeOptions !== "" && tenantTypeOptions.length > 0  ? <Dropdown placeholder={`${t("Choose Tenant Type")}`} clearable fluid  selection options={tenantTypeOptions} value={tenantTypes}  onChange={tenantInfoChange} /> : null}
+                                {typeof tenantTypeOptions !== "undefined" && tenantTypeOptions !== null && tenantTypeOptions !== "" && tenantTypeOptions.length > 0 ? <Dropdown placeholder={`${t("Choose Tenant Type")}`} clearable fluid selection options={tenantTypeOptions} value={tenantTypes} onChange={tenantInfoChange} /> : null}
                             </div>
                             <div className='col-lg-6 col-md-6 col-sm-12'>
                                 {storageTypeOptions !== null && typeof storageTypeOptions !== 'undefined' && storageTypeOptions !== '' && typeof storageTypeOptions[0].value !== 'undefined' && storageTypeOptions[0].value !== null && storageTypeOptions[0].value !== '' ?
-                                    <Dropdown placeholder="Choose Storage Type" value={storageTypeValue}  clonChange={changeStorageType} fluid selection options={storageTypeOptions} className={`opacity-1`} disabled={storageTypeOptions.length === 1}  />
+                                    <Dropdown placeholder="Choose Storage Type" value={storageTypeValue} clonChange={changeStorageType} fluid selection options={storageTypeOptions} className={`opacity-1`} disabled={storageTypeOptions.length === 1} />
                                     : ''}
                             </div>
                         </div>
@@ -367,7 +369,6 @@ const Units = () => {
                         <div className="col-lg-9 col-md-9 col-sm-12">
                             <div className="units-container-div">
                                 <p id="tenantTypeError" className='text-center error py-1 d-none'>{t("Please Select Tenant Type")}</p>
-                              
                                 <div className='sort-div text-right py-1'>
                                     <Header as='h4'>
                                         <Header.Content>
@@ -384,13 +385,12 @@ const Units = () => {
                                 </div>
                                 <div className='units-div'>
                                     <div className='row'>
-                                    {noUnits ? <div className='col-12'><p id="nounits-available" className='text-center error py-1'>No Units Available</p></div> : ""} 
+                                        {noUnits ? <div className='col-12'><p id="nounits-available" className='text-center error py-1'>No Units Available</p></div> : ""}
 
                                         {loader ? (<div>
                                             <PlaceholderLoader cardCount={7} />
                                         </div>) : (<UnitsCard tenantType={tenantTypes} checkTenantType={() => checkTenantType()} filterRequest={filterRequest} storageTypevalue={storageTypeValue} UnitResponse={UnitResponse} setUnitResponse={setUnitResponse} setLoading={setLoading} />)}
 
-                                       
                                     </div>
                                 </div>
                                 {typeof unitLoadMoreButtonVal !== 'undefined' && unitLoadMoreButtonVal !== null && unitLoadMoreButtonVal !== '' && unitLoadMoreButtonVal > 0 && unitLoadMoreButtonVal !== 0 ? (
