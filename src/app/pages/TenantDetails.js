@@ -1119,7 +1119,7 @@ export default function TenantDetails() {
                   <div key={item.fieldId} className="field w-100 my-2 ">
                     <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}
                     </label>
-                    <input type='text' id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-datatype={item.matadata.dataType} data-type={item.matadata.type} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
+                    <input type='text' id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} data-name={item.fieldName} data-fieldid={item.fieldId} data-unitid={unitid} data-required={item.matadata.isMandatory} data-datatype={item.matadata.dataType} data-type={item.matadata.type} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
                     <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
                     <div className="text-danger mt-1" id={item.matadata.dataType} style={{ display: 'none' }}>{t("It should allow Alphabet Only")}</div>
                   </div>
@@ -1131,7 +1131,7 @@ export default function TenantDetails() {
                   <div className="field w-100 my-2 ">
                     <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}
                     </label>
-                    <input type='text' id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} value={customInputFieldValue} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
+                    <input type='text' id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} value={customInputFieldValue} data-name={item.fieldName} data-fieldid={item.fieldId} data-unitid={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
                     <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
                   </div>
                 </div>
@@ -1151,11 +1151,11 @@ export default function TenantDetails() {
                 return <div key={item.fieldId} className="col-12 col-md-6 px-4 px-sm-2">
                   <span id={`${item.matadata.type}_${item.fieldId}`} >{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}
                     <span className="mx-2">
-                      <input id={`${item.matadata.type}_${item.fieldId}`} className="mr-1" type="checkbox" name={`${item.matadata.type}_${item.fieldId}`} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.options[0].option} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} />
+                      <input id={`${item.matadata.type}_${item.fieldId}`} className="mr-1" type="checkbox" name={`${item.matadata.type}_${item.fieldId}`} data-name={item.fieldName} data-fieldid={item.fieldId} data-unitid={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.options[0].option} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} />
                       <label>{item.options[0].option}</label>
                     </span>
                     <span>
-                      <input id={`${item.matadata.type}_${item.fieldId}`} className="mr-1" type="checkbox" name={`${item.matadata.type}_${item.fieldId}`} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.options[1].option} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} />
+                      <input id={`${item.matadata.type}_${item.fieldId}`} className="mr-1" type="checkbox" name={`${item.matadata.type}_${item.fieldId}`} data-name={item.fieldName} data-fieldid={item.fieldId} data-unitid={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.options[1].option} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} />
                       <label>{item.options[1].option}</label>
                     </span>
                   </span>
@@ -1168,7 +1168,7 @@ export default function TenantDetails() {
                 return <div key={item.fieldId} className="col-12 col-md-6 px-4 px-sm-2">
                   <div className="field w-100 my-2">
                     <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}</label>
-                    <textarea id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} data-name={item.fieldName} data-type={item.matadata.type} value={customInputFieldValue} rows="3" data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)}></textarea>
+                    <textarea id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} data-name={item.fieldName} data-type={item.matadata.type} value={customInputFieldValue} rows="3" data-fieldid={item.fieldId} data-unitid={unitid} data-required={item.matadata.isMandatory} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)}></textarea>
                     <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
                   </div>
                 </div>
@@ -1179,7 +1179,7 @@ export default function TenantDetails() {
                 return <div key={item.fieldId} className="col-12 col-md-6 px-4 px-sm-2">
                   <span id={`${item.matadata.type}_${item.fieldId}`}>
                     <span className="mx-0">
-                      <input className="mr-1" type="checkbox" name={`${item.matadata.type}_${item.fieldId}`} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.fieldName} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
+                      <input className="mr-1" type="checkbox" name={`${item.matadata.type}_${item.fieldId}`} data-name={item.fieldName} data-fieldid={item.fieldId} data-unitid={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.fieldName} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
                       <label>{item.fieldName}{item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}</label>
                     </span>
                   </span>
@@ -1192,7 +1192,7 @@ export default function TenantDetails() {
                   <div className="field w-100 my-2 ">
                     <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}
                     </label>
-                    <input type='number' id={`${item.matadata.type}_${item.fieldId}`} name={item.fieldId} placeholder={item.fieldName} value={cusomfieldPhone} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
+                    <input type='number' id={`${item.matadata.type}_${item.fieldId}`} name={item.fieldId} placeholder={item.fieldName} value={cusomfieldPhone} data-name={item.fieldName} data-fieldid={item.fieldId} data-unitid={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
                     <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
                   </div>
                 </div>
@@ -1201,11 +1201,11 @@ export default function TenantDetails() {
                 return <div key={item.fieldId} className="col-12 col-md-6 px-4 px-sm-2">
                   <span id={`${item.matadata.type}_${item.fieldId}`}>{item.fieldName}{item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}
                     <span className="mx-2">
-                      <input className="mr-1" id={`${item.matadata.type}_${item.fieldId}`} type="radio" name={`${item.matadata.type}_${item.fieldId}`} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.options[0].option} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} />
+                      <input className="mr-1" id={`${item.matadata.type}_${item.fieldId}`} type="radio" name={`${item.matadata.type}_${item.fieldId}`} data-name={item.fieldName} data-fieldid={item.fieldId} data-unitid={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.options[0].option} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} />
                       <label>{item.options[0].option}</label>
                     </span>
                     <span>
-                      <input className="mr-1" id={`${item.matadata.type}_${item.fieldId}`} type="radio" name={`${item.matadata.type}_${item.fieldId}`} data-name={item.fieldName} data-fieldId={item.fieldId} data-unitId={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.options[1].option} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} />
+                      <input className="mr-1" id={`${item.matadata.type}_${item.fieldId}`} type="radio" name={`${item.matadata.type}_${item.fieldId}`} data-name={item.fieldName} data-fieldid={item.fieldId} data-unitid={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.options[1].option} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} />
                       <label>{item.options[1].option}</label>
                     </span>
                   </span>

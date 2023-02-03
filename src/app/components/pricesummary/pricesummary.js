@@ -248,8 +248,6 @@ const Pricesummary = forwardRef((props, ref) => {
     unitinfodetails();
   }
 
-
-console.log(promoAppliedsession);
   
   /** Validate Promocode Discount End ***/
 
