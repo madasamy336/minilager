@@ -1,7 +1,7 @@
 {
   "HOME": "HJEM",
   "RENT NOW":"LEIE NÅ",
-  "ORDER MINI STOCK":"ORDER MINI STOCK",
+  "ORDER MINI STOCK":"BESTILL MINILAGER",
   "Zip,City or Address":"Zip, by eller adresse",
   "Search":"Søke",
   "View Units":"Vis enheter",
@@ -199,11 +199,11 @@
   "BACK":"TILBAKE",
   "Please Select Tenant Type":"Velg leietype",
   "Business User":"Forretningsbruker",
-  "MY SIDE":"MIN SIDE"
-  
-
-
-
+  "MY SIDE":"MIN SIDE",
+  "NEXT": "NESTE",
+  "Please tie your shoes while we check your credit score.":"Knyt skoene dine mens vi sjekker kredittscore.",
+  "Please do not perform any actions until we prompt":"Ikke utfør noen handlinger før vi ber om det"
+ 
 
 
 

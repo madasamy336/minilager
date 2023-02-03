@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useEffect } from 'react';
-import { useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import PreBookingBreadcrumb from '../components/prebooking breadcrumb/PreBookingBreadcrumb';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -206,7 +206,7 @@ export default function EsignPayment() {
         if (response.data.result.saveAgreement) {
           setSaveAgreement(response.data.result);
 
-        }else{
+        } else {
           setSaveAgreement([]);
 
         }
@@ -251,10 +251,10 @@ export default function EsignPayment() {
         </div>
         </div>`)
 
-          
+
           setPaymentLoader(false);
         }
-        
+
       })
       .catch((error) => {
         console.log(error);
@@ -283,12 +283,12 @@ export default function EsignPayment() {
       unitDetailRespones['paymentModeId'] = paymentModeId;
     }
     if (thirtparty) {
-      if( insuranceDetail !== null && insuranceDetail.length > 0){
-     
-      insuranceDetail.forEach((element) => {
-        unitDetailRespones.units[0]['insuranceInfo'] = element['insuranceInfo'];
-      })
-    }
+      if (insuranceDetail !== null && insuranceDetail.length > 0) {
+
+        insuranceDetail.forEach((element) => {
+          unitDetailRespones.units[0]['insuranceInfo'] = element['insuranceInfo'];
+        })
+      }
 
     }
 
@@ -397,15 +397,16 @@ export default function EsignPayment() {
       // console.log(response);
       return response
     }).then(result => {
-      if(result.data.success){
-      console.log("result", result.data.body);
-      let redirectUrl = result.data.body.url;
-      // console.log(redirectUrl);
-      window.location.replace(redirectUrl);
-      sessionStorage.setItem("bankIdDocumentId", result.data.body.document_id);
-      sessionStorage.setItem("external_id", result.data.body.external_id);
-      setButtonLoader(false)
-      }else{
+      console.log(result);
+      if (result.status == 200 && result.data.status == 201) {
+        console.log("result", result.data.body);
+        let redirectUrl = result.data.body.url;
+        // console.log(redirectUrl);
+        window.location.replace(redirectUrl);
+        sessionStorage.setItem("bankIdDocumentId", result.data.body.document_id);
+        sessionStorage.setItem("external_id", result.data.body.external_id);
+        setButtonLoader(false)
+      } else {
         toast.error(`${t("Something Went wrong")}`, {
           position: "top-right",
           autoClose: 3000,
@@ -426,7 +427,7 @@ export default function EsignPayment() {
 
   return (
     <>
-     <ToastContainer/>
+      <ToastContainer />
       {isLoading ? (
         <Loader size='large' active>Loading</Loader>
       ) : (<div>
@@ -547,15 +548,15 @@ export default function EsignPayment() {
                           </div>
                         });
                       }
-                      
+
                       )
-                      : 
+                      :
                       < div key="" className='card-bg-secondary w-100 px-2 py-2 mb-6' >
-                            
-                            <div className="text-center mt-4">
-                             {t("No document found")}
-                            </div>
-                          </div>
+
+                        <div className="text-center mt-4">
+                          {t("No document found")}
+                        </div>
+                      </div>
                       // <Segment raised>
                       //   <Placeholder>
                       //     <Placeholder.Header image>
@@ -593,13 +594,13 @@ export default function EsignPayment() {
                         <label className='ml-1'>{t("I have read and understood the contents of the documents listed and I am ready to sign")}</label>
                       </div>
                     </div>
-                   
-                    <div className={`pt-4 ${eSignature === true ? 'd-block': 'd-none'}`}>
+
+                    <div className={`pt-4 ${eSignature === true ? 'd-block' : 'd-none'}`}>
 
                       <div className='d-flex justify-content-between flex-wrap bg-primary-light p-1 border-success-dark-1 border-radius-5'>
                         <p className='d-flex align-items-center'><img src='/assets/images/esign.svg' alt='Esign' /><span className='ml-1'>{t("Great! You have successfully signed the documents")}</span></p>
-                        <button className="ui button text-success-dark bg-white card-border fs-7 fw-400 text-dark px-1 mr-2 mt-md-1" onClick={() =>setViewDocumentModal(true)}>{t("View Document")}</button>
-                      </div>                     
+                        <button className="ui button text-success-dark bg-white card-border fs-7 fw-400 text-dark px-1 mr-2 mt-md-1" onClick={() => setViewDocumentModal(true)}>{t("View Document")}</button>
+                      </div>
                       <div className='pt-4 d-flex justify-content-center flex-wrap'>
 
                         {paylaterButton === true ?
@@ -620,14 +621,14 @@ export default function EsignPayment() {
                     </div>
                     {/* {console.log(esignMethod)} */}
                   </div>
-                  {esignMethod  &&
+                  {esignMethod &&
                     <div className='mt-1'>
                       <div className='eSignTitle'>  <img src="/assets/images/bankid.png" alt="Norwegian BankID" /><h5 className='fw-600 '>Sign with Norweigan BankID</h5></div>
                       <div className='py-4 px-3'>
                         <div className='bank-title pl-3'>
                           <p>{tenantInfo.firstName + " " + tenantInfo.lastName}, {t("you will sign with a Norwegian BankID. Once you have signed, your signature will be registered by the e-signature service Signicat.")}</p>
                         </div>
-                        <div className="text-center mt-2 d-flex justify-content-center"><Button loading={isButtonLoading}  disabled={isButtonLoading} className="ui button bg-success-dark d-flex align-items-center border-radius-5 fs-6 fw-100 text-white px-5 px-md-2 mb-sm-1" onClick={(e) => triggerEsign(e)}>{t("SIGN")}</Button></div>
+                        <div className="text-center mt-2 d-flex justify-content-center"><Button loading={isButtonLoading} disabled={isButtonLoading} className="ui button bg-success-dark d-flex align-items-center border-radius-5 fs-6 fw-100 text-white px-5 px-md-2 mb-sm-1" onClick={(e) => triggerEsign(e)}>{t("SIGN")}</Button></div>
                       </div>
                     </div>
                   }
@@ -803,9 +804,9 @@ export default function EsignPayment() {
 
             : ""
           }
-         {  parse(mondelcontent) }
-        
-          
+          {parse(mondelcontent)}
+
+
         </Modal.Content>
       </Modal>
 
@@ -841,10 +842,10 @@ export default function EsignPayment() {
       >
         {/* <Modal.Header>Confirm Movein </Modal.Header> */}
         <Modal.Content className='viewDocumentModal'>
-         <iframe width={"100%"} height={'70vh'} src={sessionStorage.getItem('eSignDocumentURL')}/>
+          <iframe width={"100%"} height={'70vh'} src={sessionStorage.getItem('eSignDocumentURL')} />
         </Modal.Content>
         <Modal.Actions>
-         
+
           <Button onClick={() => setViewDocumentModal(false)}>
             {t("Close")}
           </Button>
