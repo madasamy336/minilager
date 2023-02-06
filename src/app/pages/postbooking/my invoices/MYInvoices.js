@@ -316,7 +316,8 @@ export default function MYInvoices() {
               <table className="w-100">
                 <thead>
                   <tr>
-                    <th className="text-center d-none"><input type="checkbox" id="selectedAllCheckbox" onChange={(e) => selectAllCheckBox(e)} /></th>
+                    <th className="text-center"></th>
+                    {/* <th className="text-center d-none"><input type="checkbox" id="selectedAllCheckbox" onChange={(e) => selectAllCheckBox(e)} /></th> */}
                     <th className="text-center">{t("Invoice Amount")}</th>
                     <th className="text-center">{t("Invoice Date")}</th>
                     <th className="text-center">{t("Paid On")}</th>
