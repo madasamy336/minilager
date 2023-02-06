@@ -447,7 +447,7 @@ export default function MyLeases() {
           <div className="ui form px-4 px-sm-2">
             <div className="field w-100 datePicker my-3">
               <label className='fw-500 fs-7 mb-1' >Schedule Move-Out Date</label>
-              <SemanticDatepicker disabled={isButtonLoading} showToday={true} selectedDate={helper.readDate(new Date())} value={scheduleMoveOutDateValue} name="date" onChange={(e, { name, value }) => SetScheduleMoveOutDate(name, value)} placeholder='Select date' className='w-100' />
+              <SemanticDatepicker datePickerOnly disabled={isButtonLoading} showToday={true}  value={scheduleMoveOutDateValue} name="date" onChange={(e, { name, value }) => SetScheduleMoveOutDate(name, value)} placeholder='Select date' className='w-100' />
             </div>
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-1' >Reason</label>
@@ -476,7 +476,7 @@ export default function MyLeases() {
           <div className="ui form px-4 px-sm-2">
             <div className="field w-100 datePicker my-3">
               <label className='fw-500 fs-7 mb-1' >Cancel Schedule Move-Out Date</label>
-              <SemanticDatepicker disabled={true} name="date" onChange={(e, data) => handleChange(e, data)} value={bindScheduledMovedDate} placeholder='Select date' className='w-100' />
+              <SemanticDatepicker datePickerOnly disabled={true} name="date" onChange={(e, data) => handleChange(e, data)} value={bindScheduledMovedDate} placeholder='Select date' className='w-100' />
             </div>
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-1' >Reason</label>

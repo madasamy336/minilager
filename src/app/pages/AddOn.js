@@ -505,12 +505,12 @@ export default function AddOn() {
                       </div>
                       <div className="field w-100 datePicker my-3">
                         <label className='fw-500 fs-7 mb-2' >{t("Effective From Date")}</label>
-                        <SemanticDatepicker placeholder={`${t("Effective From Date")}`} value={effectiveFromDate} className='w-100' onChange={(e, item) => setEffectiveFromDate(item.value)} />
+                        <SemanticDatepicker datePickerOnly placeholder={`${t("Effective From Date")}`} value={effectiveFromDate} className='w-100' onChange={(e, item) => setEffectiveFromDate(item.value)} />
                         <p className="error py-1 effective_from_date  d-none">{t("Please Enter Effective From Date")}</p>
                       </div>
                       <div className="field w-100 datePicker my-3">
                         <label className='fw-500 fs-7 mb-2' >{t("Effective To Date")}</label>
-                        <SemanticDatepicker placeholder={t("Effective To Date")} value={effectiveToDate} className='w-100' onChange={(e, item) => setEffectiveToDate(item.value)} />
+                        <SemanticDatepicker datePickerOnly placeholder={t("Effective To Date")} value={effectiveToDate} className='w-100' onChange={(e, item) => setEffectiveToDate(item.value)} />
                         <p className="error py-1 effective_to_date d-none">{t("Please Enter Effective To Date")}</p>
                       </div>
                       {/* <div className="field w-100 datePicker my-3">
