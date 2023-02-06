@@ -40,7 +40,7 @@ export default function RentingDetails() {
   const [invoiceDefault, setInvoiceDefault] = useState();
   const [recurring, setRecurring] = useState();
   const [movinDate, setMovinDate] = useState(new Date());
-  const [desiredMoveOutDate,setDesiredMoveOutDate] = useState();
+  const [desiredMoveOutDate, setDesiredMoveOutDate] = useState();
   const [customFieldAccess, SetCustomFieldAccess] = useState();
   const clientDataconfig = JSON.parse(sessionStorage.getItem("configdata"));
   const recurringDefaultValue = clientDataconfig.recurringTypes[0].recurringTypeId;
@@ -81,10 +81,10 @@ export default function RentingDetails() {
   }
 
   if (typeof invoiceDefault !== "undefined" && invoiceDefault !== null && invoiceDefault !== "") {
-    sessionStorage.setItem("invoiceData", (invoiceDefault));
+    sessionStorage.setItem("invoicePeriodValue", (invoiceDefault));
   }
   if (typeof recurringDefaultValue !== "undefined" && recurringDefaultValue !== null && recurringDefaultValue !== "") {
-    sessionStorage.setItem("recurringData", (recurringDefaultValue));
+    sessionStorage.setItem("invoiceRecurringValue", (recurringDefaultValue));
   }
 
 
@@ -99,12 +99,12 @@ export default function RentingDetails() {
     setDesiredMoveOutDate(date.value);
   }
   const invoiceOnchange = (e, item) => {
-    sessionStorage.setItem("invoiceData", (item.value));
+    sessionStorage.setItem("invoicePeriodValue", (item.value));
     childRef.current.unitInfodetailscall();
 
   }
   const recurringOnchange = (e, item) => {
-    sessionStorage.setItem("recurringData", (item.value));
+    sessionStorage.setItem("invoiceRecurringValue", (item.value));
     setRecurringValue(item.value)
     childRef.current.unitInfodetailscall();
 
@@ -148,7 +148,7 @@ export default function RentingDetails() {
 
     }
 
-   
+
     // SetCustomS({ ...TestT, [e.target.dataset.fieldid]: customValues });
 
 
@@ -370,7 +370,7 @@ export default function RentingDetails() {
           }
         }
       })
-      
+
     } else {
       navigate('/preBooking/addOns');
     }
@@ -415,21 +415,21 @@ export default function RentingDetails() {
                   <div className="ui form px-4 px-sm-2">
                     <div className="field w-100 datePicker my-3">
                       <label className='fw-500 fs-7 mb-2' >{t("Move-In Date")}</label>
-                      <SemanticDatepicker clearable={false} placeholder='Select date' className='w-100' clearOnSameDateClick={false} value={movinDate} onChange={movindateOnchange} filterDate={(date) => { const now = new Date(); return date >= now; }} />
+                      <SemanticDatepicker datePickerOnly clearable={false} placeholder='Select date' className='w-100' clearOnSameDateClick={false} value={movinDate} onChange={movindateOnchange} filterDate={(date) => { const now = new Date(); return date >= now; }} />
                     </div>
                     {typeof invoice !== "undefined" && invoice !== null && invoice.length > 0 ?
                       <div className="field w-100  my-3">
                         <label className='fw-500 fs-7 mb-2'>{t("Invoice Period")}</label>
-                        <Dropdown placeholder='Select Invoice Period' fluid search selection options={invoice} value={invoice.value} defaultValue={invoiceDefault} onChange={invoiceOnchange} />
+                        <Dropdown placeholder='Select Invoice Period' fluid selection options={invoice} value={invoice.value} defaultValue={invoiceDefault} onChange={invoiceOnchange} />
                       </div> : ""}
                     {typeof recurring !== "undefined" && recurring !== null && recurring.length > 0 ?
                       <div className="field w-100  my-3">
                         <label className='fw-500 fs-7 mb-2'>{t("Invoice Recurring")}</label>
-                        <Dropdown placeholder='Select Invoice Recurring' fluid search selection options={recurring} value={recurring.value} defaultValue={recurringDefaultValue} onChange={recurringOnchange} />
+                        <Dropdown placeholder='Select Invoice Recurring' fluid selection options={recurring} value={recurring.value} defaultValue={recurringDefaultValue} onChange={recurringOnchange} />
                       </div> : ""}
                     <div className="field w-100 datePicker my-3">
                       <label className='fw-500 fs-7 mb-2' >{t("Desired Move Out date")}</label>
-                      <SemanticDatepicker placeholder='Select date' className='w-100' value={desiredMoveOutDate} filterDate={(date) => { const now = new Date(movinDate); return date >= now; }} onChange={DesiredMoveoutDateChange} />
+                      <SemanticDatepicker datePickerOnly placeholder='Select date' className='w-100' value={desiredMoveOutDate} filterDate={(date) => { const now = new Date(movinDate); return date >= now; }} onChange={DesiredMoveoutDateChange} />
                     </div>
 
 
@@ -468,7 +468,7 @@ export default function RentingDetails() {
                             <div className="col-12">
                               <div className="field w-100 datePicker my-2">
                                 <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}</label>
-                                <SemanticDatepicker id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} className='w-100' data-name={item.fieldName} fieldId={item.fieldId} unitId={unitid} required={item.matadata.isMandatory} fieldpage={item.matadata.displayOn} type={item.matadata.type} onChange={(e, data) => customhandlechange(e, data, "date")} />
+                                <SemanticDatepicker datePickerOnly id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} className='w-100' data-name={item.fieldName} fieldId={item.fieldId} unitId={unitid} required={item.matadata.isMandatory} fieldpage={item.matadata.displayOn} type={item.matadata.type} onChange={(e, data) => customhandlechange(e, data, "date")} />
                                 <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
                               </div>
                             </div>
