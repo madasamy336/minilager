@@ -40,7 +40,7 @@
   "Confirm Password": "Confirm Password",
   "Old Password": "Old Password",
   "Are you sure you want to logout?": "Are you sure you want to logout?",
-  "Confirmation Modal": "Confirmation Modal",
+  "Logout Confirmation": "Logout Confirmation",
   "Logout": "Logout",
   "Personal Details": "Personal Details",
   "Facility Address": "Facility Address",
@@ -76,6 +76,11 @@
   "Please do not perform any actions until we prompt":"Please do not perform any actions until we prompt",
   "RENTING DETAILS":"RENTING DETAILS",
   "Records Selected":"Records Selected",
-  "NEXT": "NEXT"
+  "NEXT": "NEXT",
+  "Profile":"Profile",
+  "Log Out":"Log Out",
+  "Payment":"Payment",
+  "My Invoices":"My Invoices",
+  "My Leases":"My Leases"
 
 }
