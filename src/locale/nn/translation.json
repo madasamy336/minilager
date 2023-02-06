@@ -206,6 +206,11 @@
   "Profile": "Profil",
   "Log Out": "Logg ut",
   "Payment": "innbetaling",
-  "My Invoices": "My Invoices",
-  "My Leases": "Mine leiekontrakter"
+  "My Invoices": "Mine fakturaer",
+  "My Leases": "Mine leiekontrakter",
+  "Update Password": "Oppdater passord",
+  "Schedule Move-Out date": "Planlegg utflyttingsdato",
+  "Schedule Move-Out": "Planlegg utflytting",
+  "Reason": "Grunnen til",
+  "Please tell us reason": "Fortell oss grunnens"
 }

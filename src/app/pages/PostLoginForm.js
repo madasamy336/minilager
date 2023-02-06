@@ -66,7 +66,7 @@ const PostLoginForm = (props) => {
                 break;
             case 'password':
                 if (!value) {
-                    message = 'Password is Required'
+                    message = `${t('Password is Required')}`
                 }
                 break;
             default:

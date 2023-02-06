@@ -81,6 +81,20 @@
   "Log Out":"Log Out",
   "Payment":"Payment",
   "My Invoices":"My Invoices",
-  "My Leases":"My Leases"
-
+  "My Leases":"My Leases",
+  "Update Password": "Update Password",
+  "Schedule Move-Out date":"Schedule Move-Out date",
+  "Schedule Move-Out":"Schedule Move-Out",
+  "Password is Required": "Password is Required",
+  "First Name is Required": "First Name is Required",
+  "Last Name is Required": "Last Name is Required",
+  "Address is Required": "Address is Required",
+  "City is Required": "City is Required",
+  "Zipcode is Required": "Zipcode is Required",
+  "State is Required": "State is Required",
+  "Phone Number is Required": "Phone Number is Required",
+  "Email is Required": "Email is Required",
+  "Email format must be as example@mail.com": "Email format must be as example@mail.com",
+  "Reason":"Reason",
+  "Please tell us reason":"Please tell us reason"
 }
