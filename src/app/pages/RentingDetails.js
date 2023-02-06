@@ -217,7 +217,7 @@ export default function RentingDetails() {
 
   const navigateAddon = (e) => {
 
-   
+
 
     // newArray = [];
     // newArray.push({
@@ -304,78 +304,144 @@ export default function RentingDetails() {
 
   }
 
+  // const checkCustomfieldValue = () => {
+  //   debugger
+  //   let customValue = JSON.parse(localStorage.getItem(`CustomFieldsSetting`));
+  //   let errorcount = 0;
+  //   if (customValue && customValue.length > 0) {
+  //     let filterUnitSpecificValue = customValue.filter(i => i.matadata.displayOn === 'Unit specific details')
+  //     filterUnitSpecificValue.forEach((item) => {
+  //       let customvalue = document.getElementById(`${item.matadata.type}_${item.fieldId}`);
+  //       let errordiv = document.getElementById(`${item.fieldId}`);
+
+  //       if (item.matadata.isMandatory === true) {
+  //         console.log("isMandatory");
+  //         console.log(item);
+  //         if (item.matadata.type === 'textbox' && customvalue.value === '') {
+  //           console.log("textbox");
+  //           errordiv.style.display = "block";
+  //           errorcount = errorcount + 1;
+  //           return
+  //         } else if (item.matadata.type === 'radio') {
+  //           let checkRadioButton = [];
+  //           let radiobutton = document.getElementsByName(`${item.matadata.type}_${item.fieldId}`);
+  //           radiobutton.forEach((item) => {
+  //             checkRadioButton.push(item.checked);
+  //           })
+  //           if (checkRadioButton.length > 0 && checkRadioButton.includes(true) === false) {
+  //             errordiv.style.display = "block";
+  //             errorcount = errorcount + 1;
+  //           }
+  //         } else if (item.matadata.type === "checkboxes") {
+  //           let checkRadioButton = [];
+  //           let radiobutton = document.getElementsByName(`${item.matadata.type}_${item.fieldId}`);
+  //           radiobutton.forEach((item) => {
+  //             checkRadioButton.push(item.checked);
+  //           })
+  //           if (checkRadioButton.length > 0 && checkRadioButton.includes(true) === false) {
+  //             errordiv.style.display = "block";
+  //             errorcount = errorcount + 1;
+  //           }
+
+  //         } else if (item.matadata.type === "checkbox") {
+  //           let checkRadioButton = [];
+  //           let radiobutton = document.getElementsByName(`${item.matadata.type}_${item.fieldId}`);
+  //           radiobutton.forEach((item) => {
+  //             checkRadioButton.push(item.checked);
+  //           })
+  //           if (checkRadioButton.length > 0 && checkRadioButton.includes(true) === false) {
+  //             errordiv.style.display = "block";
+  //             errorcount = errorcount + 1;
+  //           }
+
+  //         }
+
+  //         else if (item.matadata.type === 'textarea' && customvalue.value === '') {
+  //           errordiv.style.display = "block";
+  //           errorcount = errorcount + 1;
+  //           return
+  //         } else if (item.matadata.type === 'date' && customvalue.value === '') {
+  //           errordiv.style.display = "block";
+  //           errorcount = errorcount + 1;
+  //           return
+  //         } else {
+  //           if (errorcount === 0) {
+  //             sessionStorage.setItem("customFieldstorage", JSON.stringify(customFieldValue))
+  //             navigate('/preBooking/addOns');
+  //           }
+  //         }
+  //       }
+  //     })
+
+  //   } else {
+  //     navigate('/preBooking/addOns');
+  //   }
+  // }
+
   const checkCustomfieldValue = () => {
-    debugger
-    let customValue = JSON.parse(localStorage.getItem(`CustomFieldsSetting`));
-    let errorcount = 0;
-    if (customValue && customValue.length > 0) {
-      let filterUnitSpecificValue = customValue.filter(i => i.matadata.displayOn === 'Unit specific details')
-      filterUnitSpecificValue.forEach((item) => {
-        let customvalue = document.getElementById(`${item.matadata.type}_${item.fieldId}`);
-        let errordiv = document.getElementById(`${item.fieldId}`);
-
-        if (item.matadata.isMandatory === true) {
-
-          if (item.matadata.type === 'textbox' && customvalue.value === '') {
-            errordiv.style.display = "block";
-            errorcount = errorcount + 1;
-            return
-          } else if (item.matadata.type === 'radio') {
-            let checkRadioButton = [];
-            let radiobutton = document.getElementsByName(`${item.matadata.type}_${item.fieldId}`);
-            radiobutton.forEach((item) => {
-              checkRadioButton.push(item.checked);
-            })
-            if (checkRadioButton.length > 0 && checkRadioButton.includes(true) === false) {
-              errordiv.style.display = "block";
-              errorcount = errorcount + 1;
-            }
-          } else if (item.matadata.type === "checkboxes") {
-            let checkRadioButton = [];
-            let radiobutton = document.getElementsByName(`${item.matadata.type}_${item.fieldId}`);
-            radiobutton.forEach((item) => {
-              checkRadioButton.push(item.checked);
-            })
-            if (checkRadioButton.length > 0 && checkRadioButton.includes(true) === false) {
-              errordiv.style.display = "block";
-              errorcount = errorcount + 1;
-            }
-
-          } else if (item.matadata.type === "checkbox") {
-            let checkRadioButton = [];
-            let radiobutton = document.getElementsByName(`${item.matadata.type}_${item.fieldId}`);
-            radiobutton.forEach((item) => {
-              checkRadioButton.push(item.checked);
-            })
-            if (checkRadioButton.length > 0 && checkRadioButton.includes(true) === false) {
-              errordiv.style.display = "block";
-              errorcount = errorcount + 1;
-            }
-
-          }
-
-          else if (item.matadata.type === 'textarea' && customvalue.value === '') {
-            errordiv.style.display = "block";
-            errorcount = errorcount + 1;
-            return
-          } else if (item.matadata.type === 'date' && customvalue.value === '') {
-            errordiv.style.display = "block";
-            errorcount = errorcount + 1;
-            return
-          } else {
-            if (errorcount === 0) {
-              sessionStorage.setItem("customFieldstorage", JSON.stringify(customFieldValue))
-              navigate('/preBooking/addOns');
-            }
-          }
-        }
-      })
-
-    } else {
-      navigate('/preBooking/addOns');
+    const customValue = JSON.parse(localStorage.getItem("CustomFieldsSetting"));
+    let errorCount = 0;
+  
+    if (!customValue || customValue.length === 0) {
+      navigate("/preBooking/addOns");
+      return;
     }
-  }
-
+  
+    const filterUnitSpecificValue = customValue.filter(
+      (i) => i.matadata.displayOn === "Unit specific details"
+    );
+  
+    for (const item of filterUnitSpecificValue) {
+      const customValue = document.getElementById(
+        `${item.matadata.type}_${item.fieldId}`
+      );
+      const errorDiv = document.getElementById(`${item.fieldId}`);
+  
+      if (!item.matadata.isMandatory) continue;
+  
+      if (
+        item.matadata.type === "textbox" &&
+        customValue.value === ""
+      ) {
+        errorDiv.style.display = "block";
+        errorCount++;
+      } else if (
+        item.matadata.type === "radio" ||
+        item.matadata.type === "checkboxes" ||
+        item.matadata.type === "checkbox"
+      ) {
+        const radioButtons = document.getElementsByName(
+          `${item.matadata.type}_${item.fieldId}`
+        );
+        const hasCheckedButton = Array.from(radioButtons).some(
+          (button) => button.checked
+        );
+  
+        if (!hasCheckedButton) {
+          errorDiv.style.display = "block";
+          errorCount++;
+        }
+      } else if (
+        item.matadata.type === "textarea" &&
+        customValue.value === ""
+      ) {
+        errorDiv.style.display = "block";
+        errorCount++;
+      } else if (
+        item.matadata.type === "date" &&
+        customValue.value === ""
+      ) {
+        errorDiv.style.display = "block";
+        errorCount++;
+      }
+    }
+  
+    if (errorCount === 0) {
+      sessionStorage.setItem("customFieldstorage", JSON.stringify(customFieldValue));
+      navigate("/preBooking/addOns");
+    }
+  };
+  
 
 
 
