@@ -13,6 +13,7 @@ import { useTranslation } from "react-i18next";
 const helper = new Helper()
 export default function MyLeases() {
   const { t, i18n } = useTranslation();
+  const lease_document = sessionStorage.getItem('lease_document') || ""
 
   const [activeUnit, setactive] = useState('');
   const [ScheduleMoveOutMOdal, SetScheduleMoveOutModal] = useState({
@@ -42,7 +43,6 @@ export default function MyLeases() {
 
   const [isLoading, setLoading] = useState(true);
   const [isButtonLoading, setButtonLoading] = useState(false);
-
 
   const panes = [
     {
@@ -236,6 +236,7 @@ export default function MyLeases() {
   }
 
   function sixStorageLeaseagreement(contract_id) {
+    console.log("Trigger");
     let config = {
       headers: {
         "Content-Type": "application/json",
@@ -248,18 +249,23 @@ export default function MyLeases() {
     }
     instance.post(request.lease_documents, data, config)
       .then(response => {
+        console.log("response", response);
         return response;
       }).then(data => {
+        console.log("data", data);
         if (typeof data !== 'undefined' || data !== null) {
-          if (typeof data.data.isSuccess !== 'undefined' && data.data !== null && data.data.isSuccess === true && data.data.result !== null) {
+          if (data.status == 200 && data.data.isSuccess == true) {
             data.data.result.map(val => {
-              if (val.documentName === 'Leaseagreement') {
+              // if (val.documentName === 'Leaseagreement') {
                 setselectedUnitLeasedocument(val.documentPath);
-              }
+                console.log(val.documentPath);
+                sessionStorage.setItem('lease_document', val.documentPath)
+                console.log("Sets");
+              // }
             })
           } else {
             setselectedUnitLeasedocument("No Record Found");
-
+            sessionStorage.setItem('lease_document', 'No Record Found')
           }
         }
       }).catch(err => {
@@ -269,10 +275,10 @@ export default function MyLeases() {
 
 
   // Open Pdf File to New Tab and Download
-  const download = (path, filename) => {
+  const download = (path) => {
     const anchor = document.createElement('a');
     anchor.href = path;
-    anchor.download = filename;
+    anchor.download = "Rental Agreement";
     anchor.target = "_blank"
     document.body.appendChild(anchor);
     anchor.click();
@@ -336,13 +342,13 @@ export default function MyLeases() {
               <div className="col-lg-7 col-md-7 col-12 px-1">
                 <div className="card-desc  p-2 border-radius-10 mt-sm-2 mb-sm-2">
                   <div className=""> <h2 className="fs-3 fw-600 mb-3 d-inline-block mr-1  ">#{leaseInfoById[0].unitInfo.unitNumber}</h2>
-                    {leaseInfoById[0].unitInfo.dueAmount > 0 ? (<span className={`success-label-leases veritical-align-super py-1 px-2 fw-500`}>
-                      {t("Good Standing")}
+                    {leaseInfoById[0].unitInfo.dueAmount > 0 ? (<span className={`danger-label-leases veritical-align-super py-1 px-2 fw-500`}>
+                      {t("Poor Standing")}
                     </span>) :
-                      <span className={`danger-label-leases veritical-align-super py-1 px-2 fw-500 mr-2`}>
-                        {t("Poor Standing")}
+                      <span className={`success-label-leases veritical-align-super py-1 px-2 fw-500`}>
+                        {t("Good Standing")}
                       </span>}
-                    {leaseInfoById[0].leaseInfo.gateStatus.descreption == 'Denied' && <span className={`danger-label-leases veritical-align-super py-1 px-2 fw-500`}>
+                    {/* {leaseInfoById[0].leaseInfo.gateStatus.descreption == 'Denied' && <span className={`danger-label-leases veritical-align-super py-1 px-2 fw-500`}>
                       {t("Access Denied")}
                     </span>}
                     {leaseInfoById[0].leaseInfo.gateStatus.descreption == 'Active' && <span className={`success-label-leases veritical-align-super py-1 px-2 fw-500`}>
@@ -350,7 +356,7 @@ export default function MyLeases() {
                     </span>}
                     {leaseInfoById[0].leaseInfo.gateStatus.descreption == 'Overlocked' && <span className={`danger-label-leases veritical-align-super py-1 px-2 fw-500`}>
                       {t("Overlocked")}
-                    </span>}
+                    </span>} */}
                   </div>
                   <div className="pb-1 mb-1 d-flex align-items-center"><img width='18' height='18' src='/assets/images/selfstorage.svg' alt='Self Storage' /><span className='ml-1'>{leaseInfoById[0].unitInfo.storageType.name} - <strong className="fw-700"> {helper.displayMeasurementSize(leaseInfoById[0].unitInfo.unitMeasurement, leaseInfoById[0].unitInfo.measurementType)} </strong> ({leaseInfoById[0].unitInfo.unitType.name})</span></div>
                   <div className='d-flex align-items-center'><img width='18' height='18' src='/assets/images/location-new.svg' alt='Self Storage' /><span className='ml-1'>{leaseInfoById[0].unitInfo.building.name}, {leaseInfoById[0].unitInfo.location.name}</span></div>
@@ -412,16 +418,15 @@ export default function MyLeases() {
                 </div>
               </div>
               <div className='text-center'>
-                <button className="ui button basic box-shadow-none border-success-dark-light-1 fs-8 px-2 py-1 my-2" onClick={() => download(selectedUnitLeasedocument, "LeaseAgreement")}><a className='text-success'>Preview</a></button>
-                {/* <button className="ui button basic box-shadow-none border-success-dark-light-1 fs-8 px-2 py-1 my-2"><a className='text-success' download={selectedUnitLeasedocument}>Download</a></button> */}
+                <button className="ui button basic box-shadow-none border-success-dark-light-1 fs-8 px-2 py-1 my-2" onClick={() => download(selectedUnitLeasedocument)}>{t("Preview to Download")}</button>
               </div>
 
             </div> :
             <div className='bg-layout'>
               <div className='text-center'>
                 <div className=' overflow-auto'>
-                <div className="rentalAgreementContainer d-flex justify-content-center align-items-center">
-                  <div className='text-center'> {t("No Record Found")}</div>
+                  <div className="rentalAgreementContainer d-flex justify-content-center align-items-center">
+                    <div className='text-center'> {t("No Record Found")}</div>
                   </div>
                 </div>
 
@@ -450,7 +455,7 @@ export default function MyLeases() {
           <div className="ui form px-4 px-sm-2">
             <div className="field w-100 datePicker my-3">
               <label className='fw-500 fs-7 mb-1' >{t("Schedule Move-Out Date")}</label>
-              <SemanticDatepicker datePickerOnly disabled={isButtonLoading} showToday={true}  value={scheduleMoveOutDateValue} name="date" onChange={(e, { name, value }) => SetScheduleMoveOutDate(name, value)} placeholder='Select date' className='w-100' />
+              <SemanticDatepicker datePickerOnly disabled={isButtonLoading} showToday={true} value={scheduleMoveOutDateValue} name="date" onChange={(e, { name, value }) => SetScheduleMoveOutDate(name, value)} placeholder='Select date' className='w-100' />
             </div>
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-1' >{t("Reason")}</label>
