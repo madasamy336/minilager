@@ -3,8 +3,10 @@ import { Dropdown, Image, Radio, Grid, Placeholder, Segment } from 'semantic-ui-
 import { useEffect, useState } from "react";
 import instance from '../../services/instance';
 import request from '../../services/request';
+import { useTranslation } from "react-i18next";
 
 const DebitCardTab = (props) => {
+    const { t, i18n } = useTranslation();
     const [isLoading, setLoading] = useState(false);
     const [showtable, setShowTable] = useState(true);
     const [achCardDetails, setACHCardDetails] = useState([]);
@@ -216,7 +218,7 @@ const DebitCardTab = (props) => {
                                 </tr>
                             })}
                         </tbody>
-                    </table> : <div className="noUnits-Found">"No Record Found"</div>}
+                    </table> : <div className="noUnits-Found">{t("No Record Found")}</div>}
                 </div>}
             </div>)}
         </div>

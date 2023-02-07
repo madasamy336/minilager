@@ -113,8 +113,10 @@ const RentNow = () => {
                             /> */}
                             <input ref={searchinput} value={searchValue} onChange={onChangeSearchValue} className='border-0 border-radius-0' placeholder={t('Zip,City or Address')} type="text" /> <i aria-hidden="true" style={{pointerEvents:"all"}} className={`${searchValue.length > 0 ? "cancel" : "search"} icon`} onClick={clearSearchValue} /> <button className="ui button" onClick={searchFacilityDetail} onChange={() => { facilitycall }}> {t('Search')}</button>
                         </div>
-                        {LocationResponse ?
-                            <Card facilitydetails={LocationResponse} /> :
+                        {LocationResponse ? <>
+                           {LocationResponse.length ? <Card facilitydetails={LocationResponse} /> :
+                            <div className="ui centered inline">No record found</div>}
+                             </>:
                             <div className="ui active centered inline loader"></div>
                         }
 

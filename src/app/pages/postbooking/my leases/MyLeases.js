@@ -8,9 +8,13 @@ import ServicesTabContent from "../../../components/postbooking/myleasestabs/Ser
 import instance from '../../../services/instance';
 import request from '../../../services/request';
 import Helper from "../../../helper";
+import { useTranslation } from "react-i18next";
 
 const helper = new Helper()
 export default function MyLeases() {
+  const { t, i18n } = useTranslation();
+  const lease_document = sessionStorage.getItem('lease_document') || ""
+
   const [activeUnit, setactive] = useState('');
   const [ScheduleMoveOutMOdal, SetScheduleMoveOutModal] = useState({
     open: false,
@@ -39,7 +43,6 @@ export default function MyLeases() {
 
   const [isLoading, setLoading] = useState(true);
   const [isButtonLoading, setButtonLoading] = useState(false);
-
 
   const panes = [
     {
@@ -233,6 +236,7 @@ export default function MyLeases() {
   }
 
   function sixStorageLeaseagreement(contract_id) {
+    console.log("Trigger");
     let config = {
       headers: {
         "Content-Type": "application/json",
@@ -245,18 +249,23 @@ export default function MyLeases() {
     }
     instance.post(request.lease_documents, data, config)
       .then(response => {
+        console.log("response", response);
         return response;
       }).then(data => {
+        console.log("data", data);
         if (typeof data !== 'undefined' || data !== null) {
-          if (typeof data.data.isSuccess !== 'undefined' && data.data !== null && data.data.isSuccess === true && data.data.result !== null) {
+          if (data.status == 200 && data.data.isSuccess == true) {
             data.data.result.map(val => {
-              if (val.documentName === 'Leaseagreement') {
+              // if (val.documentName === 'Leaseagreement') {
                 setselectedUnitLeasedocument(val.documentPath);
-              }
+                console.log(val.documentPath);
+                sessionStorage.setItem('lease_document', val.documentPath)
+                console.log("Sets");
+              // }
             })
           } else {
             setselectedUnitLeasedocument("No Record Found");
-
+            sessionStorage.setItem('lease_document', 'No Record Found')
           }
         }
       }).catch(err => {
@@ -266,10 +275,10 @@ export default function MyLeases() {
 
 
   // Open Pdf File to New Tab and Download
-  const download = (path, filename) => {
+  const download = (path) => {
     const anchor = document.createElement('a');
     anchor.href = path;
-    anchor.download = filename;
+    anchor.download = "Rental Agreement";
     anchor.target = "_blank"
     document.body.appendChild(anchor);
     anchor.click();
@@ -293,9 +302,9 @@ export default function MyLeases() {
     <div className="mx-2 mx-sm-1">
       {typeof leaseResponse !== 'undefined' && leaseResponse !== null && leaseResponse !== '' && leaseResponse.length > 0 ?
         <Menu secondary className="myLeaseUnitMenu overflow-x-auto pb-1">
-          {leaseResponse.map((lease) => (
+          {leaseResponse.map((lease, i) => (
             <Menu.Item className="py-1 px-4"
-              key={lease.unitInfo.id}
+              key={i}
               name={lease.unitInfo.unitNumber}
               active={activeUnit == lease.unitInfo.id}
               onClick={() => sixStorageViewLeaseInfo(lease)}
@@ -309,17 +318,17 @@ export default function MyLeases() {
               <h6 className="fs-6 fw-500 pt-1"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 21.698 27.198">
                 <path id="building-svgrepo-com_1_" data-name="building-svgrepo-com (1)" d="M39.106,27.2h0L29,27.179H18.18a.386.386,0,0,1-.386-.386V9.412a.386.386,0,0,1,.386-.386h5.395V.386A.386.386,0,0,1,23.962,0H39.106a.386.386,0,0,1,.386.386V26.812a.386.386,0,0,1-.386.386Zm-9.722-.791,9.336.018V.773H24.348V9.025H29a.386.386,0,0,1,.386.386Zm-10.817,0H28.611V9.8H18.567Zm8.852-2.51H24.362a.386.386,0,0,1-.386-.386V21.721a.386.386,0,0,1,.386-.386h3.057a.386.386,0,0,1,.386.386V23.51A.386.386,0,0,1,27.419,23.9Zm-2.67-.773h2.284V22.108H24.749Zm-1.932.773H19.76a.386.386,0,0,1-.386-.386V21.721a.386.386,0,0,1,.386-.386h3.057a.386.386,0,0,1,.386.386V23.51A.386.386,0,0,1,22.816,23.9Zm-2.67-.773H22.43V22.108H20.146ZM36.48,23.7H35a.386.386,0,0,1-.386-.386V21.706A.386.386,0,0,1,35,21.319H36.48a.386.386,0,0,1,.386.386v1.606A.386.386,0,0,1,36.48,23.7Zm-1.091-.773h.705v-.833h-.705Zm-3.171.773H30.741a.386.386,0,0,1-.386-.386V21.706a.386.386,0,0,1,.386-.386h1.478a.386.386,0,0,1,.386.386v1.606A.386.386,0,0,1,32.218,23.7Zm-1.091-.773h.705v-.833h-.705ZM27.419,20.4H24.362a.386.386,0,0,1-.386-.386V18.226a.386.386,0,0,1,.386-.386h3.057a.386.386,0,0,1,.386.386v1.789A.386.386,0,0,1,27.419,20.4Zm-2.67-.773h2.284V18.612H24.749Zm-1.932.773H19.76a.386.386,0,0,1-.386-.386V18.226a.386.386,0,0,1,.386-.386h3.057a.386.386,0,0,1,.386.386v1.789A.386.386,0,0,1,22.816,20.4Zm-2.67-.773H22.43V18.612H20.146Zm16.334.22H35a.386.386,0,0,1-.386-.386V17.856A.386.386,0,0,1,35,17.47H36.48a.386.386,0,0,1,.386.386v1.606A.386.386,0,0,1,36.48,19.848Zm-1.091-.773h.705v-.833h-.705Zm-3.171.773H30.741a.386.386,0,0,1-.386-.386V17.856a.386.386,0,0,1,.386-.386h1.478a.386.386,0,0,1,.386.386v1.606A.386.386,0,0,1,32.218,19.848Zm-1.091-.773h.705v-.833h-.705Zm-3.708-2.17H24.362a.386.386,0,0,1-.386-.386V14.731a.386.386,0,0,1,.386-.386h3.057a.386.386,0,0,1,.386.386V16.52A.386.386,0,0,1,27.419,16.906Zm-2.67-.773h2.284V15.117H24.749Zm-1.932.773H19.76a.386.386,0,0,1-.386-.386V14.731a.386.386,0,0,1,.386-.386h3.057a.386.386,0,0,1,.386.386V16.52A.386.386,0,0,1,22.816,16.906Zm-2.67-.773H22.43V15.117H20.146ZM36.48,16H35a.386.386,0,0,1-.386-.386V14.007A.386.386,0,0,1,35,13.62H36.48a.386.386,0,0,1,.386.386v1.606A.386.386,0,0,1,36.48,16Zm-1.091-.773h.705v-.833h-.705ZM32.218,16H30.741a.386.386,0,0,1-.386-.386V14.007a.386.386,0,0,1,.386-.386h1.478a.386.386,0,0,1,.386.386v1.606A.386.386,0,0,1,32.218,16Zm-1.091-.773h.705v-.833h-.705Zm-3.708-1.815H24.362a.386.386,0,0,1-.386-.386V11.236a.386.386,0,0,1,.386-.386h3.057a.386.386,0,0,1,.386.386v1.789A.386.386,0,0,1,27.419,13.411Zm-2.67-.773h2.284V11.622H24.749Zm-1.932.773H19.76a.386.386,0,0,1-.386-.386V11.236a.386.386,0,0,1,.386-.386h3.057a.386.386,0,0,1,.386.386v1.789A.386.386,0,0,1,22.816,13.411Zm-2.67-.773H22.43V11.622H20.146Zm16.334-.489H35a.386.386,0,0,1-.386-.386V10.157A.386.386,0,0,1,35,9.771H36.48a.386.386,0,0,1,.386.386v1.606A.386.386,0,0,1,36.48,12.149Zm-1.091-.773h.705v-.833h-.705Zm-3.171.773H30.741a.386.386,0,0,1-.386-.386V10.157a.386.386,0,0,1,.386-.386h1.478a.386.386,0,0,1,.386.386v1.606A.386.386,0,0,1,32.218,12.149Zm-1.091-.773h.705v-.833h-.705ZM36.48,8.3H35a.386.386,0,0,1-.386-.386V6.307A.386.386,0,0,1,35,5.921H36.48a.386.386,0,0,1,.386.386V7.913A.386.386,0,0,1,36.48,8.3Zm-1.091-.773h.705V6.694h-.705ZM32.218,8.3H30.741a.386.386,0,0,1-.386-.386V6.307a.386.386,0,0,1,.386-.386h1.478a.386.386,0,0,1,.386.386V7.913A.386.386,0,0,1,32.218,8.3Zm-1.091-.773h.705V6.694h-.705ZM27.956,8.3H26.479a.386.386,0,0,1-.386-.386V6.307a.386.386,0,0,1,.386-.386h1.478a.386.386,0,0,1,.386.386V7.913A.386.386,0,0,1,27.956,8.3Zm-1.091-.773h.705V6.694h-.705ZM36.48,4.45H35a.386.386,0,0,1-.386-.386V2.458A.386.386,0,0,1,35,2.071H36.48a.386.386,0,0,1,.386.386V4.064A.386.386,0,0,1,36.48,4.45Zm-1.091-.773h.705V2.844h-.705Zm-3.171.773H30.741a.386.386,0,0,1-.386-.386V2.458a.386.386,0,0,1,.386-.386h1.478a.386.386,0,0,1,.386.386V4.064A.386.386,0,0,1,32.218,4.45Zm-1.091-.773h.705V2.844h-.705Zm-3.171.773H26.479a.386.386,0,0,1-.386-.386V2.458a.386.386,0,0,1,.386-.386h1.478a.386.386,0,0,1,.386.386V4.064A.386.386,0,0,1,27.956,4.45Zm-1.091-.773h.705V2.844h-.705Z" transform="translate(-17.794)" fill="#328128" />
               </svg>
-                <span className="veritical-align-text-top ml-1">Unit Details</span></h6>
+                <span className="veritical-align-text-top ml-1">{t("Unit Details")}</span></h6>
             </div>
           </div>
           {leaseInfoById[0].leaseInfo.moveOutScheduledOn == null || typeof leaseInfoById[0].leaseInfo.moveOutScheduledOn == 'undefined' || leaseInfoById[0].leaseInfo.moveOutScheduledOn == '' || leaseInfoById[0].leaseInfo.moveOutScheduledOn.length == 0 ?
             <div className="col-6 text-right" >
               <button onClick={() => ScheduleMOveOut()} className="ui button basic box-shadow-none border-success-dark-light-1 fs-7 fw-400  px-1 m-2">
                 <img height="16" width="16" src="/assets/images/calendar.svg" alt="calendar" />
-                <span className="text-success ml-1 veritical-align-text-top fw-600" >Schedule Move-Out</span></button>
+                <span className="text-success ml-1 veritical-align-text-top fw-600" >{t("Schedule Move-Out")}</span></button>
             </div> :
             <div className="col-12 col-md-6 text-right" >
-              <span className="text-secondary fw-500">Schedule Move-Out date:<span className="mx-1 text-success">{leaseInfoById[0].leaseInfo.moveOutScheduledOn}</span></span>
+              <span className="text-secondary fw-500">{t("Schedule Move-Out date")}:<span className="mx-1 text-success">{leaseInfoById[0].leaseInfo.moveOutScheduledOn}</span></span>
               <button className="ui button bg-success-dark cancel-shecdule-btn fs-7 fw-400 text-white px-3 py-1 m-2" onClick={e => CancelScheduleMOveOut(leaseInfoById[0].leaseInfo.moveOutScheduledOn)}>Cancel</button>
             </div>
           }
@@ -333,27 +342,27 @@ export default function MyLeases() {
               <div className="col-lg-7 col-md-7 col-12 px-1">
                 <div className="card-desc  p-2 border-radius-10 mt-sm-2 mb-sm-2">
                   <div className=""> <h2 className="fs-3 fw-600 mb-3 d-inline-block mr-1  ">#{leaseInfoById[0].unitInfo.unitNumber}</h2>
-                    {leaseInfoById[0].unitInfo.dueAmount > 0 ? (<span className={`success-label-leases veritical-align-super py-1 px-2 fw-500`}>
-                      Good Standing
+                    {leaseInfoById[0].unitInfo.dueAmount > 0 ? (<span className={`danger-label-leases veritical-align-super py-1 px-2 fw-500`}>
+                      {t("Poor Standing")}
                     </span>) :
-                      <span className={`danger-label-leases veritical-align-super py-1 px-2 fw-500 mr-2`}>
-                        Poor Standing
+                      <span className={`success-label-leases veritical-align-super py-1 px-2 fw-500`}>
+                        {t("Good Standing")}
                       </span>}
-                    {leaseInfoById[0].leaseInfo.gateStatus.descreption == 'Denied' && <span className={`danger-label-leases veritical-align-super py-1 px-2 fw-500`}>
-                      Access Denied
+                    {/* {leaseInfoById[0].leaseInfo.gateStatus.descreption == 'Denied' && <span className={`danger-label-leases veritical-align-super py-1 px-2 fw-500`}>
+                      {t("Access Denied")}
                     </span>}
                     {leaseInfoById[0].leaseInfo.gateStatus.descreption == 'Active' && <span className={`success-label-leases veritical-align-super py-1 px-2 fw-500`}>
-                      Active
+                      {t("Active")}
                     </span>}
                     {leaseInfoById[0].leaseInfo.gateStatus.descreption == 'Overlocked' && <span className={`danger-label-leases veritical-align-super py-1 px-2 fw-500`}>
-                      Overlocked
-                    </span>}
+                      {t("Overlocked")}
+                    </span>} */}
                   </div>
                   <div className="pb-1 mb-1 d-flex align-items-center"><img width='18' height='18' src='/assets/images/selfstorage.svg' alt='Self Storage' /><span className='ml-1'>{leaseInfoById[0].unitInfo.storageType.name} - <strong className="fw-700"> {helper.displayMeasurementSize(leaseInfoById[0].unitInfo.unitMeasurement, leaseInfoById[0].unitInfo.measurementType)} </strong> ({leaseInfoById[0].unitInfo.unitType.name})</span></div>
                   <div className='d-flex align-items-center'><img width='18' height='18' src='/assets/images/location-new.svg' alt='Self Storage' /><span className='ml-1'>{leaseInfoById[0].unitInfo.building.name}, {leaseInfoById[0].unitInfo.location.name}</span></div>
                   {leaseInfoById[0].unitInfo.amenityInfoList !== "undefined" && leaseInfoById[0].unitInfo.amenityInfoList !== null && leaseInfoById[0].unitInfo.amenityInfoList.length > 0 ? (<div className='d-flex flex-wrap esign-amenitiy mt-2'>
-                    {leaseInfoById[0].unitInfo.amenityInfoList.map((amenities) => {
-                      return <div className='d-flex align-items-center my-2 mr-2' key={amenities.unitId}>
+                    {leaseInfoById[0].unitInfo.amenityInfoList.map((amenities, i) => {
+                      return <div className='d-flex align-items-center my-2 mr-2' key={i}>
                         <img src={amenities.imageUrl} style={{ width: 15, height: 15 }} />
                         <span className="ml-1">{amenities.name}</span>
                       </div>
@@ -365,7 +374,7 @@ export default function MyLeases() {
             </div>
           </div>
         </div>
-      ) : "No records found"}
+      ) : `${t("No records found")}`}
 
       {/* <div className="bg-white card-boxShadow border-radius-15  mb-2">
         <div className=" dashed-bottom px-4 py-1 px-sm-2">
@@ -397,7 +406,7 @@ export default function MyLeases() {
               <path id="Path_15982" data-name="Path 15982" d="M150.912,130.038c-.743,0-1.487,0-2.231,0-.432,0-.726-.155-.748-.629s.273-.687.694-.689c1.534-.014,3.067-.008,4.6,0a.624.624,0,0,1,.685.706c-.024.452-.336.62-.772.613-.743-.011-1.487,0-2.231,0Z" transform="translate(-127.242 -110.71)" fill="#328128" />
               <path id="Path_15983" data-name="Path 15983" d="M103.106,152.536c.745,0,1.491-.007,2.235,0,.413.006.745.154.765.629.022.517-.317.7-.761.7q-2.234.019-4.47,0c-.448,0-.787-.193-.769-.7.017-.467.348-.631.764-.636.745-.01,1.491,0,2.235,0Z" transform="translate(-86.105 -131.2)" fill="#328128" />
             </svg>
-            <span className="veritical-align-super ml-1">Rental Agreement</span></h6>
+            <span className="veritical-align-super ml-1">{t("Rental Agreement")}</span></h6>
         </div>
         <div className="py-1 px-3">
           {selectedUnitLeasedocument !== "No Record Found" ?
@@ -405,20 +414,19 @@ export default function MyLeases() {
               <div className=' overflow-auto'>
                 <div className="rentalAgreementContainer">
                   {/* for document preview */}
-                  {selectedUnitLeasedocument !== "No Record Found" ? <iframe src={selectedUnitLeasedocument} width="100%" height="900px"></iframe> : <div className='text-center'> No Record Found</div>}
+                  {selectedUnitLeasedocument !== "No Record Found" ? <iframe src={selectedUnitLeasedocument} width="100%" height="900px"></iframe> : <div className='text-center'> {t("No Record Found")}</div>}
                 </div>
               </div>
               <div className='text-center'>
-                <button className="ui button basic box-shadow-none border-success-dark-light-1 fs-8 px-2 py-1 my-2" onClick={() => download(selectedUnitLeasedocument, "LeaseAgreement")}><a className='text-success'>Preview</a></button>
-                {/* <button className="ui button basic box-shadow-none border-success-dark-light-1 fs-8 px-2 py-1 my-2"><a className='text-success' download={selectedUnitLeasedocument}>Download</a></button> */}
+                <button className="ui button basic box-shadow-none border-success-dark-light-1 fs-8 px-2 py-1 my-2" onClick={() => download(selectedUnitLeasedocument)}>{t("Preview to Download")}</button>
               </div>
 
             </div> :
             <div className='bg-layout'>
               <div className='text-center'>
                 <div className=' overflow-auto'>
-                <div className="rentalAgreementContainer d-flex justify-content-center align-items-center">
-                  <div className='text-center'> No Record Found</div>
+                  <div className="rentalAgreementContainer d-flex justify-content-center align-items-center">
+                    <div className='text-center'> {t("No Record Found")}</div>
                   </div>
                 </div>
 
@@ -446,11 +454,11 @@ export default function MyLeases() {
         <Modal.Content className=' p-1'>
           <div className="ui form px-4 px-sm-2">
             <div className="field w-100 datePicker my-3">
-              <label className='fw-500 fs-7 mb-1' >Schedule Move-Out Date</label>
-              <SemanticDatepicker disabled={isButtonLoading} showToday={true} selectedDate={helper.readDate(new Date())} value={scheduleMoveOutDateValue} name="date" onChange={(e, { name, value }) => SetScheduleMoveOutDate(name, value)} placeholder='Select date' className='w-100' />
+              <label className='fw-500 fs-7 mb-1' >{t("Schedule Move-Out Date")}</label>
+              <SemanticDatepicker datePickerOnly disabled={isButtonLoading} showToday={true} value={scheduleMoveOutDateValue} name="date" onChange={(e, { name, value }) => SetScheduleMoveOutDate(name, value)} placeholder='Select date' className='w-100' />
             </div>
             <div className="field w-100  my-3">
-              <label className='fw-500 fs-7 mb-1' >Reason</label>
+              <label className='fw-500 fs-7 mb-1' >{t("Reason")}</label>
               <TextArea disabled={isButtonLoading} placeholder='Please tell us reason' name="reason" value={scheduleMoveOutDate.reason} onChange={(e, data) => handleChange(e, data)} />
             </div>
             <div className='text-center my-2'>
@@ -476,10 +484,10 @@ export default function MyLeases() {
           <div className="ui form px-4 px-sm-2">
             <div className="field w-100 datePicker my-3">
               <label className='fw-500 fs-7 mb-1' >Cancel Schedule Move-Out Date</label>
-              <SemanticDatepicker disabled={true} name="date" onChange={(e, data) => handleChange(e, data)} value={bindScheduledMovedDate} placeholder='Select date' className='w-100' />
+              <SemanticDatepicker datePickerOnly disabled={true} name="date" onChange={(e, data) => handleChange(e, data)} value={bindScheduledMovedDate} placeholder='Select date' className='w-100' />
             </div>
             <div className="field w-100  my-3">
-              <label className='fw-500 fs-7 mb-1' >Reason</label>
+              <label className='fw-500 fs-7 mb-1' >{t("Reason")}</label>
               <TextArea disabled={isButtonLoading} required placeholder='Please tell us reason' name="reason" value={scheduleMoveOutDate.reason} onChange={(e, data) => handleChange(e, data)} />
             </div>
             <div className='text-center my-2'>

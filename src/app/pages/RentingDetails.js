@@ -40,7 +40,7 @@ export default function RentingDetails() {
   const [invoiceDefault, setInvoiceDefault] = useState();
   const [recurring, setRecurring] = useState();
   const [movinDate, setMovinDate] = useState(new Date());
-  const [desiredMoveOutDate,setDesiredMoveOutDate] = useState();
+  const [desiredMoveOutDate, setDesiredMoveOutDate] = useState();
   const [customFieldAccess, SetCustomFieldAccess] = useState();
   const clientDataconfig = JSON.parse(sessionStorage.getItem("configdata"));
   const recurringDefaultValue = clientDataconfig.recurringTypes[0].recurringTypeId;
@@ -81,10 +81,10 @@ export default function RentingDetails() {
   }
 
   if (typeof invoiceDefault !== "undefined" && invoiceDefault !== null && invoiceDefault !== "") {
-    sessionStorage.setItem("invoiceData", (invoiceDefault));
+    sessionStorage.setItem("invoicePeriodValue", (invoiceDefault));
   }
   if (typeof recurringDefaultValue !== "undefined" && recurringDefaultValue !== null && recurringDefaultValue !== "") {
-    sessionStorage.setItem("recurringData", (recurringDefaultValue));
+    sessionStorage.setItem("invoiceRecurringValue", (recurringDefaultValue));
   }
 
 
@@ -99,12 +99,12 @@ export default function RentingDetails() {
     setDesiredMoveOutDate(date.value);
   }
   const invoiceOnchange = (e, item) => {
-    sessionStorage.setItem("invoiceData", (item.value));
+    sessionStorage.setItem("invoicePeriodValue", (item.value));
     childRef.current.unitInfodetailscall();
 
   }
   const recurringOnchange = (e, item) => {
-    sessionStorage.setItem("recurringData", (item.value));
+    sessionStorage.setItem("invoiceRecurringValue", (item.value));
     setRecurringValue(item.value)
     childRef.current.unitInfodetailscall();
 
@@ -148,7 +148,7 @@ export default function RentingDetails() {
 
     }
 
-   
+
     // SetCustomS({ ...TestT, [e.target.dataset.fieldid]: customValues });
 
 
@@ -217,7 +217,7 @@ export default function RentingDetails() {
 
   const navigateAddon = (e) => {
 
-   
+
 
     // newArray = [];
     // newArray.push({
@@ -304,78 +304,144 @@ export default function RentingDetails() {
 
   }
 
+  // const checkCustomfieldValue = () => {
+  //   debugger
+  //   let customValue = JSON.parse(localStorage.getItem(`CustomFieldsSetting`));
+  //   let errorcount = 0;
+  //   if (customValue && customValue.length > 0) {
+  //     let filterUnitSpecificValue = customValue.filter(i => i.matadata.displayOn === 'Unit specific details')
+  //     filterUnitSpecificValue.forEach((item) => {
+  //       let customvalue = document.getElementById(`${item.matadata.type}_${item.fieldId}`);
+  //       let errordiv = document.getElementById(`${item.fieldId}`);
+
+  //       if (item.matadata.isMandatory === true) {
+  //         console.log("isMandatory");
+  //         console.log(item);
+  //         if (item.matadata.type === 'textbox' && customvalue.value === '') {
+  //           console.log("textbox");
+  //           errordiv.style.display = "block";
+  //           errorcount = errorcount + 1;
+  //           return
+  //         } else if (item.matadata.type === 'radio') {
+  //           let checkRadioButton = [];
+  //           let radiobutton = document.getElementsByName(`${item.matadata.type}_${item.fieldId}`);
+  //           radiobutton.forEach((item) => {
+  //             checkRadioButton.push(item.checked);
+  //           })
+  //           if (checkRadioButton.length > 0 && checkRadioButton.includes(true) === false) {
+  //             errordiv.style.display = "block";
+  //             errorcount = errorcount + 1;
+  //           }
+  //         } else if (item.matadata.type === "checkboxes") {
+  //           let checkRadioButton = [];
+  //           let radiobutton = document.getElementsByName(`${item.matadata.type}_${item.fieldId}`);
+  //           radiobutton.forEach((item) => {
+  //             checkRadioButton.push(item.checked);
+  //           })
+  //           if (checkRadioButton.length > 0 && checkRadioButton.includes(true) === false) {
+  //             errordiv.style.display = "block";
+  //             errorcount = errorcount + 1;
+  //           }
+
+  //         } else if (item.matadata.type === "checkbox") {
+  //           let checkRadioButton = [];
+  //           let radiobutton = document.getElementsByName(`${item.matadata.type}_${item.fieldId}`);
+  //           radiobutton.forEach((item) => {
+  //             checkRadioButton.push(item.checked);
+  //           })
+  //           if (checkRadioButton.length > 0 && checkRadioButton.includes(true) === false) {
+  //             errordiv.style.display = "block";
+  //             errorcount = errorcount + 1;
+  //           }
+
+  //         }
+
+  //         else if (item.matadata.type === 'textarea' && customvalue.value === '') {
+  //           errordiv.style.display = "block";
+  //           errorcount = errorcount + 1;
+  //           return
+  //         } else if (item.matadata.type === 'date' && customvalue.value === '') {
+  //           errordiv.style.display = "block";
+  //           errorcount = errorcount + 1;
+  //           return
+  //         } else {
+  //           if (errorcount === 0) {
+  //             sessionStorage.setItem("customFieldstorage", JSON.stringify(customFieldValue))
+  //             navigate('/preBooking/addOns');
+  //           }
+  //         }
+  //       }
+  //     })
+
+  //   } else {
+  //     navigate('/preBooking/addOns');
+  //   }
+  // }
+
   const checkCustomfieldValue = () => {
-    debugger
-    let customValue = JSON.parse(localStorage.getItem(`CustomFieldsSetting`));
-    let errorcount = 0;
-    if (customValue && customValue.length > 0) {
-      let filterUnitSpecificValue = customValue.filter(i => i.matadata.displayOn === 'Unit specific details')
-      filterUnitSpecificValue.forEach((item) => {
-        let customvalue = document.getElementById(`${item.matadata.type}_${item.fieldId}`);
-        let errordiv = document.getElementById(`${item.fieldId}`);
-
-        if (item.matadata.isMandatory === true) {
-
-          if (item.matadata.type === 'textbox' && customvalue.value === '') {
-            errordiv.style.display = "block";
-            errorcount = errorcount + 1;
-            return
-          } else if (item.matadata.type === 'radio') {
-            let checkRadioButton = [];
-            let radiobutton = document.getElementsByName(`${item.matadata.type}_${item.fieldId}`);
-            radiobutton.forEach((item) => {
-              checkRadioButton.push(item.checked);
-            })
-            if (checkRadioButton.length > 0 && checkRadioButton.includes(true) === false) {
-              errordiv.style.display = "block";
-              errorcount = errorcount + 1;
-            }
-          } else if (item.matadata.type === "checkboxes") {
-            let checkRadioButton = [];
-            let radiobutton = document.getElementsByName(`${item.matadata.type}_${item.fieldId}`);
-            radiobutton.forEach((item) => {
-              checkRadioButton.push(item.checked);
-            })
-            if (checkRadioButton.length > 0 && checkRadioButton.includes(true) === false) {
-              errordiv.style.display = "block";
-              errorcount = errorcount + 1;
-            }
-
-          } else if (item.matadata.type === "checkbox") {
-            let checkRadioButton = [];
-            let radiobutton = document.getElementsByName(`${item.matadata.type}_${item.fieldId}`);
-            radiobutton.forEach((item) => {
-              checkRadioButton.push(item.checked);
-            })
-            if (checkRadioButton.length > 0 && checkRadioButton.includes(true) === false) {
-              errordiv.style.display = "block";
-              errorcount = errorcount + 1;
-            }
-
-          }
-
-          else if (item.matadata.type === 'textarea' && customvalue.value === '') {
-            errordiv.style.display = "block";
-            errorcount = errorcount + 1;
-            return
-          } else if (item.matadata.type === 'date' && customvalue.value === '') {
-            errordiv.style.display = "block";
-            errorcount = errorcount + 1;
-            return
-          } else {
-            if (errorcount === 0) {
-              sessionStorage.setItem("customFieldstorage", JSON.stringify(customFieldValue))
-              navigate('/preBooking/addOns');
-            }
-          }
-        }
-      })
-      
-    } else {
-      navigate('/preBooking/addOns');
+    const customValue = JSON.parse(localStorage.getItem("CustomFieldsSetting"));
+    let errorCount = 0;
+  
+    if (!customValue || customValue.length === 0) {
+      navigate("/preBooking/addOns");
+      return;
     }
-  }
-
+  
+    const filterUnitSpecificValue = customValue.filter(
+      (i) => i.matadata.displayOn === "Unit specific details"
+    );
+  
+    for (const item of filterUnitSpecificValue) {
+      const customValue = document.getElementById(
+        `${item.matadata.type}_${item.fieldId}`
+      );
+      const errorDiv = document.getElementById(`${item.fieldId}`);
+  
+      if (!item.matadata.isMandatory) continue;
+  
+      if (
+        item.matadata.type === "textbox" &&
+        customValue.value === ""
+      ) {
+        errorDiv.style.display = "block";
+        errorCount++;
+      } else if (
+        item.matadata.type === "radio" ||
+        item.matadata.type === "checkboxes" ||
+        item.matadata.type === "checkbox"
+      ) {
+        const radioButtons = document.getElementsByName(
+          `${item.matadata.type}_${item.fieldId}`
+        );
+        const hasCheckedButton = Array.from(radioButtons).some(
+          (button) => button.checked
+        );
+  
+        if (!hasCheckedButton) {
+          errorDiv.style.display = "block";
+          errorCount++;
+        }
+      } else if (
+        item.matadata.type === "textarea" &&
+        customValue.value === ""
+      ) {
+        errorDiv.style.display = "block";
+        errorCount++;
+      } else if (
+        item.matadata.type === "date" &&
+        customValue.value === ""
+      ) {
+        errorDiv.style.display = "block";
+        errorCount++;
+      }
+    }
+  
+    if (errorCount === 0) {
+      sessionStorage.setItem("customFieldstorage", JSON.stringify(customFieldValue));
+      navigate("/preBooking/addOns");
+    }
+  };
+  
 
 
 
@@ -415,21 +481,21 @@ export default function RentingDetails() {
                   <div className="ui form px-4 px-sm-2">
                     <div className="field w-100 datePicker my-3">
                       <label className='fw-500 fs-7 mb-2' >{t("Move-In Date")}</label>
-                      <SemanticDatepicker clearable={false} placeholder='Select date' className='w-100' clearOnSameDateClick={false} value={movinDate} onChange={movindateOnchange} filterDate={(date) => { const now = new Date(); return date >= now; }} />
+                      <SemanticDatepicker datePickerOnly clearable={false} placeholder='Select date' className='w-100' clearOnSameDateClick={false} value={movinDate} onChange={movindateOnchange} filterDate={(date) => { const now = new Date(); return date >= now; }} />
                     </div>
                     {typeof invoice !== "undefined" && invoice !== null && invoice.length > 0 ?
                       <div className="field w-100  my-3">
                         <label className='fw-500 fs-7 mb-2'>{t("Invoice Period")}</label>
-                        <Dropdown placeholder='Select Invoice Period' fluid search selection options={invoice} value={invoice.value} defaultValue={invoiceDefault} onChange={invoiceOnchange} />
+                        <Dropdown placeholder='Select Invoice Period' fluid selection options={invoice} value={invoice.value} defaultValue={invoiceDefault} onChange={invoiceOnchange} />
                       </div> : ""}
                     {typeof recurring !== "undefined" && recurring !== null && recurring.length > 0 ?
                       <div className="field w-100  my-3">
                         <label className='fw-500 fs-7 mb-2'>{t("Invoice Recurring")}</label>
-                        <Dropdown placeholder='Select Invoice Recurring' fluid search selection options={recurring} value={recurring.value} defaultValue={recurringDefaultValue} onChange={recurringOnchange} />
+                        <Dropdown placeholder='Select Invoice Recurring' fluid selection options={recurring} value={recurring.value} defaultValue={recurringDefaultValue} onChange={recurringOnchange} />
                       </div> : ""}
                     <div className="field w-100 datePicker my-3">
                       <label className='fw-500 fs-7 mb-2' >{t("Desired Move Out date")}</label>
-                      <SemanticDatepicker placeholder='Select date' className='w-100' value={desiredMoveOutDate} filterDate={(date) => { const now = new Date(movinDate); return date >= now; }} onChange={DesiredMoveoutDateChange} />
+                      <SemanticDatepicker datePickerOnly placeholder='Select date' className='w-100' value={desiredMoveOutDate} filterDate={(date) => { const now = new Date(movinDate); return date >= now; }} onChange={DesiredMoveoutDateChange} />
                     </div>
 
 
@@ -468,7 +534,7 @@ export default function RentingDetails() {
                             <div className="col-12">
                               <div className="field w-100 datePicker my-2">
                                 <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}</label>
-                                <SemanticDatepicker id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} className='w-100' data-name={item.fieldName} fieldId={item.fieldId} unitId={unitid} required={item.matadata.isMandatory} fieldpage={item.matadata.displayOn} type={item.matadata.type} onChange={(e, data) => customhandlechange(e, data, "date")} />
+                                <SemanticDatepicker datePickerOnly id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} className='w-100' data-name={item.fieldName} fieldId={item.fieldId} unitId={unitid} required={item.matadata.isMandatory} fieldpage={item.matadata.displayOn} type={item.matadata.type} onChange={(e, data) => customhandlechange(e, data, "date")} />
                                 <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
                               </div>
                             </div>

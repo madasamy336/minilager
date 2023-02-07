@@ -12,8 +12,8 @@ import { forwardRef, useImperativeHandle, useRef } from 'react';
 let helper = new Helper();
 let storageTypeId;
 const Pricesummary = forwardRef((props, ref) => {
-  let invoiceData = JSON.parse(sessionStorage.getItem("invoiceData"));
-  let recurringData = JSON.parse(sessionStorage.getItem("recurringData"));
+  let invoicePeriodValue = JSON.parse(sessionStorage.getItem("invoicePeriodValue"));
+  let invoiceRecurringValue = JSON.parse(sessionStorage.getItem("invoiceRecurringValue"));
   let BusinessUser =  JSON.parse(sessionStorage.getItem('isBussinessUser'));
   let promocheck = JSON.parse(sessionStorage.getItem('promoApplied'));
   const { t, i18n } = useTranslation();
@@ -23,7 +23,6 @@ const Pricesummary = forwardRef((props, ref) => {
     unitInfodetailscall() {
       unitinfodetails();
     }
-
   }));
 
   const [PromoDiscount, setPromoDiscount] = useState();
@@ -42,6 +41,9 @@ const Pricesummary = forwardRef((props, ref) => {
     dimmer: undefined,
   })
 
+useEffect(() => {
+  unitinfodetails();
+}, [invoicePeriodValue,invoiceRecurringValue])
 
   useEffect(() => {
     unitinfodetails(true);
@@ -79,8 +81,8 @@ const Pricesummary = forwardRef((props, ref) => {
       ],
       moveInDate: helper.readDate(new Date(props.movinDate)),
       additionalMonths: 0,
-      recurringPeriodId: invoiceData,
-      recurringTypeId: recurringData,
+      recurringPeriodId: invoicePeriodValue,
+      recurringTypeId: invoiceRecurringValue,
       promocode: promoAppliedsession ? promoAppliedsession : promoValidate
     }
 
@@ -127,7 +129,7 @@ const Pricesummary = forwardRef((props, ref) => {
     promodiscountdata = {
       tenantTypeId: BusinessUser ? 2 : 1,
       unitIds: [unitid],
-      period: invoiceData,
+      period: invoicePeriodValue,
       visibility: 0,
       additionalMonths: 0,
       discountType: "PROMO",
@@ -191,7 +193,7 @@ const Pricesummary = forwardRef((props, ref) => {
       locationId: "",
       tenantTypeId: 3,
       promocode: promoValidate,
-      period: invoiceData,
+      period: invoicePeriodValue,
       visibility: 1,
       additionalMonths: 0
     }

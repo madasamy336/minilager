@@ -1047,8 +1047,8 @@ export default function TenantDetails() {
             <div className="field datePicker w-100 my-3">
               <label className='fw-500 fs-7 mb-2' >{t("Date of Birth")}</label>
               {TenantInfoDetails && TenantInfoDetails.birthDate ?
-                <SemanticDatepicker placeholder={t('Select date')} name="birthDate" className='w-100' format="DD-MM-YYYY" value={new Date(TenantInfoDetails.birthDate)} onChange={dateOfBirthChange} /> :
-                <SemanticDatepicker placeholder={t('Select date')} name="birthDate" className='w-100' format="DD-MM-YYYY" value={new Date()} onChange={dateOfBirthChange} />
+                <SemanticDatepicker datePickerOnly placeholder={t('Select date')} name="birthDate" className='w-100' format="DD-MM-YYYY" value={new Date(TenantInfoDetails.birthDate)} onChange={dateOfBirthChange} /> :
+                <SemanticDatepicker datePickerOnly placeholder={t('Select date')} name="birthDate" className='w-100' format="DD-MM-YYYY" value={new Date()} onChange={dateOfBirthChange} />
               }
 
             </div>
@@ -1142,7 +1142,7 @@ export default function TenantDetails() {
                 return <div key={item.fieldId} className="col-12 col-md-6 px-4 px-sm-2">
                   <div className="field w-100 datePicker my-2">
                     <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}</label>
-                    <SemanticDatepicker id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} className='w-100' data-name={item.fieldName} fieldId={item.fieldId} unitId={unitid} required={item.matadata.isMandatory} fieldpage={item.matadata.displayOn} type={item.matadata.type} onChange={(e, data) => customhandlechange(e, data, "date")} />
+                    <SemanticDatepicker datePickerOnly id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} className='w-100' data-name={item.fieldName} fieldId={item.fieldId} unitId={unitid} required={item.matadata.isMandatory} fieldpage={item.matadata.displayOn} type={item.matadata.type} onChange={(e, data) => customhandlechange(e, data, "date")} />
                     <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
                   </div>
                 </div>

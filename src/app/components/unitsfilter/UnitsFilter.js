@@ -239,8 +239,6 @@ const AccordionExampleStyled = (selectedStorageType) => {
 
     selectedStorageType.unitsearchFilters(FilterSearchId);
 
-
-
   }
 
   return (
