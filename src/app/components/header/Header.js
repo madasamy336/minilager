@@ -6,8 +6,8 @@ import { Dropdown, Icon, Menu } from 'semantic-ui-react'
 import { useLocation } from 'react-router-dom'
 export default function Header(props) {
   const location = useLocation()
-  const [selectedLanguage, setSelectedLanguage] = useState("nn");
-
+  const storedLanguage = localStorage.getItem('selectedLanguage');
+  const [selectedLanguage, setSelectedLanguage] = useState(storedLanguage || 'nn');
   const openSidebar = (e) => {
     e.preventDefault();
     props.showSidebar(!props.sidebar)
@@ -18,6 +18,7 @@ export default function Header(props) {
   }, [selectedLanguage])
 
   const handleLanguageChange = (e_, data) => {
+    localStorage.setItem('selectedLanguage', data.value);
     setSelectedLanguage(data.value);
     i18n.changeLanguage(data.value)
   };
