@@ -138,7 +138,7 @@ const RentNow = () => {
                                 onChange={onChangeSearchValue}  
                                 label={{ icon: 'remove', onClick: clearSearchValue }}
                             /> */}
-                            <input ref={searchinput} value={searchValue} onChange={onChangeSearchValue} className='border-0 border-radius-0' placeholder={t('Zip,City or Address')} type="text" /> <i aria-hidden="true" style={{ pointerEvents: "all" }} className={`${searchValue.length > 0 ? "cancel" : "search"} icon`} onClick={clearSearchValue} /> <button className="ui button" onClick={searchFacilityDetail} onChange={() => { facilitycall }}> {t('Search')}</button>
+                            <input ref={searchinput} value={searchValue} onChange={onChangeSearchValue} className='border-0 border-radius-0' placeholder={t('Zip, City or Address')} type="text" /> <i aria-hidden="true" style={{ pointerEvents: "all" }} className={`${searchValue.length > 0 ? "cancel" : "search"} icon`} onClick={clearSearchValue} /> <button className="ui button" onClick={searchFacilityDetail} onChange={() => { facilitycall }}> {t('Search')}</button>
                         </div>
 
                         {loading ?

@@ -10,6 +10,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-phone-number-input/style.css';
 import 'react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css';
+import { useTranslation } from "react-i18next";
 
 let helper = new Helper();
 let addressLineOneReq;
@@ -23,11 +24,16 @@ export default function Profile() {
   const country = culture.substring(culture.indexOf('-') + 1, culture.length).toLowerCase();
   const [profileImageSrc, setprofileImageSrc] = useState('')
 
-  // const [contactPhone, SetContactPhone] = useState();
-  const [isEdit, editTenantDetails] = useState(true);
-  const [isTenantaddress, showTenantAddress] = useState(true);
+  const [isAddressEditable, setIsAddressEditable] = useState(false);
+  const [isTenantDetailEditable, setIsTenantDetailEditable] = useState(false);
+
   const [blobImage, setBlobImage] = useState(true);
   const [isLoading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+  const today = new Date();
+  const minDate = new Date(today.setFullYear(today.getFullYear() - 18));
+
+  const { t } = useTranslation();
 
   const [tenantDetails, setTenantDetails] = useState({
     ssn: '',
@@ -45,26 +51,36 @@ export default function Profile() {
     postalCode: '',
     photoPath: null
   });
+  const requiredFields = [
+    { name: 'firstName', message: `${t('First Name is a required field')}` },
+    { name: 'lastName', message: `${t('Last Name is a required field')}` },
+    { name: 'email', message: `${t('Email is a required field')}` },
+    { name: 'phoneNumber', message: `${t('Phone Number is a required field')}` },
+    { name: 'ssn', message: `${t('Social Security Number is a required field')}` },
+    { name: 'addressLine1', message: `${t('Address Line 1 is a required field')}` },
+    { name: 'addressLine2', message: `${t('Address Line 2 is a required field')}` },
+    { name: 'city', message: `${t('City is a required field')}` },
+    { name: 'state', message: `${t('State is a required field')}` },
+    { name: 'postalCode', message: 'ZipCode is a required field' },
+    // other fields
+  ];
 
-  const [tenantProfileImage, setTenantProfileImage] = useState({
-    FileDate: '',
-    FileName: ''
-  })
-
-  const EditTenantDetailsHandler = () => {
-    editTenantDetails(false);
-  }
-  const EditTenantAddressHandler = () => {
-    showTenantAddress(false);
-  }
-
+  // UseEffect Start
   useEffect(() => {
     fetchTenantDetails();
-    // setDefultContryCode()
   }, []);
+  // UseEffect End
 
 
-  function fetchTenantDetails() {
+  // Functionalities
+  const EditTenantDetailsHandler = () => {
+    setIsTenantDetailEditable(!isTenantDetailEditable);
+  };
+  const EditTenantAddressHandler = () => {
+    setIsAddressEditable(!isAddressEditable);
+  };
+
+  async function fetchTenantDetails() {
     setLoading(true)
     let config = {
       headers: {
@@ -72,7 +88,7 @@ export default function Profile() {
       }
     };
     let userId = localStorage.getItem('userid');
-    instance.get(request.get_user_info + '/' + userId, config).then((response) => {
+    await instance.get(request.get_user_info + '/' + userId, config).then((response) => {
       const userInfoResponse = response.data;
       if (typeof userInfoResponse !== 'undefined' && userInfoResponse !== null && userInfoResponse !== '' && userInfoResponse.isSuccess === true) {
         let data = userInfoResponse.result;
@@ -84,15 +100,12 @@ export default function Profile() {
         birthDateReq = data['birthDate'];
         data['phoneNumber'] = data['phoneNumber'].replace(DefaultCountryCode, '')
         setTenantDetails(data)
-        // setTenantDetails({ ...tenantDetails, ['phoneNumber'] : data['phoneNumber'].replace(DefaultCountryCode, '') });
-
-        // tenantDetails.phoneNumber = data['phoneNumber'].replace(DefaultCountryCode, '')
         setprofileImageSrc(data.photoPath)
         setTimeout(() => {
           setLoading(false)
         }, 1000);
       } else {
-        editTenantDetails(false)
+        // setIsTenantDetailEditable(true)
         console.log('No records found');
         setLoading(false)
       }
@@ -136,76 +149,83 @@ export default function Profile() {
   }
 
 
-  function saveTenantPhoto() {
-    setLoading(true)
-    let userId = localStorage.getItem('userid');
-    let imagedata = new File([profileImageSrc], `${userId}_.png`, { type: "image/png" });
-    let config = {
+  const saveTenantPhoto = () => {
+    setLoading(true);
+    const userId = localStorage.getItem('userid');
+    const imagedata = new File([profileImageSrc], `${userId}_.png`, { type: "image/png" });
+    const config = {
       headers: {
         "Authorization": `Bearer ${process.env.REACT_APP_ACCESS_TOKEN}`,
         "Content-Type": "multipart/form-data; boundary=----787208ea84637614785e28ded8a6a7b8",
         "accept": "application/json",
-        // "Content-Length": `int(1000000)`,
         "Pragma": `no-cache`,
         "Cache-Control": `no-cache`,
-        "Accept-Language": `en-US,en;q=0.9`,
-        // "Accept-Encoding": `gzip, deflate, br`
+        "Accept-Language": `en-US,en;q=0.9`
       }
     };
-    let file = new File([blobImage], `${userId}_.png`, { type: "image/png" });
-    console.log("file", imagedata);
-    let timestamp = new Date().getTime();
-
-    let fileName = `${userId}_${timestamp}.png`;
-
+    const file = new File([blobImage], `${userId}_.png`, { type: "image/png" });
+    const timestamp = new Date().getTime();
+    const fileName = `${userId}_${timestamp}.png`;
     const formData = new FormData();
-
     formData.append("FileName", fileName);
     formData.append("FileData", file);
-
-    let uploadRequest = {
+    const uploadRequest = {
       FileName: fileName,
       FileData: file
-    }
-    instance.post(request.add_profile_picture + userId, uploadRequest, config).then(response => {
-      return response;
-    }).then(data => {
-      console.log()
-      const profileResponse = data;
-      console.log(profileResponse);
-      setLoading(false)
-
-    }).catch((err) => {
-      console.log(err);
-      setLoading(false)
-
-    })
-
-  }
+    };
+    instance.post(request.add_profile_picture + userId, uploadRequest, config)
+      .then(response => response)
+      .then(data => {
+        const profileResponse = data;
+        console.log(profileResponse);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.log(err);
+        setLoading(false);
+      });
+  };
 
 
-  function updateTenantInfo() {
-    setLoading(true)
-    saveTenantPhoto()
 
-    let config = {
+  const updateTenantInfo = async () => {
+
+
+  
+
+    const config = {
       headers: {
         "Content-Type": "application/json"
       }
     };
-    let userid = localStorage.getItem('userid');
-    console.log("updateTenantInfo", tenantDetails);
-    console.log("birthDateReq", new Date(birthDateReq));
-    tenantDetails['addressLine1'] = addressLineOneReq;
-    tenantDetails['addressLine2'] = addressLineTwoReq;
-    tenantDetails['postalCode'] = postalCodeReq;
-    tenantDetails['dateOfBirth'] = new Date(birthDateReq);
-    // tenantDetails['phoneNumber'] = tenantDetails['phoneNumber'];
-    instance.post(request.update_user_info + '/' + userid, tenantDetails, config).then((response) => {
+    const userid = localStorage.getItem('userid');
+    tenantDetails.addressLine1 = addressLineOneReq;
+    tenantDetails.addressLine2 = addressLineTwoReq;
+    tenantDetails.postalCode = postalCodeReq;
+    tenantDetails.dateOfBirth = new Date(birthDateReq);
+    const newErrors = {};
+    requiredFields.forEach(field => {
+      if (!tenantDetails[field.name]) {
+        console.log(field.name);
+        newErrors[field.name] = field.message;
+      }
+    });
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    try {
+      setLoading(true);
+      await saveTenantPhoto();
+      const response = await instance.post(
+        request.update_user_info + '/' + userid,
+        tenantDetails,
+        config
+      );
       const userUpdateResponse = response.data;
       if (userUpdateResponse.isSuccess === true && userUpdateResponse.returnCode === "SUCCESS") {
-        editTenantDetails(true)
-        fetchTenantDetails()
+        await fetchTenantDetails();
         toast.success('Profile Info Updated', {
           position: "top-right",
           autoClose: 3000,
@@ -217,37 +237,22 @@ export default function Profile() {
           theme: "colored",
           toastId: "updateTenantInfo"
         });
+        setIsAddressEditable(false);
       }
-    }).catch((err) => {
+    } catch (err) {
       console.log(err);
-      setLoading(false)
-    })
-  }
+      setLoading(false);
+    }
 
-  function handleChangeBirthdate(event, data) {
-    console.log(event, data);
+    setErrors({});
+  };
+
+
+  const handleChangeBirthdate = (event, data) => {
     const newDate = new Date(data.value);
     birthDateReq = newDate;
     setTenantDetails({ ...tenantDetails, ['dateOfBirth']: newDate });
-  }
-
-  const setDefultContryCode = (_e, data) => {
-    if (data.value && data.value.length !== 0) {
-      DefaultCountryCode = data.value
-    } else {
-      countriecodes.filter(countryData => {
-        if (countryData.flag == country) {
-          DefaultCountryCode = countryData.value
-        }
-      })
-    }
-
-  }
-
-  // const getCountryCode = (_e, data) => {
-  //   // console.log(e,d);
-  //  return DefaultCountryCode = data.value
-  // }
+  };
 
 
   const onChangePhoneInput = (e, data) => {
@@ -257,7 +262,7 @@ export default function Profile() {
   return (
     <>
       {isLoading ? (
-        <Loader size='large' active>Loading</Loader>
+        <Loader size='large' active>{t("Loading")}</Loader>
       ) : (
         <div className="mx-2 mx-sm-1">
           <ToastContainer />
@@ -269,9 +274,9 @@ export default function Profile() {
                   <path id="Path_15971" data-name="Path 15971" d="M197.321,309.9h-.2l-.025-.005a1.6,1.6,0,0,1-.739-.229,1.672,1.672,0,0,1-.8-1.162c-.011-.063-.018-.128-.026-.192v-.2a.259.259,0,0,1,.006-.035c.011-.076.017-.147.032-.219a1.691,1.691,0,1,1,2.924,1.468,1.661,1.661,0,0,1-.978.55Zm-.363-1.413-.185-.17c-.094-.085-.185-.173-.282-.254a.162.162,0,0,0-.258.087.176.176,0,0,0,.061.181l.547.5a.169.169,0,0,0,.259-.007l1.051-1.043a.331.331,0,0,0,.027-.029.169.169,0,0,0-.021-.237.151.151,0,0,0-.025-.018.172.172,0,0,0-.218.04l-.928.928-.027.026Z" transform="translate(-182.359 -286.029)" fill="#328128" />
                   <path id="Path_15972" data-name="Path 15972" d="M141.978,199.827c.044.022.082.043.122.06a6.319,6.319,0,0,1,3.84,5.037,11.357,11.357,0,0,1,.063,1.565.608.608,0,0,1-.545.588,1.289,1.289,0,0,1-.2.011H133.886a.656.656,0,0,1-.736-.572,6.966,6.966,0,0,1,.5-3.217,6.415,6.415,0,0,1,3.406-3.416c.032-.014.065-.026.1-.041.008,0,.013-.015.026-.031a3.819,3.819,0,0,1-1.45-3.253,3.74,3.74,0,0,1,1.258-2.638,3.87,3.87,0,1,1,4.994,5.907Zm2.758,5.968a5.022,5.022,0,0,0-2.566-4.426,4.916,4.916,0,0,0-5.665.312,4.971,4.971,0,0,0-2.085,4.112Zm-2.593-9.012a2.568,2.568,0,1,0-.748,1.829A2.571,2.571,0,0,0,142.143,196.783Z" transform="translate(-124.726 -181.096)" fill="#328128" />
                 </svg>
-                  <span className="veritical-align-text-top ml-1">Tenant Details</span></h6>
+                  <span className="veritical-align-text-top ml-1">{t("Tenant Details")}</span></h6>
               </div>
-              {isEdit && <div className="col-lg-6 col-md-6 col-sm-6 text-right cursor-pointer" onClick={EditTenantDetailsHandler}>
+              {!isTenantDetailEditable && <div className="col-lg-6 col-md-6 col-sm-6 text-right cursor-pointer" onClick={EditTenantDetailsHandler}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 28.419 28.276">
                   <g id="edit_copy" data-name="edit copy" opacity="0.55">
                     <path id="Path" d="M26.23,14.991a.708.708,0,0,0-.708.708v6.284A2.125,2.125,0,0,1,23.4,24.106H3.539a2.125,2.125,0,0,1-2.123-2.123V3.539A2.126,2.126,0,0,1,3.539,1.416H9.823A.708.708,0,1,0,9.823,0H3.539A3.543,3.543,0,0,0,0,3.539V21.983a3.543,3.543,0,0,0,3.539,3.539H23.4a3.543,3.543,0,0,0,3.539-3.539V15.7A.708.708,0,0,0,26.23,14.991Z" transform="translate(0 2.754)" fill="#393939" />
@@ -281,16 +286,18 @@ export default function Profile() {
               </div>}
             </div>
             <div className="py-4 px-3">
-              {!isEdit && <div className="ui form w-100">
+              {isTenantDetailEditable && <div className="ui form w-100">
                 <div className="row reverse-sm">
                   <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                     <div className="field my-3">
-                      <label className="text-dark fs-7 fw-500">First Name<span className="error">*</span></label>
+                      <label className="text-dark fs-7 fw-500">{t("First Name")}<span className="error">*</span></label>
                       <input type="text" value={tenantDetails.firstName} name="firstName" onChange={onChangePersonalInfo} />
+                      {errors["firstName"] && <div className="error">{errors["firstName"]}</div>}
                     </div>
                     <div className="field my-3">
-                      <label className="text-dark fs-7 fw-500">Last Name</label>
+                      <label className="text-dark fs-7 fw-500">{t("Last Name")}<span className="error">*</span></label>
                       <input type="text" value={tenantDetails.lastName} name="lastName" onChange={onChangePersonalInfo} />
+                      {errors["lastName"] && <div className="error">{errors["lastName"]}</div>}
                     </div>
                   </div>
                   <div className="col-lg-6 col-md-6 col-sm-12 px-2">
@@ -309,50 +316,52 @@ export default function Profile() {
                   <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                     <div className="field w-100 datePicker my-3">
                       <label className="text-dark fs-7 fw-500">Date of Birth<span className="error">*</span></label>
-                      <SemanticDatepicker datePickerOnly name="dateOfBirth" placeholder='Select date' maxDate={new Date()} format="DD-MM-YYYY" value={typeof birthDateReq !== "undefined" && birthDateReq !== null && birthDateReq !== "" ? new Date(birthDateReq) : new Date()} className='w-100' onChange={handleChangeBirthdate} />
+                      <SemanticDatepicker datePickerOnly minDate={minDate} name="dateOfBirth" placeholder='Select date' maxDate={new Date()} format="DD-MM-YYYY" value={typeof birthDateReq !== "undefined" && birthDateReq !== null && birthDateReq !== "" ? new Date(birthDateReq) : new Date()} className='w-100' onChange={handleChangeBirthdate} />
+                      {errors["dateOfBirth"] && <div className="error">{errors["dateOfBirth"]}</div>}
                     </div>
                     <div className="field my-3">
                       <label className="text-dark fs-7 fw-500">Phone Number<span className="error">*</span></label>
-                      {console.log("Hello", tenantDetails.phoneNumber)}
                       <PhoneInput
+                        name="phoneNumber"
                         defaultCountry={DefaultCountryCode}
                         value={tenantDetails.phoneNumber}
                         onChange={(e, d) => onChangePhoneInput(e, d)} />
-                      {/* <Input name="phoneNumber" value={tenantDetails.phoneNumber} onChange={e => onChangePersonalInfo(e)} className="noCounterNumber" type="number" placeholder="Enter Mobile Number"
-                        label={<Dropdown defaultValue={DefaultCountryCode} onChange={(e, d )=> setDefultContryCode(e, d)}
-                          search options={countriecodes} />}
-                        labelPosition='left' /> */}
+                      {errors["phoneNumber"] && <div className="error">{errors["phoneNumber"]}</div>}
                     </div>
                   </div>
                   <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                     <div className="field my-3">
-                      <label className="text-dark fs-7 fw-500">Email<span className="error">*</span></label>
+                      <label className="text-dark fs-7 fw-500">{t("Email")}<span className="error">*</span></label>
                       <input name="email" type="text" disabled value={tenantDetails.email} onChange={onChangePersonalInfo} />
+                      {errors["email"] && <div className="error">{errors["email"]}</div>}
+
                     </div>
                     <div className="field my-3">
-                      <label className="text-dark fs-7 fw-500">Social Security Number</label>
+                      <label className="text-dark fs-7 fw-500">{t("Social Security Number")}</label>
                       <input type="text" value={tenantDetails.ssn} name="ssn" onChange={e => onChangePersonalInfo(e)} />
+                      {errors["ssn"] && <div className="error">{errors["ssn"]}</div>}
+
                     </div>
                   </div>
                 </div>
                 <div className="mt-2 text-center">
-                  <button className="ui button text-dark fs-7 fw-400 px-5 mx-1 mb-sm-1" disabled={isLoading} onClick={editTenantDetails}>CANCEL</button>
-                  <Button className="ui button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-sm-1" loading={isLoading} disabled={isLoading} onClick={() => updateTenantInfo(tenantDetails)}>SAVE</Button>
+                  <button className="ui button text-dark fs-7 fw-400 px-5 mx-1 mb-sm-1" disabled={isLoading} onClick={EditTenantDetailsHandler}>{t("CANCEL")}</button>
+                  <Button className="ui button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-sm-1" loading={isLoading} disabled={isLoading} onClick={() => updateTenantInfo(tenantDetails)}>{t("SAVE")}</Button>
                 </div>
               </div>}
 
-              {isEdit && <div className="row reverse-sm">
+              {!isTenantDetailEditable && <div className="row reverse-sm">
                 <div className="col-lg-9 col-md-9 col-sm-12">
                   <div className="row">
                     <div className="col-lg-4 col-md-4 col-sm-4">
-                      <p className="fs-7 fw-500 text-dark mb-2">Name</p>
+                      <p className="fs-7 fw-500 text-dark mb-2">{t("Name")}</p>
                     </div>
                     <div className="col-lg-8 col-md-8 col-sm-8">
                       <p className="fs-7 mb-2">{tenantDetails.firstName}</p>
                     </div>
 
                     <div className="col-lg-4 col-md-4 col-sm-4">
-                      <p className="fs-7 fw-500 text-dark mb-2">Date of Birth</p>
+                      <p className="fs-7 fw-500 text-dark mb-2">{t("Date of Birth")}</p>
                     </div>
                     <div className="col-lg-8 col-md-8 col-sm-8">
                       <p className="fs-7 mb-2">{tenantDetails?.birthDate ? helper.readDate(new Date(tenantDetails.birthDate)) : "-"}</p>
@@ -360,7 +369,7 @@ export default function Profile() {
                     </div>
 
                     <div className="col-lg-4 col-md-4 col-sm-4">
-                      <p className="fs-7 fw-500 text-dark mb-2">Email</p>
+                      <p className="fs-7 fw-500 text-dark mb-2">{t("Email")}</p>
                     </div>
                     <div className="col-lg-8 col-md-8 col-sm-8">
                       <p className="fs-7 mb-2">{tenantDetails.email}</p>
@@ -368,7 +377,7 @@ export default function Profile() {
                     </div>
 
                     <div className="col-lg-4 col-md-4 col-sm-4">
-                      <p className="fs-7 fw-500 text-dark mb-2">Phone Number</p>
+                      <p className="fs-7 fw-500 text-dark mb-2">{t("Phone Number")}</p>
                     </div>
                     <div className="col-lg-8 col-md-8 col-sm-8">
                       <p className="fs-7 mb-2">{tenantDetails.phoneNumber}</p>
@@ -418,9 +427,9 @@ export default function Profile() {
                     </g>
                   </g>
                 </svg>
-                  <span className="veritical-align-text-top ml-1">Address</span></h6>
+                  <span className="veritical-align-text-top ml-1">{t("Address")}</span></h6>
               </div>
-              {isTenantaddress && <div className="col-lg-6 col-md-6 col-sm-6 text-right cursor-pointer" onClick={EditTenantAddressHandler}>
+              {!isAddressEditable && <div className="col-lg-6 col-md-6 col-sm-6 text-right cursor-pointer" onClick={EditTenantAddressHandler}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 28.419 28.276">
                   <g id="edit_copy" data-name="edit copy" opacity="0.55">
                     <path id="Path" d="M26.23,14.991a.708.708,0,0,0-.708.708v6.284A2.125,2.125,0,0,1,23.4,24.106H3.539a2.125,2.125,0,0,1-2.123-2.123V3.539A2.126,2.126,0,0,1,3.539,1.416H9.823A.708.708,0,1,0,9.823,0H3.539A3.543,3.543,0,0,0,0,3.539V21.983a3.543,3.543,0,0,0,3.539,3.539H23.4a3.543,3.543,0,0,0,3.539-3.539V15.7A.708.708,0,0,0,26.23,14.991Z" transform="translate(0 2.754)" fill="#393939" />
@@ -430,78 +439,86 @@ export default function Profile() {
               </div>}
             </div>
             <div className="py-4 px-3">
-              {!isTenantaddress && <div className="ui form w-100">
+              {isAddressEditable && <div className="ui form w-100">
                 <div className="row">
                   <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                     <div className="field my-2">
-                      <label className="text-dark fs-7 fw-500">Address Line 1<span className="error">*</span></label>
+                      <label className="text-dark fs-7 fw-500">{t("Address Line 1")}<span className="error">*</span></label>
                       <input type="text" name="addressLine1" value={addressLineOneReq} onChange={e => onChangePersonalInfo(e)} />
+                      {errors["addressLine1"] && <div className="error">{errors["addressLine1"]}</div>}
                     </div>
                   </div>
                   <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                     <div className="field my-2">
-                      <label className="text-dark fs-7 fw-500">Address Line 2<span className="error">*</span></label>
+                      <label className="text-dark fs-7 fw-500">{t("Address Line 2")}<span className="error">*</span></label>
                       <input type="text" name="addressLine2" value={addressLineTwoReq} onChange={e => onChangePersonalInfo(e)} />
+                      {errors["addressLine2"] && <div className="error">{errors["addressLine2"]}</div>}
                     </div>
                   </div>
                   <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                     <div className="field my-2">
-                      <label className="text-dark fs-7 fw-500">City<span className="error">*</span></label>
+                      <label className="text-dark fs-7 fw-500">{t("City")}<span className="error">*</span></label>
                       <input type="text" name="city" value={tenantDetails.city} onChange={e => onChangePersonalInfo(e)} />
+                      {errors["city"] && <div className="error">{errors["city"]}</div>}
+
                     </div>
                   </div>
                   <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                     <div className="field my-2">
-                      <label className="text-dark fs-7 fw-500">State/Province<span className="error">*</span></label>
+                      <label className="text-dark fs-7 fw-500">{t("State/Province")}<span className="error">*</span></label>
                       <input type="text" name="state" value={tenantDetails.state} onChange={e => onChangePersonalInfo(e)} />
+                      {errors["state"] && <div className="error">{errors["state"]}</div>}
+
                     </div>
                   </div>
                   <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                     <div className="field my-2">
-                      <label className="text-dark fs-7 fw-500">Zip/Postal Code<span className="error">*</span></label>
+                      <label className="text-dark fs-7 fw-500">{t("Zip/Postal Code")}<span className="error">*</span></label>
                       <input type="text" name="postalCode" value={postalCodeReq} onChange={e => onChangePersonalInfo(e)} />
+                      {errors["postalCode"] && <div className="error">{errors["postalCode"]}</div>}
+
                     </div>
                   </div>
                 </div>
                 <div className="mt-2 text-center">
-                  <button className="ui button text-dark fs-7 fw-400 px-5 mx-1 mb-sm-1" disabled={isLoading} onClick={showTenantAddress}>CANCEL</button>
-                  <button className="ui button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-sm-1 " loading={isLoading} disabled={isLoading} onClick={() => updateTenantInfo(tenantDetails)}>SAVE</button>
+                  <button className="ui button text-dark fs-7 fw-400 px-5 mx-1 mb-sm-1" disabled={isLoading} onClick={setIsAddressEditable}>{t("CANCEL")}</button>
+                  <button className="ui button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-sm-1 " loading={isLoading} disabled={isLoading} onClick={() => updateTenantInfo(tenantDetails)}>{t("SAVE")}</button>
                 </div>
               </div>}
 
-              {isTenantaddress && <div className="row reverse-sm">
+              {!isAddressEditable && <div className="row reverse-sm">
                 <div className="col-lg-9 col-md-9 col-sm-12">
                   <div className="row">
                     <div className="col-lg-4 col-md-4 col-sm-4">
-                      <p className="fs-7 fw-500 text-dark mb-2">Address Line 1</p>
+                      <p className="fs-7 fw-500 text-dark mb-2">{t("Address Line 1")}</p>
                     </div>
                     <div className="col-lg-8 col-md-8 col-sm-8">
                       <p className="fs-7 mb-2">{tenantDetails.addressLineOne}</p>
                     </div>
 
                     <div className="col-lg-4 col-md-4 col-sm-4">
-                      <p className="fs-7 fw-500 text-dark mb-2">Address Line 2</p>
+                      <p className="fs-7 fw-500 text-dark mb-2">{t("Address Line 2")}</p>
                     </div>
                     <div className="col-lg-8 col-md-8 col-sm-8">
                       <p className="fs-7 mb-2">{tenantDetails.addressLineTwo}</p>
                     </div>
 
                     <div className="col-lg-4 col-md-4 col-sm-4">
-                      <p className="fs-7 fw-500 text-dark mb-2">City</p>
+                      <p className="fs-7 fw-500 text-dark mb-2">{t("City")}</p>
                     </div>
                     <div className="col-lg-8 col-md-8 col-sm-8">
                       <p className="fs-7 mb-2">{tenantDetails.city}</p>
                     </div>
 
                     <div className="col-lg-4 col-md-4 col-sm-4">
-                      <p className="fs-7 fw-500 text-dark mb-2">State/Province</p>
+                      <p className="fs-7 fw-500 text-dark mb-2">{t("State/Province")}</p>
                     </div>
                     <div className="col-lg-8 col-md-8 col-sm-8">
                       <p className="fs-7 mb-2">{tenantDetails.state}</p>
                     </div>
 
                     <div className="col-lg-4 col-md-4 col-sm-4">
-                      <p className="fs-7 fw-500 text-dark">Zip/Postal Code</p>
+                      <p className="fs-7 fw-500 text-dark">{t("Zip/Postal Code")}</p>
                     </div>
                     <div className="col-lg-8 col-md-8 col-sm-8">
                       <p className="fs-7">{postalCodeReq}</p>
@@ -522,7 +539,7 @@ export default function Profile() {
                     <path id="Path_19734" data-name="Path 19734" d="M222.274,58.8c-.67,0-1.329.072-1.81-.5a1.853,1.853,0,0,1-.329-1.332,1.394,1.394,0,0,1,.678-1.222c.443-.285.946-.162,1.459-.209,0-.223,0-.436,0-.65a1.4,1.4,0,0,1,1.48-1.48,3.208,3.208,0,0,1,.728.049,1.361,1.361,0,0,1,1.034,1.3c.007.252,0,.5,0,.791.252,0,.485,0,.716,0a1.375,1.375,0,0,1,1.425,1.335,4.354,4.354,0,0,1,0,.515,1.391,1.391,0,0,1-1.405,1.392c-.234.009-.468,0-.738,0,0,.244,0,.467,0,.69a1.382,1.382,0,0,1-1.452,1.446,3.649,3.649,0,0,1-.649-.023,1.393,1.393,0,0,1-1.142-1.388c-.007-.226,0-.451,0-.722Zm2.318.155h0c0-.181,0-.362,0-.543.006-.367.165-.532.528-.538s.724.005,1.086,0a.474.474,0,0,0,.527-.52c.005-.108,0-.217,0-.326-.012-.382-.172-.541-.552-.545-.335,0-.67,0-1,0-.425,0-.582-.163-.585-.6,0-.326,0-.651,0-.977,0-.4-.159-.557-.556-.567-.1,0-.2,0-.3,0-.363.012-.527.17-.535.537s0,.706,0,1.058c-.007.38-.17.54-.552.544-.362,0-.724,0-1.086,0a.46.46,0,0,0-.5.487c0,.108,0,.217,0,.326,0,.411.162.572.578.577.326.005.651,0,.977,0,.435,0,.578.149.583.592,0,.235,0,.471,0,.706,0,.767.094.859.86.839.027,0,.054,0,.081,0a.458.458,0,0,0,.448-.456c.01-.2,0-.4,0-.6Z" transform="translate(-204.159 -49.531)" fill="#328128" />
                   </g>
                 </svg>
-                  <span className="veritical-align-text-top ml-1">Emergency Contact</span></h6>
+                  <span className="veritical-align-text-top ml-1">{t("Emergency Contact")}</span></h6>
               </div>
             </div>
             <div className="py-4 px-3">
@@ -530,7 +547,7 @@ export default function Profile() {
                 <div className="col-lg-9 col-md-9 col-sm-12">
                   <div className="row">
                     <div className="col-lg-4 col-md-4 col-sm-4">
-                      <p className="fs-7 fw-500 text-dark mb-2">Name</p>
+                      <p className="fs-7 fw-500 text-dark mb-2">{t("Name")}</p>
                     </div>
                     <div className="col-lg-8 col-md-8 col-sm-8">
                       <p className="fs-7 mb-2">Peter John</p>
@@ -554,7 +571,8 @@ export default function Profile() {
               </div>
             </div>
           </div>
-        </div>)}
+        </div>)
+      }
     </>
   )
 }

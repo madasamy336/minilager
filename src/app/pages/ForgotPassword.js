@@ -68,7 +68,7 @@ const ForgotPassword = (props) => {
 
             setValidations(validations);
         } else {
-            forgetCall()
+            forgotCall()
             //SetPassSuccessMsg({show:true, animation:'fly left',duration:1000});
 
 
@@ -76,8 +76,8 @@ const ForgotPassword = (props) => {
 
     }
 
-    //forget password Api call 
-    const forgetCall = () => {
+    //forgot password Api call 
+    const forgotCall = () => {
         let config = {
             headers: {
                 "Content-Type": "application/json",

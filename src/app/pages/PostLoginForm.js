@@ -586,7 +586,7 @@ const PostLoginForm = (props) => {
                             <div className="remember-div d-flex justify-content-between">
                                 <p className="d-inline-flex">
                                     <input type="checkbox" name="rememberPassword" checked={rememberPassword} onChange={(event) => handleChechbox(event)} /><span>{t("Remember me")}</span></p>
-                                <p> <a href="/" onClick={e => ForgotPassword(e)}>{t("Forget your password?")}</a> </p>
+                                <p> <a href="/" onClick={e => ForgotPassword(e)}>{t("Forgot your password?")}</a> </p>
                             </div>
                             <button className="ui button w-100 fw-100" onClick={e => ValidateSignin(e)}>{t('Sign In')}</button>
                         </form>
