@@ -695,7 +695,7 @@ export default function AddOn() {
                           <label className='fw-500 fs-7 mb-2'>{t("Year")}</label>
 
                           {/* <SemanticDatepicker placeholder='Year' formatOptions="yyyy" type='date' className='w-100' /> */}
-                          <input placeholder='Year' className='w-100' minLength={1900} maxLength={2099}  value={year} onChange={(e) => setYear(e.target.value)} />
+                          <input placeholder='Year' type="number" className='w-100' minLength={1900} maxLength={2099}  value={year} onChange={(e) => setYear(e.target.value)} />
                         </div>
                         <div className="field w-100 datePicker my-3">
                           <label className='fw-500 fs-7 mb-2'>{t("Brand")}</label>

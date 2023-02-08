@@ -80,40 +80,44 @@ export default function Profile() {
     setIsAddressEditable(!isAddressEditable);
   };
 
-  async function fetchTenantDetails() {
-    setLoading(true)
-    let config = {
+  const fetchTenantDetails = async () => {
+    setLoading(true);
+    const config = {
       headers: {
         "Content-Type": "application/json"
       }
     };
-    let userId = localStorage.getItem('userid');
-    await instance.get(request.get_user_info + '/' + userId, config).then((response) => {
+    const userId = localStorage.getItem("userid");
+    try {
+      const response = await instance.get(`${request.get_user_info}/${userId}`, config);
       const userInfoResponse = response.data;
-      if (typeof userInfoResponse !== 'undefined' && userInfoResponse !== null && userInfoResponse !== '' && userInfoResponse.isSuccess === true) {
-        let data = userInfoResponse.result;
-
+      if (
+        typeof userInfoResponse !== "undefined" &&
+        userInfoResponse !== null &&
+        userInfoResponse !== "" &&
+        userInfoResponse.isSuccess === true
+      ) {
+        const data = userInfoResponse.result;
         localStorage.setItem("tenantInfo", JSON.stringify(data));
-        addressLineOneReq = data['addressLineOne'];
-        addressLineTwoReq = data['addressLineTwo'];
-        postalCodeReq = data['zipCode'];
-        birthDateReq = data['birthDate'];
-        data['phoneNumber'] = data['phoneNumber'].replace(DefaultCountryCode, '')
-        setTenantDetails(data)
-        setprofileImageSrc(data.photoPath)
+        addressLineOneReq = data["addressLineOne"];
+        addressLineTwoReq = data["addressLineTwo"];
+        postalCodeReq = data["zipCode"];
+        birthDateReq = data["birthDate"];
+        data["phoneNumber"] = data["phoneNumber"].replace(DefaultCountryCode, "");
+        setTenantDetails(data);
+        setprofileImageSrc(data.photoPath);
         setTimeout(() => {
-          setLoading(false)
+          setLoading(false);
         }, 1000);
       } else {
-        // setIsTenantDetailEditable(true)
-        console.log('No records found');
-        setLoading(false)
+        console.log("No records found");
+        setLoading(false);
       }
-    }).catch((err) => {
+    } catch (err) {
       console.log(err);
-      setLoading(false)
-    })
-  }
+      setLoading(false);
+    }
+  };
 
   const onChangePersonalInfo = (e) => {
     console.log(e.target.value);
@@ -189,10 +193,6 @@ export default function Profile() {
 
 
   const updateTenantInfo = async () => {
-
-
-  
-
     const config = {
       headers: {
         "Content-Type": "application/json"
