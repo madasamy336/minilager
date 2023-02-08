@@ -305,16 +305,14 @@ export default function TenantDetails() {
       .then(response => {
         return response;
       }).then(result => {
-        // console.log("data", data);
         authorizationToken = result.data.access_token;
         localStorage.setItem('storedate', Date.now());
         sessionStorage.setItem('authToken', JSON.stringify(result.data.access_token));
-        // console.log(authorizationToken);
         const requestBody = {
           country_code: "NOR",
           event_type: "CREDIT_CHECK_ENQUIRY",
           // identity_number: ssn.current.value, 24014021406
-          identity_number:  "24014021406",
+          identity_number: "24014021406",
           initiated_by: `${TenantInfoDetails.firstName} ${TenantInfoDetails.lastName}`,
           request_from: "BOOKING_PORTAL",
           tenant_id: `${userid}`,
@@ -335,17 +333,18 @@ export default function TenantDetails() {
         axios.post('https://usuat-sixverifier-api.8storage.com/creditcheck', requestBody, creditCheckConfig)
           .then(response => {
             return response;
-            // }else {
-            //   setCreditCheckLoader(false);
-            //   setCreditCheckError(true);
-            // }
           }).then(result => {
-            console.log("data",result);
-            console.log(result.data.body);
-            if (data.status === 500) {
-              setTenantCreditCheckDetails({ ...tenantCreditCheckDetails, credit_check_details: result.message, credit_check_discription: result.description, modified_on: new Date() })
-              setCreditCheckLoader(false);
-              SetCreditStatus(true)
+            if (result.data.status === 500) {
+              if (result.data.message === "TRY_CREDITCHECK_AFTER_SOMETIME") {
+                setTenantCreditCheckDetails({ ...tenantCreditCheckDetails, credit_check_details: result.data.message, credit_check_discription: result.data.description, modified_on: new Date() })
+                setCreditCheckLoader(false);
+                SetCreditStatus(true)
+              } else {
+                setTenantCreditCheckDetails({ ...tenantCreditCheckDetails, credit_check_details: result.data.message, credit_check_discription: result.data.description, modified_on: new Date() })
+                setCreditCheckLoader(false);
+                SetCreditStatus(true)
+              }
+
             } else {
               localStorage.setItem('nextpage', result.data.body.is_movein_recommended ? true : false)
               localStorage.setItem('eSignature', false)
@@ -358,7 +357,7 @@ export default function TenantDetails() {
           .catch((error) => {
             console.log(error);
             setCreditCheckLoader(false);
-        setCreditCheckError(true);
+            setCreditCheckError(true);
           });
       })
       .catch((error) => {
@@ -403,8 +402,6 @@ export default function TenantDetails() {
   }
 
   function saveTenantPhoto() {
-    // let image = document.getElementById('tenantProfileImage').src
-    // console.log(image);
     const date = new Date();
     let time = date.getTime();
     let userId = localStorage.getItem('userid');
@@ -500,7 +497,7 @@ export default function TenantDetails() {
             return
           } else {
             console.log('test')
-           
+
           }
 
         }
@@ -634,8 +631,6 @@ export default function TenantDetails() {
 
   }
   function updateTenantInfo() {
-    console.log(TenantInfoDetails)
-    // setTenantDetails({ ...tenantDetails, type : event.target.value });
     let config = {
       headers: {
         "Content-Type": "application/json"
@@ -656,7 +651,6 @@ export default function TenantDetails() {
       ssn: TenantInfoDetails.ssn
 
     }
-    console.log(request.update_user_info + `/${userid}`);
     instance.post(request.update_user_info + `/${userid}`, requestBody, config).then((response) => {
       const userUpdateResponse = response.data.data;
       if (customFieldAccess && customFieldAccess.length > 0) {
@@ -788,7 +782,7 @@ export default function TenantDetails() {
       isValid = false;
     }
     if (!TenantInfoDetails.city) {
-      TenantInfoError.city =`${t("City is Required")}`;
+      TenantInfoError.city = `${t("City is Required")}`;
       isValid = false;
     }
     if (!TenantInfoDetails.zipCode) {
@@ -889,7 +883,6 @@ export default function TenantDetails() {
       //   isValid = false
       // }
     }
-    console.log("isValid", isValid);
 
     if (!isValid) {
       setTenantInfoError(TenantInfoError);
@@ -909,8 +902,6 @@ export default function TenantDetails() {
     if (emergencyDetail) {
       SetContactaccordian(JSON.parse(emergencyDetail))
     }
-    console.log("tenantCreditCheckDetails", tenantCreditCheckDetails);
-
   }, [])
 
   useEffect(() => {
@@ -1377,17 +1368,17 @@ export default function TenantDetails() {
           {!creditStatus && !creditCheckLoader &&
             <>
               {creditcheckerror ?
-                 <div className="mb-3 text-danger">
-                 {t("Something went wrong. Please try Again")}.
+                <div className="mb-3 text-danger">
+                  {t("Something went wrong. Please try Again")}.
                 </div> : <div className="mb-3">
-                 {t("As part of the move-in process, we need to verify your credit score, would you like to proceed for a credit check?")}
+                  {t("As part of the move-in process, we need to verify your credit score, would you like to proceed for a credit check?")}
                 </div>
 
               }
-{creditcheckerror ? <button onClick={() => SetCreditCheckModal({ open: false })} className="ui button bg-secondary  fs-7 fw-400 text-white px-5 mr-1">{t("Close")}</button> :             <div className="">
+              {creditcheckerror ? <button onClick={() => SetCreditCheckModal({ open: false })} className="ui button bg-secondary  fs-7 fw-400 text-white px-5 mr-1">{t("Close")}</button> : <div className="">
                 <button onClick={() => SetCreditCheckModal({ open: false })} className="ui button bg-secondary  fs-7 fw-400 text-white px-5 mr-1">{t("Cancel")}</button>
                 <button onClick={(e) => proceedCreditCheck(e)} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">{t("Proceed")}</button>
-              </div>  }
+              </div>}
 
             </>
           }
