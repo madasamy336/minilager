@@ -213,5 +213,10 @@
   "Schedule Move-Out": "Planlegg utflytting",
   "Reason": "Grunnen til",
   "Please tell us reason": "Fortell oss grunnens",
-  "Preview to Download":"Forhåndsvisning for å laste ned"
+  "Preview to Download":"Forhåndsvisning for å laste ned",
+  "FORGOT PASSWORD":"GLEMT PASSORD",
+  "Email/UserName":"E -post/brukernavn",
+  "Enter Email/UserName":"Skriv inn e -post/brukernavn",
+  "Submit":"Sende inn",
+  "UserName is required":"Brukernavn kreves"
 }

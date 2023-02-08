@@ -27,6 +27,9 @@ let customValues;
 
 export default function RentingDetails() {
   let unitid = localStorage.getItem('unitid');
+  let invoicePeriod = sessionStorage.getItem('invoicePeriodValue');
+  let invoiceRecurrValue = sessionStorage.getItem('invoiceRecurringValue');
+  let invoiceset = sessionStorage.getItem('invoiceSet')
   const childRef = useRef(null);
   const customFieldRef = useRef([]);
   const {
@@ -37,14 +40,16 @@ export default function RentingDetails() {
   const [TestT, SetCustomS] = useState([]);
   const { t, i18n } = useTranslation();
   const [invoice, setInvoice] = useState();
-  const [invoiceDefault, setInvoiceDefault] = useState();
+  const [invoiceDefault, setInvoiceDefault] = useState(invoicePeriod);
   const [recurring, setRecurring] = useState();
+  const[checkInvoiceRecurring , setcheckInvoiceRecurring] = useState(false);
   const [movinDate, setMovinDate] = useState(new Date());
   const [desiredMoveOutDate, setDesiredMoveOutDate] = useState();
   const [customFieldAccess, SetCustomFieldAccess] = useState();
   const clientDataconfig = JSON.parse(sessionStorage.getItem("configdata"));
   const recurringDefaultValue = clientDataconfig.recurringTypes[0].recurringTypeId;
-  const [recurringvalue, setRecurringValue] = useState(recurringDefaultValue);
+  const [recurringvalue, setRecurringValue] = useState(invoiceset ? invoiceRecurrValue:  recurringDefaultValue);
+  console.log(recurringvalue);
   let customFieldId;
   let customfieldValue;
   let customfieldBindingData = JSON.parse(sessionStorage.getItem("customFieldstorage"));
@@ -53,7 +58,11 @@ export default function RentingDetails() {
       const invoiceperiodval = clientDataconfig.invoicePeriods !== null && typeof clientDataconfig.invoicePeriods !== "undefined" && clientDataconfig.invoicePeriods.length > 0 ?
         clientDataconfig.invoicePeriods.map(item => {
           if (item.preferred) {
+            if(invoicePeriod){
+              setInvoiceDefault(Number(invoicePeriod));
+            }else{
             setInvoiceDefault(item.invoicePeriodId);
+            }
           }
           return {
             key: item.invoicePeriodId,
@@ -84,7 +93,7 @@ export default function RentingDetails() {
     sessionStorage.setItem("invoicePeriodValue", (invoiceDefault));
   }
   if (typeof recurringDefaultValue !== "undefined" && recurringDefaultValue !== null && recurringDefaultValue !== "") {
-    sessionStorage.setItem("invoiceRecurringValue", (recurringDefaultValue));
+    sessionStorage.setItem("invoiceRecurringValue", (recurringvalue));
   }
 
 
@@ -104,8 +113,11 @@ export default function RentingDetails() {
 
   }
   const recurringOnchange = (e, item) => {
+    setcheckInvoiceRecurring(true);
+    sessionStorage.setItem('invoiceSet', true);
     sessionStorage.setItem("invoiceRecurringValue", (item.value));
     setRecurringValue(item.value)
+    console.log(item.value);
     childRef.current.unitInfodetailscall();
 
   }
@@ -481,7 +493,16 @@ export default function RentingDetails() {
                   <div className="ui form px-4 px-sm-2">
                     <div className="field w-100 datePicker my-3">
                       <label className='fw-500 fs-7 mb-2' >{t("Move-In Date")}</label>
-                      <SemanticDatepicker datePickerOnly clearable={false} placeholder='Select date' className='w-100' clearOnSameDateClick={false} value={movinDate} onChange={movindateOnchange} filterDate={(date) => { const now = new Date(); return date >= now; }} />
+                      <SemanticDatepicker datePickerOnly clearable={false} placeholder='Select date' className='w-100' clearOnSameDateClick={false} value={movinDate} onChange={movindateOnchange} 
+                      filterDate={
+                        (date) => { 
+                          const semanticdate = new Date(date)
+                          const now = new Date(); 
+                          now.setDate(now.getDate() - 1);
+                          return semanticdate >= now; 
+                          }} 
+                          showToday={false}/>
+
                     </div>
                     {typeof invoice !== "undefined" && invoice !== null && invoice.length > 0 ?
                       <div className="field w-100  my-3">
@@ -491,11 +512,11 @@ export default function RentingDetails() {
                     {typeof recurring !== "undefined" && recurring !== null && recurring.length > 0 ?
                       <div className="field w-100  my-3">
                         <label className='fw-500 fs-7 mb-2'>{t("Invoice Recurring")}</label>
-                        <Dropdown placeholder='Select Invoice Recurring' fluid selection options={recurring} value={recurring.value} defaultValue={recurringDefaultValue} onChange={recurringOnchange} />
+                        <Dropdown placeholder='Select Invoice Recurring' fluid selection options={recurring} value={recurring.value} defaultValue={Number(recurringvalue)} onChange={recurringOnchange} />
                       </div> : ""}
                     <div className="field w-100 datePicker my-3">
                       <label className='fw-500 fs-7 mb-2' >{t("Desired Move Out date")}</label>
-                      <SemanticDatepicker datePickerOnly placeholder='Select date' className='w-100' value={desiredMoveOutDate} filterDate={(date) => { const now = new Date(movinDate); return date >= now; }} onChange={DesiredMoveoutDateChange} />
+                      <SemanticDatepicker datePickerOnly placeholder='Select date' className='w-100' value={desiredMoveOutDate} filterDate={(date) => { const now = new Date(movinDate); return date >= now; }} onChange={DesiredMoveoutDateChange} showToday ={false}/>
                     </div>
 
 
