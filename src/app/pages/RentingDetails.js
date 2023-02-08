@@ -32,6 +32,8 @@ export default function RentingDetails() {
   let invoiceset = sessionStorage.getItem('invoiceSet')
   const childRef = useRef(null);
   const customFieldRef = useRef([]);
+  const today = new Date();
+  const maxDate = today.setDate(today.getDate() + 30);
   const {
     register,
     handleSubmit,
@@ -316,79 +318,6 @@ export default function RentingDetails() {
 
   }
 
-  // const checkCustomfieldValue = () => {
-  //   debugger
-  //   let customValue = JSON.parse(localStorage.getItem(`CustomFieldsSetting`));
-  //   let errorcount = 0;
-  //   if (customValue && customValue.length > 0) {
-  //     let filterUnitSpecificValue = customValue.filter(i => i.matadata.displayOn === 'Unit specific details')
-  //     filterUnitSpecificValue.forEach((item) => {
-  //       let customvalue = document.getElementById(`${item.matadata.type}_${item.fieldId}`);
-  //       let errordiv = document.getElementById(`${item.fieldId}`);
-
-  //       if (item.matadata.isMandatory === true) {
-  //         console.log("isMandatory");
-  //         console.log(item);
-  //         if (item.matadata.type === 'textbox' && customvalue.value === '') {
-  //           console.log("textbox");
-  //           errordiv.style.display = "block";
-  //           errorcount = errorcount + 1;
-  //           return
-  //         } else if (item.matadata.type === 'radio') {
-  //           let checkRadioButton = [];
-  //           let radiobutton = document.getElementsByName(`${item.matadata.type}_${item.fieldId}`);
-  //           radiobutton.forEach((item) => {
-  //             checkRadioButton.push(item.checked);
-  //           })
-  //           if (checkRadioButton.length > 0 && checkRadioButton.includes(true) === false) {
-  //             errordiv.style.display = "block";
-  //             errorcount = errorcount + 1;
-  //           }
-  //         } else if (item.matadata.type === "checkboxes") {
-  //           let checkRadioButton = [];
-  //           let radiobutton = document.getElementsByName(`${item.matadata.type}_${item.fieldId}`);
-  //           radiobutton.forEach((item) => {
-  //             checkRadioButton.push(item.checked);
-  //           })
-  //           if (checkRadioButton.length > 0 && checkRadioButton.includes(true) === false) {
-  //             errordiv.style.display = "block";
-  //             errorcount = errorcount + 1;
-  //           }
-
-  //         } else if (item.matadata.type === "checkbox") {
-  //           let checkRadioButton = [];
-  //           let radiobutton = document.getElementsByName(`${item.matadata.type}_${item.fieldId}`);
-  //           radiobutton.forEach((item) => {
-  //             checkRadioButton.push(item.checked);
-  //           })
-  //           if (checkRadioButton.length > 0 && checkRadioButton.includes(true) === false) {
-  //             errordiv.style.display = "block";
-  //             errorcount = errorcount + 1;
-  //           }
-
-  //         }
-
-  //         else if (item.matadata.type === 'textarea' && customvalue.value === '') {
-  //           errordiv.style.display = "block";
-  //           errorcount = errorcount + 1;
-  //           return
-  //         } else if (item.matadata.type === 'date' && customvalue.value === '') {
-  //           errordiv.style.display = "block";
-  //           errorcount = errorcount + 1;
-  //           return
-  //         } else {
-  //           if (errorcount === 0) {
-  //             sessionStorage.setItem("customFieldstorage", JSON.stringify(customFieldValue))
-  //             navigate('/preBooking/addOns');
-  //           }
-  //         }
-  //       }
-  //     })
-
-  //   } else {
-  //     navigate('/preBooking/addOns');
-  //   }
-  // }
 
   const checkCustomfieldValue = () => {
     const customValue = JSON.parse(localStorage.getItem("CustomFieldsSetting"));
@@ -493,7 +422,7 @@ export default function RentingDetails() {
                   <div className="ui form px-4 px-sm-2">
                     <div className="field w-100 datePicker my-3">
                       <label className='fw-500 fs-7 mb-2' >{t("Move-In Date")}</label>
-                      <SemanticDatepicker datePickerOnly clearable={false} placeholder='Select date' className='w-100' clearOnSameDateClick={false} value={movinDate} onChange={movindateOnchange} 
+                      <SemanticDatepicker datePickerOnly clearable={false} placeholder='Select date' className='w-100' clearOnSameDateClick={false} value={movinDate} maxDate={maxDate} onChange={movindateOnchange} 
                       filterDate={
                         (date) => { 
                           const semanticdate = new Date(date)
