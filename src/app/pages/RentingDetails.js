@@ -44,13 +44,13 @@ export default function RentingDetails() {
   const [invoice, setInvoice] = useState();
   const [invoiceDefault, setInvoiceDefault] = useState(invoicePeriod);
   const [recurring, setRecurring] = useState();
-  const[checkInvoiceRecurring , setcheckInvoiceRecurring] = useState(false);
+  const [checkInvoiceRecurring, setcheckInvoiceRecurring] = useState(false);
   const [movinDate, setMovinDate] = useState(new Date());
   const [desiredMoveOutDate, setDesiredMoveOutDate] = useState();
   const [customFieldAccess, SetCustomFieldAccess] = useState();
   const clientDataconfig = JSON.parse(sessionStorage.getItem("configdata"));
   const recurringDefaultValue = clientDataconfig.recurringTypes[0].recurringTypeId;
-  const [recurringvalue, setRecurringValue] = useState(invoiceset ? invoiceRecurrValue:  recurringDefaultValue);
+  const [recurringvalue, setRecurringValue] = useState(invoiceset ? invoiceRecurrValue : recurringDefaultValue);
   console.log(recurringvalue);
   let customFieldId;
   let customfieldValue;
@@ -60,10 +60,10 @@ export default function RentingDetails() {
       const invoiceperiodval = clientDataconfig.invoicePeriods !== null && typeof clientDataconfig.invoicePeriods !== "undefined" && clientDataconfig.invoicePeriods.length > 0 ?
         clientDataconfig.invoicePeriods.map(item => {
           if (item.preferred) {
-            if(invoicePeriod){
+            if (invoicePeriod) {
               setInvoiceDefault(Number(invoicePeriod));
-            }else{
-            setInvoiceDefault(item.invoicePeriodId);
+            } else {
+              setInvoiceDefault(item.invoicePeriodId);
             }
           }
           return {
@@ -105,6 +105,7 @@ export default function RentingDetails() {
     sessionStorage.removeItem('desiredMoveoutDate')
     childRef.current.unitInfodetailscall();
   }
+
   const DesiredMoveoutDateChange = (e, date) => {
     sessionStorage.setItem('desiredMoveoutDate', date.value)
     setDesiredMoveOutDate(date.value);
@@ -322,24 +323,24 @@ export default function RentingDetails() {
   const checkCustomfieldValue = () => {
     const customValue = JSON.parse(localStorage.getItem("CustomFieldsSetting"));
     let errorCount = 0;
-  
+
     if (!customValue || customValue.length === 0) {
       navigate("/preBooking/addOns");
       return;
     }
-  
+
     const filterUnitSpecificValue = customValue.filter(
       (i) => i.matadata.displayOn === "Unit specific details"
     );
-  
+
     for (const item of filterUnitSpecificValue) {
       const customValue = document.getElementById(
         `${item.matadata.type}_${item.fieldId}`
       );
       const errorDiv = document.getElementById(`${item.fieldId}`);
-  
+
       if (!item.matadata.isMandatory) continue;
-  
+
       if (
         item.matadata.type === "textbox" &&
         customValue.value === ""
@@ -357,7 +358,7 @@ export default function RentingDetails() {
         const hasCheckedButton = Array.from(radioButtons).some(
           (button) => button.checked
         );
-  
+
         if (!hasCheckedButton) {
           errorDiv.style.display = "block";
           errorCount++;
@@ -376,13 +377,13 @@ export default function RentingDetails() {
         errorCount++;
       }
     }
-  
+
     if (errorCount === 0) {
       sessionStorage.setItem("customFieldstorage", JSON.stringify(customFieldValue));
       navigate("/preBooking/addOns");
     }
   };
-  
+
 
 
 
@@ -422,15 +423,15 @@ export default function RentingDetails() {
                   <div className="ui form px-4 px-sm-2">
                     <div className="field w-100 datePicker my-3">
                       <label className='fw-500 fs-7 mb-2' >{t("Move-In Date")}</label>
-                      <SemanticDatepicker datePickerOnly clearable={false} placeholder='Select date' className='w-100' clearOnSameDateClick={false} value={movinDate} maxDate={maxDate} onChange={movindateOnchange} 
-                      filterDate={
-                        (date) => { 
-                          const semanticdate = new Date(date)
-                          const now = new Date(); 
-                          now.setDate(now.getDate() - 1);
-                          return semanticdate >= now; 
-                          }} 
-                          showToday={false}/>
+                      <SemanticDatepicker datePickerOnly clearable={false} placeholder='Select date' className='w-100' clearOnSameDateClick={false} value={movinDate} maxDate={maxDate} onChange={movindateOnchange}
+                        filterDate={
+                          (date) => {
+                            const semanticdate = new Date(date)
+                            const now = new Date();
+                            now.setDate(now.getDate() - 1);
+                            return semanticdate >= now;
+                          }}
+                        showToday={false} />
 
                     </div>
                     {typeof invoice !== "undefined" && invoice !== null && invoice.length > 0 ?
@@ -445,10 +446,12 @@ export default function RentingDetails() {
                       </div> : ""}
                     <div className="field w-100 datePicker my-3">
                       <label className='fw-500 fs-7 mb-2' >{t("Desired Move Out date")}</label>
-                      <SemanticDatepicker datePickerOnly placeholder='Select date' className='w-100' value={desiredMoveOutDate} filterDate={(date) => { const now = new Date(movinDate); return date >= now; }} onChange={DesiredMoveoutDateChange} showToday ={false}/>
+                      <SemanticDatepicker datePickerOnly placeholder='Select date' className='w-100' value={desiredMoveOutDate} filterDate={(date) => {
+                        const now = new Date(movinDate);
+                        now.setDate(now.getDate() + 1);
+                        return date >= now;
+                      }} onChange={DesiredMoveoutDateChange} showToday={false} />
                     </div>
-
-
                     {typeof customFieldAccess !== "undefined" && customFieldAccess !== null && customFieldAccess !== "" && customFieldAccess.length > 0 ?
                       customFieldAccess.map((item, index) => {
                         {
