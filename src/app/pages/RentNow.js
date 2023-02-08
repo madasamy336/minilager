@@ -11,7 +11,10 @@ const RentNow = () => {
     const [LocationResponse, setLocationResponse] = useState(null);
     const [searchValue, setSearchValue] = useState('');
 
-    const fetchFaciltyDetail = () => {
+    const [loading, setLoading] = useState(false);
+
+    const fetchFaciltyDetail = async () => {
+        setLoading(true); // set the loading state to true before the fetch request
         let config = {
             headers: {
                 "Content-Type": "application/json",
@@ -20,40 +23,59 @@ const RentNow = () => {
         let requestbody = {
             unitVisibility: 1,
             availability: 2
+        };
+
+        try {
+            const response = await instance.post(request.facility_cities, requestbody, config);
+            const location = response.data;
+            if (
+                location.result !== null &&
+                location.result !== "undefined" &&
+                location.result !== ""
+            ) {
+                setLocationResponse(location.result);
+            }
+
+            if (location.returnCode === "NO_RECORDS_FOUND") {
+                setLocationResponse([]);
+            }
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setLoading(false); // set the loading state to false after the fetch request is complete (successful or failed)
         }
+    };
 
-        instance
-            .post(request.facility_cities, requestbody, config)
-            .then(response => {
-                const location = response.data;
-                if (location.result !== null && location.result !== 'undefined' && location.result !== '') {
-                    setLocationResponse(location.result);
-                }
 
-                if (location.returnCode === 'NO_RECORDS_FOUND') {
-                    setLocationResponse([])
-                }
-            })
-            .catch(error => {
-                console.log(error);
-
-            })
-    }
-
-    const searchFacilityDetail = (e) => {
+    const searchFacilityDetail = async (e) => {
         let locationSearch = LocationResponse;
         let filterResult = locationSearch.filter(
-            (i) =>(i.locationName !== null && i.locationName.toLowerCase().includes(searchinput.current.value.toLowerCase())) || (i.address !== null && i.address.addressLine1 !== null  && i.address.addressLine1.toLowerCase().includes(searchinput.current.value.toLowerCase())) || (i.address !== null && i.address.zipCode !== null && i.address.zipCode.includes(searchinput.current.value)));
-        if (searchinput.current.value === '') {
-            filterResult = [];
+            (i) =>
+                i.locationName !== null &&
+                i.locationName.toLowerCase().includes(searchinput.current.value.toLowerCase()) ||
+                (i.address !== null &&
+                    i.address.addressLine1 !== null &&
+                    i.address.addressLine1.toLowerCase().includes(searchinput.current.value.toLowerCase())) ||
+                (i.address !== null &&
+                    i.address.zipCode !== null &&
+                    i.address.zipCode.includes(searchinput.current.value))
+        );
+
+        if (searchinput.current.value === "") {
+            setLoading(true); // set the loading state to true before fetching the data
+            await fetchFaciltyDetail();
         }
+
         if (filterResult.length > 0) {
             setLocationResponse(filterResult);
         } else {
-            fetchFaciltyDetail();
+            setLocationResponse([]);
+            console.log("No record found");
         }
 
-    }
+        setLoading(false); // set the loading state to false after the data is filtered
+    };
+
     const facilitycall = (e) => {
         e.preventDefault()
         if (searchinput.current.value === '') {
@@ -61,25 +83,30 @@ const RentNow = () => {
         }
 
     }
+
     const onChangeSearchValue = (e) => {
         e.preventDefault()
         setSearchValue(e.target.value);
-
     }
-    const clearSearchValue = (e) => {
+
+    const clearSearchValue = async (e) => {
         e.preventDefault()
         if (searchValue.length > 0) {
             const newVotes = searchValue;
             setSearchValue('')
-            fetchFaciltyDetail();
+            await fetchFaciltyDetail();
         }
 
     }
-    // searchinput.current.addEventListener("keydown",(e)=> {
-    //     if(e.code === "Enter"){
-    //         console.log("test")
+
+    // searchinput.current.addEventListener("keydown", async (e) => {
+    //     console.log(e);
+    //     await searchFacilityDetail();
+    //     if (e.code === "Enter") {
+    //       console.log("test");
     //     }
-    // })
+    //   });
+
     const { t } = useTranslation();
     useEffect(() => {
         fetchFaciltyDetail();
@@ -111,15 +138,16 @@ const RentNow = () => {
                                 onChange={onChangeSearchValue}  
                                 label={{ icon: 'remove', onClick: clearSearchValue }}
                             /> */}
-                            <input ref={searchinput} value={searchValue} onChange={onChangeSearchValue} className='border-0 border-radius-0' placeholder={t('Zip,City or Address')} type="text" /> <i aria-hidden="true" style={{pointerEvents:"all"}} className={`${searchValue.length > 0 ? "cancel" : "search"} icon`} onClick={clearSearchValue} /> <button className="ui button" onClick={searchFacilityDetail} onChange={() => { facilitycall }}> {t('Search')}</button>
+                            <input ref={searchinput} value={searchValue} onChange={onChangeSearchValue} className='border-0 border-radius-0' placeholder={t('Zip,City or Address')} type="text" /> <i aria-hidden="true" style={{ pointerEvents: "all" }} className={`${searchValue.length > 0 ? "cancel" : "search"} icon`} onClick={clearSearchValue} /> <button className="ui button" onClick={searchFacilityDetail} onChange={() => { facilitycall }}> {t('Search')}</button>
                         </div>
-                        {LocationResponse ? <>
-                           {LocationResponse.length ? <Card facilitydetails={LocationResponse} /> :
-                            <div className="ui centered inline">No record found</div>}
-                             </>:
-                            <div className="ui active centered inline loader"></div>
-                        }
 
+                        {loading ?
+                            <div className="ui active centered inline loader"></div> :
+                            (Array.isArray(LocationResponse) && LocationResponse.length > 0 ?
+                                <Card facilitydetails={LocationResponse} /> :
+                                <div className="ui centered inline">No record found</div>
+                            )
+                        }
                     </div>
                 </div>
             </div>
