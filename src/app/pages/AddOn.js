@@ -549,9 +549,7 @@ export default function AddOn() {
                             return <div key={item.id} className='col-lg-6 col-md-6 col-sm-12 px-1 mb-3'>
                               <div className='card card-border-secondary border-radius-10 p-2'>
                                 <div className='row'>
-                                  <div className='col-lg-8 col-md-8 col-sm-8'>
-                                    <div className='d-flex align-items-center'>
-                                      {item.isMandatory == true ?
+                                {item.isMandatory == true ?
                                         <input type="checkbox" value={item.id} checked disabled /> :
                                         <input type="checkbox" id={`services_${item.id}`} value={item.id} onChange={(e) => { serviceSelected(e) }} />
 
@@ -565,6 +563,9 @@ export default function AddOn() {
                                         })
 
                                       }
+                                  <div className='col-lg-8 col-md-8 col-sm-8'>
+                                    <div className='d-flex align-items-center'>
+                                   
 
                                       <div className='ml-2'>
                                         <p>{helper.displayCurrency(item.serviceCharge.netAmount)}</p>

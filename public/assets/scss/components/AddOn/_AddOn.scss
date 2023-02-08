@@ -1,97 +1,100 @@
-.addon-container{
+.addon-container {
+    .card {
+        min-height: 100%;
+        span {
+            font-size: 0.7rem;
+        }
+    }
+    .upload {
+        border: 1px solid $AddonUpload;
+        border-radius: 4px;
+        input {
+            width: 0.1px;
+            height: 0.1px;
+            opacity: 0;
+            overflow: hidden;
+            position: absolute;
+            z-index: -1;
+        }
+    }
+    .services {
         .card {
-            min-height: 100%;
-            span{
-                font-size: 0.7rem;
-            }
-        }
-        .upload{
-            border: 1px solid $AddonUpload;
-            border-radius: 4px;
-            input{
-                width: 0.1px;
-                height: 0.1px;
-                opacity: 0;
-                overflow: hidden;
-                position: absolute;
-                z-index: -1;
-            }
-        }
-        .services{
-            .card{
-                // input{
-                //     height: 1.2rem;
-                //     width: 1.2rem;
-                // }
-                .services-img{
-                    img{
-                        height: 3rem;
-                        width: 3rem;
-                        object-fit: contain;
-                    }
+            display: flex;
+            align-items: center;
+            .services-img {
+                img {
+                    height: 3rem;
+                    width: 3rem;
+                    object-fit: contain;
                 }
             }
         }
-        .merchandise{
-            .card{
-                .merchandise-img{
-                    background-color: $UnitsCardBg;
-                    border-radius: 10px 10px 0 0;
-                    img{
-                        width: 6rem;
-                        height: 6rem;
+    }
+    .merchandise {
+        .card {
+            .merchandise-img {
+                background-color: $UnitsCardBg;
+                border-radius: 10px 10px 0 0;
+                img {
+                    width: 6rem;
+                    height: 6rem;
+                }
+            }
+            .counter {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0;
+                a {
+                    display: block;
+                    width: 22px;
+                    height: 20px;
+                    cursor: pointer;
+                    margin: 0;
+                    background: $CounterBg;
+                    text-decoration: none;
+                    text-align: center;
+                    line-height: 23px;
+                    &:first-child {
+                        border-radius: 5px 0 0 5px;
+                    }
+                    &:last-child {
+                        border-radius: 0 5px 5px 0;
                     }
                 }
-                .counter{
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
+                input {
+                    width: 32px;
+                    height: 20px;
+                    margin: 0;
                     padding: 0;
-                    a{
-                        display: block;
-                        width: 22px;
-                        height: 20px;
-                        cursor: pointer;
-                        margin: 0;
-                        background: $CounterBg;
-                        text-decoration: none;
-                        text-align: center;
-                        line-height: 23px;
-                        &:first-child{
-                            border-radius: 5px 0 0 5px;
-                        }
-                        &:last-child{
-                            border-radius: 0 5px 5px 0;
-                        }
-                    }
-                    input{
-                        width: 32px;
-                        height: 20px;
-                        margin: 0;
-                        padding: 0;
-                        text-align: center;
-                        border-top: 2px solid $UnitsCardBg;
-                        border-bottom: 2px solid $UnitsCardBg;
-                        border-left: 1px solid $CounterBg;
-                        border-right: 1px solid $CounterBg;
-                        background: $textLightColor;
-                        color: $secondaryColor;
-                    }
+                    text-align: center;
+                    border-top: 2px solid $UnitsCardBg;
+                    border-bottom: 2px solid $UnitsCardBg;
+                    border-left: 1px solid $CounterBg;
+                    border-right: 1px solid $CounterBg;
+                    background: $textLightColor;
+                    color: $secondaryColor;
                 }
             }
         }
+    }
 }
 
-.AddonsInsurance{
-    .card{
+.AddonsInsurance {
+    .card {
         border: 1px solid $textDisabledColor;
     }
-    .card.active{
-     background-color: $primaryColor !important;
-     color: white !important;
+    .card.active {
+        background-color: $primaryColor !important;
+        color: white !important;
     }
 }
 
-.display_block{
+.display_block {
     display: block;
 }
+
+// input[type="checkbox"] {
+//     width: 20px!important;
+//     height: 20px!important;
+//   }
