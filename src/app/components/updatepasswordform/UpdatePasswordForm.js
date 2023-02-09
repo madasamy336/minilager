@@ -1,14 +1,18 @@
 import React, { useState } from "react";
 import { Label } from 'semantic-ui-react'
+import { useTranslation } from "react-i18next";
 
 const UpdatePasswordForm = (props) => {
     const [toggle, setToggle] = useState(true);
+    const { t, i18n } = useTranslation();
+
     const showPasswordHandler = () => {
         setToggle(!toggle);
     }
     return (
         <div className="ui form w-50 w-sm-100">
             <div className="field my-3 position-relative">
+            <label className='fw-500 fs-7 mb-2'>{t(props.placeholder)} <i className="text-danger ">*</i></label>
                 <input type={toggle ? "password" : "text"} placeholder={props.placeholder} value={props.value} name={props.name} onChange={(e) => props.onChange(e)} />
                 {!toggle && <div onClick={showPasswordHandler}>
                     <svg className="eyeopen position-absolute r-2 t-1" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 31.937 21.446">

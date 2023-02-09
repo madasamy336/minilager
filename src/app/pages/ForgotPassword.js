@@ -104,7 +104,7 @@ const ForgotPassword = (props) => {
                    
                 } else {
 
-                    toast.error(`${('Email not exits. Please verify your email')}`, {
+                    toast.error(`${('Email not exist. Please verify your email')}`, {
                         position: "top-right",
                         autoClose: 3000,
                         duration:100,

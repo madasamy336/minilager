@@ -6,6 +6,7 @@ import React, { useState, useEffect } from "react";
 import instance from '../../../services/instance';
 import requests from '../../../services/request';
 import Helper from "../../../helper";
+import { useTranslation } from "react-i18next";
 
 
 export default function Updatepassword() {
@@ -22,6 +23,7 @@ export default function Updatepassword() {
   const [loadingButton, setLoadingButton] = useState(false);
   const [isDisabled, setButtonDisabled] = useState(false);
 
+  const { t, i18n } = useTranslation();
 
   const handleOnChange = (e) => {
     const { name, value } = e.target
@@ -121,7 +123,7 @@ export default function Updatepassword() {
                   <path id="Path_19672" data-name="Path 19672" d="M95.047,116.309a1,1,0,0,0-1,1v3.828a1,1,0,1,0,2,0v-3.828A1,1,0,0,0,95.047,116.309Z" transform="translate(-54.104 -100.802)" fill="#328128" />
                 </g>
               </svg>
-                <span className="veritical-align-text-top ml-1">Update password</span></h6>
+                <span className="veritical-align-text-top ml-1">{t("Update password")}</span></h6>
             </div>
           </div>
           <div className="py-4 px-3">

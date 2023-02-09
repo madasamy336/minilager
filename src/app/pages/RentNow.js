@@ -145,7 +145,7 @@ const RentNow = () => {
                             <div className="ui active centered inline loader"></div> :
                             (Array.isArray(LocationResponse) && LocationResponse.length > 0 ?
                                 <Card facilitydetails={LocationResponse} /> :
-                                <div className="ui centered inline">No record found</div>
+                                <div className="ui centered inline">{t("No record found")}</div>
                             )
                         }
                     </div>
