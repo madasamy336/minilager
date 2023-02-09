@@ -448,7 +448,7 @@ const AccordionExampleStyled = (selectedStorageType) => {
         </div>
       </Accordion.Content>
 
-      <div id="pricerange-hide">
+      {/* <div id="pricerange-hide">
 
         <Accordion.Title className='d-flex justify-content-between align-items-center'
           active={activeIndex === 4}
@@ -471,7 +471,7 @@ const AccordionExampleStyled = (selectedStorageType) => {
           </div>
         </Accordion.Content>
 
-      </div>
+      </div> */}
 
 
       {
