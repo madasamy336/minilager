@@ -80,6 +80,9 @@
                     }
                 }
                 .selectedFilter{
+                    div{
+                        margin: 0.2rem!important;
+                    }
                     p{
                         background-color: $UnitsFilterSelectedText;
                         img{
