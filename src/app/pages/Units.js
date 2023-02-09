@@ -199,6 +199,7 @@ const Units = () => {
         let amenitiesId;
         let minvalues;
         let maxvalues;
+        console.log(searchFilterValues);
         if (typeof searchFilterValues !== "undefined" && searchFilterValues !== null && searchFilterValues !== "") {
             buidingId = searchFilterValues.buildingid;
             unitTypeId = searchFilterValues.unitTypeid;

@@ -5,10 +5,12 @@ import countriecodes from '../../../components/CountryCode';
 import instance from '../../../services/instance';
 import request from '../../../services/request';
 import Helper from "../../../helper";
+import ReactPhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 import PhoneInput, { formatPhoneNumber, formatPhoneNumberIntl } from 'react-phone-number-input'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import 'react-phone-number-input/style.css';
+// import 'react-phone-number-input/style.css';
 import 'react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css';
 import { useTranslation } from "react-i18next";
 
@@ -321,11 +323,14 @@ export default function Profile() {
                     </div>
                     <div className="field my-3">
                       <label className="text-dark fs-7 fw-500">Phone Number<span className="error">*</span></label>
-                      <PhoneInput
+                      <ReactPhoneInput
                         name="phoneNumber"
+                        disabled
+                        className={`profilePhoneNumber`}
                         defaultCountry={DefaultCountryCode}
                         value={tenantDetails.phoneNumber}
                         onChange={(e, d) => onChangePhoneInput(e, d)} />
+
                       {errors["phoneNumber"] && <div className="error">{errors["phoneNumber"]}</div>}
                     </div>
                   </div>

@@ -2,16 +2,17 @@ import { t } from 'i18next';
 import { componentsToColor } from 'pdf-lib';
 import { propTypes } from 'pdf-viewer-reactjs';
 import React, { Component, useState, useEffect } from 'react';
+import {Popup } from 'semantic-ui-react'
 import { Accordion, Item } from 'semantic-ui-react';
 import UnitsRangeSlider from '../unitsrangeslider/UnitsRangeSlider';
+import Helper from "../../helper";
 import { useTranslation } from "react-i18next";
 let Buildingfilter;
 let unitTypeFilter;
 let UnitTypeDimension = [];
 let NewPriceValue;
 let AmenityFilter;
-
-
+const helper = new Helper();
 const AccordionExampleStyled = (selectedStorageType) => {
   const filters = JSON.parse(localStorage.getItem('Units'));
   const [filterBuilding, setFilterBuiding] = useState([]);
@@ -80,13 +81,16 @@ const AccordionExampleStyled = (selectedStorageType) => {
     Buildingfilter = filters.building.filter(i => i.storageTypeId === selectedStorageType.storageTypeValue);
   }
   if (typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof filters.unitType !== 'undefined' && filters.unitType !== null && filters.unitType !== "" && filters.unitType.length > 0 && selectedStorageType.storageTypeValue !== 'undefined' && selectedStorageType.storageTypeValue !== null) {
+    // /console.log(`check test`+unitTypesarr);
     unitTypeFilter = filters.unitType.filter(i => i.storageTypeId === selectedStorageType.storageTypeValue);
+    let unitTypesarr = (Object.values(unitTypeFilter.reduce((acc, cur) => Object.assign(acc, { [cur.unitTypeName]: cur }), {})));
     let result = unitTypeFilter.reduce(function (r, a) {
       r[a.unitTypeName] = r[a.unitTypeName] || [];
       r[a.unitTypeName].push(a);
       return r;
     }, Object.create(null));
     UnitTypeDimension = result;
+    unitTypeFilter = unitTypesarr;
   }
 
   if (typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof filters.priceRangeValue !== 'undefined' && filters.priceRangeValue !== null && filters.priceRangeValue !== "" && filters.priceRangeValue.length > 0 && selectedStorageType.storageTypeValue !== 'undefined' && selectedStorageType.storageTypeValue !== null) {
@@ -107,6 +111,7 @@ const AccordionExampleStyled = (selectedStorageType) => {
     }) : '';
 
   const onChangeUnitMesurement = (e, unitMeasurement, unitTypeId) => {
+    debugger
     if (e.target.checked) {
       setfilterDimensions([...filterDimensions, { unitmesurement: unitMeasurement, unitTypeid: unitTypeId }]);
     } else {
@@ -177,9 +182,33 @@ const AccordionExampleStyled = (selectedStorageType) => {
     }
   }
   const onChangeUnitType = (e, unitTypeName, unitTypeId) => {
+    console.log(`dimension_${unitTypeName.split(" ").join("")}`);
+   let dimension = document.querySelectorAll(`.dimension_${unitTypeName.split(" ").join("").replace(/[&\\+()~%'",:?<>{}!@#]/g, '')}`);
+   console.log(dimension);
     if (e.target.checked) {
+      dimension.forEach((element)=> {
+        console.log(element);
+       
+        element.disabled = false;
+      })
+      
       setfilterUnitType([...filterUnitType, { unitTypename: unitTypeName, unitTypeid: unitTypeId }]);
     } else {
+      let removeFilter;
+      dimension.forEach((element)=> {
+        if(element.checked){
+          console.log(element.value);
+          setfilterDimensions((item) => item.filter((i) => i.unitTypeid !== element.value));
+
+        }
+        element.checked = false;
+        element.disabled = true;
+        console.log(removeFilter);
+       
+       
+      })
+     
+  
       setfilterUnitType((item) => item.filter((i) => i.unitTypeid !== unitTypeId));
     }
   }
@@ -208,11 +237,26 @@ const AccordionExampleStyled = (selectedStorageType) => {
     setMinPriceState(0);
   }
 
+  function arrayUnique(array) {
+    var a = array.concat();
+    for(var i=0; i<a.length; ++i) {
+        for(var j=i+1; j<a.length; ++j) {
+            if(a[i] === a[j])
+                a.splice(j--, 1);
+        }
+    }
+
+    return a;
+}
+
 
   const applyAllFiterValues = () => {
+    debugger
     let selectedbuildingId;
     let selectedUnitTypeId;
     let selectedAmenitiesId;
+    let selectedDimension;
+    let finalUnitTypeId=[];
     
     if (typeof filterBuilding !== "undefined" && filterBuilding !== "" && filterBuilding !== null) {
       selectedbuildingId = filterBuilding.filter((i) => i.buildingid).map((item) => {
@@ -220,6 +264,16 @@ const AccordionExampleStyled = (selectedStorageType) => {
       });
     }
     if (typeof filterUnitType !== "undefined" && filterUnitType !== "" && filterUnitType !== null) {
+      filterUnitType.forEach((i)=> {
+        let dimension = document.querySelectorAll(`.dimension_${i.unitTypename.split(" ").join("").replace(/[&\\+()~%'",:?<>{}!@#]/g, '')}`);
+        dimension.forEach((element)=>{
+         if(!element.checked){
+          console.log(element.value);
+
+         }
+        })
+        
+      })
       selectedUnitTypeId = filterUnitType.filter((i) => i.unitTypeid).map((item) => {
         return item.unitTypeid;
       });
@@ -230,9 +284,20 @@ const AccordionExampleStyled = (selectedStorageType) => {
       });
     }
 
+    if(typeof filterDimensions !== "undefined" && filterDimensions !== "" && filterDimensions !== null ){
+      
+      selectedDimension = filterDimensions.filter((i) => i.unitTypeid).map((item) => {
+        return item.unitTypeid;
+      });
+
+      
+    }
+
+    finalUnitTypeId =arrayUnique(selectedUnitTypeId.concat(selectedDimension));
+    console.log(finalUnitTypeId);
     let FilterSearchId = {
       buildingid: selectedbuildingId,
-      unitTypeid: selectedUnitTypeId,
+      unitTypeid: finalUnitTypeId,
       amenitiesid: selectedAmenitiesId,
       priceRange: PriceRangeArrayvalue
     }
@@ -370,11 +435,13 @@ const AccordionExampleStyled = (selectedStorageType) => {
 
             {typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof UnitTypeDimension !== 'undefined' && UnitTypeDimension !== null && UnitTypeDimension !== "" ?
               Object.keys(UnitTypeDimension).map(data => {
+                console.log(data);
                 return UnitTypeDimension[data].map(dimension => {
-                  return <li key={dimension.key}><input value={dimension.unitTypeId} checked={filterDimensions.find((item) => item.unitTypeid === dimension.unitTypeId)} className='mr-1 mb-1' type="checkbox" onChange={(e) => onChangeUnitMesurement(e, dimension.unitMeasurement, dimension.unitTypeId)} />{dimension.unitMeasurement}</li>
+                  return <li key={dimension.key}><input  disabled={true} value={dimension.unitTypeId}  className={`mr-1 mb-1 dimension_${data.split(" ").join("").replace(/[&\\+()~%'",:?<>{}!@#]/g, '')}`} type="checkbox" onChange={(e) => onChangeUnitMesurement(e, dimension.unitMeasurement, dimension.unitTypeId)} />{dimension.unitMeasurement}{helper.measurementDisplayFormat(dimension.measurementType)}</li>
                 })
               })
-              : ''}
+              : ''
+              }
           </ul>
           {/* onClick={this.props.modal} */}
           <a href="javascript:void(0);" className='text-success text-right d-none' >MORE</a>

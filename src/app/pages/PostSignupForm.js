@@ -8,7 +8,9 @@ import instance from '../services/instance';
 import request from '../services/request';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import PhoneInput, { formatPhoneNumber, formatPhoneNumberIntl } from 'react-phone-number-input'
+import ReactPhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
+//import PhoneInput, { formatPhoneNumber, formatPhoneNumberIntl } from 'react-phone-number-input'
 
 
 let DefaultCountryCode;
@@ -19,6 +21,7 @@ export default function PostSignupForm(props) {
     const { t, i18n } = useTranslation();
     const culture = clientDataconfig.culture.culture
     const country = culture.substring(culture.indexOf('-') + 1, culture.length).toLowerCase();
+    console.log(country)
     const [toggle, setToggle] = useState(true);
     const showPasswordHandler = () => {
         setToggle(!toggle);
@@ -295,8 +298,13 @@ export default function PostSignupForm(props) {
                                             label={<Dropdown defaultValue='+91' search options={countriecodes} />}
                                             labelPosition='left' /> */}
 
-                                        <PhoneInput
-                                            defaultCountry={DefaultCountryCode}
+                                        <ReactPhoneInput
+                                        inputExtraProps={{
+                                            name: "phone",
+                                            required: true,
+                                            autoFocus: true
+                                          }}
+                                          country={country}
                                             value={values.phoneNumber}
                                             placeholder={`${t('Enter Mobile Number')}`}
                                             onChange={(e, d) => onChangePhoneInput(e, d)} />

@@ -2,6 +2,8 @@ import React, {useState} from "react";
 import ReactSlider from "react-slider";
 
 const UnitsRangeSlider = (props) => {
+    console.log(props.priceRange.minPrice);
+    console.log(props.priceRange.maxPrice);
     let intialMin;
     let intialMax;
     intialMin = Number(sessionStorage.getItem('MinValue'));
@@ -28,7 +30,7 @@ const UnitsRangeSlider = (props) => {
                 ariaValuetext="auto"
                 renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
                 pearling
-                step={10}
+               
                 onChange={handleChange}
             />
         </div>
