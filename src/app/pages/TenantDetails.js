@@ -1,17 +1,15 @@
 import PreBookingBreadcrumb from "../components/prebooking breadcrumb/PreBookingBreadcrumb";
-import { Dropdown, Image, Input, Modal } from "semantic-ui-react";
+import { Image, Modal } from "semantic-ui-react";
 import SemanticDatepicker from "react-semantic-ui-datepickers";
 import React, { useEffect, useRef, useState } from "react";
-import TenantDetailEmergengyContactAccordian from "../components/tenantDetailsAccordian/TenantDetailsAccordian";
-import PhoneInput, { formatPhoneNumber, formatPhoneNumberIntl } from 'react-phone-number-input'
-import { json, useNavigate } from "react-router-dom";
-import countriecodes from "../components/CountryCode";
+import TenantDetailEmergengycontactAccordian from "../components/tenantDetailsAccordian/TenantDetailsAccordian";
+import PhoneInput from 'react-phone-number-input'
+import { useNavigate } from "react-router-dom";
 import instance from '../services/instance';
 import request from '../services/request';
 import { useTranslation } from "react-i18next";
 import Helper from "../helper";
 import axios from "axios";
-var qs = require('qs');
 
 
 let helper = new Helper();
@@ -37,7 +35,6 @@ export default function TenantDetails() {
   let companyDetail = [];
   const clientDataconfig = JSON.parse(sessionStorage.getItem("configdata"));
   const culture = clientDataconfig.culture.culture
-  const country = culture.substring(culture.indexOf('-') + 1, culture.length).toLowerCase();
   const today = new Date();
   const minDate = new Date(today.setFullYear(today.getFullYear() - 18));
   const navigate = useNavigate();
@@ -50,8 +47,20 @@ export default function TenantDetails() {
   const companyName = useRef(null);
   const ssn = useRef(null)
   const companyRegistrationNumber = useRef(null);
-  // <button onClick={e => tenantInfoFinal(e)} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">{t("NEXT")}</button>
-  // <button onClick={() => SetCreditCheckModal({ open: true, dimmer: 'blurring' })} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">{t("NEXT")}</button>
+  const [errors, setErrors] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    birthDate: '',
+    phoneNumber: '',
+    addressLineOne: '',
+    addressLineTwo: '',
+    city: '',
+    country: '',
+    state: '',
+    zipCode: '',
+    ssn: '',
+  });
   const [TenantInfoDetails, setTenantInfoDetails] = useState(
     {
       firstName: '',
@@ -67,148 +76,6 @@ export default function TenantDetails() {
       zipCode: '',
       ssn: '',
     });
-
-  const [TenantInfoError, setTenantInfoError] = useState({
-    firstName: '',
-    email: '',
-    phoneNumber: '',
-    addressLineOne: '',
-    city: '',
-    state: '',
-    zipCode: '',
-    ssn: ''
-  });
-
-  const [emergencyContactDetails, setEmergencyContactDetails] = useState({
-    emergencyFname: '',
-    emergencylname: '',
-    emergencyemail: '',
-    emergencyphoneno: ''
-  });
-
-  const [emergencyContactErr, setEmergencyContactErr] = useState({
-    emergencyFname: '',
-    emergencyemail: '',
-    emergencyphoneno: '',
-  });
-
-  const [imguploadStatus, SetimguploadStatus] = useState(false);
-  const [creditCheckLoader, setCreditCheckLoader] = useState(false);
-  const [contactaccordian, SetContactaccordian] = useState([]);
-  const [creditStatus, SetCreditStatus] = useState(false);
-  const [tenantCreditCheckDetails, setTenantCreditCheckDetails] = useState({})
-  const [creditcheckerror, setCreditCheckError] = useState(false)
-  const [creditCheckModal, SetCreditCheckModal] = useState({
-    open: false,
-    dimmer: undefined,
-  })
-
-  const handlechange = (e) => {
-    e.persist();
-    const { name, value } = e.target;
-    setTenantInfoDetails({ ...TenantInfoDetails, [name]: value });
-  }
-  const validateemergencycontactInfo = (e) => {
-
-    const { name } = e.target;
-    const value = emergencyContactDetails[name];
-    let message = '';
-    if (!value && name === "emergencyFname") {
-      message = `${t("First Name is Required")}`;
-    }
-    if (!value && name === "emergencyemail") {
-      message = `${t("Email is Required")}`;
-    }
-    if (value && name === "emergencyemail" && !/\S+@\S+\.\S+/.test(value)) {
-      message = `${("Email format must be as example@mail.com")}`;
-    }
-    if (!value && name === "emergencyphoneno") {
-      message = `${t('Phone No is Required')}`;
-    }
-
-    setEmergencyContactErr({ ...emergencyContactErr, [name]: message })
-
-  }
-  const onChangePhoneInput = (e, data) => {
-    setEmergencyContactDetails({ ...emergencyContactDetails, ['emergencyphoneno']: e });
-  }
-
-  const validateTenantInfo = (e) => {
-    const { name } = e.target;
-    const value = TenantInfoDetails[name];
-    let message = ''
-    if (!value) {
-      message = `${name} is required`;
-    }
-    let ssnErrormsg = document.getElementById('ssn');
-    if (ssn.current.value === '') {
-      ssnErrormsg.classList.remove('d-none');
-    } else if (ssn.current.value.length <= 5) {
-      ssnErrormsg.innerHTML = `Please enter at least 6 characters`
-      ssnErrormsg.classList.remove('d-none');
-    } else {
-      ssnErrormsg.classList.add('d-none');
-    }
-    setTenantInfoError({ ...TenantInfoError, [name]: message });
-  }
-
-  const emergencyhandlechange = (e) => {
-    setEmergencyContactDetails({ ...emergencyContactDetails, [e.target.name]: e.target.value });
-  }
-
-
-  const addEmergencyContact = (e) => {
-    e.preventDefault();
-
-    const emergencyContactErr = { emergencyFname: '', emergencyemail: '', emergencyphoneno: '' }
-    let isValid = true;
-
-    if (!emergencyContactDetails.emergencyFname) {
-      emergencyContactErr.emergencyFname = `${t("First Name is Required ")}`;
-      isValid = false;
-    }
-    if (!emergencyContactDetails.emergencyemail) {
-      emergencyContactErr.emergencyemail = `${t("Email is Required")}`;
-      isValid = false;
-    }
-    if (emergencyContactDetails.emergencyemail && !/\S+@\S+\.\S+/.test(emergencyContactDetails.emergencyemail)) {
-      emergencyContactErr.emergencyemail = `${t("Email format must be as example@mail.com ")}`;
-      isValid = false;
-    }
-    if (!emergencyContactDetails.emergencyphoneno) {
-      emergencyContactErr.emergencyphoneno = `${t("Phone No is Required")}`;
-      isValid = false;
-    }
-    if (!isValid) {
-      setEmergencyContactErr(emergencyContactErr);
-    } else {
-
-      const newcontactdetails = {
-        name: emergencyContactDetails.emergencyFname,
-        lname: emergencyContactDetails.emergencylname,
-        email: emergencyContactDetails.emergencyemail,
-        phone: emergencyContactDetails.emergencyphoneno,
-        contactaccordianLength: contactaccordian.length + 1
-      }
-      SetContactaccordian([...contactaccordian, newcontactdetails]);
-
-      /** Clear all Input values */
-
-      emergencyContactDetails.emergencyFname = '';
-      emergencyContactDetails.emergencylname = '';
-      emergencyContactDetails.emergencyemail = '';
-      emergencyContactDetails.emergencyphoneno = '';
-
-      /** Clear all Input values */
-
-    }
-  }
-  const removeEmergencyContact = (index) => {
-    const list = [...contactaccordian]
-    list.splice(index, 1);
-    SetContactaccordian(list)
-
-  }
 
   const PHOTO_URl_PERSONAL_USER = (data) => {
     const url = {
@@ -234,9 +101,7 @@ export default function TenantDetails() {
       return url[71_100]
     } else {
       return '/assets/images/poor_credit_score.svg'
-
     }
-
   }
 
   const PHOTO_URl_BUSINESS_USER = (data) => {
@@ -266,21 +131,218 @@ export default function TenantDetails() {
     else if (data === 'NR') {
       return url.NR
     } else {
-
       return '/assets/images/poor_credit_score.svg'
     }
-
   }
 
-  // const PHOTO_URl_BUSINESS_USER1 = {
-  //   A: "/assets/images/A.png",
-  //   AA: "/assets/images/AA.png",
-  //   AN: "/assets/images/AN.png",
-  //   B: "/assets/images/B.png",
-  //   C: "/assets/images/c.png",
-  //   NR: "/assets/images/NR.png",
+  const [TenantInfoError, setTenantInfoError] = useState({
+    firstName: '', email: '', phoneNumber: '', addressLineOne: '', city: '', state: '', zipCode: '', ssn: ''
+  });
 
-  // }
+  const [emergencyContactDetails, setEmergencyContactDetails] = useState({
+    emergencyFname: '', emergencyname: '', emergencyEmail: '', emergencyPhoneNo: ''
+  });
+
+  const [emergencyContactErr, setEmergencyContactErr] = useState({
+    emergencyFname: '', emergencyEmail: '', emergencyPhoneNo: '',
+  });
+
+  const [imguploadStatus, SetimguploadStatus] = useState(false);
+  const [creditCheckLoader, setCreditCheckLoader] = useState(false);
+  const [contactAccordian, SetcontactAccordian] = useState([]);
+  const [creditStatus, SetCreditStatus] = useState(false);
+  const [tenantCreditCheckDetails, setTenantCreditCheckDetails] = useState({})
+  const [creditcheckerror, setCreditCheckError] = useState(false)
+  const [creditCheckModal, SetCreditCheckModal] = useState({
+    open: false,
+    dimmer: undefined,
+  })
+
+  useEffect(() => {
+    var diff = (Date.now() - startdate) / 60000;
+    if (diff > 40) {
+      localStorage.setItem('nextpage', JSON.stringify(false))
+    }
+    tenantInfo();
+    if (emergencyDetail) {
+      SetcontactAccordian(JSON.parse(emergencyDetail))
+    }
+  }, [])
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (customFieldAccess && customFieldAccess.length > 0) {
+        bindCustomFieldValue();
+      }
+    }, 1000)
+  }, [customFieldAccess])
+  const handlechange = (e) => {
+    e.persist();
+    const { name, value } = e.target;
+    setTenantInfoDetails({ ...TenantInfoDetails, [name]: value });
+  }
+
+
+  // Validation Functions
+
+  const validateEmergencyContactInfo = (value, field) => {
+    let message = "";
+    console.log(field);
+    switch (field) {
+      case "emergencyFname":
+        if (!value) {
+          message = `${t("First Name is required")}`;
+        }
+        break;
+      case "emergencyEmail":
+        if (!value) {
+          message = `${t("Email is required")}`;
+        } else if (!/\S+@\S+.\S+/.test(value)) {
+          message = `${t("Email format must be example@mail.com")}`;
+        }
+        break;
+      case "emergencyPhoneNo":
+        if (!value) {
+          message = `${t("Phone Number is required")}`;
+        }
+        break;
+      default:
+        break;
+    }
+    setEmergencyContactErr({ ...emergencyContactErr, [field]: message });
+    return message;
+  };
+
+  const customfleldvalidate = (e) => {
+    const fieldId = e.target.dataset.fieldid;
+    const value = e.target.value;
+    const isMandatory = e.target.dataset.required;
+    if (!value && isMandatory === "true") {
+      document.getElementById(fieldId).style.display = 'block';
+    } else if (!value && isMandatory === "false") {
+      document.getElementById(fieldId).style.display = 'none';
+    } else {
+      document.getElementById(fieldId).style.display = 'none';
+    }
+  }
+  const validate = (field, value) => {
+    console.log(field, value);
+    switch (field) {
+      case "firstName":
+        if (!value) {
+          setErrors({ ...errors, firstName: "First Name is required" });
+          return false;
+        }
+        setErrors({ ...errors, firstName: "" });
+        return true;
+      case "lastName":
+        if (!value) {
+          setErrors({ ...errors, lastName: "Last Name is required" });
+          return false;
+        }
+        setErrors({ ...errors, lastName: "" });
+        return true;
+      case "email":
+        if (!value) {
+          setErrors({ ...errors, email: "Email is required" });
+          return false;
+        }
+        setErrors({ ...errors, email: "" });
+        return true;
+      case "phoneNumber":
+        if (!value) {
+          setErrors({ ...errors, phoneNumber: "Phone Number is required" });
+          return false;
+        }
+        setErrors({ ...errors, phoneNumber: "" });
+        return true;
+      case "ssn":
+        if (!value) {
+          setErrors({ ...errors, ssn: "Social Security Number is required" });
+          return false;
+        }
+        setErrors({ ...errors, ssn: "" });
+        return true;
+      case "birthDate":
+        if (!value) {
+          setErrors({ ...errors, birthDate: "Date Of Birth is required" });
+          return false;
+        }
+        setErrors({ ...errors, birthDate: "" });
+        return true;
+      case "companyName":
+        if (BusinessUser && !value) {
+          setErrors({ ...errors, companyName: "Company Name is required" });
+          return false;
+        }
+        setErrors({ ...errors, companyName: "" });
+        return true;
+      default:
+        return false;
+    }
+  };
+
+
+
+  // onChange Funcion
+  const onChangePhoneInput = (e, data) => {
+    setEmergencyContactDetails({ ...emergencyContactDetails, ['emergencyPhoneNo']: e });
+  }
+  const emergencyhandlechange = (e) => {
+    setEmergencyContactDetails({ ...emergencyContactDetails, [e.target.name]: e.target.value });
+  }
+
+  // OnCLick FUnctions
+  const addEmergencyContact = (e) => {
+    e.preventDefault();
+
+    const emergencyContactErr = { emergencyFname: '', emergencyEmail: '', emergencyPhoneNo: '' }
+    let isValid = true;
+
+    if (!emergencyContactDetails.emergencyFname &&
+      !emergencyContactDetails.emergencyEmail &&
+      !emergencyContactDetails.emergencyPhoneNo) {
+      return;
+    }
+
+    emergencyContactErr.emergencyFname = validateEmergencyContactInfo(emergencyContactDetails.emergencyFname, "FirstName");
+    isValid = emergencyContactErr.emergencyFname === '';
+
+    emergencyContactErr.emergencyEmail = validateEmergencyContactInfo(emergencyContactDetails.emergencyEmail, "Email");
+    isValid = isValid && emergencyContactErr.emergencyEmail === '';
+
+    emergencyContactErr.emergencyPhoneNo = validateEmergencyContactInfo(emergencyContactDetails.emergencyPhoneNo, "Phone No");
+    isValid = isValid && emergencyContactErr.emergencyPhoneNo === '';
+
+    if (!isValid) {
+      setEmergencyContactErr(emergencyContactErr);
+      return false
+    } else {
+      const newContactDetails = {
+        name: emergencyContactDetails.emergencyFname,
+        lname: emergencyContactDetails.emergencyname,
+        email: emergencyContactDetails.emergencyEmail,
+        phone: emergencyContactDetails.emergencyPhoneNo,
+        contactAccordianLength: contactAccordian.length + 1
+      }
+      SetcontactAccordian([...contactAccordian, newContactDetails]);
+
+      emergencyContactDetails.emergencyFname = '';
+      emergencyContactDetails.emergencyname = '';
+      emergencyContactDetails.emergencyEmail = '';
+      emergencyContactDetails.emergencyPhoneNo = '';
+
+      return true;
+    }
+  };
+
+  const removeEmergencyContact = (index) => {
+    const list = [...contactAccordian]
+    list.splice(index, 1);
+    SetcontactAccordian(list)
+  }
+
+
 
   const proceedCreditCheck = (e) => {
     e.preventDefault();
@@ -437,6 +499,7 @@ export default function TenantDetails() {
     })
 
   }
+
   const dateOfBirthChange = (e, date) => {
     TenantInfoDetails['birthDate'] = date.value;
 
@@ -533,9 +596,9 @@ export default function TenantDetails() {
 
   const leaseProfileSave = (customfield) => {
     let emergencyContactArray = [];
-    if (contactaccordian.length > 0) {
-      sessionStorage.setItem('emergencyDetail', JSON.stringify(contactaccordian));
-      contactaccordian.forEach((item) => {
+    if (contactAccordian.length > 0) {
+      sessionStorage.setItem('emergencyDetail', JSON.stringify(contactAccordian));
+      contactAccordian.forEach((item) => {
         emergencyContactArray.push({
           id: null,
           firstName: item.name,
@@ -631,6 +694,7 @@ export default function TenantDetails() {
       });
 
   }
+
   function updateTenantInfo() {
     let config = {
       headers: {
@@ -742,95 +806,22 @@ export default function TenantDetails() {
 
 
   }
-  const customfleldvalidate = (e) => {
-    const fieldId = e.target.dataset.fieldid;
-    const value = e.target.value;
-    const isMandatory = e.target.dataset.required;
-    if (!value && isMandatory === "true") {
-      document.getElementById(fieldId).style.display = 'block';
-    } else if (!value && isMandatory === "false") {
-      document.getElementById(fieldId).style.display = 'none';
-    } else {
-      document.getElementById(fieldId).style.display = 'none';
-    }
-  }
 
 
 
-  const tenantInfoFinal = (e) => {
+  const submitTenantInfo = (e) => {
     e.preventDefault();
-    const TenantInfoError = {
-      firstName: "",
-      lastName: "",
-      email: "",
-      phoneNumber: "",
-      addressLineOne: "",
-      city: "",
-      state: "",
-      zipCode: ""
-    }
     let isValid = true;
-    if (!TenantInfoDetails.firstName) {
-      TenantInfoError.firstName = `${t("First Name is Required")}`;
-      isValid = false;
-    }
-    if (!TenantInfoDetails.lastName) {
-      TenantInfoError.lastName = `${t("Last Name is Required")}`;
-      isValid = false;
-    }
-    if (!TenantInfoDetails.addressLineOne) {
-      TenantInfoError.addressLineOne = `${t("Address is Required")}`;
-      isValid = false;
-    }
-    if (!TenantInfoDetails.city) {
-      TenantInfoError.city = `${t("City is Required")}`;
-      isValid = false;
-    }
-    if (!TenantInfoDetails.zipCode) {
-      TenantInfoError.zipCode = `${t("Zipcode is Required")}`;
-      isValid = false;
-    }
-    if (!TenantInfoDetails.state) {
-      TenantInfoError.state = `${t("State is Required")}`;
-      isValid = false;
-    }
-    if (BusinessUser) {
-      let companyErrormessage = document.getElementById("companyname");
-      if (companyName.current.value === '') {
-        companyErrormessage.classList.remove('d-none')
-        isValid = false
-      } else {
-        companyDetail = { companyName: companyName.current.value };
-        sessionStorage.setItem("companyDetail", JSON.stringify(companyDetail));
-        companyErrormessage.classList.add('d-none');
-
+    const fields = ["firstName", "lastName", "email", "phoneNumber", "ssn", "birthDate"];
+    fields.forEach((field) => {
+      if (!validate(field, TenantInfoDetails[field])) {
+        isValid = false;
       }
-      // if(companyRegistrationNumber.current.value == ''){
-      //   isValid = false
-      // }
-    }
-
-    let ssnErrormsg = document.getElementById('ssn');
-    if (ssn.current.value === '') {
-      ssnErrormsg.classList.remove('d-none');
-      isValid = false;
-    } else if (ssn.current.value.length <= 5) {
-      ssnErrormsg.classList.remove('d-none');
-      isValid = false;
-
-    }
-    else {
-      ssnErrormsg.classList.add('d-none');
-    }
-
-
-    if (!isValid) {
-      setTenantInfoError(TenantInfoError);
-    } else {
+    });
+    if (isValid) {
       checkCustomfieldValue();
-      // updateTenantInfo();
     }
-  }
+  };
 
   const checkCreditScore = () => {
     const TenantInfoError = {
@@ -893,27 +884,6 @@ export default function TenantDetails() {
     }
   }
 
-
-  useEffect(() => {
-    var diff = (Date.now() - startdate) / 60000;
-    if (diff > 40) {
-      localStorage.setItem('nextpage', JSON.stringify(false))
-    }
-    tenantInfo();
-    if (emergencyDetail) {
-      SetContactaccordian(JSON.parse(emergencyDetail))
-    }
-  }, [])
-
-  useEffect(() => {
-    setTimeout(() => {
-      if (customFieldAccess && customFieldAccess.length > 0) {
-        bindCustomFieldValue();
-      }
-    }, 1000)
-  }, [customFieldAccess])
-
-
   const bindCustomFieldValue = () => {
     unitDetailCustomField.filter((i => i.fieldpage === 'Movein Tenant Details')).forEach((item) => {
       let element = document.getElementById(`${item.typeof}_${item.fieldId}`);
@@ -960,8 +930,8 @@ export default function TenantDetails() {
 
   const {
     emergencyFname: fname_err,
-    emergencyemail: email_err,
-    emergencyphoneno: phone_err
+    emergencyEmail: email_err,
+    emergencyPhoneNo: phone_err
 
   } = emergencyContactErr;
 
@@ -1001,15 +971,19 @@ export default function TenantDetails() {
             <div className="col-12 px-4 px-sm-2">
               <div className="field w-100  my-3">
                 <label className='fw-500 fs-7 mb-2'>{t("First Name")}<i className="text-danger ">*</i></label>
-                <input type='text' placeholder={t('Enter First Name')} name="firstName" value={TenantInfoDetails.firstName} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
-                <div className="text-danger mt-1">{fname_Data}</div>
+                <input type='text' placeholder={t('Enter First Name')} name="firstName" value={TenantInfoDetails.firstName} onChange={(e) => handlechange(e)} onBlur={() => validate("firstName", TenantInfoDetails.firstName)} />
+                {/* <div className="text-danger mt-1">{fname_Data}</div> */}
+                {errors.firstName && <p className="text-danger mt-1">{errors.firstName}</p>}
+
               </div>
             </div>
             <div className="col-12  px-4 px-sm-2">
               <div className="field w-100  my-3">
                 <label className='fw-500 fs-7 mb-2'>{t("Last Name")}<i className="text-danger ">*</i></label>
-                <input type='text' placeholder={t('Enter Last Name')} name="lastName" value={TenantInfoDetails.lastName} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
-                <div className="text-danger mt-1">{lastNameError}</div>
+                <input type='text' placeholder={t('Enter Last Name')} name="lastName" value={TenantInfoDetails.lastName} onChange={(e) => handlechange(e)} onBlur={() => validate("lastName", TenantInfoDetails.lastName)} />
+                {/* <div className="text-danger mt-1">{lastNameError}</div> */}
+                {errors.lastName && <p className="text-danger mt-1">{errors.lastName}</p>}
+
               </div>
             </div>
           </div>
@@ -1054,30 +1028,37 @@ export default function TenantDetails() {
           <div className="col-12  col-md-6  px-4 px-sm-2">
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-2'>{t("Email Address")} <i className="text-danger ">*</i></label>
-              <input disabled type='email' placeholder={t('Enter Email Address')} name="email" value={TenantInfoDetails.email} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
-              <div className="text-danger mt-1">{email_Data}</div>
+              <input disabled type='email' placeholder={t('Enter Email Address')} name="email" value={TenantInfoDetails.email} onChange={(e) => handlechange(e)} onBlur={() => validate("email", TenantInfoDetails.email)} />
+              {/* <div className="text-danger mt-1">{email_Data}</div> */}
+              {errors.email && <p className="text-danger mt-1">{errors.email}</p>}
+
             </div>
           </div>
           <div className="col-12  col-md-6  px-4 px-sm-2">
             <div className="points-events-none field w-100  my-3 tenantPhonenumber">
               <label className='fw-500 fs-7 mb-2'>{t("Phone Number")} <i className="text-danger ">*</i></label>
               <PhoneInput
+                name="phoneNumber"
                 // defaultCountry={DefaultCountryCode}
                 value={TenantInfoDetails.phoneNumber}
                 placeholder={t("Enter Mobile Number")}
                 id="tenantinfophone"
               />
-              {/* <Input disabled className="noCounterNumber" type="number" name="phoneNumber" placeholder="Enter Mobile Number" value={TenantInfoDetails.phoneNumber} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo}
+              {/* <Input disabled className="noCounterNumber" type="number" name="phoneNumber" placeholder="Enter Mobile Number" value={TenantInfoDetails.phoneNumber} onChange={(e) => handlechange(e)} onBlur={() => validate("email", email)}
                 label={<Dropdown defaultValue='+91' search options={countriecodes} />}
                 labelPosition='left' /> */}
-              <div className="text-danger mt-1">{phoneNo_Data}</div>
+              {/* <div className="text-danger mt-1">{phoneNo_Data}</div> */}
+              {errors.phoneNumber && <p className="text-danger mt-1">{errors.phoneNumber}</p>}
+
             </div>
           </div>
           <div className="col-12  col-md-6  px-4 px-sm-2">
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-2'>{t("Social Security Number")} <i className="text-danger ">*</i></label>
-              <input className="noCounterNumber" ref={ssn} type='number' name="ssn" value={TenantInfoDetails.ssn} placeholder={t("Social Security Number")} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
-              <div id="ssn" className="text-danger mt-1 d-none"> {t("Please Enter Social Security Number")} </div>
+              <input className="noCounterNumber" ref={ssn} type='number' name="ssn" value={TenantInfoDetails.ssn} placeholder={t("Social Security Number")} onChange={(e) => handlechange(e)} onBlur={() => validate("ssn", TenantInfoDetails.ssn)} />
+              {/* <div id="ssn" className="text-danger mt-1 d-none"> {t("Please Enter Social Security Number")} </div> */}
+              {errors.ssn && <p className="text-danger mt-1">{errors.ssn}</p>}
+
             </div>
           </div>
           {BusinessUser ?
@@ -1085,7 +1066,8 @@ export default function TenantDetails() {
               <div className="field w-100  my-3">
                 <label className='fw-500 fs-7 mb-2'>{t("Company Name")}<i className="text-danger ">*</i></label>
                 <input className="noCounterNumber" ref={companyName} type='text' name="companyname" placeholder='Company Name' />
-                <div id="companyname" className="text-danger mt-1 d-none">{t("Please Enter Company Name")}</div>
+                {/* <div id="companyname" className="text-danger mt-1 d-none">{t("Please Enter Company Name")}</div> */}
+                {errors.companyname && <p className="text-danger mt-1">{errors.companyname}</p>}
               </div>
             </div>
             : ""
@@ -1097,6 +1079,8 @@ export default function TenantDetails() {
                 <label className='fw-500 fs-7 mb-2'>{t("Company registration No")} <i className="text-danger ">*</i></label>
                 <input className="noCounterNumber" ref={companyRegistrationNumber} type='text' name="companyregistration" placeholder='Company registration No' />
                 <div id="registration" className="text-danger mt-1 d-none"> {t("Please Enter registration No")} </div>
+                {errors.companyregistration && <p className="text-danger mt-1">{errors.companyregistration}</p>}
+
               </div>
             </div> : ""
 
@@ -1231,7 +1215,7 @@ export default function TenantDetails() {
           <div className="col-12 col-md-6 px-4 px-sm-2">
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-2'>{t("Address Line 1")}</label>
-              <input type='text' placeholder={t("Address Line 1")} name="addressLineOne" value={TenantInfoDetails.addressLineOne} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
+              <input type='text' placeholder={t("Address Line 1")} name="addressLineOne" value={TenantInfoDetails.addressLineOne} onChange={(e) => handlechange(e)} onBlur={() => validate("addressLineOne", TenantInfoDetails.addressLineOne)} />
               <div className="text-danger mt-1">{addressLine1Error}</div>
             </div>
           </div>
@@ -1244,21 +1228,21 @@ export default function TenantDetails() {
           <div className="col-12 col-md-6 px-4 px-sm-2">
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-2'>{t("City")}<i className="text-danger ">*</i></label>
-              <input type='text' placeholder={t("City")} name="city" value={TenantInfoDetails.city} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
+              <input type='text' placeholder={t("City")} name="city" value={TenantInfoDetails.city} onChange={(e) => handlechange(e)} onBlur={() => validate("city", TenantInfoDetails.city)} />
               <div className="text-danger mt-1">{cityError}</div>
             </div>
           </div>
           <div className="col-12 col-md-6 px-4 px-sm-2">
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-2'>{t("State/Provine")}<i className="text-danger ">*</i></label>
-              <input type='text' placeholder={t("State/Provine")} name="state" value={TenantInfoDetails.state} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
+              <input type='text' placeholder={t("State/Provine")} name="state" value={TenantInfoDetails.state} onChange={(e) => handlechange(e)} onBlur={() => validate("state", TenantInfoDetails.state)} />
               <div className="text-danger mt-1">{stateError}</div>
             </div>
           </div>
           <div className="col-12 col-md-6 px-4 px-sm-2">
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-2'>{t("Zip/Postal Code")}<i className="text-danger ">*</i></label>
-              <input className="noCounterNumber" type='number' name="zipCode" placeholder={t("Zip/Postal Code")} defaultValue={TenantInfoDetails.zipCode} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
+              <input className="noCounterNumber" type='number' name="zipCode" placeholder={t("Zip/Postal Code")} defaultValue={TenantInfoDetails.zipCode} onChange={(e) => handlechange(e)} onBlur={() => validate("zipCode", TenantInfoDetails.zipCode)} />
               <div className="text-danger mt-1">{postalError}</div>
             </div>
           </div>
@@ -1276,25 +1260,25 @@ export default function TenantDetails() {
               <span className='veritical-align-text-top ml-1'>{t("Emergency Contact")}</span></h6>
           </div>
         </div>
-        {contactaccordian.length < 3 &&
+        {contactAccordian.length < 3 &&
           <div className="row ui form mb-4 emergencycontact">
             <div className="col-12 col-md-6 px-4 px-sm-2">
               <div className="field w-100  my-3">
                 <label className='fw-500 fs-7 mb-2'>{t("First Name")}<i className="text-danger ">*</i></label>
-                <input value={emergencyContactDetails.emergencyFname} onChange={(e) => emergencyhandlechange(e)} onBlur={(e) => validateemergencycontactInfo(e)} name="emergencyFname" type='text' placeholder={t("First Name")} />
+                <input value={emergencyContactDetails.emergencyFname} onChange={(e) => emergencyhandlechange(e)} onBlur={(e) => validateEmergencyContactInfo(emergencyContactDetails.emergencyFname, "emergencyFname")} name="emergencyFname" type='text' placeholder={t("First Name")} />
                 <div className="text-danger mt-1">{fname_err}</div>
               </div>
             </div>
             <div className="col-12 col-md-6 px-4 px-sm-2">
               <div className="field w-100  my-3">
                 <label className='fw-500 fs-7 mb-2'>{t("Last Name")}</label>
-                <input value={emergencyContactDetails.emergencylname} onChange={(e) => emergencyhandlechange(e)} onBlur={(e) => validateemergencycontactInfo(e)} type='text' name="emergencylname" placeholder={t('Last Name')} />
+                <input value={emergencyContactDetails.emergencyname} onChange={(e) => emergencyhandlechange(e)} type='text' name="emergencyLname" onBlur={(e) => validateEmergencyContactInfo(emergencyContactDetails.emergencyname, "emergencyLname")} placeholder={t('Last Name')} />
               </div>
             </div>
             <div className="col-12 col-md-6 px-4 px-sm-2">
               <div className="field w-100  my-3">
                 <label className='fw-500 fs-7 mb-2'>{t("Email")} <i className="text-danger ">*</i></label>
-                <input value={emergencyContactDetails.emergencyemail} onChange={(e) => emergencyhandlechange(e)} onBlur={(e) => validateemergencycontactInfo(e)} type='email' name="emergencyemail" placeholder={t('Enter Email')} />
+                <input value={emergencyContactDetails.emergencyEmail} onChange={(e) => emergencyhandlechange(e)} onBlur={(e) => validateEmergencyContactInfo(emergencyContactDetails.emergencyEmail, "emergencyEmail")} type='email' name="emergencyEmail" placeholder={t('Enter Email')} />
                 <div className="text-danger mt-1">{email_err}</div>
               </div>
             </div>
@@ -1302,15 +1286,15 @@ export default function TenantDetails() {
               <div className="field w-100  my-3">
                 <label className='fw-500 fs-7 mb-2'>{t("Phone Number")} <i className="text-danger ">*</i></label>
                 {/* <input value={contactPhone} onChange={e=>SetContactPhone(e.target.value)} className="noCounterNumber" type='number' placeholder='Enter Phone Number' /> */}
-                {/* <Input value={emergencyContactDetails.emergencyphoneno} onChange={(e) => emergencyhandlechange(e)} className="noCounterNumber" onBlur={(e) => validateemergencycontactInfo(e)} type="number" name="emergencyphoneno" placeholder="Enter Mobile Number"
+                {/* <Input value={emergencyContactDetails.emergencyPhoneNo} onChange={(e) => emergencyhandlechange(e)} className="noCounterNumber" onBlur={(e) => validateEmergencyContactInfo(e.target.value)} type="number" name="emergencyPhoneNo" placeholder="Enter Mobile Number"
                   label={<Dropdown defaultValue='+91' search options={countriecodes} />}
                   labelPosition='left' /> */}
                 <PhoneInput
                   defaultCountry={DefaultCountryCode}
-                  value={emergencyContactDetails.emergencyphoneno}
+                  value={emergencyContactDetails.emergencyPhoneNo}
                   placeholder={t("Enter Mobile Number")}
-                  name="emergencyphoneno"
-                  onBlur={(e) => validateemergencycontactInfo(e)}
+                  name="emergencyPhoneNo"
+                  onBlur={(e) => validateEmergencyContactInfo(emergencyContactDetails.emergencyPhoneNo, "emergencyPhoneNo")}
                   onChange={(e, d) => onChangePhoneInput(e, d)} />
                 <div className="text-danger mt-1">{[phone_err]}</div>
               </div>
@@ -1326,8 +1310,8 @@ export default function TenantDetails() {
         }
         <div className="col-12 px-sm-2" id="EmergencyContactDiv">
           {
-            contactaccordian.map((data, index) => (
-              <TenantDetailEmergengyContactAccordian key={index} removefunction={removeEmergencyContact} index={index} contactLength={data.contactaccordianLength} name={data.name} lname={data.lname} email={data.email} phone={data.phone} />
+            contactAccordian.map((data, index) => (
+              <TenantDetailEmergengycontactAccordian key={index} removefunction={removeEmergencyContact} index={index} contactLength={data.contactAccordianLength} name={data.name} lname={data.lname} email={data.email} phone={data.phone} />
             ))
           }
         </div>
@@ -1335,7 +1319,7 @@ export default function TenantDetails() {
       </div>
       <div className="ui container text-center my-5">
         <button onClick={() => navigate('/preBooking/addOns')} className="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">{t("BACK")}</button>
-        <button onClick={e => tenantInfoFinal(e)} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">{t("NEXT")}</button>
+        <button onClick={e => submitTenantInfo(e)} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">{t("NEXT")}</button>
         {/* <button onClick={() => checkCreditScore()} class/Name="ui button bg-success-dark   fs-7 fw-400 text-white px-5">{t("NEXT")}</button> */}
         {/* <button onClick={() => SetCreditCheckModal({ open: true })} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">{t("NEXT")}</button> */}
 
