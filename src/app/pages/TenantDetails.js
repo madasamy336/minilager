@@ -38,7 +38,8 @@ export default function TenantDetails() {
   const clientDataconfig = JSON.parse(sessionStorage.getItem("configdata"));
   const culture = clientDataconfig.culture.culture
   const country = culture.substring(culture.indexOf('-') + 1, culture.length).toLowerCase();
-
+  const today = new Date();
+  const minDate = new Date(today.setFullYear(today.getFullYear() - 18));
   const navigate = useNavigate();
   const [profileImageSrc, setprofileImageSrc] = useState({
     img: '/assets/images/userDemoProfile.svg'
@@ -1006,7 +1007,7 @@ export default function TenantDetails() {
             </div>
             <div className="col-12  px-4 px-sm-2">
               <div className="field w-100  my-3">
-                <label className='fw-500 fs-7 mb-2'>{t("Last Name")}</label>
+                <label className='fw-500 fs-7 mb-2'>{t("Last Name")}<i className="text-danger ">*</i></label>
                 <input type='text' placeholder={t('Enter Last Name')} name="lastName" value={TenantInfoDetails.lastName} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
                 <div className="text-danger mt-1">{lastNameError}</div>
               </div>
@@ -1037,10 +1038,16 @@ export default function TenantDetails() {
           <div className="col-12  col-md-6  px-4 px-sm-2">
             <div className="field datePicker w-100 my-3">
               <label className='fw-500 fs-7 mb-2' >{t("Date of Birth")}</label>
-              {TenantInfoDetails && TenantInfoDetails.birthDate ?
-                <SemanticDatepicker datePickerOnly placeholder={t('Select date')} name="birthDate" className='w-100' format="DD-MM-YYYY" value={new Date(TenantInfoDetails.birthDate)} onChange={dateOfBirthChange} /> :
-                <SemanticDatepicker datePickerOnly placeholder={t('Select date')} name="birthDate" className='w-100' format="DD-MM-YYYY" value={new Date()} onChange={dateOfBirthChange} />
-              }
+              <SemanticDatepicker
+                datePickerOnly
+                placeholder={t('Select date')}
+                name="birthDate"
+                className="w-100"
+                format="DD-MM-YYYY"
+                value={TenantInfoDetails.birthDate ? new Date(TenantInfoDetails.birthDate) : TenantInfoDetails.birthDate}
+                minDate={minDate}
+                onChange={dateOfBirthChange}
+              />
 
             </div>
           </div>
@@ -1236,21 +1243,21 @@ export default function TenantDetails() {
           </div>
           <div className="col-12 col-md-6 px-4 px-sm-2">
             <div className="field w-100  my-3">
-              <label className='fw-500 fs-7 mb-2'>{t("City")}</label>
+              <label className='fw-500 fs-7 mb-2'>{t("City")}<i className="text-danger ">*</i></label>
               <input type='text' placeholder={t("City")} name="city" value={TenantInfoDetails.city} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
               <div className="text-danger mt-1">{cityError}</div>
             </div>
           </div>
           <div className="col-12 col-md-6 px-4 px-sm-2">
             <div className="field w-100  my-3">
-              <label className='fw-500 fs-7 mb-2'>{t("State/Provine")}</label>
+              <label className='fw-500 fs-7 mb-2'>{t("State/Provine")}<i className="text-danger ">*</i></label>
               <input type='text' placeholder={t("State/Provine")} name="state" value={TenantInfoDetails.state} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
               <div className="text-danger mt-1">{stateError}</div>
             </div>
           </div>
           <div className="col-12 col-md-6 px-4 px-sm-2">
             <div className="field w-100  my-3">
-              <label className='fw-500 fs-7 mb-2'>{t("Zip/Postal Code")}</label>
+              <label className='fw-500 fs-7 mb-2'>{t("Zip/Postal Code")}<i className="text-danger ">*</i></label>
               <input className="noCounterNumber" type='number' name="zipCode" placeholder={t("Zip/Postal Code")} defaultValue={TenantInfoDetails.zipCode} onChange={(e) => handlechange(e)} onBlur={validateTenantInfo} />
               <div className="text-danger mt-1">{postalError}</div>
             </div>
