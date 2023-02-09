@@ -2,6 +2,7 @@ import React, {useState , useEffect} from "react";
 import Helper from "../../helper";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useTranslation } from "react-i18next";
 
 let helper = new Helper();
 const AddonCard = (props) => {
@@ -9,6 +10,7 @@ const AddonCard = (props) => {
   let merchandiseSessionvalue =JSON.parse(sessionStorage.getItem('merchandiseItem'));
   let merchandiseItem = [];
   const [countItem, setCount] = useState(0);
+  const { t } = useTranslation();
     const merchandiseDeleteItem = (e, unitid, merchandiseid) => {
         e.preventDefault();
         if(countItem >0){

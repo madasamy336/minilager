@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import { Accordion } from 'semantic-ui-react'
+import { useTranslation } from "react-i18next";
 
 export default class AddOnAccordion extends Component {
-  state = { activeIndex: 0 }
+  state = { activeIndex: 0 };
 
   handleClick = (e, titleProps) => {
     const { index } = titleProps
@@ -14,6 +15,7 @@ export default class AddOnAccordion extends Component {
 
   render() {
     const { activeIndex } = this.state
+    const { t } = useTranslation();
 
     return (
       <Accordion className='w-100'>
@@ -22,41 +24,41 @@ export default class AddOnAccordion extends Component {
           index={0}
           onClick={this.handleClick}
         >
-          <p>Vehicle Detail {this.props.VehicleLength}</p>
+          <p>{t("Vehicle Detail")} {this.props.VehicleLength}</p>
           <div><img src="/assets/images/arrow-down.png" alt="Down" /></div>
         </Accordion.Title>
         <Accordion.Content active={activeIndex === 0}>
         <div className='row'>
           <div className='col-lg-4 col-md-6 col-sm-12 px-1 mb-2'>
-            <p><span className='fs-7 fw-500 mr-1 mb-2'>Vehicle Type:</span>{this.props.VehicleType}</p>
+            <p><span className='fs-7 fw-500 mr-1 mb-2'>{t("Vehicle Type")}:</span>{this.props.VehicleType}</p>
           </div>
 
           <div className='col-lg-4 col-md-6 col-sm-12 px-1 mb-2'>
-            <p><span className='fs-7 fw-500 mr-1'>Year:</span>{this.props.Year}</p>
+            <p><span className='fs-7 fw-500 mr-1'>{t("Year")}:</span>{this.props.Year}</p>
           </div>
 
           <div className='col-lg-4 col-md-6 col-sm-12 px-1 mb-2'>
-            <p><span className='fs-7 fw-500 mr-1'>Brand:</span>{this.props.Brand}</p>
+            <p><span className='fs-7 fw-500 mr-1'>{t("Brand")}:</span>{this.props.Brand}</p>
           </div>
 
           <div className='col-lg-4 col-md-6 col-sm-12 px-1 mb-2'>
-            <p><span className='fs-7 fw-500 mr-1'>Model:</span>{this.props.Model}</p>
+            <p><span className='fs-7 fw-500 mr-1'>{t("Model")}:</span>{this.props.Model}</p>
           </div>
 
           <div className='col-lg-4 col-md-6 col-sm-12 px-1 mb-2'>
-            <p><span className='fs-7 fw-500 mr-1'>Color:</span>{this.props.Color}</p>
+            <p><span className='fs-7 fw-500 mr-1'>{t("Color")}:</span>{this.props.Color}</p>
           </div>
 
           <div className='col-lg-4 col-md-6 col-sm-12 px-1 mb-2'>
-            <p><span className='fs-7 fw-500 mr-1'>Vehicle State:</span>{this.props.VehicleState}</p>
+            <p><span className='fs-7 fw-500 mr-1'>{t("Vehicle State")}:</span>{this.props.VehicleState}</p>
           </div>
 
           <div className='col-lg-4 col-md-6 col-sm-12 px-1 mb-2'>
-            <p><span className='fs-7 fw-500 mr-1'>Registration No:</span>{this.props.RegistrationNo}</p>
+            <p><span className='fs-7 fw-500 mr-1'>{t("Registration No")}:</span>{this.props.RegistrationNo}</p>
           </div>
 
           <div className='col-lg-4 col-md-6 col-sm-12 px-1 mb-2'>
-            <p><span className='fs-7 fw-500 mr-1'>License No:</span>{this.props.LicenseNo}</p>
+            <p><span className='fs-7 fw-500 mr-1'>{t("License No")}:</span>{this.props.LicenseNo}</p>
           </div>
         </div>
           <div className='text-center'>

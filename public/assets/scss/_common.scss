@@ -221,3 +221,8 @@ color: $UnitsCardsDesc;
     background:#2A0062;
 }
 }
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+-webkit-appearance: none;
+margin: 0;
+}

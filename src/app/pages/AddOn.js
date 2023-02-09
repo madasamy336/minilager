@@ -24,7 +24,7 @@ let merchandiseItem = [];
 export default function AddOn() {
   const childRef = useRef(null);
   const navigate = useNavigate();
-  const formik = useFormik({ });
+  const formik = useFormik({});
   const inputRefs = useRef({});
   const { t, i18n } = useTranslation();
   let unitid = localStorage.getItem('unitid');
@@ -95,16 +95,17 @@ export default function AddOn() {
       SetVehicleAccordian(VehicleSessionValue);
 
     }
-    if(thirdparty === true){
-      if(insuranceSessionValue !== null){
-      insuranceSessionValue.forEach((insurance)=> {
-        SetactivePlan('Own Insurance');
-        setPolicyProvider(insurance['insuranceInfo'].providerName);
-        setPolicyNumber(insurance['insuranceInfo'].policyNumber);
-        setEffectiveFromDate(new Date(insurance['insuranceInfo'].effectiveFrom));
-        setEffectiveToDate(new Date(insurance['insuranceInfo'].effectiveTill));
-      })
-    }
+    if (thirdparty === true) {
+      if (insuranceSessionValue !== null) {
+        insuranceSessionValue.forEach((insurance) => {
+          SetactivePlan('Own Insurance');
+          setPolicyProvider(insurance['insuranceInfo'].providerName);
+          setPolicyNumber(insurance['insuranceInfo'].policyNumber);
+          setPolicyPhoneNumber(insurance['insuranceInfo'].policyPhoneNumber);
+          setEffectiveFromDate(new Date(insurance['insuranceInfo'].effectiveFrom));
+          setEffectiveToDate(new Date(insurance['insuranceInfo'].effectiveTill));
+        })
+      }
 
 
 
@@ -130,7 +131,7 @@ export default function AddOn() {
   }, []);
 
   const navigateTenantDEtails = (e) => {
-     setLoader(true)
+    setLoader(true)
     e.preventDefault();
     let errorcount = 0;
     if (ownInsurance === true) {
@@ -169,7 +170,7 @@ export default function AddOn() {
           }
 
         });
-        if(saveThirdPartyInsuranceDetailsValues.length !== 0){
+        if (saveThirdPartyInsuranceDetailsValues.length !== 0) {
           sessionStorage.setItem('insurancedetail', JSON.stringify(saveThirdPartyInsuranceDetailsValues));
 
         }
@@ -185,12 +186,12 @@ export default function AddOn() {
             let merchandisevalue = document.querySelector(`.merchandise_${id}`)
             if (merchandisevalue !== null && typeof merchandisevalue !== 'undefined') {
               setMerchandiseAddcard(unitid, id, merchandisevalue.value);
-  
+
             }
           })
           sessionStorage.setItem('merchandiseItem', JSON.stringify(merchandiseItem));
-  
-  
+
+
         }
         if (vehicleaccordian !== 0) {
           sessionStorage.setItem('vehicleDetail', JSON.stringify(vehicleaccordian));
@@ -199,7 +200,7 @@ export default function AddOn() {
           navigate('/preBooking/TenantDetails')
         } else {
           navigate('/preBooking/sign-in')
-        }  
+        }
         // navigate('/preBooking/TenantDetails')
       }
 
@@ -239,7 +240,7 @@ export default function AddOn() {
 
       setLoader(false)
 
-      
+
     }
 
 
@@ -356,6 +357,7 @@ export default function AddOn() {
   //insurance
   const [insurancePolicyProvider, setPolicyProvider] = useState("");
   const [policyNumber, setPolicyNumber] = useState("");
+  const [policyPhoneNumber, setPolicyPhoneNumber] = useState("");
   const [effectiveFromDate, setEffectiveFromDate] = useState("");
   const [effectiveToDate, setEffectiveToDate] = useState("");
 
@@ -495,13 +497,18 @@ export default function AddOn() {
                     {ownInsurance && (<div className="ui form px-4 px-sm-2">
                       <div className="field w-100 datePicker my-3">
                         <label className='fw-500 fs-7 mb-2'>{t("Policy Provider Name")}</label>
-                        <input placeholder={`${t("Policy Provider Name")}`} name="ProviderName"  ref ={inputRefs.current.ProviderName}value={insurancePolicyProvider} onChange={(e) => { setPolicyProvider(e.target.value) }} />
+                        <input placeholder={`${t("Policy Provider Name")}`} name="ProviderName" ref={inputRefs.current.ProviderName} value={insurancePolicyProvider} onChange={(e) => { setPolicyProvider(e.target.value) }} />
                         <p className="error py-1 provider_name d-none">{t("Please Enter Policy Provider Name")}</p>
                       </div>
                       <div className="field w-100 datePicker my-3">
                         <label className='fw-500 fs-7 mb-2'>{t("Policy Number")}</label>
                         <input placeholder={`${t("Policy Number")}`} value={policyNumber} onChange={(e) => { setPolicyNumber(e.target.value) }} />
                         <p className="error py-1 policy_number d-none">{t("Please Enter Policy Number")}</p>
+                      </div>
+                      <div className="field w-100 datePicker my-3">
+                        <label className='fw-500 fs-7 mb-2'>{t("Policy Phone Number")}</label>
+                        <input placeholder={`${t("Policy Phone Number")}`} value={policyPhoneNumber} onChange={(e) => { setPolicyPhoneNumber(e.target.value) }} />
+                        <p className="error py-1 policy_number d-none">{t("Please Enter Policy Phone Number")}</p>
                       </div>
                       <div className="field w-100 datePicker my-3">
                         <label className='fw-500 fs-7 mb-2' >{t("Effective From Date")}</label>
@@ -549,23 +556,23 @@ export default function AddOn() {
                             return <div key={item.id} className='col-lg-6 col-md-6 col-sm-12 px-1 mb-3'>
                               <div className='card card-border-secondary border-radius-10 p-2'>
                                 <div className='row'>
-                                {item.isMandatory == true ?
-                                        <input type="checkbox" value={item.id} checked disabled /> :
-                                        <input type="checkbox" id={`services_${item.id}`} value={item.id} onChange={(e) => { serviceSelected(e) }} />
+                                  {item.isMandatory == true ?
+                                    <input type="checkbox" value={item.id} checked disabled /> :
+                                    <input type="checkbox" id={`services_${item.id}`} value={item.id} onChange={(e) => { serviceSelected(e) }} />
 
+                                  }
+                                  {
+                                    serviceSessionValue !== null && serviceSessionValue.forEach((e) => {
+                                      let checkbox = document.getElementById(`services_${e.servicedId}`)
+                                      if (checkbox !== null) {
+                                        checkbox.checked = true
                                       }
-                                      {
-                                        serviceSessionValue !== null && serviceSessionValue.forEach((e) => {
-                                          let checkbox = document.getElementById(`services_${e.servicedId}`)
-                                          if (checkbox !== null) {
-                                            checkbox.checked = true
-                                          }
-                                        })
+                                    })
 
-                                      }
+                                  }
                                   <div className='col-lg-8 col-md-8 col-sm-8'>
                                     <div className='d-flex align-items-center'>
-                                   
+
 
                                       <div className='ml-2'>
                                         <p>{helper.displayCurrency(item.serviceCharge.netAmount)}</p>
@@ -695,7 +702,7 @@ export default function AddOn() {
                           <label className='fw-500 fs-7 mb-2'>{t("Year")}</label>
 
                           {/* <SemanticDatepicker placeholder='Year' formatOptions="yyyy" type='date' className='w-100' /> */}
-                          <input placeholder='Year' className='w-100' minLength={1900} maxLength={2099}  value={year} onChange={(e) => setYear(e.target.value)} />
+                          <input placeholder='Year' type="number" className='w-100' minLength={1900} maxLength={2099} value={year} onChange={(e) => setYear(e.target.value)} />
                         </div>
                         <div className="field w-100 datePicker my-3">
                           <label className='fw-500 fs-7 mb-2'>{t("Brand")}</label>
