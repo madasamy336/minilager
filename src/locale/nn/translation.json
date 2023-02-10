@@ -218,5 +218,6 @@
   "Email/UserName":"E -post/brukernavn",
   "Enter Email/UserName":"Skriv inn e -post/brukernavn",
   "Submit":"Sende inn",
-  "UserName is required":"Brukernavn kreves"
+  "UserName is required":"Brukernavn kreves",
+  "Please Enter Reason":"Vennligst skriv inn grunn"
 }

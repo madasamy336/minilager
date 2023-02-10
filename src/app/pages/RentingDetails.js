@@ -23,13 +23,15 @@ let newArray;
 let customInputFieldValue;
 let customFieldValue = [];
 let customValues;
+let recurringTempvalue;
 
 
 export default function RentingDetails() {
   let unitid = localStorage.getItem('unitid');
   let invoicePeriod = sessionStorage.getItem('invoicePeriodValue');
   let invoiceRecurrValue = sessionStorage.getItem('invoiceRecurringValue');
-  let invoiceset = sessionStorage.getItem('invoiceSet')
+  let invoiceset = sessionStorage.getItem('invoiceSet');
+  let invoicePeriodSet = sessionStorage.getItem('invoicePeriodset');
   const childRef = useRef(null);
   const customFieldRef = useRef([]);
   const today = new Date();
@@ -48,10 +50,10 @@ export default function RentingDetails() {
   const [movinDate, setMovinDate] = useState(new Date());
   const [desiredMoveOutDate, setDesiredMoveOutDate] = useState();
   const [customFieldAccess, SetCustomFieldAccess] = useState();
+  const [invoiceRecurringDisabled, setInvoiceRecurringDisabled] = useState(false);
   const clientDataconfig = JSON.parse(sessionStorage.getItem("configdata"));
   const recurringDefaultValue = clientDataconfig.recurringTypes[0].recurringTypeId;
   const [recurringvalue, setRecurringValue] = useState(invoiceset ? invoiceRecurrValue : recurringDefaultValue);
-  console.log(recurringvalue);
   let customFieldId;
   let customfieldValue;
   let customfieldBindingData = JSON.parse(sessionStorage.getItem("customFieldstorage"));
@@ -60,6 +62,7 @@ export default function RentingDetails() {
       const invoiceperiodval = clientDataconfig.invoicePeriods !== null && typeof clientDataconfig.invoicePeriods !== "undefined" && clientDataconfig.invoicePeriods.length > 0 ?
         clientDataconfig.invoicePeriods.map(item => {
           if (item.preferred) {
+          
             if (invoicePeriod) {
               setInvoiceDefault(Number(invoicePeriod));
             } else {
@@ -90,13 +93,35 @@ export default function RentingDetails() {
 
     }
   }
-
+  
   if (typeof invoiceDefault !== "undefined" && invoiceDefault !== null && invoiceDefault !== "") {
+    if(invoicePeriodSet){
+      sessionStorage.setItem("invoicePeriodValue", (invoicePeriod));
+
+    }else{
+      console.log('testhdhdhddjjk');
+      console.log(invoiceDefault);
     sessionStorage.setItem("invoicePeriodValue", (invoiceDefault));
+    }
   }
   if (typeof recurringDefaultValue !== "undefined" && recurringDefaultValue !== null && recurringDefaultValue !== "") {
     sessionStorage.setItem("invoiceRecurringValue", (recurringvalue));
   }
+
+  useEffect(() => {
+    if(Number(invoiceDefault) >=1 && Number(invoiceDefault) <= 4){
+      let newvalue
+      if(recurring !== null && typeof recurring !== 'undefined'){
+       newvalue = recurring.filter(i=> i.key === 3);
+       console.log(newvalue);
+       setRecurring(newvalue);
+       setRecurringValue(3);
+       setInvoiceRecurringDisabled(true);
+      }
+      
+    }
+   
+  },[invoicePeriod])
 
 
   const movindateOnchange = (e, item) => {
@@ -112,6 +137,27 @@ export default function RentingDetails() {
   }
   const invoiceOnchange = (e, item) => {
     sessionStorage.setItem("invoicePeriodValue", (item.value));
+    sessionStorage.setItem("invoicePeriodset", true);
+    recurringTempvalue = recurring
+    debugger
+    if(item.value >=1 && item.value <= 4){
+      let newvalue = recurring.filter(i=> i.key === 3);
+      setRecurring(newvalue);
+      setRecurringValue(3);
+      setInvoiceRecurringDisabled(true);
+      
+    }else{
+      setInvoiceRecurringDisabled(false);
+      setRecurring(clientDataconfig.recurringTypes.map((item) => {
+        return {
+          key: item.recurringTypeId,
+          text: item.recurringType,
+          value: item.recurringTypeId,
+        }
+
+      }));
+    }
+   
     childRef.current.unitInfodetailscall();
 
   }
@@ -119,8 +165,8 @@ export default function RentingDetails() {
     setcheckInvoiceRecurring(true);
     sessionStorage.setItem('invoiceSet', true);
     sessionStorage.setItem("invoiceRecurringValue", (item.value));
+    // document.querySelector('.inovice-recurring>.divider.text').innerHTML="text";
     setRecurringValue(item.value)
-    console.log(item.value);
     childRef.current.unitInfodetailscall();
 
   }
@@ -129,7 +175,6 @@ export default function RentingDetails() {
   const customhandlechange = (e, data, checkfield) => {
     // setInputValue({"id":e.target.id,"":e.target.})
     if (checkfield === 'date') {
-      console.log(data);
       const index = customFieldValue.findIndex(object => {
         return object.fieldId === data.fieldId
       })
@@ -383,10 +428,6 @@ export default function RentingDetails() {
       navigate("/preBooking/addOns");
     }
   };
-
-
-
-
   return (
     <>
       <div>
@@ -437,12 +478,12 @@ export default function RentingDetails() {
                     {typeof invoice !== "undefined" && invoice !== null && invoice.length > 0 ?
                       <div className="field w-100  my-3">
                         <label className='fw-500 fs-7 mb-2'>{t("Invoice Period")}</label>
-                        <Dropdown placeholder='Select Invoice Period' fluid selection options={invoice} value={invoice.value} defaultValue={invoiceDefault} onChange={invoiceOnchange} />
+                        <Dropdown className='invoicePeriod' placeholder='Select Invoice Period' fluid selection options={invoice} value={invoice.value} defaultValue={invoiceDefault} onChange={invoiceOnchange} />
                       </div> : ""}
                     {typeof recurring !== "undefined" && recurring !== null && recurring.length > 0 ?
                       <div className="field w-100  my-3">
                         <label className='fw-500 fs-7 mb-2'>{t("Invoice Recurring")}</label>
-                        <Dropdown placeholder='Select Invoice Recurring' fluid selection options={recurring} value={recurring.value} defaultValue={Number(recurringvalue)} onChange={recurringOnchange} />
+                        <Dropdown className='inovice-recurring' placeholder='Select Invoice Recurring' fluid selection  disabled={invoiceRecurringDisabled} options={recurring} value={invoiceRecurringDisabled === true ?3:recurring.value} defaultValue={invoiceRecurringDisabled === true?3:Number(recurringvalue)} onChange={recurringOnchange} />
                       </div> : ""}
                     <div className="field w-100 datePicker my-3">
                       <label className='fw-500 fs-7 mb-2' >{t("Desired Move Out date")}</label>

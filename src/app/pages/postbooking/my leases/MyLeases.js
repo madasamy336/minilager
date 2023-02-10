@@ -38,6 +38,7 @@ export default function MyLeases() {
   const [leaseResponse, setLeaseResponse] = useState([]);
   const [leaseInfoById, setLeaseInfoById] = useState([]);
   const [selectedUnitLeasedocument, setselectedUnitLeasedocument] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [bindScheduledMovedDate, setBindScheduledMovedDate] = useState(new Date());
   const [scheduleMoveOutDateValue, setScheduleMoveOutDateValue] = useState(new Date());
 
@@ -144,6 +145,13 @@ export default function MyLeases() {
 
   function addScheduleMOveOutDate(data) {
     setButtonLoading(true)
+    if(scheduleMoveOutDate.reason.length === 0){
+      setErrorMessage(t("Please Enter Reason"));
+      setButtonLoading(false)
+      return
+
+    }
+    setErrorMessage('');
     // console.log(leaseId)
     let config = {
       headers: {
@@ -187,6 +195,13 @@ export default function MyLeases() {
 
   function cancelScheduleMOveOutDate(data) {
     setButtonLoading(true);
+    if(scheduleMoveOutDate.reason.length === 0){
+      setErrorMessage(t("Please Enter Reason"));
+      setButtonLoading(false)
+      return
+
+    }
+    setErrorMessage("");
     console.log(data);
     console.log(bindScheduledMovedDate);
     // console.log(leaseId)
@@ -458,10 +473,11 @@ export default function MyLeases() {
               <SemanticDatepicker datePickerOnly disabled={isButtonLoading} showToday={true} value={scheduleMoveOutDateValue} name="date" onChange={(e, { name, value }) => SetScheduleMoveOutDate(name, value)} placeholder='Select date' className='w-100' />
             </div>
             <div className="field w-100  my-3">
-              <label className='fw-500 fs-7 mb-1' >{t("Reason")}</label>
+              <label className='fw-500 fs-7 mb-1' >{t("Reason")} <i className="text-danger">*</i></label>
               <TextArea disabled={isButtonLoading} placeholder='Please tell us reason' name="reason" value={scheduleMoveOutDate.reason} onChange={(e, data) => handleChange(e, data)} />
+              <div className="text-danger">{errorMessage} </div>
             </div>
-            <div className='text-center my-2'>
+            <div className='text-center my-6'>
               <Button className="ui button bg-success-dark fs-7 fw-400 text-white px-3 py-1" disabled={isButtonLoading} loading={isButtonLoading} onClick={() => addScheduleMOveOutDate(leaseInfoById[0])}>Schedule</Button>
             </div>
           </div>
@@ -489,8 +505,9 @@ export default function MyLeases() {
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-1' >{t("Reason")}</label>
               <TextArea disabled={isButtonLoading} required placeholder='Please tell us reason' name="reason" value={scheduleMoveOutDate.reason} onChange={(e, data) => handleChange(e, data)} />
+              <div className="text-danger">{errorMessage} </div>
             </div>
-            <div className='text-center my-2'>
+            <div className='text-center my-6'>
               <Button className="ui button bg-success-dark fs-7 fw-400 text-white px-3 py-1" disabled={isButtonLoading} loading={isButtonLoading} onClick={() => cancelScheduleMOveOutDate(leaseInfoById[0])}>Schedule</Button>
             </div>
           </div>
