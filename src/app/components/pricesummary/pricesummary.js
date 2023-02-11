@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import PreBookingBreadcrumb from '../prebooking breadcrumb/PreBookingBreadcrumb'
-import { Dropdown, Modal, Placeholder } from 'semantic-ui-react';
+import { Dropdown, Loader, Modal, Placeholder } from 'semantic-ui-react';
+import { Dimmer, Image, Segment } from 'semantic-ui-react'
 import { json, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -30,6 +31,7 @@ const Pricesummary = forwardRef((props, ref) => {
   const [validateMsg, setValidateMsg] = useState();
   const [unitInfoDetails, setUnitInfoDetails] = useState();
   const [totalAmount, setTotalAmount] = useState();
+  const[loader,setLoader] = useState(false);
   const [movinDate, setMovinDate] = useState(new Date());
   const [promoOnchangebutton, setpromoOnchangebutton] = useState();
   const[promcodeError, setpromcodeError] = useState();
@@ -43,7 +45,7 @@ const Pricesummary = forwardRef((props, ref) => {
 
 useEffect(() => {
   unitinfodetails();
-}, [invoicePeriodValue,invoiceRecurringValue])
+}, [unitInfoDetails,invoicePeriodValue,invoiceRecurringValue])
 
   useEffect(() => {
     unitinfodetails(true);
@@ -55,6 +57,7 @@ useEffect(() => {
   /** Unit Details Page Start **/
 
   const unitinfodetails = (initialCall) => {
+    setLoader(false);
     sessionStorage.setItem("moveindate", props.movinDate);
     if (promoAppliedsession) {
       setPromoValidate(promoAppliedsession);
@@ -99,6 +102,7 @@ useEffect(() => {
             storageTypeId = units_info[0].unitInfo.storageType.id;
             if (typeof units_info !== "undefined" && units_info !== null && units_info.length > 0) {
               setUnitInfoDetails(units_info);
+              setLoader(true);
             }
             if (typeof initialCall !== 'undefined' && initialCall !== null && initialCall !== "" && initialCall === true) {
               promocodeRender();
@@ -255,9 +259,10 @@ useEffect(() => {
 
   return (
     <>
+   
     <ToastContainer/>
-      {typeof unitInfoDetails !== "undefined" && unitInfoDetails !== null && unitInfoDetails.length > 0 ?
-        unitInfoDetails.map((item) => {
+      {typeof unitInfoDetails !== "undefined" && unitInfoDetails !== null && unitInfoDetails.length > 0  ?
+       unitInfoDetails.map((item) => {
           return (<div key={item.unitInfo.id} className='col-12 col-md-5 pl-1 pl-sm-0 mb-3'>
             <div className='bg-white px-0 py-2 border-radius-15 border-top-success-4 card-boxshadow'>
               <h6 className='text-success-dark fw-600 fs-6 px-4 pt-2 mb-1  px-sm-2'>{t("Invoice Details")}</h6>

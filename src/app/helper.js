@@ -156,6 +156,8 @@ class Helper {
             returnFormat = `SAR ` + amount;
         } else if (this.culture === 'is-IS') {
             returnFormat = amount + 'kr';
+        }else if(this.culture === 'nn-NO'){
+            returnFormat = amount + 'kr';
         }
 
         return returnFormat;

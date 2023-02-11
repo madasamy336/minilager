@@ -5,6 +5,8 @@ import SemanticDatepicker from "react-semantic-ui-datepickers";
 import React, { useEffect, useRef, useState } from "react";
 import TenantDetailEmergengycontactAccordian from "../components/tenantDetailsAccordian/TenantDetailsAccordian";
 import PhoneInput from 'react-phone-number-input'
+import ReactPhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 import { useNavigate } from "react-router-dom";
 import instance from '../services/instance';
 import request from '../services/request';
@@ -986,9 +988,10 @@ export default function TenantDetails() {
           <div className="col-12  col-md-6  px-4 px-sm-2">
             <div className="points-events-none field w-100  my-3 tenantPhonenumber">
               <label className='fw-500 fs-7 mb-2'>{t("Phone Number")} <i className="text-danger ">*</i></label>
-              <PhoneInput
+              <ReactPhoneInput
                 name="phoneNumber"
                 value={TenantInfoDetails.phoneNumber}
+                className={`profilePhoneNumber`}
                 placeholder={t("Enter Mobile Number")}
                 id="tenantinfophone"
               />
@@ -1235,8 +1238,9 @@ export default function TenantDetails() {
                 {/* <Input value={emergencyContactDetails.emergencyPhoneNo} onChange={(e) => emergencyhandlechange(e)} className="noCounterNumber" onBlur={(e) => validateEmergencyContactInfo(e.target.value)} type="number" name="emergencyPhoneNo" placeholder="Enter Mobile Number"
                   label={<Dropdown defaultValue='+91' search options={countriecodes} />}
                   labelPosition='left' /> */}
-                <PhoneInput
-                  defaultCountry={DefaultCountryCode}
+                <ReactPhoneInput
+                  country={`no`}
+                  className={`profilePhoneNumber`}
                   value={emergencyContactDetails.emergencyPhoneNo}
                   placeholder={t("Enter Mobile Number")}
                   name="emergencyPhoneNo"
