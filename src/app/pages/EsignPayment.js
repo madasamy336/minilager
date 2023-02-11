@@ -1,5 +1,4 @@
-import React, { useState } from 'react'
-import { useEffect } from 'react';
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import PreBookingBreadcrumb from '../components/prebooking breadcrumb/PreBookingBreadcrumb';
 import { ToastContainer, toast } from 'react-toastify';
@@ -19,6 +18,7 @@ export default function EsignPayment() {
   const [unitdetail, setUnitdetail] = useState();
   let unitid = localStorage.getItem('unitid');
   let userid = localStorage.getItem('userid');
+  const clientDataconfig = JSON.parse(sessionStorage.getItem("configdata"));
   let leaseProfileIdValue = sessionStorage.getItem('leaseProfileid');
   let insuranceArray = [];
   let merchandiseArray = [];
@@ -42,30 +42,121 @@ export default function EsignPayment() {
   const [PaymentModal, setpaymentModal] = useState({ open: false, dimmer: undefined, })
   const [mondelcontent, setModelcontent] = useState(`<div className="ui active centered inline loader"></div>`);
   const [totalAmount, settotalAmount] = useState(0);
-  const [paylaterButton, setPaylaterButton] = useState(false);
   const [OpenPaylaterModal, setPayLaterModal] = useState(false);
   const [OpenViewDocumentModal, setViewDocumentModal] = useState(false);
-  const [paymentLoader, setPaymentLoader] = useState(true);
-  const [isLoading, setLoader] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [isButtonLoading, setButtonLoader] = useState(false);
   const [businessName, setbusinessName] = useState();
-  const [isSignatureVerified, setisSignatureVerified] = useState(false);
   const [saveCard, setSavecard] = useState(true);
   const [autoPayEnabled, setAutopayEnabled] = useState(true);
   const [iFrameResponse, setIframeRespones] = useState(false);
   const [paymentModeId, setpaymentModeId] = useState('');
+  const [eSignSetting, setEsignSettingData] = useState(null);
+  const [showEsignContent, setShowEsignContent] = useState(false);
+  const [esignMethod, setEsignMethod] = useState(false);
+  const [eSignatureCompleted, setESignatureCompleted] = useState(JSON.parse(localStorage.getItem("eSignatureCompleted")) || false);
+  const [showPaymentMethods, setShowPaymentMethods] = useState(false);
+
+
   const { t, i18n } = useTranslation();
 
-  const eSignature = JSON.parse(localStorage.getItem("eSignature"));
+
+  useEffect(() => {
+    //  Check ESign Settings
+    console.log("eSignatureCompleted on initial load: ", eSignatureCompleted);
+
+    eSignSettingsInformation();
+  }, []);
+
+  const oAuthTokenGeneration = async () => {
+    const currentTimestamp = new Date().getTime() / 1000;
+    const tokenExpirationTimestamp = localStorage.getItem("tokenExpirationTimestamp");
+
+    // Check if the token has expired
+    if (!tokenExpirationTimestamp || currentTimestamp > parseInt(tokenExpirationTimestamp)) {
+      try {
+        const data = {
+          client_id: '6StorageTenantPortal',
+          client_secret: 'eea7aee6-e7fd-976b-164a-20b9a5b75166',
+          grant_type: 'client_credentials',
+          acr_values: `tenant:${clientDataconfig.clientId}`,
+          scopes: 'sixstorage_admin_api_scope'
+        };
+        const config = {
+          headers: {
+            'tenant': 'root',
+            'Accept-Language': 'en-US',
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+        };
+
+        await axios.post("https://id.8storage.com/connect/token", data, config)
+          .then(response => {
+            const accessToken = response.data.access_token;
+            const expirationTimestamp = currentTimestamp + response.data.expires_in;
+            // Store the new token and its expiration timestamp
+            localStorage.setItem("accessToken", accessToken);
+            localStorage.setItem("tokenExpirationTimestamp", expirationTimestamp);
+            return accessToken;
+          })
+          .catch(error => {
+            console.error(error);
+          });
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      return localStorage.getItem("accessToken");
+    }
+  };
+
+  const eSignSettingsInformation = async () => {
+    setIsLoading(true)
+    oAuthTokenGeneration()
+    const requestBody = {
+      country_code: "NOR",
+      event_type: "GET_ESIGN_SETTINGS",
+      client_id: `${clientDataconfig.clientId}`,
+      integrated_with: "signicat",
+      initiated_by: "karthick"
+    }
+    const creditCheckConfig = {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem("accessToken")}`,
+      },
+    };
+    try {
+      const response = await axios.post('https://usuat-sixverifier-api.8storage.com/integration', requestBody, creditCheckConfig);
+      setEsignSettingData(response.data)
+      console.log(response.data);
+      if (response.data.status === 200 && response.data.body.is_enabled_in_booking_portal) {
+        if (response.data.body.enable_in_booking_portal_for == "BUSINESS" && BusinessUser) {
+          console.log("BUSINESS");
+          setShowEsignContent(true)
+        } else if (response.data.body.enable_in_booking_portal_for == "PERSONAL" && !BusinessUser) {
+          console.log("PERSONAL");
+          setShowEsignContent(true)
+        } else {
+          console.log("BOTH");
+          setShowEsignContent(true)
+        }
+      } else {
+        console.log("Show Pay Buttons");
+        setShowEsignContent(false)
+      }
+      setIsLoading(false);
+    } catch (error) {
+      console.error(error);
+      setIsLoading(false)
+    }
+  };
+
+
   if (insuranceDetail !== null && insuranceDetail.length > 0) {
-
     insuranceDetail.forEach(element => {
-
       element.insurancePlans ? insuranceArray.push(element.insurancePlans) : insuranceArray = [];
-
-
     });
-
   }
 
   if (merchandiseItem !== null && merchandiseItem.length > 0) {
@@ -85,10 +176,11 @@ export default function EsignPayment() {
   }
 
   const navigate = useNavigate();
-  const [esignMethod, setEsignMethod] = useState(false);
   const esignMethodHandler = () => {
-    setEsignMethod(!esignMethod);
-  }
+    if (!eSignatureCompleted) {
+      setEsignMethod(!esignMethod);
+    }
+  };
   const ThankYou = (e) => {
     e.preventDefault();
     navigate('/preBooking/thankyou')
@@ -123,7 +215,7 @@ export default function EsignPayment() {
 
   //get Unit detail
   const unitInfoDetails = () => {
-    setLoader(true)
+    setIsLoading(true)
     let config = {
       headers: {
         "Content-Type": "application/json",
@@ -158,7 +250,7 @@ export default function EsignPayment() {
           settotalAmount(unit_info_data.result.grossAmount);
           previewLeaseAgreement(leaseProfileIdValue, unit_info_data.result);
         }
-        setLoader(false)
+        setIsLoading(false)
 
       })
       .catch((error) => {
@@ -168,7 +260,6 @@ export default function EsignPayment() {
   }
 
   function getSitedetail() {
-
     let config = {
       headers: {
         "Content-Type": "application/json",
@@ -189,7 +280,6 @@ export default function EsignPayment() {
 
   //preview Leaseagreement
   function previewLeaseAgreement(leaseProfileId, unitinfo) {
-
     let config = {
       headers: {
         "Content-Type": "application/json",
@@ -205,7 +295,6 @@ export default function EsignPayment() {
       .then((response) => {
         if (response.data.result.saveAgreement) {
           setSaveAgreement(response.data.result);
-
         } else {
           setSaveAgreement([]);
 
@@ -250,9 +339,7 @@ export default function EsignPayment() {
           <iframe id="iframePreviewLicense"  scrolling="auto" type='application/pdf' loading="lazy" src="${response.data.result}" style="width:100%;height:100%;"></iframe>
         </div>
         </div>`)
-
-
-          setPaymentLoader(false);
+          setpaymentModeId(false);
         }
 
       })
@@ -261,8 +348,8 @@ export default function EsignPayment() {
       });
 
   }
-  const saveMoveinDetails = (cardResponse, leaseprofileid, paylater) => {
 
+  const saveMoveinDetails = (cardResponse, leaseprofileid, paylater) => {
     let config = {
       headers: {
         "Content-Type": "application/json",
@@ -301,24 +388,38 @@ export default function EsignPayment() {
           sessionStorage.removeItem('insurancedetail');
           sessionStorage.removeItem('vehicleDetail');
           sessionStorage.removeItem('merchandiseItem');
+          localStorage.removeItem("eSignatureCompleted")
           navigate('/preBooking/thankyou')
         } else {
-          alert('something went wrong')
+          if (response.data.returnCode === "REQUEST_CONTAINS_OCCUPIED_UNITS") {
+            toast.error('Selected Unit Already Occupied', {
+              position: "top-right",
+              autoClose: 3000,
+              duration: 100,
+              hideProgressBar: false,
+              closeOnClick: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+              toastId: "unitOccupiedError"
+            });
+            // navigate('/preBooking/units')
+          }
+          // alert('something went wrong')
+          return
         }
 
       })
       .catch((error) => {
         console.log(error);
       });
-
-
   }
 
   const payLater = (value) => {
-    setPaylaterButton(true);
+    setShowPaymentMethods(false)
     setPayLaterModal(true);
-
   }
+
   const changeSavedCard = (e) => {
     if (e.target.checked) {
       setSavecard(true);
@@ -336,25 +437,6 @@ export default function EsignPayment() {
     }
   }
 
-  const payNow = (value) => {
-    setPaylaterButton(false)
-  }
-
-  // const triggerEsign = (e) => {
-  //   e.preventDefault();
-  //   console.log(changeURL()); 
-  //   // const successUrl = window.location.hostname + '/preBooking/viewEsignDocuments' + "?eSigned=true"
-  //   const successUrl = window.location.host + '/preBooking/viewEsignDocuments' + "?eSigned=true"
-  //   console.log(successUrl);
-  // }
-
-  //   function changeURL() {
-  //     var theURL = window.location.pathname;
-  //    return  theURL.replace("/url_part_to_change/", "/new_url_part/");
-  //     //Set URL
-
-  // }
-
   const triggerEsign = (e) => {
     e.preventDefault();
     console.log("Triggered");
@@ -366,7 +448,7 @@ export default function EsignPayment() {
       "event_type": "INITIATE_ESIGN_DOCUMENT_CREATION",
       "country_code": "NOR",
       "integrated_with": "signicat",
-      "tenant_id": "470c0600-3c51-4da5-8f26-3fc1918b48a5",
+      "tenant_id": tenantInfo.userId,
       "initiated_by": tenantInfo.firstName,
       "request_from": "BOOKING_PORTAL",
       "redirect_settings": {
@@ -374,23 +456,21 @@ export default function EsignPayment() {
         "abort_url": "https://" + window.location.host,
         "error_url": "https://" + window.location.host + '/preBooking/documentExpired'
       },
-      "title": "As simple as that",
+      "title": "E-Sign Document",
       "description": "This is an important document",
       "external_id": "ae7b9ca7-3839-4e0d-a070-9f14bffbbf55",
       "contact_details": {
-        "email": "test@test.com"
+        "email": tenantInfo.email
       },
       "data_to_sign": {
         "base64_content": "VGhpcyB0ZXh0IGNhbiBzYWZlbHkgYmUgc2lnbmVk",
-        "file_name": "sample.txt"
+        "file_name": "E-Sign.txt"
       }
     }
-    let authorizationToken = JSON.parse(sessionStorage.getItem('authToken'));
-    console.log("authorizationToken", authorizationToken);
     const config = {
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${authorizationToken}`
+        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
       },
     }
     axios.post('https://usuat-sixverifier-api.8storage.com/esign', requestBody, config).then(response => {
@@ -419,17 +499,22 @@ export default function EsignPayment() {
         });
         setButtonLoader(false)
       }
-
     }).catch(err => {
       console.log(err);
     })
   }
 
+  const payNow = (e) => {
+    e.preventDefault()
+    console.log("pay");
+    setShowPaymentMethods(!showPaymentMethods)
+  }
   return (
     <>
+      {console.log(showPaymentMethods)}
       <ToastContainer />
       {isLoading ? (
-        <Loader size='large' active>Loading</Loader>
+        <Loader size='large' active>{t("Loading")}</Loader>
       ) : (<div>
         <PreBookingBreadcrumb activeStep='1234' />
         <div className="esign">
@@ -504,18 +589,12 @@ export default function EsignPayment() {
                       </div>
                     </div>
                   </div>
-
                 })
-
-
                 }
               </div>
               : <div className="bg-white card-boxShadow px-2 px-sm-1 py-3 border-radius-10 mb-4 min-h-150">
                 <div className="ui active centered inline loader"></div>
-
               </div>
-
-
             }
             <div className='row'>
               <div className='col-12 col-md-7 pr-1 pr-sm-0 mb-3'>
@@ -557,20 +636,10 @@ export default function EsignPayment() {
                           {t("No document found")}
                         </div>
                       </div>
-                      // <Segment raised>
-                      //   <Placeholder>
-                      //     <Placeholder.Header image>
-                      //       <Placeholder.Line />
-                      //       <Placeholder.Line />
-                      //     </Placeholder.Header>
-                      //     <Placeholder.Paragraph>
-                      //       <Placeholder.Line length='medium' />
-                      //       <Placeholder.Line length='short' />
-                      //     </Placeholder.Paragraph>
-                      //   </Placeholder></Segment>
-
                     }
-                    <div className='row mt-2'>
+
+
+                    {showEsignContent && <div className='row mt-2'>
                       <div className='col-lg-6 col-md-12 col-sm-12'>
                         <div className='card-border border-radius-5 mr-2 mr-md-0 mb-md-1'>
                           <h6 className='card-bg-secondary p-2 text-success-dark fs-6'>{t("INITIATOR")}</h6>
@@ -590,77 +659,61 @@ export default function EsignPayment() {
                         </div>
                       </div>
                       <div className='d-flex mt-2 align-items-start'>
-                        <input onClick={esignMethodHandler} type="checkbox" checked={esignMethod || eSignature} />
+                        <input onClick={esignMethodHandler} type="checkbox" disabled={eSignatureCompleted} checked={esignMethod || eSignatureCompleted} />
                         <label className='ml-1'>{t("I have read and understood the contents of the documents listed and I am ready to sign")}</label>
                       </div>
-                    </div>
+                    </div>}
 
-                    <div className={`pt-4 ${eSignature === true ? 'd-block' : 'd-none'}`}>
+                    <div className={`pt-4`}>
 
-                      <div className='d-flex justify-content-between flex-wrap bg-primary-light p-1 border-success-dark-1 border-radius-5'>
+                      {eSignatureCompleted && <div className='d-flex justify-content-between flex-wrap bg-primary-light p-1 border-success-dark-1 border-radius-5'>
                         <p className='d-flex align-items-center'><img src='/assets/images/esign.svg' alt='Esign' /><span className='ml-1'>{t("Great! You have successfully signed the documents")}</span></p>
                         <button className="ui button text-success-dark bg-white card-border fs-7 fw-400 text-dark px-1 mr-2 mt-md-1" onClick={() => setViewDocumentModal(true)}>{t("View Document")}</button>
-                      </div>
-                      <div className='pt-4 d-flex justify-content-center flex-wrap'>
+                      </div>}
 
-                        {paylaterButton === true ?
-                          <button className="ui button bg-white d-flex align-items-center border-radius-5 card-border fs-6 fw-400 text-dark px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1" onClick={(e) => payNow(e)} ><img src='/assets/images/executed-payment.svg' alt='Pay Now' id="paynow" /><span className='ml-1' onClick={(e) => payNow(e)}>{t("Pay Now")}</span></button>
-                          :
-                          <button className="ui button bg-success-dark d-flex align-items-center border-radius-5 fs-6 fw-100 text-white px-5 px-md-2 mb-sm-1" onClick={(e) => payNow(e)}><img className='executed-img' src='/assets/images/executed-payment.svg' alt='Pay Now' id="paynow" /><span className='ml-1' onClick={(e) => payNow(e)} >{t("Pay Now")}</span></button>
-
-                        }
-                        {paylaterButton ?
-                          <button className="ui button bg-success-dark d-flex align-items-center border-radius-5 card-border fs-6 fw-400 text-white px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1" onClick={(e) => payLater(e)} ><img src='/assets/images/pay.svg' alt='Pay Later' id="paylater" /><span className='ml-1' onClick={(e) => payLater(e)}>{t("Pay Later")}</span></button>
-                          :
-                          <button className="ui button bg-white d-flex align-items-center border-radius-5 card-border fs-6 fw-400 text-dark px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1" onClick={(e) => payLater(e)} ><img src='/assets/images/pay.svg' alt='Pay Later' id="paylater" /><span className='ml-1' onClick={(e) => payLater()}>{t("Pay Later")}</span></button>
-
-                        }
-
-
-                      </div>
+                      {(!showEsignContent || eSignatureCompleted) && <div className='pt-4 d-flex justify-content-center flex-wrap'>
+                        <Button className="ui button bg-white d-flex align-items-center border-radius-5 card-border fs-6 fw-400 text-dark px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1" onClick={(e) => payNow(e)} ><img src='/assets/images/executed-payment.svg' alt='Pay Now' id="paynow" /><span className='ml-1' onClick={(e) => payNow(e)}>{t("Pay Now")}</span></Button>
+                        <Button className="ui button bg-success-dark d-flex align-items-center border-radius-5 card-border fs-6 fw-400 text-white px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1" onClick={(e) => payLater(e)} ><img src='/assets/images/pay.svg' alt='Pay Later' id="paylater" /><span className='ml-1' onClick={(e) => payLater(e)}>{t("Pay Later")}</span></Button>
+                      </div>}
                     </div>
                     {/* {console.log(esignMethod)} */}
                   </div>
-                  {esignMethod &&
-                    <div className='mt-1'>
-                      <div className='eSignTitle'>  <img src="/assets/images/bankid.png" alt="Norwegian BankID" /><h5 className='fw-600 '>Sign with Norweigan BankID</h5></div>
-                      <div className='py-4 px-3'>
-                        <div className='bank-title pl-3'>
-                          <p>{tenantInfo.firstName + " " + tenantInfo.lastName}, {t("you will sign with a Norwegian BankID. Once you have signed, your signature will be registered by the e-signature service Signicat.")}</p>
-                        </div>
-                        <div className="text-center mt-2 d-flex justify-content-center"><Button loading={isButtonLoading} disabled={isButtonLoading} className="ui button bg-success-dark d-flex align-items-center border-radius-5 fs-6 fw-100 text-white px-5 px-md-2 mb-sm-1" onClick={(e) => triggerEsign(e)}>{t("SIGN")}</Button></div>
-                      </div>
-                    </div>
-                  }
-                </div>
-                {!paylaterButton && eSignature ?
-                  <div className='bg-white card-boxshadow px-0 py-2 border-radius-15 mb-3 mt-2'>
-                    <h6 className='text-dark fw-500 fs-6 px-4 py-2 px-sm-2 card-border-bottom fw-600 text-success-dark'>
-                      <span className='veritical-align-text-top ml-1'>{t("CHOOSE PAYMENT TYPE")}</span></h6>
+
+                  {(showEsignContent && esignMethod && !eSignatureCompleted) && <div className='mt-1'>
+                    <div className='eSignTitle'>  <img src="/assets/images/bankid.png" alt="Norwegian BankID" /><h5 className='fw-600 '>Sign with Norweigan BankID</h5></div>
                     <div className='py-4 px-3'>
-                      {checkPaymentModes && checkPaymentModes.length > 0 ?
-                        checkPaymentModes.filter(i => i.value !== "PayLater").map((e) => {
-                          return <div key={e.id} className='card-border bank-div border-radius-5 d-flex align-items-center position-relative mb-3' onClick={() => loadPaymentForm(e.id, leaseProfileIdValue)}>
-                            <div className='bank-img px-2'>
-                              {e.value === 'CreditCard' ?
-                                <img className='w-100 h-100' src="/assets/images/credit-payment.svg" alt="Credit card" />
-                                : <img className='w-100 h-100' src="/assets/images/direct-debit.svg" alt="Debit card" />
-                              }
-                            </div>
-                            <div className='bank-title'>
-                              <p>{t(e.text)}</p>
-                            </div>
-                            <img className='bankid-img position-absolute r-2' src="/assets/images/arrow-down.png" alt="Arrow" />
-                          </div>
-
-                        })
-                        : ""
-                      }
+                      <div className='bank-title pl-3'>
+                        <p>{tenantInfo.firstName + " " + tenantInfo.lastName}, {t("you will sign with a Norwegian BankID. Once you have signed, your signature will be registered by the e-signature service Signicat.")}</p>
+                      </div>
+                      <div className="text-center mt-2 d-flex justify-content-center"><Button loading={isButtonLoading} disabled={isButtonLoading} className="ui button bg-success-dark d-flex align-items-center border-radius-5 fs-6 fw-100 text-white px-5 px-md-2 mb-sm-1" onClick={(e) => triggerEsign(e)}>{t("SIGN")}</Button></div>
                     </div>
-                  </div> : ""
+                  </div>}
+                </div>
 
+                {showPaymentMethods && (<div className='bg-white card-boxshadow px-0 py-2 border-radius-15 mb-3 mt-2'>
+                  <h6 className='text-dark fw-500 fs-6 px-4 py-2 px-sm-2 card-border-bottom fw-600 text-success-dark'>
+                    <span className='veritical-align-text-top ml-1'>{t("CHOOSE PAYMENT TYPE")}</span></h6>
+                  <div className='py-4 px-3'>
+                    {checkPaymentModes && checkPaymentModes.length > 0 ?
+                      checkPaymentModes.filter(i => i.value !== "PayLater").map((e) => {
+                        return <div key={e.id} className='card-border bank-div border-radius-5 d-flex align-items-center position-relative mb-3' onClick={() => loadPaymentForm(e.id, leaseProfileIdValue)}>
+                          <div className='bank-img px-2'>
+                            {e.value === 'CreditCard' ?
+                              <img className='w-100 h-100' src="/assets/images/credit-payment.svg" alt="Credit card" />
+                              : <img className='w-100 h-100' src="/assets/images/direct-debit.svg" alt="Debit card" />
+                            }
+                          </div>
+                          <div className='bank-title'>
+                            <p>{t(e.text)}</p>
+                          </div>
+                          <img className='bankid-img position-absolute r-2' src="/assets/images/arrow-down.png" alt="Arrow" />
+                        </div>
 
-                }
+                      })
+                      : ""
+                    }
+                  </div>
+                </div>)}
                 <div className="text-center mt-4">
                   <Button disabled={isButtonLoading} onClick={() => navigate('/preBooking/TenantDetails')} className="ui button bg-white text-success-dark border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">{t("BACK")}</Button>
                 </div>
@@ -718,9 +771,7 @@ export default function EsignPayment() {
                           <p>{t("Merchandise")}:</p>
                           <p>{helper.displayCurrency(unitdetail.merchandise)}</p>
                         </div>
-
                         : ""
-
                       }
                       {
                         unitdetail.taxAmount !== null && unitdetail.taxAmount > 0
@@ -735,7 +786,6 @@ export default function EsignPayment() {
                               <p>{`${t("Tax")}`}:</p>
                               <p>{helper.displayCurrency(unitdetail.taxAmount)}</p>
                             </div>
-
                           :
                           ""
                       }
