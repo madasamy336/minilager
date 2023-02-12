@@ -206,8 +206,24 @@ export default function Profile() {
     tenantDetails.postalCode = postalCodeReq;
     tenantDetails.dateOfBirth = new Date(birthDateReq);
     const newErrors = {};
+    const addressFields = [
+      { name: 'addressLine1', message: `${t('Address Line 1 is a required field')}` },
+      { name: 'addressLine2', message: `${t('Address Line 2 is a required field')}` },
+      { name: 'city', message: `${t('City is a required field')}` },
+      { name: 'state', message: `${t('State is a required field')}` },
+      { name: 'postalCode', message: 'Zip Code is a required field' },
+    ];
+
+    if (isAddressEditable) {
+      addressFields.forEach(field => {
+        if (!tenantDetails[field.name]) {
+          console.log(field.name);
+          newErrors[field.name] = field.message;
+        }
+      });
+    }
     requiredFields.forEach(field => {
-      if (!tenantDetails[field.name]) {
+      if (!tenantDetails[field.name] && (field.name !== 'addressLine1' || isAddressEditable) && (field.name !== 'addressLine2' || isAddressEditable) && (field.name !== 'postalCode' || isAddressEditable)) {
         console.log(field.name);
         newErrors[field.name] = field.message;
       }
