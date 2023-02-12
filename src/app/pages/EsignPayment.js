@@ -293,12 +293,10 @@ export default function EsignPayment() {
     instance
       .post(request.lease_agreement + `/${leaseProfileId}`, unitinfo, config)
       .then((response) => {
-        if (response.data.result.saveAgreement) {
+        if (response.data.result) {
+          console.log(response.data.result);
           setSaveAgreement(response.data.result);
-        } else {
-          setSaveAgreement([]);
-
-        }
+        } 
 
       })
       .catch((error) => {
@@ -630,12 +628,15 @@ export default function EsignPayment() {
 
                       )
                       :
+                      saveAgreement && saveAgreement.previewLease.length === 0?
+
+                      
                       < div key="" className='card-bg-secondary w-100 px-2 py-2 mb-6' >
 
                         <div className="text-center mt-4">
                           {t("No document found")}
                         </div>
-                      </div>
+                      </div>:<div className="ui active centered inline loader"></div>
                     }
 
 

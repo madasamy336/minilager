@@ -990,6 +990,7 @@ export default function TenantDetails() {
               <label className='fw-500 fs-7 mb-2'>{t("Phone Number")} <i className="text-danger ">*</i></label>
               <ReactPhoneInput
                 name="phoneNumber"
+                disabled
                 value={TenantInfoDetails.phoneNumber}
                 className={`profilePhoneNumber`}
                 placeholder={t("Enter Mobile Number")}
