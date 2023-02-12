@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { Button, Dropdown, Input, Loader } from 'semantic-ui-react';
+import { Button, Dropdown, Input, Loader, Image } from 'semantic-ui-react';
 import SemanticDatepicker from 'react-semantic-ui-datepickers';
 import countriecodes from '../../../components/CountryCode';
 import instance from '../../../services/instance';
@@ -34,7 +34,8 @@ export default function Profile() {
   const [errors, setErrors] = useState({});
   const today = new Date();
   const minDate = new Date(today.setFullYear(today.getFullYear() - 18));
-
+  const [previewSrc, setPreviewSrc] = useState(null);
+  const [file, setFile] = useState(null);
   const { t } = useTranslation();
 
   const [tenantDetails, setTenantDetails] = useState({
@@ -138,61 +139,86 @@ export default function Profile() {
     setTenantDetails({ ...tenantDetails, [e.target.name]: e.target.value });
   }
 
-  const profileImageUpload = (e) => {
-    e.preventDefault();
-    let file = e.target.files[0];
+  // const profileImageUpload = (e) => {
+  //   e.preventDefault();
+  //   let file = e.target.files[0];
+  //   const reader = new FileReader();
+  //   reader.addEventListener("load", () => {
+  //     setprofileImageSrc(reader.result);
+  //   }, false);
+  //   if (file) {
+  //     const blob = new Blob([file], { type: 'image/png' });
+  //     setBlobImage(blob);
+  //     reader.readAsDataURL(file);
+
+  //   }
+  //   console.log("setprofileImageSrc", profileImageSrc);
+  // }
+
+  const handleFileSelect = (event) => {
+    setFile(event.target.files[0]);
     const reader = new FileReader();
-    reader.addEventListener("load", () => {
-      setprofileImageSrc(reader.result);
-    }, false);
-    if (file) {
-      const blob = new Blob([file], { type: 'image/png' });
-      setBlobImage(blob);
-      reader.readAsDataURL(file);
+    reader.readAsDataURL(event.target.files[0]);
+    reader.onload = () => setPreviewSrc(reader.result);
 
-    }
-    console.log("setprofileImageSrc", profileImageSrc);
-  }
+    // Below code for reaize the image. Need to implement in Future if required
+    // reader.onload = () => {
+    //   const image = new Image();
+    //   image.src = reader.result;
+    //   image.onload = () => {
+    //     const canvas = document.createElement('canvas');
+    //     const context = canvas.getContext('2d');
+    //     canvas.width = 300;
+    //     canvas.height = 300;
+    //     context.drawImage(image, 0, 0, 300, 300);
+    //     setPreviewSrc(canvas.toDataURL());
+    //   };
+    // };
+  };
 
-
-  const saveTenantPhoto = () => {
-    setLoading(true);
+  const saveTenantPhoto = async () => {
     const userId = localStorage.getItem('userid');
-    const imagedata = new File([profileImageSrc], `${userId}_.png`, { type: "image/png" });
+    if (!file) {
+      toast.error('Please select the File', {
+        position: "top-right",
+        autoClose: 3000,
+        duration: 100,
+        hideProgressBar: false,
+        closeOnClick: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        toastId: "profilePhoto"
+      }); return;
+    }
+    const timestamp = new Date().getTime();
+    const fileName = `${userId}_${timestamp}.png`;
+
+    const data = new FormData();
+    data.append('FileData', file);
+    data.append('FileName', fileName);
+
     const config = {
       headers: {
-        "Authorization": `Bearer ${process.env.REACT_APP_ACCESS_TOKEN}`,
-        "Content-Type": "multipart/form-data; boundary=----787208ea84637614785e28ded8a6a7b8",
+        'Authorization': `Bearer ${process.env.REACT_APP_ACCESS_TOKEN}`,
+        "maxBodyLength": Infinity,
         "accept": "application/json",
         "Pragma": `no-cache`,
         "Cache-Control": `no-cache`,
-        "Accept-Language": `en-US,en;q=0.9`
-      }
+        "Accept-Language": `en-US,en;q=0.9`,
+        'Content-Type': `multipart/form-data; boundary=${data._boundary}`
+      },
+      data: data
     };
-    const file = new File([blobImage], `${userId}_.png`, { type: "image/png" });
-    const timestamp = new Date().getTime();
-    const fileName = `${userId}_${timestamp}.png`;
-    const formData = new FormData();
-    formData.append("FileName", fileName);
-    formData.append("FileData", file);
-    const uploadRequest = {
-      FileName: fileName,
-      FileData: file
-    };
-    instance.post(request.add_profile_picture + userId, uploadRequest, config)
-      .then(response => response)
-      .then(data => {
-        const profileResponse = data;
-        console.log(profileResponse);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.log(err);
-        setLoading(false);
-      });
+    try {
+      const response = await instance.post(request.add_profile_picture + userId, data, config);
+      console.log(response.data);
+      // TODO: handle successful response
+    } catch (error) {
+      console.error(error);
+      // TODO: handle error
+    }
   };
-
-
 
   const updateTenantInfo = async () => {
     const config = {
@@ -309,23 +335,28 @@ export default function Profile() {
                   <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                     <div className="field my-3">
                       <label className="text-dark fs-7 fw-500">{t("First Name")}<span className="error">*</span></label>
-                      <input type="text" value={tenantDetails.firstName} name="firstName" onChange={onChangePersonalInfo} />
+                      <Input type="text" value={tenantDetails.firstName} name="firstName" onChange={onChangePersonalInfo} />
                       {errors["firstName"] && <div className="error">{errors["firstName"]}</div>}
                     </div>
                     <div className="field my-3">
                       <label className="text-dark fs-7 fw-500">{t("Last Name")}<span className="error">*</span></label>
-                      <input type="text" value={tenantDetails.lastName} name="lastName" onChange={onChangePersonalInfo} />
+                      <Input type="text" value={tenantDetails.lastName} name="lastName" onChange={onChangePersonalInfo} />
                       {errors["lastName"] && <div className="error">{errors["lastName"]}</div>}
                     </div>
                   </div>
                   <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                     <div className="edit-profile-img position-relative">
-                      <img src={profileImageSrc && profileImageSrc.length > 0 ? profileImageSrc : '/assets/images/profile_.png'} className="ui medium circular image object-fit-cover TenantDetailsProfileImage mx-auto" id="tenantProfileImage" alt="Profile" />
+                      {/* <img src={profileImageSrc && profileImageSrc.length > 0 ? profileImageSrc : '/assets/images/profile_.png'} className="ui medium circular image object-fit-cover TenantDetailsProfileImage mx-auto" id="tenantProfileImage" alt="Profile" /> */}
+                      {previewSrc ? (
+                        <Image src={previewSrc} className="ui medium circular image object-fit-cover TenantDetailsProfileImage mx-auto" id="tenantProfileImage" alt="Profile" />
+                      ) : (
+                        <Image src='/default-profile-pic.jpg' className="ui medium circular image object-fit-cover TenantDetailsProfileImage mx-auto" id="tenantProfileImage" alt="Profile" />
+                      )}
                       <div className="edit-icon position-absolute text-center l-18 r-0 t-1">
-                        <label className="cursor-pointer" htmlFor='profileImageUpload'>
+                        <label className="cursor-pointer" htmlFor='handleFileSelect'>
                           <img width='50' height='50' className="" src="/assets/images/edit-photo.svg" alt="Edit" />
                         </label>
-                        <input id="profileImageUpload" onChange={(e) => profileImageUpload(e)} hidden type='file' />
+                        <Input id="handleFileSelect" onChange={(e) => handleFileSelect(e)} hidden type='file' />
                       </div>
                     </div>
                   </div>
@@ -353,13 +384,13 @@ export default function Profile() {
                   <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                     <div className="field my-3">
                       <label className="text-dark fs-7 fw-500">{t("Email")}<span className="error">*</span></label>
-                      <input name="email" type="text" disabled value={tenantDetails.email} onChange={onChangePersonalInfo} />
+                      <Input name="email" type="text" disabled value={tenantDetails.email} onChange={onChangePersonalInfo} />
                       {errors["email"] && <div className="error">{errors["email"]}</div>}
 
                     </div>
                     <div className="field my-3">
                       <label className="text-dark fs-7 fw-500">{t("Social Security Number")}</label>
-                      <input type="text" value={tenantDetails.ssn} name="ssn" onChange={e => onChangePersonalInfo(e)} />
+                      <Input type="text" value={tenantDetails.ssn} name="ssn" onChange={e => onChangePersonalInfo(e)} />
                       {errors["ssn"] && <div className="error">{errors["ssn"]}</div>}
 
                     </div>
@@ -465,21 +496,21 @@ export default function Profile() {
                   <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                     <div className="field my-2">
                       <label className="text-dark fs-7 fw-500">{t("Address Line 1")}<span className="error">*</span></label>
-                      <input type="text" name="addressLine1" value={addressLineOneReq} onChange={e => onChangePersonalInfo(e)} />
+                      <Input type="text" name="addressLine1" value={addressLineOneReq} onChange={e => onChangePersonalInfo(e)} />
                       {errors["addressLine1"] && <div className="error">{errors["addressLine1"]}</div>}
                     </div>
                   </div>
                   <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                     <div className="field my-2">
                       <label className="text-dark fs-7 fw-500">{t("Address Line 2")}<span className="error">*</span></label>
-                      <input type="text" name="addressLine2" value={addressLineTwoReq} onChange={e => onChangePersonalInfo(e)} />
+                      <Input type="text" name="addressLine2" value={addressLineTwoReq} onChange={e => onChangePersonalInfo(e)} />
                       {errors["addressLine2"] && <div className="error">{errors["addressLine2"]}</div>}
                     </div>
                   </div>
                   <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                     <div className="field my-2">
                       <label className="text-dark fs-7 fw-500">{t("City")}<span className="error">*</span></label>
-                      <input type="text" name="city" value={tenantDetails.city} onChange={e => onChangePersonalInfo(e)} />
+                      <Input type="text" name="city" value={tenantDetails.city} onChange={e => onChangePersonalInfo(e)} />
                       {errors["city"] && <div className="error">{errors["city"]}</div>}
 
                     </div>
@@ -487,7 +518,7 @@ export default function Profile() {
                   <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                     <div className="field my-2">
                       <label className="text-dark fs-7 fw-500">{t("State/Province")}<span className="error">*</span></label>
-                      <input type="text" name="state" value={tenantDetails.state} onChange={e => onChangePersonalInfo(e)} />
+                      <Input type="text" name="state" value={tenantDetails.state} onChange={e => onChangePersonalInfo(e)} />
                       {errors["state"] && <div className="error">{errors["state"]}</div>}
 
                     </div>
@@ -495,7 +526,7 @@ export default function Profile() {
                   <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                     <div className="field my-2">
                       <label className="text-dark fs-7 fw-500">{t("Zip/Postal Code")}<span className="error">*</span></label>
-                      <input type="text" name="postalCode" value={postalCodeReq} onChange={e => onChangePersonalInfo(e)} />
+                      <Input type="text" name="postalCode" value={postalCodeReq} onChange={e => onChangePersonalInfo(e)} />
                       {errors["postalCode"] && <div className="error">{errors["postalCode"]}</div>}
 
                     </div>
