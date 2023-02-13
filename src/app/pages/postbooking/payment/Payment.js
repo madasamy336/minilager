@@ -55,7 +55,7 @@ export default function Payment() {
       menuItem: (
         <Menu.Item key={filteredPaymentmode.value}>
           {filteredPaymentmode.value == 'CreditCard' ? <Image className="mr-1" src="/assets/images/credit-card.svg" /> : <Image className="mr-1" src="/assets/images/direct-debit-tab.svg" />}
-          {filteredPaymentmode.value}
+          {filteredPaymentmode.value == 'CreditCard' ? 'Credit Card' : "Debit Card"}
         </Menu.Item>
       ), render: () => filteredPaymentmode.value == 'CreditCard' ? <Tab.Pane><CreditCardTab addCreditCardForm={() => renderAddCardForm(filteredPaymentmode.id)} cards={creditCardDetails} loading={isLoading} paymentFom={paymentForm} /></Tab.Pane> : <Tab.Pane><DebitCardTab addCreditCardForm={() => renderAddCardForm(filteredPaymentmode.id)} cards={achCardDetails} loader={isLoading} cardForm={paymentForm} /></Tab.Pane>
     }

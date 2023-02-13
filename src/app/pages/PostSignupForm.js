@@ -1,8 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Dropdown, Input } from "semantic-ui-react";
+import { Dropdown, Input,Icon } from "semantic-ui-react";
 import countriecodes from "../components/CountryCode";
 import React, { useState, useEffect } from "react";
-import {useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useTranslation } from "react-i18next";
 import instance from '../services/instance';
 import request from '../services/request';
@@ -22,9 +22,11 @@ export default function PostSignupForm(props) {
     const culture = clientDataconfig.culture.culture
     const country = culture.substring(culture.indexOf('-') + 1, culture.length).toLowerCase();
     console.log(country)
-    const [toggle, setToggle] = useState(true);
+    // const [toggle, setToggle] = useState(true);
+    const [type, setType] = useState('password');
+    const [icon, setIcon] = useState('eye');
     const showPasswordHandler = () => {
-        setToggle(!toggle);
+        type === 'password' ? setType('text') & setIcon('eye slash') : setType('password') & setIcon('eye');
     }
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -90,7 +92,7 @@ export default function PostSignupForm(props) {
             case 'password':
                 if (!value) {
                     message = `${t("Password is Required")}`;
-                    
+
                 } else if (value.length < 8) {
                     message = `${t("Password must contain at least eight characters!")}`;
                 } else if (!/[0-9]/.test(value)) {
@@ -133,13 +135,13 @@ export default function PostSignupForm(props) {
             validations.lastName = `${t("Last Name  is required")}`;
             isValid = false;
         }
-        
-       
+
+
         if (!email) {
             validations.email = `${t("Email  is required")}`;
             isValid = false;
-        }else if(!/\S+@\S+\.\S+/.test(email)){
-            validations.email =`${t("Email format must be as example@mail.com")}`;
+        } else if (!/\S+@\S+\.\S+/.test(email)) {
+            validations.email = `${t("Email format must be as example@mail.com")}`;
             isValid = false;
 
         }
@@ -148,28 +150,28 @@ export default function PostSignupForm(props) {
         }
         if (!password) {
             validations.password = `${t("Password  is required")}`;
-            isValid = false;  
+            isValid = false;
         } else if (password.length < 8) {
             validations.password = `${t("Password must contain at least eight characters!")}`;
             isValid = false;
         } else if (!/[0-9]/.test(password)) {
-            validations.password =`${t("Password must contain at least one number (0-9)")}`;
+            validations.password = `${t("Password must contain at least one number (0-9)")}`;
             isValid = false;
         } else if (!/[a-z]/.test(password)) {
-            validations.password =`${t("Password must contain at least one lowercase letter (a-z)")}`;
+            validations.password = `${t("Password must contain at least one lowercase letter (a-z)")}`;
             isValid = false;
         } else if (!/[A-Z]/.test(password)) {
-            validations.password =`${t("Password must contain at least one uppercase letter (A-Z)")}`;
+            validations.password = `${t("Password must contain at least one uppercase letter (A-Z)")}`;
             isValid = false;
         } else if (!/[*@!#%&()$^~{}]/.test(password)) {
-            validations.password =  `${t("Password must contain at least one special character!")}`;
+            validations.password = `${t("Password must contain at least one special character!")}`;
             isValid = false;
         }
 
         if (!isValid) {
             setValidations(validations);
             console.log('error call');
-            
+
         } else {
             values['UserName'] = values['email'];
             values['confirmPassword'] = values['password'];
@@ -294,17 +296,17 @@ export default function PostSignupForm(props) {
                                 <div className="field form-control w-100">
                                     <label className="d-block">{t("Mobile Number")}<span className="requiredfield">*</span></label>
                                     <div className="ui input w-100">
-                                        {/* <Input className="noCounterNumber w-100" type="tel" placeholder="Enter Mobile Number" onInput={(e) => { sixStorageCheckPhoneNumber(e) }} name="phoneNumber" value={phoneNumber} onBlur={validateOne} onChange={(e) => { handleChange(e) }}
+                                        {/* <input className="noCounterNumber w-100" type="tel" placeholder="Enter Mobile Number" onInput={(e) => { sixStorageCheckPhoneNumber(e) }} name="phoneNumber" value={phoneNumber} onBlur={validateOne} onChange={(e) => { handleChange(e) }}
                                             label={<Dropdown defaultValue='+91' search options={countriecodes} />}
                                             labelPosition='left' /> */}
 
                                         <ReactPhoneInput
-                                        inputExtraProps={{
-                                            name: "phone",
-                                            required: true,
-                                            autoFocus: true
-                                          }}
-                                          country={country}
+                                            inputExtraProps={{
+                                                name: "phone",
+                                                required: true,
+                                                autoFocus: true
+                                            }}
+                                            country={country}
                                             value={values.phoneNumber}
                                             placeholder={`${t('Enter Mobile Number')}`}
                                             onChange={(e, d) => onChangePhoneInput(e, d)} />
@@ -314,14 +316,17 @@ export default function PostSignupForm(props) {
                                 <div className="form-control">
                                     <label className="d-block">{t("Password")}<span className="requiredfield">*</span></label>
                                     <div className="ui input w-100 position-relative">
-                                        <input type={toggle ? "password" : "text"} placeholder={`${t("Enter Password")}`} name="password" value={password} onChange={(e) => { handleChange(e) }} onBlur={validateOne} />
-                                        <svg className="position-absolute l-1 t-1" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 22.036 32">
+                                        <input type={type} placeholder={`${t("Enter Password")}`} name="password" value={password} onChange={(e) => { handleChange(e) }} onBlur={validateOne} />
+                                        <Icon className="r-2 t-1 position-absolute password-eye-icon" name={icon} link onClick={showPasswordHandler} />
+
+
+                                        <svg className="eyeclose position-absolute l-1 t-1" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 22.036 32">
                                             <g id="password-svgrepo-com" transform="translate(-31.62)" opacity="0.21">
                                                 <path id="Path_18916" data-name="Path 18916" d="M50.9,11.539h-.521v-3.8a7.739,7.739,0,0,0-15.479,0v3.8h-.522A2.761,2.761,0,0,0,31.62,14.3V29.243A2.761,2.761,0,0,0,34.377,32H50.9a2.761,2.761,0,0,0,2.757-2.757V14.3A2.76,2.76,0,0,0,50.9,11.539Zm-13.636-3.8a5.376,5.376,0,0,1,10.752,0v3.8H37.262Zm14.03,21.5a.4.4,0,0,1-.394.394H34.377a.4.4,0,0,1-.394-.394V14.3a.4.4,0,0,1,.394-.394H50.9a.4.4,0,0,1,.394.394Z" />
                                                 <path id="Path_18917" data-name="Path 18917" d="M95.229,116.309a1.182,1.182,0,0,0-1.182,1.182v4.524a1.182,1.182,0,1,0,2.363,0v-4.524A1.182,1.182,0,0,0,95.229,116.309Z" transform="translate(-52.591 -97.983)" />
                                             </g>
                                         </svg>
-                                        {!toggle && <div onClick={showPasswordHandler}>
+                                        {/* {!toggle && <div onClick={showPasswordHandler}>
                                             <svg className="eyeopen position-absolute r-2 t-1" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 31.937 21.446">
                                                 <g id="Group_56" data-name="Group 56" transform="translate(0 0)" opacity="0.65">
                                                     <g id="password" transform="translate(0 0)">
@@ -330,9 +335,9 @@ export default function PostSignupForm(props) {
                                                     </g>
                                                 </g>
                                             </svg>
-                                        </div>}
+                                        </div>} */}
 
-                                        {toggle && <div onClick={showPasswordHandler}>
+                                        {/* {toggle && <div onClick={showPasswordHandler}>
                                             <svg className="eyeclose position-absolute r-2 t-1" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 31.937 25.414">
                                                 <g id="Group_56" data-name="Group 56" transform="translate(0 0.707)" opacity="0.59">
                                                     <g id="password" transform="translate(0 0)">
@@ -342,7 +347,7 @@ export default function PostSignupForm(props) {
                                                     <line id="Line_7" data-name="Line 7" y1="24" x2="24" transform="translate(4.242)" fill="none" stroke="#707070" strokeWidth="2" />
                                                 </g>
                                             </svg>
-                                        </div>}
+                                        </div>} */}
                                     </div>
                                     <div className="text-danger mt-1"> {paswordval}</div>
                                 </div>
@@ -350,9 +355,9 @@ export default function PostSignupForm(props) {
                             </form>
                             <div className="signup-div text-center">
                                 {
-                                    props.callingfrom === 'prebooking' ? 
-                                    <p>{t("Already have an Account?")}  <Link to={'/preBooking/sign-in'}>{t("Sign in")}</Link></p> :
-                                    <p>{t("Already have an Account?")} <Link to={'/login'}>{t("Sign in")}</Link></p>
+                                    props.callingfrom === 'prebooking' ?
+                                        <p>{t("Already have an Account?")}  <Link to={'/preBooking/sign-in'}>{t("Sign in")}</Link></p> :
+                                        <p>{t("Already have an Account?")} <Link to={'/login'}>{t("Sign in")}</Link></p>
                                 }
 
                             </div>

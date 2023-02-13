@@ -130,7 +130,7 @@ export default function AddOn() {
 
   }, []);
 
-  const navigateTenantDEtails = (e) => {
+  const navigateTenantDetails = (e) => {
     setLoader(true)
     e.preventDefault();
     let errorcount = 0;
@@ -399,7 +399,8 @@ export default function AddOn() {
       <div>
         {isLoading ? (
           <Loader size='large' active>Loading</Loader>
-        ) : (
+        ) : 
+        (
           <div>
             <PreBookingBreadcrumb activeStep='12' />
             <div className='ui container responsive addon-container'>
@@ -805,7 +806,7 @@ export default function AddOn() {
               <div className='row'>
                 <div className='text-center col-12 my-2'>
                   <button onClick={() => navigate('/preBooking/rentingDetails')} className="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">{t("BACK")}</button>
-                  <button className="ui button bg-success-dark   fs-7 fw-400 text-white px-5" onClick={e => navigateTenantDEtails(e)}>{t("NEXT")}</button>
+                  <button className="ui button bg-success-dark   fs-7 fw-400 text-white px-5" onClick={e => navigateTenantDetails(e)}>{t("NEXT")}</button>
                 </div>
               </div>
             </div>

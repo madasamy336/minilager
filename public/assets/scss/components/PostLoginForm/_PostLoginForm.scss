@@ -1,75 +1,79 @@
-a{
+a {
     color: $LoginFormTextColor;
 }
 
-.postloginform{
+.postloginform {
     width: 60%;
     box-shadow: $LoginFormBoxShadow;
     border-radius: 16px;
-    @include for-mobile{
+    @include for-mobile {
         width: 95%;
     }
-    .postloginform-img{
+    .postloginform-img {
         background-color: $LoginFormBackground;
-        @include for-mobile{
+        @include for-mobile {
             display: none;
         }
     }
-    .postloginform-inputs{
+    .postloginform-inputs {
         padding: 2rem;
-        .form-title{
-            h2{
+        .form-title {
+            h2 {
                 color: $LoginFormTextColor !important;
                 font-size: 1.5rem;
                 margin-bottom: 0.7rem;
             }
-            p{
+            p {
                 font-size: 0.7rem;
             }
         }
-        form{
+        form {
             padding: 2rem 0;
-        .form-control{
-            margin-bottom: 1rem;
-            label{
-                font-size: 0.7rem;
+            .form-control {
                 margin-bottom: 1rem;
-            }
-            .ui.input{
-                input{
-                    border: 1px solid $LoginFormBorderColor;
-                    border-radius: 4px;
-                    padding-left: 2.5rem;
-                    &::placeholder{
-                        font-size: 0.7rem;
+                label {
+                    font-size: 0.7rem;
+                    margin-bottom: 1rem;
+                }
+                .ui.input {
+                    input {
+                        border: 1px solid $LoginFormBorderColor;
+                        border-radius: 4px;
+                        padding-left: 2.5rem;
+                        &::placeholder {
+                            font-size: 0.7rem;
+                        }
                     }
                 }
             }
-        }
-        .remember-div{
-            margin-bottom: 1.8rem;
-            p{
-                font-size: 0.7rem;
-                span{
-                    margin-left: 0.4rem;
-                    color: $textDisabledColor;
+            .remember-div {
+                margin-bottom: 1.8rem;
+                p {
+                    font-size: 0.7rem;
+                    span {
+                        margin-left: 0.4rem;
+                        color: $textDisabledColor;
+                    }
+                }
+                a {
+                    text-decoration: underline;
                 }
             }
-            a{
-                text-decoration: underline;
+            button {
+                background-color: $LoginFormTextColor !important;
+                color: $textLightColor !important;
+                padding: 1rem 2rem;
+                font-size: 0.8rem;
             }
         }
-        button{
-            background-color: $LoginFormTextColor !important;
-            color: $textLightColor !important;
-            padding: 1rem 2rem;
-            font-size: 0.8rem;
-        }
-        }
-        .signup-div{
-            p{
-                font-size: .7rem;
+        .signup-div {
+            p {
+                font-size: 0.7rem;
             }
         }
     }
+}
+.password-eye-icon {
+    top: 0.8rem !important;
+    opacity: 0.5 !important;
 }
