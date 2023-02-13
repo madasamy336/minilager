@@ -240,8 +240,10 @@ export default function Profile() {
       { name: 'postalCode', message: 'Zip Code is a required field' },
     ];
 
+    console.log(isAddressEditable);
     if (isAddressEditable) {
       addressFields.forEach(field => {
+        console.log(tenantDetails[field.name]);
         if (!tenantDetails[field.name]) {
           console.log(field.name);
           newErrors[field.name] = field.message;
@@ -356,7 +358,7 @@ export default function Profile() {
                         <label className="cursor-pointer" htmlFor='handleFileSelect'>
                           <img width='50' height='50' className="" src="/assets/images/edit-photo.svg" alt="Edit" />
                         </label>
-                        <Input id="handleFileSelect" onChange={(e) => handleFileSelect(e)} hidden type='file' />
+                        <input id='handleFileSelect' onChange={e => handleFileSelect(e)} type="file" hidden />
                       </div>
                     </div>
                   </div>
