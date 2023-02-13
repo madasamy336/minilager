@@ -1,11 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
-import React from "react";
-// import { useEffect, useState } from 'react';
+// import React from "react";
+import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 // import { useTranslation } from "react-i18next";
 import instance from '../services/instance';
 import request from '../services/request';
 import { ToastContainer, toast } from 'react-toastify';
+import { Dropdown, Input,Icon } from "semantic-ui-react";
 import { useTranslation } from "react-i18next";
 import 'react-toastify/dist/ReactToastify.css';
 import { fetchLoginSuccess, fetchLoginFailure, fetchLoginRequest } from '../redux/actions/login/loginAction';
@@ -31,7 +32,11 @@ const PostLoginForm = (props) => {
     })
 
     let { username, password, rememberPassword } = values;
-
+    const [type, setType] = useState('password');
+    const [icon, setIcon] = useState('eye');
+    const showPasswordHandler = () => {
+        type === 'password' ? setType('text') & setIcon('eye slash') : setType('password') & setIcon('eye');
+    }
 
     if (userid !== null && typeof userid !== "undefined" && userid !== '') {
 
@@ -193,12 +198,12 @@ const PostLoginForm = (props) => {
 
     const ForgotPassword = (e) => {
         e.preventDefault();
-        if(props.callingfrom === "prebooking"){
+        if (props.callingfrom === "prebooking") {
             navigate('/preBooking/forgotpassword')
-        }else{
+        } else {
             navigate('/forgotpassword')
         }
-       
+
     }
 
 
@@ -547,7 +552,7 @@ const PostLoginForm = (props) => {
                                     <p>{t("Don't have an account?")} <Link to={'/signup'}>{t("Signup Now")}</Link></p>
 
                             }
-                           
+
                         </div>
                         <form>
                             <div className="form-control">
@@ -570,10 +575,11 @@ const PostLoginForm = (props) => {
                             <div className="form-control">
                                 <label className="d-block">{t("Password")} <span className="requiredfield">*</span></label>
                                 <div className="ui input w-100 position-relative">
-                                    <input type="password" placeholder={`${t('Enter Password')}`}
+                                    <input type={type} placeholder={`${t('Enter Password')}`}
                                         value={password} name="password"
                                         onChange={(e) => { handleChange(e) }}
                                         onBlur={validateOne} />
+                                    <Icon name={icon} className="password-eye-icon position-absolute r-2 t-1" link onClick={showPasswordHandler} />
                                     <svg className="position-absolute l-1 t-1" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 22.036 32">
                                         <g id="password-svgrepo-com" transform="translate(-31.62)" opacity="0.21">
                                             <path id="Path_18916" data-name="Path 18916" d="M50.9,11.539h-.521v-3.8a7.739,7.739,0,0,0-15.479,0v3.8h-.522A2.761,2.761,0,0,0,31.62,14.3V29.243A2.761,2.761,0,0,0,34.377,32H50.9a2.761,2.761,0,0,0,2.757-2.757V14.3A2.76,2.76,0,0,0,50.9,11.539Zm-13.636-3.8a5.376,5.376,0,0,1,10.752,0v3.8H37.262Zm14.03,21.5a.4.4,0,0,1-.394.394H34.377a.4.4,0,0,1-.394-.394V14.3a.4.4,0,0,1,.394-.394H50.9a.4.4,0,0,1,.394.394Z" />
