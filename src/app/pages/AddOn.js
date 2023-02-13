@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import PreBookingBreadcrumb from '../components/prebooking breadcrumb/PreBookingBreadcrumb'
 import SemanticDatepicker from 'react-semantic-ui-datepickers';
+import { YearPicker } from "react-semantic-ui-datepickers";
+import { Dropdown,Radio } from 'semantic-ui-react';
 import { Grid, Loader, Placeholder, Segment } from "semantic-ui-react";
 import { Modal } from 'semantic-ui-react';
 import { useNavigate } from 'react-router-dom';
@@ -20,6 +22,11 @@ let ownInsuranceArray = [];
 let servicesArray = [];
 let merchandiseId = [];
 let merchandiseItem = [];
+const yearOptions = [];
+const currentYear = new Date().getFullYear();
+for (let i = currentYear; i > currentYear - 101 ; i--) {
+  yearOptions.push({ key: i, text: i, value: i });
+}
 
 export default function AddOn() {
   const childRef = useRef(null);
@@ -45,7 +52,6 @@ export default function AddOn() {
   const [ownInsurance, setOwnInsurance] = useState(false);
   const [isLoading, setLoader] = useState(false);
   const [startDate, setStartDate] = useState(new Date());
-
   const ownInsuranceHandler = (e) => {
     SetactivePlan('Own Insurance')
     e.preventDefault()
@@ -701,9 +707,8 @@ export default function AddOn() {
                         </div>
                         <div className="field w-100 datePicker my-3">
                           <label className='fw-500 fs-7 mb-2'>{t("Year")}</label>
-
-                          {/* <SemanticDatepicker placeholder='Year' formatOptions="yyyy" type='date' className='w-100' /> */}
-                          <input placeholder='Year' type="number" className='w-100' minLength={1900} maxLength={2099} value={year} onChange={(e) => setYear(e.target.value)} />
+                          <Dropdown placeholder='Year' fluid selection options={yearOptions} value={year} onChange={(e, data) => setYear(data.value)}     />
+                          {/* <input placeholder='Year' type="number" className='w-100' minLength={1900} maxLength={2099} value={year} onChange={(e) => setYear(e.target.value)} /> */}
                         </div>
                         <div className="field w-100 datePicker my-3">
                           <label className='fw-500 fs-7 mb-2'>{t("Brand")}</label>

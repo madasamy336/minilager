@@ -239,7 +239,7 @@ export default function PostSignupForm(props) {
     return (
 
         <>
-            <ToastContainer />
+        <div>            <ToastContainer />
 
             <div className="createAccountform my-5 mx-auto overflow-hidden">
                 <div className="row">
@@ -364,6 +364,15 @@ export default function PostSignupForm(props) {
                         </div>
                     </div>
                 </div>
+            </div>
+            { props.callingfrom === 'prebooking'  ?
+         <div className='row'>
+         <div className='text-center col-12 my-2'>
+           <button className="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2" onClick={() => navigate('/preBooking/addOns')}>{t("BACK")}</button>
+         </div>
+         </div>:""
+
+        }
             </div>
         </>
     )
