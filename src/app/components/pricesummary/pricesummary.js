@@ -12,6 +12,7 @@ import Helper from "../../helper";
 import { forwardRef, useImperativeHandle, useRef } from 'react';
 let helper = new Helper();
 let storageTypeId;
+let  units_info;
 const Pricesummary = forwardRef((props, ref) => {
   let invoicePeriodValue = JSON.parse(sessionStorage.getItem("invoicePeriodValue"));
   let invoiceRecurringValue = JSON.parse(sessionStorage.getItem("invoiceRecurringValue"));
@@ -29,12 +30,13 @@ const Pricesummary = forwardRef((props, ref) => {
   const [PromoDiscount, setPromoDiscount] = useState();
   const [promoValidate, setPromoValidate] = useState('');
   const [validateMsg, setValidateMsg] = useState();
-  const [unitInfoDetails, setUnitInfoDetails] = useState();
+  const [unitInfoDetails, setUnitInfoDetails] = useState('');
   const [totalAmount, setTotalAmount] = useState();
   const[loader,setLoader] = useState(false);
   const [movinDate, setMovinDate] = useState(new Date());
   const [promoOnchangebutton, setpromoOnchangebutton] = useState();
   const[promcodeError, setpromcodeError] = useState();
+  const[removePromo, setRemovePromo] = useState(0)
 
   let unitid = localStorage.getItem('unitid');
   const navigate = useNavigate()
@@ -45,7 +47,15 @@ const Pricesummary = forwardRef((props, ref) => {
 
 useEffect(() => {
   unitinfodetails();
-}, [unitInfoDetails,invoicePeriodValue,invoiceRecurringValue])
+}, [invoicePeriodValue,invoiceRecurringValue])
+
+useEffect(()=> {
+
+      unitinfodetails();
+
+    
+  
+},[removePromo]);
 
   useEffect(() => {
     unitinfodetails(true);
@@ -98,7 +108,7 @@ useEffect(() => {
           const unit_infodetails = response.data.result;
           if (typeof unit_infodetails !== "undefined" && unit_infodetails !== null && unit_infodetails !== "") {
             setTotalAmount(unit_infodetails);
-            const units_info = response.data.result.units;
+             units_info = response.data.result.units;
             storageTypeId = units_info[0].unitInfo.storageType.id;
             if (typeof units_info !== "undefined" && units_info !== null && units_info.length > 0) {
               setUnitInfoDetails(units_info);
@@ -171,6 +181,13 @@ useEffect(() => {
     SetApplyDiscountModal({ open: true, dimmer: 'blurring' });
     // document.getElementById("promoInputbox").style.display = 'block';
     sessionStorage.setItem('promoApplied',false);
+  }
+  const clearPromocode = () => {
+    setPromoValidate('');
+    setpromoOnchangebutton('')
+    setRemovePromo(removePromo+1);
+    sessionStorage.setItem('promoApplied',false);
+    sessionStorage.removeItem('applypromo');
   }
 
   /**  Validate Promocode Discount Start **/
@@ -322,11 +339,11 @@ useEffect(() => {
 
 
                     {typeof promoOnchangebutton !=="undefined" && promoOnchangebutton !==null && promoOnchangebutton !=="" &&  typeof promoValidate !== "undefined" && promoValidate !== null && promoValidate !==""?
-                      <p className='d-flex align-items-center px-1'>
+                      totalAmount.discount > 0 &&<p className='d-flex align-items-center px-1'>
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24.631 24.637">
                           <path id="tick" d="M-81.811-487.2h-1.443a1.331,1.331,0,0,0-.186-.04,11.727,11.727,0,0,1-5.374-1.695,12.155,12.155,0,0,1-5.844-8.462c-.086-.461-.129-.931-.192-1.4v-1.443c.015-.085.032-.17.045-.256.076-.529.121-1.067.234-1.59A11.963,11.963,0,0,1-90-509.286a11.957,11.957,0,0,1,10.054-2.258A11.885,11.885,0,0,1-72.774-507a11.977,11.977,0,0,1,2.491,8.722,11.9,11.9,0,0,1-3,6.884,12.1,12.1,0,0,1-7.124,4.007C-80.874-487.306-81.343-487.26-81.811-487.2Zm-2.642-10.284c-.453-.418-.906-.83-1.354-1.238-.679-.621-1.345-1.263-2.053-1.852a1.178,1.178,0,0,0-1.878.633,1.271,1.271,0,0,0,.445,1.314q2,1.812,3.984,3.624a1.231,1.231,0,0,0,1.887-.047q3.828-3.792,7.651-7.589a2.755,2.755,0,0,0,.2-.211,1.23,1.23,0,0,0,.269-1.01,1.23,1.23,0,0,0-.606-.852,1.244,1.244,0,0,0-1.585.286q-3.378,3.372-6.753,6.75c-.061.061-.125.12-.2.192Z" transform="translate(94.85 511.833)" fill="#67c84e" />
                         </svg>
-                       <div className='d-flex px-1 justify-content-between w-100'> <span>{promoOnchangebutton} applied</span>  <span >{helper.displayCurrency(totalAmount.discount)}</span></div> 
+                       <div className='d-flex justify-content-between w-100'> <span>{promoOnchangebutton} applied</span>  <span >{helper.displayCurrency(totalAmount.discount)}<i className='icon remove cursor-pointer text-danger' onClick={()=>clearPromocode()} style={{ pointerEvents: "all" }}></i></span> </div> 
                         
                       </p> : ""
                     }
