@@ -219,5 +219,7 @@
   "Enter Email/UserName":"Skriv inn e -post/brukernavn",
   "Submit":"Sende inn",
   "UserName is required":"Brukernavn kreves",
-  "Please Enter Reason":"Vennligst skriv inn grunn"
+  "Please Enter Reason":"Vennligst skriv inn grunn",
+  "Do you really want to cancel your insurance?":"Vil du virkelig avbryte forsikringen din?",
+  "Cancel Insurance!":"Avbryt forsikring!"
 }

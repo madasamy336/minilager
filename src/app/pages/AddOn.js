@@ -3,7 +3,7 @@ import PreBookingBreadcrumb from '../components/prebooking breadcrumb/PreBooking
 import SemanticDatepicker from 'react-semantic-ui-datepickers';
 import { YearPicker } from "react-semantic-ui-datepickers";
 import { Dropdown,Radio } from 'semantic-ui-react';
-import { Grid, Loader, Placeholder, Segment } from "semantic-ui-react";
+import { Grid, Loader, Placeholder, Segment ,Button} from "semantic-ui-react";
 import { Modal } from 'semantic-ui-react';
 import { useNavigate } from 'react-router-dom';
 import AddOnAccordion from '../components/addonaccordion/AddOnAccordion';
@@ -50,14 +50,22 @@ export default function AddOn() {
   const [activePlan, SetactivePlan] = useState('');
   const [addOnsResponse, setAddOnsResponse] = useState(null);
   const [ownInsurance, setOwnInsurance] = useState(false);
+  const[insuranceDeleteModal, setinsuranceModal] = useState(false);
   const [isLoading, setLoader] = useState(false);
   const [startDate, setStartDate] = useState(new Date());
-  const ownInsuranceHandler = (e) => {
+  const ownInsuranceHandler = (e) => {  
     SetactivePlan('Own Insurance')
     e.preventDefault()
     setOwnInsurance(true);
+    setInsuranceGrid(false);
   }
   const selectAdminInsurance = (planname, id) => {
+    SetactivePlan('');
+    setPolicyNumber('');
+    setPolicyPhoneNumber('');
+    setEffectiveFromDate('');
+    setEffectiveToDate('');
+    setPolicyProvider('');
     sessionStorage.setItem('thirdpartyinsurance', false);
     SetactivePlan(planname);
     ownInsuranceArray.push(
@@ -81,8 +89,54 @@ export default function AddOn() {
     }
   }
   const cancelInsuranceHandler = () => {
-    setOwnInsurance(false);
+    setinsuranceModal(true);
+   
+   
   }
+
+  const deletingInsurance = () => {
+    setinsuranceModal(false);
+    setOwnInsurance(false);
+    setInsuranceGrid(true);
+    SetactivePlan('');
+    setPolicyNumber('');
+    setPolicyPhoneNumber('');
+    setEffectiveFromDate('');
+    setEffectiveToDate('');
+    setPolicyProvider('');
+
+  }
+  const saveInsurance = () => {
+    let errorcount = 0;
+    let insuranceValue = {
+      provider_name: insurancePolicyProvider !== '' ? insurancePolicyProvider : '',
+      policy_number: policyNumber !== '' ? policyNumber : '',
+      effective_to_date: effectiveToDate !== '' ? effectiveToDate : '',
+      effective_from_date: effectiveFromDate !== '' ? effectiveFromDate : '',
+      policy_phonenumber:policyPhoneNumber !== '' ? policyPhoneNumber:''
+      
+    }
+    Object.entries(insuranceValue).forEach(([key, value]) => {
+      if (value === '' || value === null) {
+        console.log('test');
+        document.querySelector(`.${key}`).classList.remove("d-none");
+        document.querySelector(`.${key}`).scrollIntoView({ behavior: 'smooth' });
+        errorcount = errorcount + 1;
+      } 
+
+    });
+    if(errorcount === 0){
+      Object.entries(insuranceValue).forEach(([key, value]) => {
+        document.querySelector(`.${key}`).classList.add("d-none");
+      });
+      
+        setOwnInsurance(true);
+        setInsuranceGrid(true);
+        SetactivePlan('Own Insurance')
+    }
+   
+  }
+  
   const [applyDiscountModal, SetApplyDiscountModal] = useState({
     open: false,
     dimmer: undefined,
@@ -366,6 +420,7 @@ export default function AddOn() {
   const [policyPhoneNumber, setPolicyPhoneNumber] = useState("");
   const [effectiveFromDate, setEffectiveFromDate] = useState("");
   const [effectiveToDate, setEffectiveToDate] = useState("");
+  const [insuranceGrid, setInsuranceGrid] = useState(true);
 
   const VehicleFormSubmitHandler = (e) => {
     e.preventDefault();
@@ -428,7 +483,7 @@ export default function AddOn() {
                         <path id="Path_15983" data-name="Path 15983" d="M103.106,152.536c.745,0,1.491-.007,2.235,0,.413.006.745.154.765.629.022.517-.317.7-.761.7q-2.234.019-4.47,0c-.448,0-.787-.193-.769-.7.017-.467.348-.631.764-.636.745-.01,1.491,0,2.235,0Z" transform="translate(-86.105 -131.2)" fill="#328128" />
                       </svg>
                       <span className='veritical-align-text-top ml-1'>{t("Insurance")}</span></h6>
-                    {!ownInsurance && (
+                    {insuranceGrid && (
                       <div className=" p-3 AddonsInsurance">
 
                         {typeof addOnsResponse !== 'undefined' && addOnsResponse !== null ?
@@ -452,13 +507,10 @@ export default function AddOn() {
                               <div className={`card changePlanCard cursor-pointer  border-radius-10 text-center p-2  ${activePlan === 'Own Insurance' && 'active'}`} onClick={(e) => ownInsuranceHandler(e)} >
                                 <p className=' fs-7 fw-500 pb-1 mt-1'>{t("I HAVE A")}</p>
                                 <h4 className={` fs-6 fw-500 pb-2 ${activePlan === 'Own Insurance' ? 'text-white' : 'text-success-dark'}`}>{t("OWN INSURANCE")}</h4>
-
                               </div>
                             </div>
 
                           </div>
-
-
 
                           : <Grid columns={3} stackable>
                             <Grid.Column>
@@ -501,7 +553,7 @@ export default function AddOn() {
 
                       </div>
                     )}
-                    {ownInsurance && (<div className="ui form px-4 px-sm-2">
+                    {!insuranceGrid && (<div className="ui form px-4 px-sm-2">
                       <div className="field w-100 datePicker my-3">
                         <label className='fw-500 fs-7 mb-2'>{t("Policy Provider Name")}</label>
                         <input placeholder={`${t("Policy Provider Name")}`} name="ProviderName" ref={inputRefs.current.ProviderName} value={insurancePolicyProvider} onChange={(e) => { setPolicyProvider(e.target.value) }} />
@@ -515,7 +567,7 @@ export default function AddOn() {
                       <div className="field w-100 datePicker my-3">
                         <label className='fw-500 fs-7 mb-2'>{t("Policy Phone Number")}</label>
                         <input placeholder={`${t("Policy Phone Number")}`} value={policyPhoneNumber} onChange={(e) => { setPolicyPhoneNumber(e.target.value) }} />
-                        <p className="error py-1 policy_number d-none">{t("Please Enter Policy Phone Number")}</p>
+                        <p className="error py-1 policy_phonenumber d-none">{t("Please Enter Policy Phone Number")}</p>
                       </div>
                       <div className="field w-100 datePicker my-3">
                         <label className='fw-500 fs-7 mb-2' >{t("Effective From Date")}</label>
@@ -541,7 +593,8 @@ export default function AddOn() {
                         </div>
                       </div> */}
                       <div className='text-center my-4'>
-                        <button className="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2 mb-sm-1" onClick={cancelInsuranceHandler}>{t("Change")}</button>
+                        <button className="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2 mb-sm-1" onClick={cancelInsuranceHandler}>{t("Cancel")}</button>
+                        <button className="ui button bg-success-dark   fs-7 fw-400 text-white px-5" onClick={(e)=>{saveInsurance()}}>{t("Save")}</button>
                       </div>
                     </div>)}
                   </div>
@@ -846,6 +899,27 @@ export default function AddOn() {
             </div>
           </div>
         </Modal.Content>
+      </Modal>
+      <Modal
+        centered={false}
+        open={insuranceDeleteModal}
+        size={ 'mini'}
+        onClose={() => setinsuranceModal(false)}
+        onOpen={() => setinsuranceModal(true)}
+
+      >
+        <Modal.Header>{t("Cancel Insurance!")} </Modal.Header>
+        <Modal.Content>
+          <p>{t("Do you really want to cancel your insurance?")}</p>
+        </Modal.Content>
+        <Modal.Actions>
+          <Button onClick={() => setinsuranceModal(false)} negative>
+            {t("No")}
+          </Button>
+          <Button  onClick={()=>deletingInsurance()} positive >
+            {t("Yes")}
+          </Button>
+        </Modal.Actions>
       </Modal>
     </>
   )
