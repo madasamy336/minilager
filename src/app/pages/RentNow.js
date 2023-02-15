@@ -5,12 +5,14 @@ import { useTranslation } from "react-i18next";
 import { useEffect } from 'react';
 import instance from '../services/instance';
 import request from '../services/request';
+import { Pagination } from "semantic-ui-react";
 
 const RentNow = () => {
     const searchinput = useRef(null);
     const [LocationResponse, setLocationResponse] = useState(null);
     const [searchValue, setSearchValue] = useState('');
-
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(false);
 
     const fetchFaciltyDetail = async () => {
@@ -22,7 +24,8 @@ const RentNow = () => {
         };
         let requestbody = {
             unitVisibility: 1,
-            availability: 2
+            availability: 2,
+            pageNumber:currentPage
         };
 
         try {
@@ -35,6 +38,8 @@ const RentNow = () => {
             ) {
                 setLocationResponse(location.result);
             }
+            console.log(location.pageCount);
+            setTotalPages(location.pageCount);
 
             if (location.returnCode === "NO_RECORDS_FOUND") {
                 setLocationResponse([]);
@@ -58,7 +63,17 @@ const RentNow = () => {
                     i.address.addressLine1.toLowerCase().includes(searchinput.current.value.toLowerCase())) ||
                 (i.address !== null &&
                     i.address.zipCode !== null &&
-                    i.address.zipCode.includes(searchinput.current.value))
+                    i.address.zipCode.toLowerCase().includes(searchinput.current.value.toLowerCase()))
+                ||(i.address !== null &&
+                    i.address.state !== null &&
+                    i.address.state.toLowerCase().includes(searchinput.current.value.toLowerCase()))
+                ||(i.address !== null &&
+                    i.address.country !== null &&
+                    i.address.country.toLowerCase().includes(searchinput.current.value.toLowerCase()))
+                ||  (i.address !== null &&
+                        i.address.city !== null &&
+                        i.address.city.toLowerCase().includes(searchinput.current.value.toLowerCase()))
+
         );
 
         if (searchinput.current.value === "") {
@@ -75,6 +90,10 @@ const RentNow = () => {
 
         setLoading(false); // set the loading state to false after the data is filtered
     };
+    function handlePageChange(event, { activePage }) {
+        setCurrentPage(activePage);
+      
+    }
 
     const facilitycall = (e) => {
         e.preventDefault()
@@ -110,7 +129,7 @@ const RentNow = () => {
     const { t } = useTranslation();
     useEffect(() => {
         fetchFaciltyDetail();
-    }, [])
+    }, [currentPage])
     useEffect(() => {
         setSearchValue(searchValue)
     }, [searchValue])
@@ -147,10 +166,21 @@ const RentNow = () => {
                                 <Card facilitydetails={LocationResponse} /> :
                                 <div className="ui centered inline">{t("No record found")}</div>
                             )
+                            
+                        }{ !loading ?
+                            <div className='pagination-div mt-2 mb-3 text-center'>
+                          <Pagination activePage={currentPage} totalPages={totalPages}  onPageChange={handlePageChange} />
+                          </div>:""
+
                         }
+                          
+                                  
                     </div>
+        
                 </div>
+               
             </div>
+           
         </div>
     )
 }

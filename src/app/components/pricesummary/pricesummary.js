@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import PreBookingBreadcrumb from '../prebooking breadcrumb/PreBookingBreadcrumb'
-import { Dropdown, Loader, Modal, Placeholder } from 'semantic-ui-react';
-import { Dimmer, Image, Segment } from 'semantic-ui-react'
+import { Modal, Placeholder } from 'semantic-ui-react';
 import { json, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -9,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import instance from '../../services/instance';
 import request from '../../services/request';
 import Helper from "../../helper";
+import date from 'date-and-time';
 import { forwardRef, useImperativeHandle, useRef } from 'react';
 let helper = new Helper();
 let storageTypeId;
@@ -288,7 +288,7 @@ useEffect(()=> {
                 <div className="py-2 card-border-secondary border-radius-10 mb-2">
                   <div className="content">
                     <p className='text-success-dark mb-1 fw-600 fs-6 px-1'>{item.unitInfo.storageType.name} - {item.unitInfo.unitNumber} ({item.unitInfo.unitMeasurement} {helper.measurementDisplayFormat(item.unitInfo.measurementType)}) </p>
-                    <div className="text-dark fw-500 mb-2 px-1">{t("Payment Period")}: ({item.estimation.startsOn} to {item.estimation.endsOn})</div>
+                    <div className="text-dark fw-500 mb-2 px-1">{t("Payment Period")}: ({helper.showDateFormat(item.estimation.startsOn)} to {helper.showDateFormat(item.estimation.endsOn)})</div>
                     <div className='mb-2 d-flex px-1 justify-content-between text-light-gray fw-500'>
                       <span>{t("Rent for the payment period")}</span><span>{helper.displayCurrency(item.estimation.rentAmount)}</span>
                     </div>
@@ -421,7 +421,7 @@ useEffect(()=> {
                         <p className='fs-7'>{item.description}</p>
                       </div>
                       <div className='col-sm-12 col-md-3 d-flex align-items-center justify-content-center'>
-                        <button className="ui button text-success bg-white border-success-1  fs-7 fw-400 py-1 px-3" onClick={() => autoApplybtn(item.promotionalDiscount.promoCode)}>Add</button>
+                        <button className="ui button text-success bg-white border-success-1  fs-7 fw-400 py-1 px-3" onClick={() => autoApplybtn(item.promotionalDiscount.promoCode)}>{t("Apply")}</button>
                       </div>
                     </div>
                   </div>

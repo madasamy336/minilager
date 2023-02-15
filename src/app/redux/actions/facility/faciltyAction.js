@@ -2,7 +2,7 @@ import instance from '../../../services/instance';
 import request from '../../../services/request';
 import { constant } from '../../constants/constant';
 
-export const fetchFacilty = () => {
+export const fetchFacilty = (pagenumber) => {
     return (dispatch) => {
         dispatch(fetchAppConfigRequest());
         let config = {
@@ -12,7 +12,8 @@ export const fetchFacilty = () => {
         };
         let requestbody = {
             unitVisibility: 1, 
-            availability: 2
+            availability: 2,
+            pageNumber:pagenumber
         }
 
         instance

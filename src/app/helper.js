@@ -1,5 +1,6 @@
 import moment from "moment";
 import Intel from 'intl-tel-input';
+import date from 'date-and-time';
 import React, { useState, useEffect } from "react";
 
 class Helper {
@@ -41,7 +42,9 @@ class Helper {
 
         return today.toLocaleDateString("en-US", options);
     }
-
+    showDateFormat(datevalue){
+        return date.format(new Date(datevalue), 'DD.MM.YYYY')
+    }
     checkNumber(event) {
         let inputValue = event.target.value;
         let numbers = inputValue.replace(/[^0-9]/g, '');
@@ -157,14 +160,13 @@ class Helper {
         } else if (this.culture === 'is-IS') {
             returnFormat = amount + 'kr';
         }else if(this.culture === 'nn-NO'){
-            returnFormat = amount + 'kr';
+            returnFormat =`${amount} kr `
         }
 
         return returnFormat;
     }
 
     // displayCurrency_listing(amount) {
-
     //     let returnFormat = new Intl.NumberFormat(this.culture, {
     //         style: "currency",
     //         currency: typeof this.currency !== 'undefined' && this.currency != null ? this.currency : 'USD',

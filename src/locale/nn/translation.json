@@ -221,5 +221,6 @@
   "UserName is required":"Brukernavn kreves",
   "Please Enter Reason":"Vennligst skriv inn grunn",
   "Do you really want to cancel your insurance?":"Vil du virkelig avbryte forsikringen din?",
-  "Cancel Insurance!":"Avbryt forsikring!"
+  "Cancel Insurance!":"Avbryt forsikring!",
+  "Cancel Schedule Move-Out Date":"Avbryt tidsplan flyttingsdato"
 }

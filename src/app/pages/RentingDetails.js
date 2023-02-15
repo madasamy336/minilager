@@ -463,7 +463,7 @@ export default function RentingDetails() {
                   <div className="ui form px-4 px-sm-2">
                     <div className="field w-100 datePicker my-3">
                       <label className='fw-500 fs-7 mb-2' >{t("Move-In Date")}</label>
-                      <SemanticDatepicker datePickerOnly clearable={false} placeholder='Select date' className='w-100' clearOnSameDateClick={false} value={movinDate} maxDate={maxDate} onChange={movindateOnchange}
+                      <SemanticDatepicker datePickerOnly clearable={false} placeholder='Select date' className='w-100'   format='DD.MM.YYYY' clearOnSameDateClick={false} value={movinDate} maxDate={maxDate} onChange={movindateOnchange}
                         filterDate={
                           (date) => {
                             const semanticdate = new Date(date)
@@ -486,7 +486,7 @@ export default function RentingDetails() {
                       </div> : ""}
                     <div className="field w-100 datePicker my-3">
                       <label className='fw-500 fs-7 mb-2' >{t("Desired Move Out date")}</label>
-                      <SemanticDatepicker datePickerOnly placeholder='Select date' className='w-100' value={desiredMoveOutDate} filterDate={(date) => {
+                      <SemanticDatepicker  format='DD.MM.YYYY' datePickerOnly placeholder='Select date' className='w-100' value={desiredMoveOutDate} filterDate={(date) => {
                         const now = new Date(movinDate);
                         now.setDate(now.getDate() + 1);
                         return date >= now;

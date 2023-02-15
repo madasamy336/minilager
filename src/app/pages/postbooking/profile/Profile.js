@@ -367,7 +367,7 @@ export default function Profile() {
                   <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                     <div className="field w-100 datePicker my-3">
                       <label className="text-dark fs-7 fw-500">Date of Birth<span className="error">*</span></label>
-                      <SemanticDatepicker datePickerOnly minDate={minDate} name="dateOfBirth" placeholder='Select date' maxDate={new Date()} format="DD-MM-YYYY" value={typeof birthDateReq !== "undefined" && birthDateReq !== null && birthDateReq !== "" ? new Date(birthDateReq) : new Date()} className='w-100' onChange={handleChangeBirthdate} />
+                      <SemanticDatepicker  format='DD.MM.YYYY' datePickerOnly minDate={minDate} name="dateOfBirth" placeholder='Select date' maxDate={new Date()}  value={typeof birthDateReq !== "undefined" && birthDateReq !== null && birthDateReq !== "" ? new Date(birthDateReq) : new Date()} className='w-100' onChange={handleChangeBirthdate} />
                       {errors["dateOfBirth"] && <div className="error">{errors["dateOfBirth"]}</div>}
                     </div>
                     <div className="field my-3">
