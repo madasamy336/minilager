@@ -200,7 +200,7 @@ export default function TenantDetails() {
 
 
   const validatePersonalInfo = (details) => {
-    const { firstName, lastName, email, phoneNumber, ssn, birthDate, companyName } = details;
+    const { firstName, lastName, email, phoneNumber, ssn, birthDate, companyName, city, state, zipCode } = details;
     const errors = {};
     console.log(details);
     if (!firstName) {
@@ -225,6 +225,15 @@ export default function TenantDetails() {
 
     if (!birthDate) {
       errors.birthDate = "Date Of Birth is required";
+    }
+    if (!city) {
+      errors.city = "City is required";
+    } 
+    if (!state) {
+      errors.state = "State is required";
+    }
+    if (!zipCode) {
+      errors.zipCode = "Zip Code is required";
     }
 
     if (BusinessUser && !companyName) {
@@ -899,10 +908,11 @@ export default function TenantDetails() {
                   <div className="col-12 col-md-6 d-flex justify-content-center mb-2">
                     <div className="edit-profile-img position-relative">
                       {/* <img src={profileImageSrc && profileImageSrc.length > 0 ? profileImageSrc : '/assets/images/profile_.png'} className="ui medium circular image object-fit-cover TenantDetailsProfileImage mx-auto" id="tenantProfileImage" alt="Profile" /> */}
+                      {console.log(previewSrc)}
                       {previewSrc ? (
                         <Image src={previewSrc} className="ui medium circular image object-fit-cover TenantDetailsProfileImage mx-auto" id="tenantProfileImage" alt="Profile" />
                       ) : (
-                        <Image src='/default-profile-pic.jpg' className="ui medium circular image object-fit-cover TenantDetailsProfileImage mx-auto" id="tenantProfileImage" alt="Profile" />
+                        <Image src='/assets/images/userDemoProfile.svg' className="ui medium circular image object-fit-cover TenantDetailsProfileImage mx-auto" id="tenantProfileImage" alt="Profile" />
                       )}
                       <div className="edit-icon position-absolute text-center l-18 r-0 t-1">
                         <label className="cursor-pointer" htmlFor='handleFileSelect'>
