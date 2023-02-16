@@ -733,7 +733,7 @@ export default function EsignPayment() {
                       {unitdetail !== null && typeof unitdetail !== 'undefined' ?
                         <div className='card-border-primary text-center p-1'>
                           <p>{t("Billing Period")}</p>
-                          <p className='fw-500 text-success-dark'>{unitdetail.startsOn} {t("to")} {unitdetail.endsOn}</p>
+                          <p className='fw-500 text-success-dark'>{helper.showDateFormat(unitdetail.startsOn)} {t("to")} {helper.showDateFormat(unitdetail.endsOn)}</p>
                         </div>
                         :
                         <div className="ui active centered inline loader"></div>

@@ -212,7 +212,8 @@ const PostLoginForm = (props) => {
         password: passwordVal,
     } = validations
     return (
-        <div className="postloginform my-5 mx-auto overflow-hidden">
+        <div>       
+            <div className="postloginform my-5 mx-auto overflow-hidden">
             <div className="row">
                 <div className="col-lg-5 col-md-5 col-sm-12">
                     <div className="postloginform-img py-6 h-100">
@@ -608,7 +609,20 @@ const PostLoginForm = (props) => {
                     </div>
                 </div>
             </div>
+           
         </div>
+        { props.callingfrom === 'prebooking'  ?
+         <div className='row'>
+         <div className='text-center col-12 my-2'>
+           <button className="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2" onClick={() => navigate('/preBooking/addOns')}>{t("BACK")}</button>
+         </div>
+         </div>:""
+
+        }
+       
+
+        </div>
+ 
     )
 }
 

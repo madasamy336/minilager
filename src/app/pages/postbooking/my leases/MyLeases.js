@@ -343,7 +343,7 @@ export default function MyLeases() {
                 <span className="text-success ml-1 veritical-align-text-top fw-600" >{t("Schedule Move-Out")}</span></button>
             </div> :
             <div className="col-12 col-md-6 text-right" >
-              <span className="text-secondary fw-500">{t("Schedule Move-Out date")}:<span className="mx-1 text-success">{leaseInfoById[0].leaseInfo.moveOutScheduledOn}</span></span>
+              <span className="text-secondary fw-500">{t("Schedule Move-Out date")}:<span className="mx-1 text-success">{helper.showDateFormat(leaseInfoById[0].leaseInfo.moveOutScheduledOn)}</span></span>
               <button className="ui button bg-success-dark cancel-shecdule-btn fs-7 fw-400 text-white px-3 py-1 m-2" onClick={e => CancelScheduleMOveOut(leaseInfoById[0].leaseInfo.moveOutScheduledOn)}>Cancel</button>
             </div>
           }
@@ -470,7 +470,7 @@ export default function MyLeases() {
           <div className="ui form px-4 px-sm-2">
             <div className="field w-100 datePicker my-3">
               <label className='fw-500 fs-7 mb-1' >{t("Schedule Move-Out Date")}</label>
-              <SemanticDatepicker datePickerOnly disabled={isButtonLoading} showToday={true} value={scheduleMoveOutDateValue} name="date" onChange={(e, { name, value }) => SetScheduleMoveOutDate(name, value)} placeholder='Select date' className='w-100' />
+              <SemanticDatepicker datePickerOnly disabled={isButtonLoading}  format='DD.MM.YYYY' showToday={true} value={scheduleMoveOutDateValue} name="date" onChange={(e, { name, value }) => SetScheduleMoveOutDate(name, value)} placeholder='Select date' className='w-100' />
             </div>
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-1' >{t("Reason")} <i className="text-danger">*</i></label>
@@ -499,8 +499,8 @@ export default function MyLeases() {
         <Modal.Content className=' p-1'>
           <div className="ui form px-4 px-sm-2">
             <div className="field w-100 datePicker my-3">
-              <label className='fw-500 fs-7 mb-1' >Cancel Schedule Move-Out Date</label>
-              <SemanticDatepicker datePickerOnly disabled={true} name="date" onChange={(e, data) => handleChange(e, data)} value={bindScheduledMovedDate} placeholder='Select date' className='w-100' />
+              <label className='fw-500 fs-7 mb-1' >{t("Cancel Schedule Move-Out Date")}</label>
+              <SemanticDatepicker  format='DD.MM.YYYY' datePickerOnly disabled={true} name="date" onChange={(e, data) => handleChange(e, data)} value={bindScheduledMovedDate} placeholder='Select date' className='w-100' />
             </div>
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-1' >{t("Reason")}</label>

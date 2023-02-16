@@ -83,7 +83,7 @@ export default function RentingDetails() {
         clientDataconfig.recurringTypes.map((item) => {
           return {
             key: item.recurringTypeId,
-            text: item.recurringType,
+            text: item.recurringLabel,
             value: item.recurringTypeId,
           }
 
@@ -139,7 +139,6 @@ export default function RentingDetails() {
     sessionStorage.setItem("invoicePeriodValue", (item.value));
     sessionStorage.setItem("invoicePeriodset", true);
     recurringTempvalue = recurring
-    debugger
     if(item.value >=1 && item.value <= 4){
       let newvalue = recurring.filter(i=> i.key === 3);
       setRecurring(newvalue);
@@ -151,7 +150,7 @@ export default function RentingDetails() {
       setRecurring(clientDataconfig.recurringTypes.map((item) => {
         return {
           key: item.recurringTypeId,
-          text: item.recurringType,
+          text: item.recurringLabel,
           value: item.recurringTypeId,
         }
 
@@ -464,7 +463,7 @@ export default function RentingDetails() {
                   <div className="ui form px-4 px-sm-2">
                     <div className="field w-100 datePicker my-3">
                       <label className='fw-500 fs-7 mb-2' >{t("Move-In Date")}</label>
-                      <SemanticDatepicker datePickerOnly clearable={false} placeholder='Select date' className='w-100' clearOnSameDateClick={false} value={movinDate} maxDate={maxDate} onChange={movindateOnchange}
+                      <SemanticDatepicker datePickerOnly clearable={false} placeholder='Select date' className='w-100'   format='DD.MM.YYYY' clearOnSameDateClick={false} value={movinDate} maxDate={maxDate} onChange={movindateOnchange}
                         filterDate={
                           (date) => {
                             const semanticdate = new Date(date)
@@ -487,7 +486,7 @@ export default function RentingDetails() {
                       </div> : ""}
                     <div className="field w-100 datePicker my-3">
                       <label className='fw-500 fs-7 mb-2' >{t("Desired Move Out date")}</label>
-                      <SemanticDatepicker datePickerOnly placeholder='Select date' className='w-100' value={desiredMoveOutDate} filterDate={(date) => {
+                      <SemanticDatepicker  format='DD.MM.YYYY' datePickerOnly placeholder='Select date' className='w-100' value={desiredMoveOutDate} filterDate={(date) => {
                         const now = new Date(movinDate);
                         now.setDate(now.getDate() + 1);
                         return date >= now;
@@ -588,6 +587,7 @@ export default function RentingDetails() {
                             <input type='number' id={`${item.matadata.type}_${item.fieldId}`} name={item.fieldId} placeholder={item.fieldName} value={cusomfieldPhone} data-name={item.fieldName} data-fieldid={item.fieldId} data-unitid={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
                             <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
                           </div>
+                          
 
                         } else if (item.matadata.displayOn === "Unit specific details" && item.matadata.type === "radio") {
                           return <div key={item.fieldId} className="col-12 my-2">

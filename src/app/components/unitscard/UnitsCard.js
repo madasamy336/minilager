@@ -102,7 +102,7 @@ const UnitsCard = (props) => {
                                 </div>
                                 <div className='card-actions'>
                                     <div className='d-flex justify-content-between align-items-center'>
-                                        <h2 className='fw-700'>{helper.displayCurrency(details.netAmount)} <PopupExampleInverted img={<img src='/assets/images/tooltip.png' alt='Price' />} tooltip={`Rent :${helper.displayCurrency(details.unitPrice)} Tax(${helper.displayPercent(details.taxPercentage)}): ${helper.displayCurrency(details.taxAmount)}`} /></h2>
+                                        <h2 className='fw-700'>{helper.displayCurrency(details.netAmount)} <PopupExampleInverted img={<img src='/assets/images/tooltip.png' alt='Price' />} tooltip={`Rent: ${helper.displayCurrency(details.unitPrice)} Tax(${helper.displayPercent(details.taxPercentage)}): ${helper.displayCurrency(details.taxAmount)}`} /></h2>
                                         <button className='ui button btn-success d-inline-flex align-items-center' onClick={e => rentNow(e, details.unitIds)}><img src='/assets/images/password-img.png' alt='Rent Now' /><span>{t("Rent Now")}</span></button>
                                     </div>
                                 </div>
