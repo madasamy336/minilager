@@ -639,8 +639,8 @@ export default function TenantDetails() {
     const requestBody = {
       country_code: "NOR",
       event_type: "CREDIT_CHECK_ENQUIRY",
-      // identity_number: ssn.current.value, 24014021406
-      identity_number: "24014021406",
+      identity_number: TenantInfoDetails.ssn,
+      // identity_number: "24014021406",
       initiated_by: `${TenantInfoDetails.firstName} ${TenantInfoDetails.lastName}`,
       request_from: "BOOKING_PORTAL",
       tenant_id: `${userid}`,
