@@ -848,6 +848,17 @@ export default function TenantDetails() {
     await creditCheckSettingsInformation();
   };
 
+  const handleInputKeyDown = (event) => {
+    console.log(event);
+    const pattern = /^[0-9\b]+$/;
+    const mathSymbols = /[-+*/^()]/;
+    const inputChar = String.fromCharCode(event.keyCode);
+
+  if (!pattern.test(inputChar) || mathSymbols.test(inputChar)) {
+    event.preventDefault();
+  }
+  };
+
   return (
     <>
       <div>
@@ -1090,7 +1101,7 @@ export default function TenantDetails() {
                           <div className="field w-100 my-2 ">
                             <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}
                             </label>
-                            <input type='number' pattern="[0-9]*" id={`${item.matadata.type}_${item.fieldId}`} name={item.fieldId} placeholder={item.fieldName} value={cusomfieldPhone} data-name={item.fieldName} data-fieldid={item.fieldId} data-unitid={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => validateCustomFields(e)} />
+                            <input type='number' onKeyDown={handleInputKeyDown} id={`${item.matadata.type}_${item.fieldId}`} name={item.fieldId} placeholder={item.fieldName} value={cusomfieldPhone} data-name={item.fieldName} data-fieldid={item.fieldId} data-unitid={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => validateCustomFields(e)} />
                             <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
                           </div>
                         </div>
