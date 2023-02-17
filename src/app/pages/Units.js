@@ -18,7 +18,7 @@ let pages = 0;
 const Units = () => {
     const [tenantTypes, setTenantTypes] = useState(null);
     const [tenantTypeError, setTenantTypeError] = useState(false);
-    const [SortByPriceRange, setSortByPriceRange] = useState("Ascending");
+    const [SortByPriceRange, setSortByPriceRange] = useState("Descending");
     const [unitLoadMoreButtonVal, setUnitLoadMoreButtonVal] = useState();
     const [pageNumber, setPageNumber] = useState(1);
     const [noUnits, setNoUnits] = useState(false);
@@ -231,9 +231,7 @@ const Units = () => {
             pageNumber: pageNumber,
             pageSize: 10,
             isBusinessUser: isBussinessUser === "true" ? true : false,
-            unitSort: "UnitPrice",
-            unitVisibility: 1,
-            availability: 2
+            unitSort: 'unitPrice'
         }
         instance
             .post(request.user_search, requestbody, config)
@@ -290,6 +288,7 @@ const Units = () => {
     }
 
     const sortByPriceRange = (event_, data) => {
+        console.log(data);
         setSortByPriceRange(data.value);
         sixStorageLoadUnitList(storageTypeValue);
     }
@@ -326,15 +325,15 @@ const Units = () => {
 
     const sortUnitOptions = [
         {
-            key: 'Ascending',
+            key: 'Descending',
             text: `${t("Price Low to High")}`,
-            value: 'Ascending',
+            value: 'Descending',
             content: `${t("Price Low to High")}`,
         },
         {
-            key: 'Descending',
+            key: 'Ascending',
             text: `${t("Price High to Low")}`,
-            value: 'Descending',
+            value: 'Ascending',
             content: `${t("Price High to Low")}`,
         }
     ]

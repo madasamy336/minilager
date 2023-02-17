@@ -52,7 +52,7 @@ const UnitsCard = (props) => {
                                             <div className='d-flex align-items-center justify-content-between'>
                                                 <h2 className='fw-700 mb-1'>{helper.displayMeasurementSize(details.unitMeasurement)} <small className='fw-500'>{details.unitTypeName}</small></h2>
                                                 <div className='units-left'>
-                                                    <p className='error'>{`${t("Only")} ${details.unitIds.length} ${t("Units left")}`}</p>
+                                                    <p className='unit-count'>{`${t("Only")} ${details.unitIds.length} ${t("Units left")}`}</p>
                                                 </div>
                                             </div>
                                             <div className='d-flex align-items-start'>
@@ -69,7 +69,7 @@ const UnitsCard = (props) => {
                                         <div className='d-flex flex-wrap units-amenitiy'>
                                             {details.amenities.map((item) => {
                                                 return <div key="" className='d-flex align-items-center my-1'>
-                                                    <img src={item.imageUrl} alt='amenities' style={{ width: "10px", height: "10px" }} />
+                                                    <img className='amenities-image' src={item.imageUrl} alt='amenities' style={{ width: "10px", height: "10px" }} />
                                                     <span>{item.name}</span>
                                                 </div>
 

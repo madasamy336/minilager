@@ -1,30 +1,29 @@
 import PreBookingBreadcrumb from "../components/prebooking breadcrumb/PreBookingBreadcrumb";
 import { PHOTO_URl_BUSINESS_USER, PHOTO_URl_PERSONAL_USER } from "../constant/constant";
-import { Image, Modal, Button } from "semantic-ui-react";
+import { Image, Modal, Button, Loader } from "semantic-ui-react";
 import SemanticDatepicker from "react-semantic-ui-datepickers";
 import React, { useEffect, useRef, useState } from "react";
 import TenantDetailEmergengycontactAccordian from "../components/tenantDetailsAccordian/TenantDetailsAccordian";
-import PhoneInput from 'react-phone-number-input'
 import ReactPhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { useNavigate } from "react-router-dom";
+import 'react-toastify/dist/ReactToastify.css';
 import instance from '../services/instance';
 import request from '../services/request';
 import { useTranslation } from "react-i18next";
 import Helper from "../helper";
 import axios from "axios";
+import { ToastContainer, toast } from 'react-toastify';
 
 
 let helper = new Helper();
 let customFieldValue = [];
-let customValues;
 let Sdetails;
 let cusomfieldPhone;
 let customInputFieldValue;
-let DefaultCountryCode;
 
 export default function TenantDetails() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   let unitid = localStorage.getItem('unitid');
   let userid = localStorage.getItem("userid");
   let preferredStorageValue = JSON.parse(sessionStorage.getItem("preferredStorage"));
@@ -33,40 +32,19 @@ export default function TenantDetails() {
   let BusinessUser = JSON.parse(sessionStorage.getItem('isBussinessUser'));
   let customFieldAccess = JSON.parse(localStorage.getItem('CustomFieldsSetting'));
   let unitDetailCustomField = JSON.parse(sessionStorage.getItem("customFieldstorage"));
-  let nextpage = localStorage.getItem('nextpage');
   let startdate = Number(localStorage.getItem('storedate'));
   let companyDetail = [];
   const clientDataconfig = JSON.parse(sessionStorage.getItem("configdata"));
-  const culture = clientDataconfig.culture.culture
   const today = new Date();
   const minDate = new Date(today.setFullYear(today.getFullYear() - 18));
   const navigate = useNavigate();
-  const [profileImageSrc, setprofileImageSrc] = useState({
-    img: '/assets/images/userDemoProfile.svg'
-  });
-  const [photoPath, setPhotopath] = useState(null);
-  const [blobImage, setblobImage] = useState();
-  const [imagesize, setImageSize] = useState();
-  const [isExecuted, setIsExecuted] = useState(false);
+  const [previewSrc, setPreviewSrc] = useState('/assets/images/userDemoProfile.svg');
+  const [file, setFile] = useState('/assets/images/userDemoProfile.svg');
   const companyName = useRef(null);
   const ssn = useRef(null);
-  const [creditCheckSetting, setCreditCheckSettingData] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const companyRegistrationNumber = useRef(null);
-  const [errors, setErrors] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    birthDate: '',
-    phoneNumber: '',
-    addressLineOne: '',
-    addressLineTwo: '',
-    city: '',
-    country: '',
-    state: '',
-    zipCode: '',
-    ssn: '',
-  });
   const [TenantInfoDetails, setTenantInfoDetails] = useState(
     {
       firstName: '',
@@ -82,16 +60,13 @@ export default function TenantDetails() {
       zipCode: '',
       ssn: '',
     });
-  const [isLoading, setIsLoading] = useState(false);
 
-
-
-  const [TenantInfoError, setTenantInfoError] = useState({
+  const [tenantInfoError, setTenantInfoError] = useState({
     firstName: '', email: '', phoneNumber: '', addressLineOne: '', city: '', state: '', zipCode: '', ssn: ''
   });
 
   const [emergencyContactDetails, setEmergencyContactDetails] = useState({
-    emergencyFname: '', emergencyname: '', emergencyEmail: '', emergencyPhoneNo: ''
+    emergencyFname: '', emergencyLname: '', emergencyEmail: '', emergencyPhoneNo: ''
   });
 
   const [emergencyContactErr, setEmergencyContactErr] = useState({
@@ -100,10 +75,11 @@ export default function TenantDetails() {
 
   const [imguploadStatus, SetimguploadStatus] = useState(false);
   const [creditCheckLoader, setCreditCheckLoader] = useState(false);
-  const [contactAccordian, SetcontactAccordian] = useState([]);
+  const [contactAccordian, setContactAccordian] = useState([]);
   const [creditStatus, SetCreditStatus] = useState(false);
   const [tenantCreditCheckDetails, setTenantCreditCheckDetails] = useState({})
   const [creditcheckerror, setCreditCheckError] = useState(false)
+  const [isBtnLoading, setIsBtnLoading] = useState(false)
   const [creditCheckModal, SetCreditCheckModal] = useState({
     open: false,
     dimmer: undefined,
@@ -120,7 +96,7 @@ export default function TenantDetails() {
     zipCode: postalError,
     ssn: ssnError
 
-  } = TenantInfoError;
+  } = tenantInfoError;
 
   const {
     emergencyFname: fname_err,
@@ -129,14 +105,17 @@ export default function TenantDetails() {
 
   } = emergencyContactErr;
 
+  // useEffect(() => {
+  //   setEmergencyContactErr({ emergencyFname: '', emergencyEmail: '', emergencyPhoneNo: '' });
+  // }, []);
   useEffect(() => {
     var diff = (Date.now() - startdate) / 60000;
     if (diff > 40) {
       localStorage.setItem('nextpage', JSON.stringify(false))
     }
-    tenantInfo();
+    fetchTenantInfo();
     if (emergencyDetail) {
-      SetcontactAccordian(JSON.parse(emergencyDetail))
+      setContactAccordian(JSON.parse(emergencyDetail))
     }
   }, [])
 
@@ -157,226 +136,26 @@ export default function TenantDetails() {
 
   // Validation Functions
 
-  const validateEmergencyContactInfo = (value, field) => {
-    let message = "";
-    switch (field) {
-      case "emergencyFname":
-        if (!value) {
-          message = `${t("First Name is required")}`;
-        }
-        break;
-      case "emergencyEmail":
-        if (!value) {
-          message = `${t("Email is required")}`;
-        } else if (!/\S+@\S+.\S+/.test(value)) {
-          message = `${t("Email format must be example@mail.com")}`;
-        }
-        break;
-      case "emergencyPhoneNo":
-        if (!value) {
-          message = `${t("Phone Number is required")}`;
-        }
-        break;
-      default:
-        break;
-    }
-    setEmergencyContactErr({ ...emergencyContactErr, [field]: message });
-    return message;
-  };
 
-  const customfleldvalidate = (e) => {
+
+  const validateCustomFields = (e) => {
+    console.log("validateCustomFields");
     const fieldId = e.target.dataset.fieldid;
     const value = e.target.value;
     const isMandatory = e.target.dataset.required;
     if (!value && isMandatory === "true") {
       document.getElementById(fieldId).style.display = 'block';
+      return false;
     } else if (!value && isMandatory === "false") {
       document.getElementById(fieldId).style.display = 'none';
     } else {
       document.getElementById(fieldId).style.display = 'none';
     }
-  }
-  const validate = (field, value) => {
-    switch (field) {
-      case "firstName":
-        if (!value) {
-          setErrors({ ...errors, firstName: "First Name is required" });
-          return false;
-        }
-        setErrors({ ...errors, firstName: "" });
-        return true;
-      case "lastName":
-        if (!value) {
-          setErrors({ ...errors, lastName: "Last Name is required" });
-          return false;
-        }
-        setErrors({ ...errors, lastName: "" });
-        return true;
-      case "email":
-        if (!value) {
-          setErrors({ ...errors, email: "Email is required" });
-          return false;
-        }
-        setErrors({ ...errors, email: "" });
-        return true;
-      case "phoneNumber":
-        if (!value) {
-          setErrors({ ...errors, phoneNumber: "Phone Number is required" });
-          return false;
-        }
-        setErrors({ ...errors, phoneNumber: "" });
-        return true;
-      case "ssn":
-        if (!value) {
-          setErrors({ ...errors, ssn: "Social Security Number is required" });
-          return false;
-        }
-        setErrors({ ...errors, ssn: "" });
-        return true;
-      case "birthDate":
-        if (!value) {
-          setErrors({ ...errors, birthDate: "Date Of Birth is required" });
-          return false;
-        }
-        setErrors({ ...errors, birthDate: "" });
-        return true;
-      case "companyName":
-        if (BusinessUser && !value) {
-          setErrors({ ...errors, companyName: "Company Name is required" });
-          return false;
-        }
-        setErrors({ ...errors, companyName: "" });
-        return true;
-      default:
-        return false;
-    }
+    return true;
   };
 
-
-
-  // onChange Funcion
-  const onChangePhoneInput = (e, data) => {
-    setEmergencyContactDetails({ ...emergencyContactDetails, ['emergencyPhoneNo']: e });
-  }
-  const emergencyhandlechange = (e) => {
-    setEmergencyContactDetails({ ...emergencyContactDetails, [e.target.name]: e.target.value });
-  }
-
-  // OnCLick FUnctions
-  const addEmergencyContact = (e) => {
-    e.preventDefault();
-
-    const emergencyContactErr = { emergencyFname: '', emergencyEmail: '', emergencyPhoneNo: '' }
-    let isValid = true;
-
-    if (!emergencyContactDetails.emergencyFname &&
-      !emergencyContactDetails.emergencyEmail &&
-      !emergencyContactDetails.emergencyPhoneNo) {
-      return;
-    }
-
-    emergencyContactErr.emergencyFname = validateEmergencyContactInfo(emergencyContactDetails.emergencyFname, "FirstName");
-    isValid = emergencyContactErr.emergencyFname === '';
-
-    emergencyContactErr.emergencyEmail = validateEmergencyContactInfo(emergencyContactDetails.emergencyEmail, "Email");
-    isValid = isValid && emergencyContactErr.emergencyEmail === '';
-
-    emergencyContactErr.emergencyPhoneNo = validateEmergencyContactInfo(emergencyContactDetails.emergencyPhoneNo, "Phone No");
-    isValid = isValid && emergencyContactErr.emergencyPhoneNo === '';
-
-    if (!isValid) {
-      setEmergencyContactErr(emergencyContactErr);
-      return false
-    } else {
-      const newContactDetails = {
-        name: emergencyContactDetails.emergencyFname,
-        lname: emergencyContactDetails.emergencyname,
-        email: emergencyContactDetails.emergencyEmail,
-        phone: emergencyContactDetails.emergencyPhoneNo,
-        contactAccordianLength: contactAccordian.length + 1
-      }
-      SetcontactAccordian([...contactAccordian, newContactDetails]);
-
-      emergencyContactDetails.emergencyFname = '';
-      emergencyContactDetails.emergencyname = '';
-      emergencyContactDetails.emergencyEmail = '';
-      emergencyContactDetails.emergencyPhoneNo = '';
-
-      return true;
-    }
-  };
-
-  const removeEmergencyContact = (index) => {
-    const list = [...contactAccordian]
-    list.splice(index, 1);
-    SetcontactAccordian(list)
-  }
-
-  const profileImageUpload = (e) => {
-    e.preventDefault();
-    setPhotopath(null);
-    let img = e.target.files[0];
-    if (!img.name.match(/\.(jpg|jpeg|png|svg)$/)) {
-      alert('Please check the your file format,only jpg,jpeg,png,svg formats are supported')
-      return false;
-    }
-    if (img.size > 1000000) {
-      alert('Please make sure the file size is less than 1mb and try again')
-      return false;
-    }
-    setImageSize(img.size);
-    if (e.target.files && e.target.files[0]) {
-      setprofileImageSrc({ img: URL.createObjectURL(img) });
-      const blob = new Blob([img], { type: 'image/png' });
-      setblobImage(blob);
-      SetimguploadStatus(true);
-      saveTenantPhoto();
-
-    }
-
-  }
-
-  function saveTenantPhoto() {
-    const date = new Date();
-    let time = date.getTime();
-    let userId = localStorage.getItem('userid');
-    let file = new File([blobImage], `${userId}_.png`, { type: "image/png" });
-    let config = {
-      headers: {
-        "Authorization": `Bearer ${process.env.REACT_APP_ACCESS_TOKEN}`,
-        "Content-Type": `multipart/form-data; boundary=----${time}`,
-        "Content-Length": `${imagesize}`,
-        "accept": "application/json",
-        "Pragma": `no-cache`,
-        "Cache-Control": `no-cache`,
-        "Accept-Language": `en-US,en;q=0.9`,
-        "Accept-Encoding": `gzip, deflate, br`
-      }
-    };
-
-    let timestamp = new Date().getTime();
-
-    let fileName = `${userId}_${timestamp}.png`;
-
-    let uploadRequest = {
-      FileName: fileName,
-      FileData: file
-    }
-    instance.post(request.add_profile_picture + userId, uploadRequest, config).then(response => {
-      return response;
-    }).then(data => {
-      const profileResponse = data;
-    }).catch((err) => {
-      console.log(err);
-    })
-
-  }
-
-  const dateOfBirthChange = (e, date) => {
-    TenantInfoDetails['birthDate'] = date.value;
-
-  }
-  const checkCustomfieldValue = (e) => {
+  const checkCustomfieldValue = () => {
+    console.log("hello");
     let customValue = JSON.parse(localStorage.getItem(`CustomFieldsSetting`));
     let errorcount = 0;
 
@@ -413,24 +192,227 @@ export default function TenantDetails() {
           }
         }
       });
+    }
 
-      if (errorcount === 0) {
-        Array.prototype.push.apply(unitDetailCustomField, customFieldValue);
-        sessionStorage.setItem('customFieldstorage', JSON.stringify(unitDetailCustomField));
-        if (JSON.parse(nextpage) === false) {
-          creditCheckSettingsInformation();
-        } else {
-          navigateEsign(null);
-        }
-      }
-    } else {
-      if (JSON.parse(nextpage) === false) {
-        creditCheckSettingsInformation();
-      } else {
-        navigateEsign(null);
+    return errorcount;
+  };
+
+
+
+  const validatePersonalInfo = (details) => {
+    const { firstName, lastName, email, phoneNumber, ssn, birthDate, companyName, city, state, zipCode } = details;
+    const errors = {};
+    console.log(details);
+    if (!firstName) {
+      errors.firstName = "First Name is required";
+    }
+
+    if (!lastName) {
+      errors.lastName = "Last Name is required";
+    }
+
+    if (!email) {
+      errors.email = "Email is required";
+    }
+
+    if (!phoneNumber) {
+      errors.phoneNumber = "Phone Number is required";
+    }
+
+    if (!ssn) {
+      errors.ssn = "Social Security Number is required";
+    }
+
+    if (!birthDate) {
+      errors.birthDate = "Date Of Birth is required";
+    }
+    if (!city) {
+      errors.city = "City is required";
+    } 
+    if (!state) {
+      errors.state = "State is required";
+    }
+    if (!zipCode) {
+      errors.zipCode = "Zip Code is required";
+    }
+
+    if (BusinessUser && !companyName) {
+      errors.companyName = "Company Name is required";
+    }
+
+    setTenantInfoError(errors);
+
+    return Object.keys(errors).length === 0;
+  };
+
+
+
+  const validateEmergencyContactInfo = (details) => {
+    const { emergencyFname, emergencyLname, emergencyEmail, emergencyPhoneNo } = details;
+    const errors = {};
+
+    if (!emergencyFname) {
+      errors.emergencyFname = "First Name is required";
+    }
+
+    if (!emergencyEmail) {
+      errors.emergencyEmail = "Email is required";
+    } else if (!/\S+@\S+.\S+/.test(emergencyEmail)) {
+      errors.emergencyEmail = "Email format must be example@mail.com";
+    }
+
+    if (!emergencyPhoneNo) {
+      errors.emergencyPhoneNo = "Phone Number is required";
+    }
+
+    setEmergencyContactErr(errors);
+
+    return Object.keys(errors).length === 0;
+  };
+
+
+
+
+
+  // onChange Funcion
+  const onChangePhoneInput = (e, data) => {
+    setEmergencyContactDetails({ ...emergencyContactDetails, ['emergencyPhoneNo']: e });
+  }
+  const emergencyhandlechange = (e) => {
+    setEmergencyContactDetails({ ...emergencyContactDetails, [e.target.name]: e.target.value });
+  }
+
+  // OnClick Functions
+
+  // const addEmergencyContact = (e) => {
+  //   e.preventDefault();
+
+  //   const isValid = validateEmergencyContactInfo(emergencyContactDetails);
+  //   if (!isValid) {
+  //     return false;
+  //   }
+
+  //   const newContactDetails = {
+  //     name: emergencyContactDetails.emergencyFname,
+  //     lname: emergencyContactDetails.emergencyLname,
+  //     email: emergencyContactDetails.emergencyEmail,
+  //     phone: emergencyContactDetails.emergencyPhoneNo,
+  //     contactAccordianLength: contactAccordian.length + 1
+  //   };
+
+  //   setContactAccordian([...contactAccordian, newContactDetails]);
+  //   // setEmergencyContactDetails({
+  //   //   emergencyFname: '',
+  //   //   emergencyLname: '',
+  //   //   emergencyEmail: '',
+  //   //   emergencyPhoneNo: '',
+  //   // });
+
+  //   return true;
+  // };
+
+  const addEmergencyContact = (data) => {
+    if (data !== "next") {
+      const isValid = validateEmergencyContactInfo(emergencyContactDetails);
+      if (!isValid) {
+        return false;
       }
     }
+
+    const newContactDetails = {
+      name: emergencyContactDetails.emergencyFname,
+      lname: emergencyContactDetails.emergencyLname,
+      email: emergencyContactDetails.emergencyEmail,
+      phone: emergencyContactDetails.emergencyPhoneNo,
+      contactAccordianLength: contactAccordian.length + 1
+    };
+
+    setContactAccordian(prevState => [...prevState, newContactDetails]);
+    setEmergencyContactDetails({
+      emergencyFname: '',
+      emergencyLname: '',
+      emergencyEmail: '',
+      emergencyPhoneNo: '',
+    });
+
+    return true;
   };
+
+
+
+
+  const removeEmergencyContact = (index) => {
+    const list = [...contactAccordian]
+    list.splice(index, 1);
+    setContactAccordian(list)
+  }
+
+  const handleFileSelect = (e) => {
+    e.preventDefault();
+    if (e.target.files && e.target.files[0]) {
+      const reader = new FileReader();
+      reader.readAsDataURL(e.target.files[0]);
+      reader.onload = () => setPreviewSrc(reader.result);
+      setFile(e.target.files[0]);
+      SetimguploadStatus(true);
+      // saveTenantPhoto();
+    }
+  }
+
+  async function saveTenantPhoto() {
+    const userId = localStorage.getItem("userid");
+    console.log(file);
+    if (!file) {
+      toast.error("Please select a file", {
+        position: "top-right",
+        autoClose: 3000,
+        duration: 100,
+        hideProgressBar: false,
+        closeOnClick: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        toastId: "profilePhoto"
+      });
+      return;
+    }
+    const timestamp = new Date().getTime();
+    const fileName = `${userId}_${timestamp}.png`;
+
+    const data = new FormData();
+    data.append("FileData", file);
+    data.append("FileName", fileName);
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${process.env.REACT_APP_ACCESS_TOKEN}`,
+        maxBodyLength: Infinity,
+        accept: "application/json",
+        Pragma: "no-cache",
+        "Cache-Control": "no-cache",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Content-Type": `multipart/form-data; boundary=${data._boundary}`
+      },
+      data
+    };
+    try {
+      const response = await instance.post(
+        `${request.add_profile_picture}${userId}`,
+        data,
+        config
+      );
+      console.log(response.data);
+      // TODO: handle successful response
+    } catch (error) {
+      console.error(error);
+      // TODO: handle error
+    }
+  }
+
+
+  const dateOfBirthChange = (e, date) => {
+    TenantInfoDetails['birthDate'] = date.value;
+  }
 
   const oAuthTokenGeneration = async () => {
     const currentTimestamp = new Date().getTime() / 1000;
@@ -476,7 +458,7 @@ export default function TenantDetails() {
 
 
 
-  const creditCheckSettingsInformation = async () => {
+  const creditCheckSettingsInformation = async (e) => {
     setIsLoading(true)
     oAuthTokenGeneration()
     const requestBody = {
@@ -494,7 +476,7 @@ export default function TenantDetails() {
     };
     try {
       const response = await axios.post('https://usuat-sixverifier-api.8storage.com/integration', requestBody, creditCheckConfig);
-      setCreditCheckSettingData(response.data)
+      // setCreditCheckSettingData(response.data)
       console.log(response.data);
       if (response.data.status === 200 && response.data.body.is_enabled_in_booking_portal) {
         if (response.data.body.enable_in_booking_portal_for == "BUSINESS" && BusinessUser) {
@@ -509,7 +491,8 @@ export default function TenantDetails() {
         }
       } else {
         console.log("Continue with Normal Move-in");
-        navigateEsign()
+        navigate('/preBooking/esignPayment');
+        return true
       }
       setIsLoading(false);
     } catch (error) {
@@ -518,136 +501,60 @@ export default function TenantDetails() {
     }
   };
 
-  const navigateEsign = (e) => {
+  const navigateEsign = async (e) => {
     if (typeof e !== 'undefined' && e !== null) {
       e.preventDefault();
     }
-    updateTenantInfo();
-    // navigate('/preBooking/esignPayment');
-    sessionStorage.setItem('customFieldstorage', JSON.stringify(unitDetailCustomField));
-    leaseProfileSave(unitDetailCustomField)
+    // await updateTenantInfo();
+    navigate('/preBooking/esignPayment');
+    // sessionStorage.setItem('customFieldstorage', JSON.stringify(unitDetailCustomField));
+    // leaseProfileSave(unitDetailCustomField)
   };
 
 
-  const leaseProfileSave = (customfield) => {
-    let emergencyContactArray = [];
-    if (contactAccordian.length > 0) {
-      sessionStorage.setItem('emergencyDetail', JSON.stringify(contactAccordian));
-      contactAccordian.forEach((item) => {
-        emergencyContactArray.push({
-          id: null,
-          firstName: item.name,
-          lastName: item.lname,
-          email: item.email,
-          mobile: item.phone
-        })
-      })
-
-    } else {
-      emergencyContactArray = [];
-    }
+  const fetchTenantInfo = async () => {
+    setIsLoading(true);
     let config = {
       headers: {
         "Content-Type": "application/json",
       },
     };
-    let requestbody = {
-      profileAddress: {
-        id: null,
-        addressLineOne: TenantInfoDetails.addressLineOne,
-        addressLineTwo: TenantInfoDetails.addressLineTwo,
-        country: TenantInfoDetails.country,
-        state: TenantInfoDetails.state,
-        city: TenantInfoDetails.city,
-        zipCode: TenantInfoDetails.zipCode
-      },
-      companyDetails: BusinessUser ? companyDetail : {},
-      deliveryAddress: {},
-      customFields: customfield ? customfield : [],
-      emergencyContact: emergencyContactArray,
-      id: leaseProfileId ? leaseProfileId : "",
-      tenantId: userid,
-      firstName: TenantInfoDetails.firstName,
-      lastName: TenantInfoDetails.lastName,
-      email: TenantInfoDetails.email,
-      isBusinessUser: BusinessUser,
-      phoneNumberOne: TenantInfoDetails.phoneNumber,
-      dob: TenantInfoDetails.birthDate,
-      preferredStorage: preferredStorageValue
-    }
-    instance
-      .post(request.lease_profile, requestbody, config)
-      .then(response => {
-        if (response.data.result !== null && response.data.result !== 'undefined') {
-          sessionStorage.setItem("leaseProfileid", response.data.result);
-          navigate('/preBooking/esignPayment')
-          //checkCustomfieldValue();
+    let tenantinfodata = {
+      userId: userid,
+    };
+    try {
+      const response = await instance.get(
+        request.tenant_details + "/" + userid,
+        tenantinfodata,
+        config
+      );
+      const tenantInfoGetdata = response.data;
+      if (
+        typeof tenantInfoGetdata !== "undefined" &&
+        tenantInfoGetdata !== null &&
+        tenantInfoGetdata !== ""
+      ) {
+        const tenantInfoGetresult = tenantInfoGetdata.result;
+        if (
+          typeof tenantInfoGetresult !== "undefined" &&
+          tenantInfoGetresult !== null & tenantInfoGetresult !== ""
+        ) {
+          sessionStorage.setItem("tenantInfo", JSON.stringify(tenantInfoGetresult));
+          let tenantMovinData = JSON.parse(sessionStorage.getItem("tenantInfo"));
+          setTenantInfoDetails(tenantMovinData);
+          setPreviewSrc(tenantInfoGetresult.photoPath);
         }
-      })
-      .catch(error => {
-        console.log(error)
-
-      })
+      }
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+    }
   };
 
-  const tenantInfo = () => {
-    let config = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-    let tenantinfodata;
-    tenantinfodata = {
-      userId: userid
-    }
-    instance
-      .get(request.tenant_details + '/' + userid, tenantinfodata, config)
-      .then((response) => {
-        const tenantInfoGetdata = response.data;
-        if (typeof tenantInfoGetdata !== "undefined" && tenantInfoGetdata !== null && tenantInfoGetdata !== "") {
-          const tenantInfoGetresult = tenantInfoGetdata.result;
-          if (typeof tenantInfoGetresult !== "undefined" && tenantInfoGetresult !== null & tenantInfoGetresult !== "") {
-            sessionStorage.setItem("tenantInfo", JSON.stringify(tenantInfoGetresult));
-            let tenantMovinData = JSON.parse(sessionStorage.getItem("tenantInfo"));
-            setTenantInfoDetails(tenantMovinData);
-            setPhotopath(tenantInfoGetresult.photoPath);
-          }
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
 
-  function updateTenantInfo() {
-    let config = {
-      headers: {
-        "Content-Type": "application/json"
-      }
-    };
-    let requestBody = {
-      firstName: TenantInfoDetails.firstName,
-      lastName: TenantInfoDetails.lastName,
-      dateOfBirth: TenantInfoDetails.birthDate,
-      addressLine1: TenantInfoDetails.addressLineOne,
-      addressLine2: TenantInfoDetails.addressLineTwo,
-      city: TenantInfoDetails.city,
-      country: TenantInfoDetails.country,
-      state: TenantInfoDetails.state,
-      postalCode: TenantInfoDetails.zipCode,
-      email: TenantInfoDetails.email,
-      phoneNumber: TenantInfoDetails.phoneNumber,
-      ssn: TenantInfoDetails.ssn
-    };
-    instance.post(request.update_user_info + `/${userid}`, requestBody, config).then((response) => {
-      const userUpdateResponse = response.data.data;
-      if (customFieldAccess && customFieldAccess.length > 0) {
-        checkCustomfieldValue();
-      } else {
-        leaseProfileSave()
-      }
-    })
-  }
+
+
 
   const customhandlechange = (e, data, checkfield) => {
     // setInputValue({"id":e.target.id,"":e.target.})
@@ -668,11 +575,11 @@ export default function TenantDetails() {
         document.getElementById(`${data.fieldId}`).style.display = "none";
       }
     }
-    customValues = {
-      value: e.target.value,
-      unitId: e.target.dataset.unitid,
-      fieldId: e.target.dataset.fieldid,
-    }
+    // customValues = {
+    //   value: e.target.value,
+    //   unitId: e.target.dataset.unitid,
+    //   fieldId: e.target.dataset.fieldid,
+    // }
     const index = customFieldValue.findIndex(object => {
       return object.fieldId === e.target.dataset.fieldid
     })
@@ -725,29 +632,15 @@ export default function TenantDetails() {
     }
   };
 
-  const submitTenantInfo = (e) => {
-    e.preventDefault();
-    let isValid = true;
-    const fields = ["firstName", "lastName", "email", "phoneNumber", "ssn", "birthDate"];
-    fields.forEach((field) => {
-      if (!validate(field, TenantInfoDetails[field])) {
-        isValid = false;
-      }
-    });
-    if (isValid) {
-      checkCustomfieldValue();
-    }
-  };
-
-  const proceedCreditCheck = (e) => {
+  const proceedCreditCheck = async (e) => {
     e.preventDefault()
-    updateTenantInfo();
+    await updateTenantInfo();
     setCreditCheckLoader(true);
     const requestBody = {
       country_code: "NOR",
       event_type: "CREDIT_CHECK_ENQUIRY",
-      // identity_number: ssn.current.value, 24014021406
-      identity_number: "24014021406",
+      identity_number: TenantInfoDetails.ssn,
+      // identity_number: "24014021406",
       initiated_by: `${TenantInfoDetails.firstName} ${TenantInfoDetails.lastName}`,
       request_from: "BOOKING_PORTAL",
       tenant_id: `${userid}`,
@@ -765,7 +658,7 @@ export default function TenantDetails() {
       },
     };
 
-    axios.post('https://usuat-sixverifier-api.8storage.com/creditcheck', requestBody, creditCheckConfig)
+    await axios.post('https://usuat-sixverifier-api.8storage.com/creditcheck', requestBody, creditCheckConfig)
       .then(response => {
         return response;
       }).then(result => {
@@ -795,67 +688,6 @@ export default function TenantDetails() {
         setCreditCheckError(true);
       })
     return;
-  }
-
-  const checkCreditScore = () => {
-    const TenantInfoError = {
-      firstName: "",
-      lastName: "",
-      email: "",
-      phoneNumber: "",
-      addressLineOne: "",
-      city: "",
-      state: "",
-      zipCode: ""
-    }
-    let isValid = true;
-    if (!TenantInfoDetails.firstName) {
-      TenantInfoError.firstName = `${t("First Name is Required")}`;
-      isValid = false;
-    }
-    if (!TenantInfoDetails.lastName) {
-      TenantInfoError.lastName = `${t("Last Name is Required")}`;
-      isValid = false;
-    }
-    if (!TenantInfoDetails.addressLineOne) {
-      TenantInfoError.addressLineOne = `${t("Address is Required")}`;
-      isValid = false;
-    }
-    if (!TenantInfoDetails.city) {
-      TenantInfoError.city = `${t("City is Required")}`;
-      isValid = false;
-    }
-    if (!TenantInfoDetails.zipCode) {
-      TenantInfoError.zipCode = `${t("Zipcode is Required")}`;
-      isValid = false;
-    }
-    if (!TenantInfoDetails.state) {
-      TenantInfoError.state = "State is Required";
-      isValid = false;
-    }
-
-    if (BusinessUser) {
-      let companyErrormessage = document.getElementById("companyname");
-      if (companyName.current.value === '') {
-        companyErrormessage.classList.remove('d-none')
-        isValid = false
-      } else {
-        companyDetail = { companyName: companyName.current.value };
-        sessionStorage.setItem("companyDetail", JSON.stringify(companyDetail));
-        companyErrormessage.classList.add('d-none');
-
-      }
-      // if(companyRegistrationNumber.current.value == ''){
-      //   isValid = false
-      // }
-    }
-
-    if (!isValid) {
-      setTenantInfoError(TenantInfoError);
-    } else {
-      checkCustomfieldValue
-      SetCreditCheckModal({ open: true })
-    }
   }
 
   const bindCustomFieldValue = () => {
@@ -888,395 +720,537 @@ export default function TenantDetails() {
     })
   }
 
+  const leaseProfileSave = async (customfield) => {
+    console.log("leaseProfileSave", contactAccordian);
+    setIsBtnLoading(true)
+    addEmergencyContact("next")
+    try {
+      let emergencyContactArray = [];
+      if (contactAccordian.length > 0) {
+        console.log("emergencyDetail");
+        sessionStorage.setItem('emergencyDetail', JSON.stringify(contactAccordian));
+        contactAccordian.forEach((item) => {
+          emergencyContactArray.push({
+            id: null,
+            firstName: item.name,
+            lastName: item.lname,
+            email: item.email,
+            mobile: item.phone
+          })
+        })
+      } else {
+        emergencyContactArray = [];
+      }
+
+      let config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+
+      let requestbody = {
+        profileAddress: {
+          id: null,
+          addressLineOne: TenantInfoDetails.addressLineOne,
+          addressLineTwo: TenantInfoDetails.addressLineTwo,
+          country: TenantInfoDetails.country,
+          state: TenantInfoDetails.state,
+          city: TenantInfoDetails.city,
+          zipCode: TenantInfoDetails.zipCode
+        },
+        companyDetails: BusinessUser ? companyDetail : {},
+        deliveryAddress: {},
+        customFields: customfield ? customfield : [],
+        emergencyContact: emergencyContactArray,
+        id: leaseProfileId ? leaseProfileId : "",
+        tenantId: userid,
+        firstName: TenantInfoDetails.firstName,
+        lastName: TenantInfoDetails.lastName,
+        email: TenantInfoDetails.email,
+        isBusinessUser: BusinessUser,
+        phoneNumberOne: TenantInfoDetails.phoneNumber,
+        dob: TenantInfoDetails.birthDate,
+        preferredStorage: preferredStorageValue
+      }
+
+      const response = await instance.post(request.lease_profile, requestbody, config);
+
+      if (response.data.result !== null && response.data.result !== 'undefined') {
+        sessionStorage.setItem("leaseProfileid", response.data.result);
+        // navigate('/preBooking/esignPayment')
+        //checkCustomfieldValue();
+        setIsBtnLoading(false)
+      }
+    } catch (error) {
+      console.log(error);
+      // Handle errors here
+      setIsBtnLoading(false)
+    }
+  };
+
+
+  const navigateToPayNowPage = async (e) => {
+    // step 1: Initialize errorcount to zero
+    let errorcount = 0;
+
+    // step 2: Perform validations
+    console.log(contactAccordian.length);
+    if (!contactAccordian.length) {
+      if (!validateEmergencyContactInfo(emergencyContactDetails)) {
+        errorcount++
+      }
+    }
+
+    const customFieldsErrorCount = checkCustomfieldValue();
+    if (customFieldsErrorCount > 0) {
+      errorcount += customFieldsErrorCount;
+    } else {
+      errorcount = 0
+    }
+
+    if (!validatePersonalInfo(TenantInfoDetails)) {
+      errorcount++;
+      console.log(errorcount);
+    }
+
+    // step 3: Return if there are errors
+    if (errorcount > 0) {
+      return;
+    }
+    // step 2: Update and Proceed next step
+    await updateTenantInfo()
+  }
+
+  const updateTenantInfo = async () => {
+    await saveTenantPhoto();
+    const config = {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    };
+    const requestBody = {
+      firstName: TenantInfoDetails.firstName,
+      lastName: TenantInfoDetails.lastName,
+      dateOfBirth: TenantInfoDetails.birthDate,
+      addressLine1: TenantInfoDetails.addressLineOne,
+      addressLine2: TenantInfoDetails.addressLineTwo,
+      city: TenantInfoDetails.city,
+      country: TenantInfoDetails.country,
+      state: TenantInfoDetails.state,
+      postalCode: TenantInfoDetails.zipCode,
+      email: TenantInfoDetails.email,
+      phoneNumber: TenantInfoDetails.phoneNumber,
+      ssn: TenantInfoDetails.ssn
+    };
+    const response = await instance.post(request.update_user_info + `/${userid}`, requestBody, config);
+    const userUpdateResponse = response.data.data;
+    await leaseProfileSave(sessionStorage.getItem('customFieldstorage'));
+    await creditCheckSettingsInformation();
+  };
+
+  const handleInputKeyDown = (event) => {
+    console.log(event);
+    const pattern = /^[0-9\b]+$/;
+    const mathSymbols = /[-+*/^()]/;
+    const inputChar = String.fromCharCode(event.keyCode);
+
+  if (!pattern.test(inputChar) || mathSymbols.test(inputChar)) {
+    event.preventDefault();
+  }
+  };
+
   return (
     <>
-      <PreBookingBreadcrumb activeStep='123' />
-      <div className="ui container bg-white card-boxshadow border-radius-15 py-2">
+      <div>
+        {isLoading ? (
+          <Loader size='large' active>{t("Loading")}</Loader>
+        ) :
+          (
+            <div>
+              <PreBookingBreadcrumb activeStep='123' />
+              <div className="ui container bg-white card-boxshadow border-radius-15 py-2">
 
-        <h6 className='text-dark dashed-bottom fw-500 fs-6 px-4 py-2 px-sm-2 mb-2'><svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="25"
-          height="25"
-          viewBox="0 0 39.333 39.248"
-        >
-          <g fill="#328128" data-name="Tenant Details" transform="translate(.05)">
-            <path
-              d="M42.311 38h.614a11.61 11.61 0 011.043.622q4.108 3.053 8.2 6.123c.077.057.162.1.307.195v-3.918a.972.972 0 011.107-1.105h3.339c.955 0 1.255.3 1.255 1.263 0 2.541.007 5.082-.008 7.622a.774.774 0 00.373.717c.648.456 1.257.969 1.912 1.412a3.812 3.812 0 011.831 2.474v.689l-.084.291a2.883 2.883 0 01-2.329 2.274 8.343 8.343 0 01-1.695-.019v17.488c0 .2 0 .41-.015.614a2.635 2.635 0 01-2.654 2.5q-12.883.01-25.768-.008a2.733 2.733 0 01-1.15-.264 2.639 2.639 0 01-1.53-2.61q.009-8.661 0-17.324v-.5l-.329.09a2.856 2.856 0 01-3.262-1.262 7.936 7.936 0 01-.518-1.264v-.689a3.967 3.967 0 011.8-2.452Q32.905 44.9 41.023 38.8c.405-.3.858-.533 1.288-.8zm.268 38.022h12.673a1.48 1.48 0 001.691-1.692q0-9.141.005-18.282a.634.634 0 00-.28-.575q-6.814-5.107-13.612-10.241a.618.618 0 00-.877 0q-6.8 5.131-13.612 10.241a.632.632 0 00-.28.574q.009 9.142.005 18.282a1.478 1.478 0 001.691 1.692zM59.242 55.59l.045-.093a1.731 1.731 0 001.689-1.3 1.667 1.667 0 00-.732-1.865l-17.1-12.8c-.518-.387-.518-.386-1.016-.013l-9.585 7.169q-3.783 2.826-7.561 5.656a1.659 1.659 0 00-.756 1.685 1.707 1.707 0 002.788 1.095q4.223-3.161 8.435-6.336l6.042-4.542a1.646 1.646 0 012.269 0c.216.161.43.323.644.484q6.882 5.17 13.769 10.337a6.473 6.473 0 001.069.523zM53.7 41.157v.452c0 1.137.041 2.276-.016 3.409a1.4 1.4 0 00.7 1.41c.861.564 1.662 1.219 2.535 1.87v-7.141z"
-              data-name="Path 15970"
-              transform="translate(-23 -38)"
-            ></path>
-            <path
-              d="M197.934 311.061h-.266l-.034-.007a2.151 2.151 0 01-.991-.307 2.244 2.244 0 01-1.077-1.56c-.015-.085-.024-.172-.035-.258v-.265a.348.348 0 01.008-.047c.014-.1.023-.2.043-.294a2.269 2.269 0 113.923 1.969 2.229 2.229 0 01-1.313.738c-.086.011-.173.019-.258.031zm-.487-1.9l-.249-.228c-.126-.114-.248-.232-.379-.341a.217.217 0 00-.346.117.236.236 0 00.082.243l.734.668a.227.227 0 00.348-.009l1.41-1.4a.444.444 0 00.037-.039.226.226 0 00-.029-.318.2.2 0 00-.034-.025.23.23 0 00-.293.053l-1.245 1.245-.037.035z"
-              data-name="Path 15971"
-              transform="translate(-177.906 -279.022)"
-            ></path>
-            <path
-              d="M145 202.189c.059.03.111.057.164.081a8.479 8.479 0 015.153 6.759 15.238 15.238 0 01.085 2.1.816.816 0 01-.731.79 1.727 1.727 0 01-.262.015h-15.266a.88.88 0 01-.988-.768 9.347 9.347 0 01.666-4.317 8.608 8.608 0 014.571-4.584c.043-.018.087-.035.13-.055.01 0 .017-.019.035-.041a5.125 5.125 0 01-1.946-4.366 5.018 5.018 0 011.689-3.54 5.193 5.193 0 116.7 7.927zm3.7 8.009a6.738 6.738 0 00-3.443-5.94 6.6 6.6 0 00-7.6.419 6.671 6.671 0 00-2.8 5.518zm-3.477-12.098a3.446 3.446 0 10-1 2.454 3.45 3.45 0 001-2.454z"
-              data-name="Path 15972"
-              transform="translate(-121.901 -177.054)"
-            ></path>
-          </g>
-        </svg>
-          <span className='veritical-align-text-top ml-1'>{t("Tenant Details")}</span></h6>
-        <div className="row reverse-sm">
-          <div className="col-12 col-md-6 ui form">
-            <div className="col-12 px-4 px-sm-2">
-              <div className="field w-100  my-3">
-                <label className='fw-500 fs-7 mb-2'>{t("First Name")}<i className="text-danger ">*</i></label>
-                <input type='text' placeholder={t('Enter First Name')} name="firstName" value={TenantInfoDetails.firstName} onChange={(e) => handlechange(e)} onBlur={() => validate("firstName", TenantInfoDetails.firstName)} />
-                {/* <div className="text-danger mt-1">{fname_Data}</div> */}
-                {errors.firstName && <p className="text-danger mt-1">{errors.firstName}</p>}
+                <h6 className='text-dark dashed-bottom fw-500 fs-6 px-4 py-2 px-sm-2 mb-2'><svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="25"
+                  height="25"
+                  viewBox="0 0 39.333 39.248"
+                >
+                  <g fill="#328128" data-name="Tenant Details" transform="translate(.05)">
+                    <path
+                      d="M42.311 38h.614a11.61 11.61 0 011.043.622q4.108 3.053 8.2 6.123c.077.057.162.1.307.195v-3.918a.972.972 0 011.107-1.105h3.339c.955 0 1.255.3 1.255 1.263 0 2.541.007 5.082-.008 7.622a.774.774 0 00.373.717c.648.456 1.257.969 1.912 1.412a3.812 3.812 0 011.831 2.474v.689l-.084.291a2.883 2.883 0 01-2.329 2.274 8.343 8.343 0 01-1.695-.019v17.488c0 .2 0 .41-.015.614a2.635 2.635 0 01-2.654 2.5q-12.883.01-25.768-.008a2.733 2.733 0 01-1.15-.264 2.639 2.639 0 01-1.53-2.61q.009-8.661 0-17.324v-.5l-.329.09a2.856 2.856 0 01-3.262-1.262 7.936 7.936 0 01-.518-1.264v-.689a3.967 3.967 0 011.8-2.452Q32.905 44.9 41.023 38.8c.405-.3.858-.533 1.288-.8zm.268 38.022h12.673a1.48 1.48 0 001.691-1.692q0-9.141.005-18.282a.634.634 0 00-.28-.575q-6.814-5.107-13.612-10.241a.618.618 0 00-.877 0q-6.8 5.131-13.612 10.241a.632.632 0 00-.28.574q.009 9.142.005 18.282a1.478 1.478 0 001.691 1.692zM59.242 55.59l.045-.093a1.731 1.731 0 001.689-1.3 1.667 1.667 0 00-.732-1.865l-17.1-12.8c-.518-.387-.518-.386-1.016-.013l-9.585 7.169q-3.783 2.826-7.561 5.656a1.659 1.659 0 00-.756 1.685 1.707 1.707 0 002.788 1.095q4.223-3.161 8.435-6.336l6.042-4.542a1.646 1.646 0 012.269 0c.216.161.43.323.644.484q6.882 5.17 13.769 10.337a6.473 6.473 0 001.069.523zM53.7 41.157v.452c0 1.137.041 2.276-.016 3.409a1.4 1.4 0 00.7 1.41c.861.564 1.662 1.219 2.535 1.87v-7.141z"
+                      data-name="Path 15970"
+                      transform="translate(-23 -38)"
+                    ></path>
+                    <path
+                      d="M197.934 311.061h-.266l-.034-.007a2.151 2.151 0 01-.991-.307 2.244 2.244 0 01-1.077-1.56c-.015-.085-.024-.172-.035-.258v-.265a.348.348 0 01.008-.047c.014-.1.023-.2.043-.294a2.269 2.269 0 113.923 1.969 2.229 2.229 0 01-1.313.738c-.086.011-.173.019-.258.031zm-.487-1.9l-.249-.228c-.126-.114-.248-.232-.379-.341a.217.217 0 00-.346.117.236.236 0 00.082.243l.734.668a.227.227 0 00.348-.009l1.41-1.4a.444.444 0 00.037-.039.226.226 0 00-.029-.318.2.2 0 00-.034-.025.23.23 0 00-.293.053l-1.245 1.245-.037.035z"
+                      data-name="Path 15971"
+                      transform="translate(-177.906 -279.022)"
+                    ></path>
+                    <path
+                      d="M145 202.189c.059.03.111.057.164.081a8.479 8.479 0 015.153 6.759 15.238 15.238 0 01.085 2.1.816.816 0 01-.731.79 1.727 1.727 0 01-.262.015h-15.266a.88.88 0 01-.988-.768 9.347 9.347 0 01.666-4.317 8.608 8.608 0 014.571-4.584c.043-.018.087-.035.13-.055.01 0 .017-.019.035-.041a5.125 5.125 0 01-1.946-4.366 5.018 5.018 0 011.689-3.54 5.193 5.193 0 116.7 7.927zm3.7 8.009a6.738 6.738 0 00-3.443-5.94 6.6 6.6 0 00-7.6.419 6.671 6.671 0 00-2.8 5.518zm-3.477-12.098a3.446 3.446 0 10-1 2.454 3.45 3.45 0 001-2.454z"
+                      data-name="Path 15972"
+                      transform="translate(-121.901 -177.054)"
+                    ></path>
+                  </g>
+                </svg>
+                  <span className='veritical-align-text-top ml-1'>{t("Tenant Details")}</span></h6>
+                <div className="row reverse-sm">
+                  <div className="col-12 col-md-6 ui form">
+                    <div className="col-12 px-4 px-sm-2">
+                      <div className="field w-100  my-3">
+                        <label className='fw-500 fs-7 mb-2'>{t("First Name")}<i className="text-danger ">*</i></label>
+                        <input type='text' placeholder={t('Enter First Name')} name="firstName" value={TenantInfoDetails.firstName} onChange={(e) => handlechange(e)} onBlur={() => validatePersonalInfo(TenantInfoDetails)} />
+                        {/* <div className="text-danger mt-1">{fname_Data}</div> */}
+                        {tenantInfoError.firstName && <p className="text-danger mt-1">{tenantInfoError.firstName}</p>}
 
-              </div>
-            </div>
-            <div className="col-12  px-4 px-sm-2">
-              <div className="field w-100  my-3">
-                <label className='fw-500 fs-7 mb-2'>{t("Last Name")}<i className="text-danger ">*</i></label>
-                <input type='text' placeholder={t('Enter Last Name')} name="lastName" value={TenantInfoDetails.lastName} onChange={(e) => handlechange(e)} onBlur={() => validate("lastName", TenantInfoDetails.lastName)} />
-                {/* <div className="text-danger mt-1">{lastNameError}</div> */}
-                {errors.lastName && <p className="text-danger mt-1">{errors.lastName}</p>}
+                      </div>
+                    </div>
+                    <div className="col-12  px-4 px-sm-2">
+                      <div className="field w-100  my-3">
+                        <label className='fw-500 fs-7 mb-2'>{t("Last Name")}<i className="text-danger ">*</i></label>
+                        <input type='text' placeholder={t('Enter Last Name')} name="lastName" value={TenantInfoDetails.lastName} onChange={(e) => handlechange(e)} onBlur={() => validatePersonalInfo(TenantInfoDetails)} />
+                        {/* <div className="text-danger mt-1">{lastNameError}</div> */}
+                        {tenantInfoError.lastName && <p className="text-danger mt-1">{tenantInfoError.lastName}</p>}
 
-              </div>
-            </div>
-          </div>
-          <div className="col-12 col-md-6 d-flex justify-content-center mb-2">
-            <div className="position-relative">
-              {imguploadStatus &&
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-12 col-md-6 d-flex justify-content-center mb-2">
+                    <div className="edit-profile-img position-relative">
+                      {/* <img src={profileImageSrc && profileImageSrc.length > 0 ? profileImageSrc : '/assets/images/profile_.png'} className="ui medium circular image object-fit-cover TenantDetailsProfileImage mx-auto" id="tenantProfileImage" alt="Profile" /> */}
+                      {console.log(previewSrc)}
+                      {previewSrc ? (
+                        <Image src={previewSrc} className="ui medium circular image object-fit-cover TenantDetailsProfileImage mx-auto" id="tenantProfileImage" alt="Profile" />
+                      ) : (
+                        <Image src='/assets/images/userDemoProfile.svg' className="ui medium circular image object-fit-cover TenantDetailsProfileImage mx-auto" id="tenantProfileImage" alt="Profile" />
+                      )}
+                      <div className="edit-icon position-absolute text-center l-18 r-0 t-1">
+                        <label className="cursor-pointer" htmlFor='handleFileSelect'>
+                          <img width='50' height='50' className="" src="/assets/images/edit-photo.svg" alt="Edit" />
+                        </label>
+                        <input id='handleFileSelect' onChange={e => handleFileSelect(e)} type="file" hidden />
+                      </div>
+                    </div>
+                  </div>
 
-                <label className="position-absolute r-0 t-1 z-index-1 cursor-pointer" htmlFor="photoUpload"><img width='50' height='50' className="" alt="Edit Photo" src="/assets/images/edit-photo.svg" /></label>
-              }
-              {photoPath ?
-                <Image className="TenantDetailsProfileImage object-fit-cover" src={photoPath} size='medium' circular />
-                : <Image className="TenantDetailsProfileImage object-fit-cover" src={profileImageSrc.img} size='medium' circular />
-              }
+                </div>
+                <div className="row ui form mb-1">
+                  <div className="col-12  col-md-6  px-4 px-sm-2">
+                    <div className="field datePicker w-100 my-3">
+                      <label className='fw-500 fs-7 mb-2' >{t("Date of Birth")}<i className="text-danger ">*</i></label>
+                      <SemanticDatepicker
+                        datePickerOnly
+                        placeholder={t('Select date')}
+                        name="birthDate"
+                        className="w-100"
+                        format="DD-MM-YYYY"
+                        value={TenantInfoDetails.birthDate ? new Date(TenantInfoDetails.birthDate) : TenantInfoDetails.birthDate}
+                        minDate={minDate}
+                        maxDate={new Date()}
+                        onChange={dateOfBirthChange}
+                      />
+                      {tenantInfoError.birthDate && <p className="text-danger mt-1">{tenantInfoError.birthDate}</p>}
 
-              <div className="text-center mt-1">
-                {!imguploadStatus &&
-                  <label htmlFor="photoUpload" className="text-success fw-500 cursor-pointer">{t("Upload Photo")}</label>
-                }
-                <input id='photoUpload' onChange={e => profileImageUpload(e)} type="file" hidden />
-              </div>
-            </div>
-          </div>
+                    </div>
+                  </div>
+                  <div className="col-12  col-md-6  px-4 px-sm-2">
+                    <div className="field w-100  my-3">
+                      <label className='fw-500 fs-7 mb-2'>{t("Email Address")} <i className="text-danger ">*</i></label>
+                      <input disabled type='email' placeholder={t('Enter Email Address')} name="email" value={TenantInfoDetails.email} onChange={(e) => handlechange(e)} onBlur={() => validatePersonalInfo(TenantInfoDetails)} />
+                      {tenantInfoError.email && <p className="text-danger mt-1">{tenantInfoError.email}</p>}
 
-        </div>
-        <div className="row ui form mb-1">
-          <div className="col-12  col-md-6  px-4 px-sm-2">
-            <div className="field datePicker w-100 my-3">
-              <label className='fw-500 fs-7 mb-2' >{t("Date of Birth")}</label>
-              <SemanticDatepicker
-                datePickerOnly
-                placeholder={t('Select date')}
-                name="birthDate"
-                className="w-100"
-                format="DD-MM-YYYY"
-                value={TenantInfoDetails.birthDate ? new Date(TenantInfoDetails.birthDate) : TenantInfoDetails.birthDate}
-                minDate={minDate}
-                onChange={dateOfBirthChange}
-              />
-
-            </div>
-          </div>
-          <div className="col-12  col-md-6  px-4 px-sm-2">
-            <div className="field w-100  my-3">
-              <label className='fw-500 fs-7 mb-2'>{t("Email Address")} <i className="text-danger ">*</i></label>
-              <input disabled type='email' placeholder={t('Enter Email Address')} name="email" value={TenantInfoDetails.email} onChange={(e) => handlechange(e)} onBlur={() => validate("email", TenantInfoDetails.email)} />
-              {errors.email && <p className="text-danger mt-1">{errors.email}</p>}
-
-            </div>
-          </div>
-          <div className="col-12  col-md-6  px-4 px-sm-2">
-            <div className="points-events-none field w-100  my-3 tenantPhonenumber">
-              <label className='fw-500 fs-7 mb-2'>{t("Phone Number")} <i className="text-danger ">*</i></label>
-              <ReactPhoneInput
-                name="phoneNumber"
-                disabled
-                value={TenantInfoDetails.phoneNumber}
-                className={`profilePhoneNumber`}
-                placeholder={t("Enter Mobile Number")}
-                id="tenantinfophone"
-              />
-              {/* <Input disabled className="noCounterNumber" type="number" name="phoneNumber" placeholder="Enter Mobile Number" value={TenantInfoDetails.phoneNumber} onChange={(e) => handlechange(e)} onBlur={() => validate("email", email)}
+                    </div>
+                  </div>
+                  <div className="col-12  col-md-6  px-4 px-sm-2">
+                    <div className="points-events-none field w-100  my-3 tenantPhonenumber">
+                      <label className='fw-500 fs-7 mb-2'>{t("Phone Number")} <i className="text-danger ">*</i></label>
+                      <ReactPhoneInput
+                        name="phoneNumber"
+                        disabled
+                        value={TenantInfoDetails.phoneNumber}
+                        className={`profilePhoneNumber`}
+                        placeholder={t("Enter Mobile Number")}
+                        id="tenantinfophone"
+                      />
+                      {/* <Input disabled className="noCounterNumber" type="number" name="phoneNumber" placeholder="Enter Mobile Number" value={TenantInfoDetails.phoneNumber} onChange={(e) => handlechange(e)} onBlur={() => validatePersonalInfo("email", email)}
                 label={<Dropdown defaultValue='+91' search options={countriecodes} />}
                 labelPosition='left' /> */}
-              {/* <div className="text-danger mt-1">{phoneNo_Data}</div> */}
-              {errors.phoneNumber && <p className="text-danger mt-1">{errors.phoneNumber}</p>}
+                      {/* <div className="text-danger mt-1">{phoneNo_Data}</div> */}
+                      {tenantInfoError.phoneNumber && <p className="text-danger mt-1">{tenantInfoError.phoneNumber}</p>}
 
-            </div>
-          </div>
-          <div className="col-12  col-md-6  px-4 px-sm-2">
-            <div className="field w-100  my-3">
-              <label className='fw-500 fs-7 mb-2'>{t("Social Security Number")} <i className="text-danger ">*</i></label>
-              <input className="noCounterNumber" ref={ssn} type='number' name="ssn" value={TenantInfoDetails.ssn} placeholder={t("Social Security Number")} onChange={(e) => handlechange(e)} onBlur={() => validate("ssn", TenantInfoDetails.ssn)} />
-              {errors.ssn && <p className="text-danger mt-1">{errors.ssn}</p>}
+                    </div>
+                  </div>
+                  <div className="col-12  col-md-6  px-4 px-sm-2">
+                    <div className="field w-100  my-3">
+                      <label className='fw-500 fs-7 mb-2'>{t("Social Security Number")} <i className="text-danger ">*</i></label>
+                      <input className="noCounterNumber" ref={ssn} type='number' name="ssn" value={TenantInfoDetails.ssn} placeholder={t("Social Security Number")} onChange={(e) => handlechange(e)} onBlur={() => validatePersonalInfo(TenantInfoDetails)} />
+                      {tenantInfoError.ssn && <p className="text-danger mt-1">{tenantInfoError.ssn}</p>}
 
-            </div>
-          </div>
-          {BusinessUser ?
-            <div className="col-12  col-md-6  px-4 px-sm-2">
-              <div className="field w-100  my-3">
-                <label className='fw-500 fs-7 mb-2'>{t("Company Name")}<i className="text-danger ">*</i></label>
-                <input className="noCounterNumber" ref={companyName} type='text' name="companyname" placeholder='Company Name' />
-                {errors.companyname && <p className="text-danger mt-1">{errors.companyname}</p>}
-              </div>
-            </div>
-            : ""
+                    </div>
+                  </div>
+                  {BusinessUser ?
+                    <div className="col-12  col-md-6  px-4 px-sm-2">
+                      <div className="field w-100  my-3">
+                        <label className='fw-500 fs-7 mb-2'>{t("Company Name")}<i className="text-danger ">*</i></label>
+                        <input className="noCounterNumber" ref={companyName} type='text' name="companyname" placeholder='Company Name' />
+                        {tenantInfoError.companyname && <p className="text-danger mt-1">{tenantInfoError.companyname}</p>}
+                      </div>
+                    </div>
+                    : ""
 
-          }
-          {BusinessUser ?
-            <div className="col-12  col-md-6  px-4 px-sm-2">
-              <div className="field w-100  my-3">
-                <label className='fw-500 fs-7 mb-2'>{t("Company registration No")} <i className="text-danger ">*</i></label>
-                <input className="noCounterNumber" ref={companyRegistrationNumber} type='text' name="companyregistration" placeholder='Company registration No' />
-                <div id="registration" className="text-danger mt-1 d-none"> {t("Please Enter registration No")} </div>
-                {errors.companyregistration && <p className="text-danger mt-1">{errors.companyregistration}</p>}
+                  }
+                  {BusinessUser ?
+                    <div className="col-12  col-md-6  px-4 px-sm-2">
+                      <div className="field w-100  my-3">
+                        <label className='fw-500 fs-7 mb-2'>{t("Company registration No")} <i className="text-danger ">*</i></label>
+                        <input className="noCounterNumber" ref={companyRegistrationNumber} type='text' name="companyregistration" placeholder='Company registration No' />
+                        <div id="registration" className="text-danger mt-1 d-none"> {t("Please Enter registration No")} </div>
+                        {tenantInfoError.companyregistration && <p className="text-danger mt-1">{tenantInfoError.companyregistration}</p>}
 
-              </div>
-            </div> : ""
+                      </div>
+                    </div> : ""
 
 
-          }
-          {typeof customFieldAccess !== "undefined" && customFieldAccess !== null && customFieldAccess !== "" && customFieldAccess.length > 0 ?
-            customFieldAccess.map((item, index) => {
-              {
+                  }
+                  {typeof customFieldAccess !== "undefined" && customFieldAccess !== null && customFieldAccess !== "" && customFieldAccess.length > 0 ?
+                    customFieldAccess.map((item, index) => {
+                      {
 
-                typeof Sdetails !== "undefined" && Sdetails !== null && Sdetails !== "" && Sdetails.length > 0 ?
-                  Sdetails.forEach((data) => {
-                    cusomfieldPhone = data.value.fid;
-                  }) : ""
-              }
+                        typeof Sdetails !== "undefined" && Sdetails !== null && Sdetails !== "" && Sdetails.length > 0 ?
+                          Sdetails.forEach((data) => {
+                            cusomfieldPhone = data.value.fid;
+                          }) : ""
+                      }
 
-              if (item.matadata.displayOn === "Movein Tenant Details" && item.matadata.type === "textbox" && item.matadata.dataType === "Alphabet") {
-                return <div key={item.fieldId} className="col-12 col-md-6 px-4 px-sm-2">
-                  <div key={item.fieldId} className="field w-100 my-2 ">
-                    <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}
-                    </label>
-                    <input type='text' id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} data-name={item.fieldName} data-fieldid={item.fieldId} data-unitid={unitid} data-required={item.matadata.isMandatory} data-datatype={item.matadata.dataType} data-type={item.matadata.type} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
-                    <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
-                    <div className="text-danger mt-1" id={item.matadata.dataType} style={{ display: 'none' }}>{t("It should allow Alphabet Only")}</div>
+                      if (item.matadata.displayOn === "Movein Tenant Details" && item.matadata.type === "textbox" && item.matadata.dataType === "Alphabet") {
+                        return <div key={item.fieldId} className="col-12 col-md-6 px-4 px-sm-2">
+                          <div key={item.fieldId} className="field w-100 my-2 ">
+                            <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}
+                            </label>
+                            <input type='text' id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} data-name={item.fieldName} data-fieldid={item.fieldId} data-unitid={unitid} data-required={item.matadata.isMandatory} data-datatype={item.matadata.dataType} data-type={item.matadata.type} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => validateCustomFields(e)} />
+                            <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
+                            <div className="text-danger mt-1" id={item.matadata.dataType} style={{ display: 'none' }}>{t("It should allow Alphabet Only")}</div>
+                          </div>
+                        </div>
+
+                      } else if (item.matadata.displayOn === "Movein Tenant Details" && item.matadata.type === "textbox" && item.matadata.dataType === "Alphanumeric") {
+
+                        return <div key={item.fieldId} className="col-12 col-md-6 px-4 px-sm-2">
+                          <div className="field w-100 my-2 ">
+                            <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}
+                            </label>
+                            <input type='text' id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} value={customInputFieldValue} data-name={item.fieldName} data-fieldid={item.fieldId} data-unitid={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => validateCustomFields(e)} />
+                            <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
+                          </div>
+                        </div>
+
+                      }
+
+                      else if (item.matadata.displayOn === "Movein Tenant Details" && item.matadata.type === "date") {
+                        return <div key={item.fieldId} className="col-12 col-md-6 px-4 px-sm-2">
+                          <div className="field w-100 datePicker my-2">
+                            <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}</label>
+                            <SemanticDatepicker datePickerOnly id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} className='w-100' data-name={item.fieldName} fieldId={item.fieldId} unitId={unitid} required={item.matadata.isMandatory} fieldpage={item.matadata.displayOn} type={item.matadata.type} onChange={(e, data) => customhandlechange(e, data, "date")} />
+                            <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
+                          </div>
+                        </div>
+                      }
+                      else if (item.matadata.displayOn === "Movein Tenant Details" && item.matadata.type === "checkboxes") {
+                        return <div key={item.fieldId} className="col-12 col-md-6 px-4 px-sm-2">
+                          <span id={`${item.matadata.type}_${item.fieldId}`} >{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}
+                            <span className="mx-2">
+                              <input id={`${item.matadata.type}_${item.fieldId}`} className="mr-1" type="checkbox" name={`${item.matadata.type}_${item.fieldId}`} data-name={item.fieldName} data-fieldid={item.fieldId} data-unitid={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.options[0].option} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} />
+                              <label>{item.options[0].option}</label>
+                            </span>
+                            <span>
+                              <input id={`${item.matadata.type}_${item.fieldId}`} className="mr-1" type="checkbox" name={`${item.matadata.type}_${item.fieldId}`} data-name={item.fieldName} data-fieldid={item.fieldId} data-unitid={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.options[1].option} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} />
+                              <label>{item.options[1].option}</label>
+                            </span>
+                          </span>
+                          <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
+                        </div>
+                      }
+
+                      else if (item.matadata.displayOn === "Movein Tenant Details" && item.matadata.type === "textarea") {
+
+                        return <div key={item.fieldId} className="col-12 col-md-6 px-4 px-sm-2">
+                          <div className="field w-100 my-2">
+                            <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}</label>
+                            <textarea id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} data-name={item.fieldName} data-type={item.matadata.type} value={customInputFieldValue} rows="3" data-fieldid={item.fieldId} data-unitid={unitid} data-required={item.matadata.isMandatory} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => validateCustomFields(e)}></textarea>
+                            <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
+                          </div>
+                        </div>
+
+                      }
+                      else if (item.matadata.displayOn === "Movein Tenant Details" && item.matadata.type === "checkbox") {
+
+                        return <div key={item.fieldId} className="col-12 col-md-6 px-4 px-sm-2">
+                          <span id={`${item.matadata.type}_${item.fieldId}`}>
+                            <span className="mx-0">
+                              <input className="mr-1" type="checkbox" name={`${item.matadata.type}_${item.fieldId}`} data-name={item.fieldName} data-fieldid={item.fieldId} data-unitid={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.fieldName} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => validateCustomFields(e)} />
+                              <label>{item.fieldName}{item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}</label>
+                            </span>
+                          </span>
+                          <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
+                        </div>
+
+                      } else if (item.matadata.displayOn === "Movein Tenant Details" && item.matadata.type === "textbox" && item.matadata.dataType === "Digits (0-9)") {
+
+                        return <div key={item.fieldId} className="col-12 col-md-6 px-4 px-sm-2">
+                          <div className="field w-100 my-2 ">
+                            <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}
+                            </label>
+                            <input type='number' onKeyDown={handleInputKeyDown} id={`${item.matadata.type}_${item.fieldId}`} name={item.fieldId} placeholder={item.fieldName} value={cusomfieldPhone} data-name={item.fieldName} data-fieldid={item.fieldId} data-unitid={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => validateCustomFields(e)} />
+                            <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
+                          </div>
+                        </div>
+
+                      } else if (item.matadata.displayOn === "Movein Tenant Details" && item.matadata.type === "radio") {
+                        return <div key={item.fieldId} className="col-12 col-md-6 px-4 px-sm-2">
+                          <span id={`${item.matadata.type}_${item.fieldId}`}>{item.fieldName}{item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}
+                            <span className="mx-2">
+                              <input className="mr-1" id={`${item.matadata.type}_${item.fieldId}`} type="radio" name={`${item.matadata.type}_${item.fieldId}`} data-name={item.fieldName} data-fieldid={item.fieldId} data-unitid={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.options[0].option} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} />
+                              <label>{item.options[0].option}</label>
+                            </span>
+                            <span>
+                              <input className="mr-1" id={`${item.matadata.type}_${item.fieldId}`} type="radio" name={`${item.matadata.type}_${item.fieldId}`} data-name={item.fieldName} data-fieldid={item.fieldId} data-unitid={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.options[1].option} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} />
+                              <label>{item.options[1].option}</label>
+                            </span>
+                          </span>
+                          <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
+                        </div>
+                      }
+                    }) : ''}
+
+                </div>
+
+                <div className="row ui form">
+                  <div className="col-12">
+                    <h6 className='text-dark dashed-bottom fw-500 fs-6 px-4 py-2 px-sm-2'>
+                      <svg id="location-svgrepo-com_1_" data-name="location-svgrepo-com (1)" xmlns="http://www.w3.org/2000/svg" width="25" height="22" viewBox="0 0 25 33.828">
+                        <g id="Group_6994" data-name="Group 6994" transform="translate(0)">
+                          <g id="Group_6993" data-name="Group 6993">
+                            <path id="Path_19673" data-name="Path 19673" d="M53.6,0A12.514,12.514,0,0,0,41.1,12.5c0,6.673,11.4,20.454,11.881,21.038a.805.805,0,0,0,1.239,0C54.708,32.954,66.1,19.173,66.1,12.5A12.514,12.514,0,0,0,53.6,0Zm0,31.745c-1.01-1.262-3.11-3.95-5.187-7.023-3.73-5.518-5.7-9.744-5.7-12.222a10.889,10.889,0,1,1,21.778,0c0,2.478-1.972,6.7-5.7,12.222C56.713,27.795,54.613,30.483,53.6,31.745Z" transform="translate(-41.103)" fill="#328128" />
+                            <path id="Path_19674" data-name="Path 19674" d="M154.9,212.808a.805.805,0,0,0-1.118.217c-1.087,1.609-2.3,3.3-3.619,5.012a.805.805,0,1,0,1.279.979c1.334-1.742,2.57-3.454,3.675-5.089A.805.805,0,0,0,154.9,212.808Z" transform="translate(-138.305 -189.831)" fill="#328128" />
+                            <path id="Path_19675" data-name="Path 19675" d="M102.6,57.5a6.6,6.6,0,1,0,6.6,6.6A6.612,6.612,0,0,0,102.6,57.5Zm0,11.6A4.994,4.994,0,1,1,107.6,64.1,5,5,0,0,1,102.6,69.1Z" transform="translate(-90.105 -51.325)" fill="#328128" />
+                          </g>
+                        </g>
+                      </svg>
+                      <span className='veritical-align-text-top ml-1'>{t("Address Details")}</span></h6>
+                  </div>
+                  <div className="col-12 col-md-6 px-4 px-sm-2">
+                    <div className="field w-100  my-3">
+                      <label className='fw-500 fs-7 mb-2'>{t("Address Line 1")}</label>
+                      <input type='text' placeholder={t("Address Line 1")} name="addressLineOne" value={TenantInfoDetails.addressLineOne} onChange={(e) => handlechange(e)} onBlur={() => validatePersonalInfo(TenantInfoDetails)} />
+                      <div className="text-danger mt-1">{addressLine1Error}</div>
+                    </div>
+                  </div>
+                  <div className="col-12 col-md-6 px-4 px-sm-2">
+                    <div className="field w-100  my-3">
+                      <label className='fw-500 fs-7 mb-2'>{t("Address Line 2")}</label>
+                      <input type='text' placeholder={t("Address Line 2")} name="addressLineTwo" value={TenantInfoDetails.addressLineTwo} onChange={(e) => handlechange(e)} />
+                    </div>
+                  </div>
+                  <div className="col-12 col-md-6 px-4 px-sm-2">
+                    <div className="field w-100  my-3">
+                      <label className='fw-500 fs-7 mb-2'>{t("City")}<i className="text-danger ">*</i></label>
+                      <input type='text' placeholder={t("City")} name="city" value={TenantInfoDetails.city} onChange={(e) => handlechange(e)} onBlur={() => validatePersonalInfo(TenantInfoDetails)} />
+                      <div className="text-danger mt-1">{cityError}</div>
+                    </div>
+                  </div>
+                  <div className="col-12 col-md-6 px-4 px-sm-2">
+                    <div className="field w-100  my-3">
+                      <label className='fw-500 fs-7 mb-2'>{t("State/Provine")}<i className="text-danger ">*</i></label>
+                      <input type='text' placeholder={t("State/Provine")} name="state" value={TenantInfoDetails.state} onChange={(e) => handlechange(e)} onBlur={() => validatePersonalInfo(TenantInfoDetails)} />
+                      <div className="text-danger mt-1">{stateError}</div>
+                    </div>
+                  </div>
+                  <div className="col-12 col-md-6 px-4 px-sm-2">
+                    <div className="field w-100  my-3">
+                      <label className='fw-500 fs-7 mb-2'>{t("Zip/Postal Code")}<i className="text-danger ">*</i></label>
+                      <input className="noCounterNumber" type='number' name="zipCode" placeholder={t("Zip/Postal Code")} defaultValue={TenantInfoDetails.zipCode} onChange={(e) => handlechange(e)} onBlur={() => validatePersonalInfo(TenantInfoDetails)} />
+                      <div className="text-danger mt-1">{postalError}</div>
+                    </div>
                   </div>
                 </div>
-
-              } else if (item.matadata.displayOn === "Movein Tenant Details" && item.matadata.type === "textbox" && item.matadata.dataType === "Alphanumeric") {
-
-                return <div key={item.fieldId} className="col-12 col-md-6 px-4 px-sm-2">
-                  <div className="field w-100 my-2 ">
-                    <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}
-                    </label>
-                    <input type='text' id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} value={customInputFieldValue} data-name={item.fieldName} data-fieldid={item.fieldId} data-unitid={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
-                    <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
+                <div className="row ui form mb-2">
+                  <div className="col-12">
+                    <h6 className='text-dark fw-500 fs-6 px-4 py-2 px-sm-2 dashed-bottom'>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 34.809 36">
+                        <g id="ec" transform="translate(-0.008 -0.005)">
+                          <path id="Path_19732" data-name="Path 19732" d="M9.165,116.439a9.172,9.172,0,0,1-1.028-.208,14.7,14.7,0,0,1-1.606-.6.726.726,0,0,0-.672-.034,4.3,4.3,0,0,1-5.727-1.982c-.213-.394-.151-.738.165-.919a.609.609,0,0,1,.873.323,3.061,3.061,0,0,0,2.465,1.756,11.06,11.06,0,0,0,1.549-.093c-.137-.183-.2-.262-.255-.339A3.613,3.613,0,0,1,4.1,111.4a2.233,2.233,0,0,1,2.241-1.848,2.176,2.176,0,0,1,2.055,1.92,3.435,3.435,0,0,1-.77,2.822c-.095.118-.2.231-.3.347,1.671,1.349,5.862.382,7.136-1.661-.105-.065-.21-.13-.317-.194A21.442,21.442,0,0,1,4.637,101.7a11.863,11.863,0,0,1-.468-7.382A10.09,10.09,0,0,1,7.026,89.6a2.858,2.858,0,0,1,3.5-.4,11.694,11.694,0,0,1,4.313,4.336,2.809,2.809,0,0,1-.754,3.7,3.226,3.226,0,0,0-1.169,3.793,7.094,7.094,0,0,0,5.142,4.88,3.11,3.11,0,0,0,3.4-1.2,2.827,2.827,0,0,1,3.9-.715,11.8,11.8,0,0,1,4.167,4.194,2.872,2.872,0,0,1-.432,3.584,10.357,10.357,0,0,1-9.511,3.012c-.208-.033-.416-.069-.621-.117a.6.6,0,1,1,.231-1.179c.568.077,1.133.192,1.7.232a9.029,9.029,0,0,0,5.951-1.6c.067-.046.126-.1.256-.209-.57-.733-1.109-1.484-1.709-2.18-.5-.575-1.06-1.093-1.606-1.624-.385-.375-.459-.7-.187-.995.256-.273.61-.235.987.1a19.063,19.063,0,0,1,3.23,3.694c.051.076.107.149.161.224a1.669,1.669,0,0,0,.553-2.258,10.484,10.484,0,0,0-3.932-3.927,1.61,1.61,0,0,0-2.091.369,4.4,4.4,0,0,1-5.239,1.631,8.284,8.284,0,0,1-5.589-5.879,4.224,4.224,0,0,1,.571-3.6c.119-.179.063-.288-.033-.433a17.78,17.78,0,0,0-3.43-3.887c-.117-.1-.237-.193-.345-.3a.591.591,0,0,1-.072-.822.58.58,0,0,1,.846-.076,19.919,19.919,0,0,1,1.754,1.62c.728.807,1.379,1.684,2.062,2.53.064.08.124.163.183.242a1.536,1.536,0,0,0,.643-2.066A9.992,9.992,0,0,0,9.72,90.141a1.509,1.509,0,0,0-1.824.3A8.835,8.835,0,0,0,5.02,96.541a13.14,13.14,0,0,0,1.93,7.371,20.79,20.79,0,0,0,8.5,8.212c.61.322.688.612.3,1.174a6.963,6.963,0,0,1-5.056,3.082,1.179,1.179,0,0,0-.2.06H9.164ZM6.3,114.032a10.929,10.929,0,0,0,.755-1.1,1.843,1.843,0,0,0,.067-1.568.894.894,0,0,0-1.578-.248,1.666,1.666,0,0,0-.284.975A2.69,2.69,0,0,0,6.3,114.033Z" transform="translate(0 -80.435)" fill="#328128" />
+                          <path id="Path_19733" data-name="Path 19733" d="M192.107,9.356a9.824,9.824,0,0,1-2.355,6.54,10.982,10.982,0,0,1-5.42,3.22c-.6.169-1.206.285-1.813.413a.666.666,0,0,1-.784-.239c-.251-.386-.017-.828.485-.934.561-.118,1.127-.218,1.678-.372a9.832,9.832,0,0,0,5.075-3.039,8.549,8.549,0,0,0,1.9-5.953,8.027,8.027,0,1,0-15.987,1.232,7.815,7.815,0,0,0,2.854,5.194c.444.372.51.525.3,1.06-.186.466-.412.916-.638,1.365-.191.379-.132.549.269.682a.594.594,0,0,1,.468.74.6.6,0,0,1-.742.423,1.567,1.567,0,0,1-1.13-2.264c.148-.292.3-.583.463-.866.128-.221.076-.362-.112-.533a9.028,9.028,0,0,1-2.8-4.885,9.234,9.234,0,1,1,18.149-3.393c.09.529.1,1.071.146,1.608Z" transform="translate(-157.29 0)" fill="#328128" />
+                          <path id="Path_19734" data-name="Path 19734" d="M222.906,60.392c-.867,0-1.721.093-2.344-.644a2.4,2.4,0,0,1-.426-1.726,1.805,1.805,0,0,1,.878-1.583c.574-.369,1.225-.21,1.89-.271,0-.288,0-.565,0-.842a1.806,1.806,0,0,1,1.917-1.917,4.155,4.155,0,0,1,.943.064,1.763,1.763,0,0,1,1.34,1.688c.008.326,0,.652,0,1.024.327,0,.628,0,.927,0a1.781,1.781,0,0,1,1.846,1.73,5.631,5.631,0,0,1,0,.667,1.8,1.8,0,0,1-1.82,1.8c-.3.012-.606,0-.956,0,0,.317,0,.605,0,.894a1.79,1.79,0,0,1-1.881,1.873,4.726,4.726,0,0,1-.841-.03,1.8,1.8,0,0,1-1.479-1.8c-.009-.292,0-.584,0-.936Zm3,.2h0c0-.234,0-.469,0-.7.008-.475.213-.69.684-.7s.938.007,1.407-.006a.613.613,0,0,0,.682-.674c.007-.14,0-.281,0-.422-.016-.5-.223-.7-.715-.706-.434,0-.867,0-1.3,0-.551,0-.754-.211-.757-.772,0-.422,0-.844,0-1.266,0-.517-.206-.722-.721-.734-.129,0-.258,0-.387,0-.471.016-.682.221-.692.7-.01.457,0,.914,0,1.371-.008.492-.221.7-.715.7-.469,0-.938-.006-1.407,0a.6.6,0,0,0-.645.631c-.006.14,0,.281,0,.422,0,.532.21.74.749.748.422.007.844,0,1.266,0,.564,0,.749.194.755.767,0,.3,0,.61,0,.914,0,.993.122,1.112,1.113,1.087.035,0,.07,0,.105,0a.593.593,0,0,0,.58-.59c.013-.257,0-.516,0-.773Z" transform="translate(-199.444 -48.387)" fill="#328128" />
+                        </g>
+                      </svg>
+                      <span className='veritical-align-text-top ml-1'>{t("Emergency Contact")}</span></h6>
                   </div>
                 </div>
-
-              }
-
-              else if (item.matadata.displayOn === "Movein Tenant Details" && item.matadata.type === "date") {
-                return <div key={item.fieldId} className="col-12 col-md-6 px-4 px-sm-2">
-                  <div className="field w-100 datePicker my-2">
-                    <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}</label>
-                    <SemanticDatepicker datePickerOnly id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} className='w-100' data-name={item.fieldName} fieldId={item.fieldId} unitId={unitid} required={item.matadata.isMandatory} fieldpage={item.matadata.displayOn} type={item.matadata.type} onChange={(e, data) => customhandlechange(e, data, "date")} />
-                    <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
-                  </div>
-                </div>
-              }
-              else if (item.matadata.displayOn === "Movein Tenant Details" && item.matadata.type === "checkboxes") {
-                return <div key={item.fieldId} className="col-12 col-md-6 px-4 px-sm-2">
-                  <span id={`${item.matadata.type}_${item.fieldId}`} >{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}
-                    <span className="mx-2">
-                      <input id={`${item.matadata.type}_${item.fieldId}`} className="mr-1" type="checkbox" name={`${item.matadata.type}_${item.fieldId}`} data-name={item.fieldName} data-fieldid={item.fieldId} data-unitid={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.options[0].option} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} />
-                      <label>{item.options[0].option}</label>
-                    </span>
-                    <span>
-                      <input id={`${item.matadata.type}_${item.fieldId}`} className="mr-1" type="checkbox" name={`${item.matadata.type}_${item.fieldId}`} data-name={item.fieldName} data-fieldid={item.fieldId} data-unitid={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.options[1].option} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} />
-                      <label>{item.options[1].option}</label>
-                    </span>
-                  </span>
-                  <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
-                </div>
-              }
-
-              else if (item.matadata.displayOn === "Movein Tenant Details" && item.matadata.type === "textarea") {
-
-                return <div key={item.fieldId} className="col-12 col-md-6 px-4 px-sm-2">
-                  <div className="field w-100 my-2">
-                    <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}</label>
-                    <textarea id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} data-name={item.fieldName} data-type={item.matadata.type} value={customInputFieldValue} rows="3" data-fieldid={item.fieldId} data-unitid={unitid} data-required={item.matadata.isMandatory} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)}></textarea>
-                    <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
-                  </div>
-                </div>
-
-              }
-              else if (item.matadata.displayOn === "Movein Tenant Details" && item.matadata.type === "checkbox") {
-
-                return <div key={item.fieldId} className="col-12 col-md-6 px-4 px-sm-2">
-                  <span id={`${item.matadata.type}_${item.fieldId}`}>
-                    <span className="mx-0">
-                      <input className="mr-1" type="checkbox" name={`${item.matadata.type}_${item.fieldId}`} data-name={item.fieldName} data-fieldid={item.fieldId} data-unitid={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.fieldName} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
-                      <label>{item.fieldName}{item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}</label>
-                    </span>
-                  </span>
-                  <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
-                </div>
-
-              } else if (item.matadata.displayOn === "Movein Tenant Details" && item.matadata.type === "textbox" && item.matadata.dataType === "Digits (0-9)") {
-
-                return <div key={item.fieldId} className="col-12 col-md-6 px-4 px-sm-2">
-                  <div className="field w-100 my-2 ">
-                    <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}
-                    </label>
-                    <input type='number' id={`${item.matadata.type}_${item.fieldId}`} name={item.fieldId} placeholder={item.fieldName} value={cusomfieldPhone} data-name={item.fieldName} data-fieldid={item.fieldId} data-unitid={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
-                    <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
-                  </div>
-                </div>
-
-              } else if (item.matadata.displayOn === "Movein Tenant Details" && item.matadata.type === "radio") {
-                return <div key={item.fieldId} className="col-12 col-md-6 px-4 px-sm-2">
-                  <span id={`${item.matadata.type}_${item.fieldId}`}>{item.fieldName}{item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}
-                    <span className="mx-2">
-                      <input className="mr-1" id={`${item.matadata.type}_${item.fieldId}`} type="radio" name={`${item.matadata.type}_${item.fieldId}`} data-name={item.fieldName} data-fieldid={item.fieldId} data-unitid={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.options[0].option} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} />
-                      <label>{item.options[0].option}</label>
-                    </span>
-                    <span>
-                      <input className="mr-1" id={`${item.matadata.type}_${item.fieldId}`} type="radio" name={`${item.matadata.type}_${item.fieldId}`} data-name={item.fieldName} data-fieldid={item.fieldId} data-unitid={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} value={item.options[1].option} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} />
-                      <label>{item.options[1].option}</label>
-                    </span>
-                  </span>
-                  <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
-                </div>
-              }
-            }) : ''}
-
-        </div>
-
-        <div className="row ui form">
-          <div className="col-12">
-            <h6 className='text-dark dashed-bottom fw-500 fs-6 px-4 py-2 px-sm-2'>
-              <svg id="location-svgrepo-com_1_" data-name="location-svgrepo-com (1)" xmlns="http://www.w3.org/2000/svg" width="25" height="22" viewBox="0 0 25 33.828">
-                <g id="Group_6994" data-name="Group 6994" transform="translate(0)">
-                  <g id="Group_6993" data-name="Group 6993">
-                    <path id="Path_19673" data-name="Path 19673" d="M53.6,0A12.514,12.514,0,0,0,41.1,12.5c0,6.673,11.4,20.454,11.881,21.038a.805.805,0,0,0,1.239,0C54.708,32.954,66.1,19.173,66.1,12.5A12.514,12.514,0,0,0,53.6,0Zm0,31.745c-1.01-1.262-3.11-3.95-5.187-7.023-3.73-5.518-5.7-9.744-5.7-12.222a10.889,10.889,0,1,1,21.778,0c0,2.478-1.972,6.7-5.7,12.222C56.713,27.795,54.613,30.483,53.6,31.745Z" transform="translate(-41.103)" fill="#328128" />
-                    <path id="Path_19674" data-name="Path 19674" d="M154.9,212.808a.805.805,0,0,0-1.118.217c-1.087,1.609-2.3,3.3-3.619,5.012a.805.805,0,1,0,1.279.979c1.334-1.742,2.57-3.454,3.675-5.089A.805.805,0,0,0,154.9,212.808Z" transform="translate(-138.305 -189.831)" fill="#328128" />
-                    <path id="Path_19675" data-name="Path 19675" d="M102.6,57.5a6.6,6.6,0,1,0,6.6,6.6A6.612,6.612,0,0,0,102.6,57.5Zm0,11.6A4.994,4.994,0,1,1,107.6,64.1,5,5,0,0,1,102.6,69.1Z" transform="translate(-90.105 -51.325)" fill="#328128" />
-                  </g>
-                </g>
-              </svg>
-              <span className='veritical-align-text-top ml-1'>{t("Address Details")}</span></h6>
-          </div>
-          <div className="col-12 col-md-6 px-4 px-sm-2">
-            <div className="field w-100  my-3">
-              <label className='fw-500 fs-7 mb-2'>{t("Address Line 1")}</label>
-              <input type='text' placeholder={t("Address Line 1")} name="addressLineOne" value={TenantInfoDetails.addressLineOne} onChange={(e) => handlechange(e)} onBlur={() => validate("addressLineOne", TenantInfoDetails.addressLineOne)} />
-              <div className="text-danger mt-1">{addressLine1Error}</div>
-            </div>
-          </div>
-          <div className="col-12 col-md-6 px-4 px-sm-2">
-            <div className="field w-100  my-3">
-              <label className='fw-500 fs-7 mb-2'>{t("Address Line 2")}</label>
-              <input type='text' placeholder={t("Address Line 2")} name="addressLineTwo" value={TenantInfoDetails.addressLineTwo} onChange={(e) => handlechange(e)} />
-            </div>
-          </div>
-          <div className="col-12 col-md-6 px-4 px-sm-2">
-            <div className="field w-100  my-3">
-              <label className='fw-500 fs-7 mb-2'>{t("City")}<i className="text-danger ">*</i></label>
-              <input type='text' placeholder={t("City")} name="city" value={TenantInfoDetails.city} onChange={(e) => handlechange(e)} onBlur={() => validate("city", TenantInfoDetails.city)} />
-              <div className="text-danger mt-1">{cityError}</div>
-            </div>
-          </div>
-          <div className="col-12 col-md-6 px-4 px-sm-2">
-            <div className="field w-100  my-3">
-              <label className='fw-500 fs-7 mb-2'>{t("State/Provine")}<i className="text-danger ">*</i></label>
-              <input type='text' placeholder={t("State/Provine")} name="state" value={TenantInfoDetails.state} onChange={(e) => handlechange(e)} onBlur={() => validate("state", TenantInfoDetails.state)} />
-              <div className="text-danger mt-1">{stateError}</div>
-            </div>
-          </div>
-          <div className="col-12 col-md-6 px-4 px-sm-2">
-            <div className="field w-100  my-3">
-              <label className='fw-500 fs-7 mb-2'>{t("Zip/Postal Code")}<i className="text-danger ">*</i></label>
-              <input className="noCounterNumber" type='number' name="zipCode" placeholder={t("Zip/Postal Code")} defaultValue={TenantInfoDetails.zipCode} onChange={(e) => handlechange(e)} onBlur={() => validate("zipCode", TenantInfoDetails.zipCode)} />
-              <div className="text-danger mt-1">{postalError}</div>
-            </div>
-          </div>
-        </div>
-        <div className="row ui form mb-2">
-          <div className="col-12">
-            <h6 className='text-dark fw-500 fs-6 px-4 py-2 px-sm-2 dashed-bottom'>
-              <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 34.809 36">
-                <g id="ec" transform="translate(-0.008 -0.005)">
-                  <path id="Path_19732" data-name="Path 19732" d="M9.165,116.439a9.172,9.172,0,0,1-1.028-.208,14.7,14.7,0,0,1-1.606-.6.726.726,0,0,0-.672-.034,4.3,4.3,0,0,1-5.727-1.982c-.213-.394-.151-.738.165-.919a.609.609,0,0,1,.873.323,3.061,3.061,0,0,0,2.465,1.756,11.06,11.06,0,0,0,1.549-.093c-.137-.183-.2-.262-.255-.339A3.613,3.613,0,0,1,4.1,111.4a2.233,2.233,0,0,1,2.241-1.848,2.176,2.176,0,0,1,2.055,1.92,3.435,3.435,0,0,1-.77,2.822c-.095.118-.2.231-.3.347,1.671,1.349,5.862.382,7.136-1.661-.105-.065-.21-.13-.317-.194A21.442,21.442,0,0,1,4.637,101.7a11.863,11.863,0,0,1-.468-7.382A10.09,10.09,0,0,1,7.026,89.6a2.858,2.858,0,0,1,3.5-.4,11.694,11.694,0,0,1,4.313,4.336,2.809,2.809,0,0,1-.754,3.7,3.226,3.226,0,0,0-1.169,3.793,7.094,7.094,0,0,0,5.142,4.88,3.11,3.11,0,0,0,3.4-1.2,2.827,2.827,0,0,1,3.9-.715,11.8,11.8,0,0,1,4.167,4.194,2.872,2.872,0,0,1-.432,3.584,10.357,10.357,0,0,1-9.511,3.012c-.208-.033-.416-.069-.621-.117a.6.6,0,1,1,.231-1.179c.568.077,1.133.192,1.7.232a9.029,9.029,0,0,0,5.951-1.6c.067-.046.126-.1.256-.209-.57-.733-1.109-1.484-1.709-2.18-.5-.575-1.06-1.093-1.606-1.624-.385-.375-.459-.7-.187-.995.256-.273.61-.235.987.1a19.063,19.063,0,0,1,3.23,3.694c.051.076.107.149.161.224a1.669,1.669,0,0,0,.553-2.258,10.484,10.484,0,0,0-3.932-3.927,1.61,1.61,0,0,0-2.091.369,4.4,4.4,0,0,1-5.239,1.631,8.284,8.284,0,0,1-5.589-5.879,4.224,4.224,0,0,1,.571-3.6c.119-.179.063-.288-.033-.433a17.78,17.78,0,0,0-3.43-3.887c-.117-.1-.237-.193-.345-.3a.591.591,0,0,1-.072-.822.58.58,0,0,1,.846-.076,19.919,19.919,0,0,1,1.754,1.62c.728.807,1.379,1.684,2.062,2.53.064.08.124.163.183.242a1.536,1.536,0,0,0,.643-2.066A9.992,9.992,0,0,0,9.72,90.141a1.509,1.509,0,0,0-1.824.3A8.835,8.835,0,0,0,5.02,96.541a13.14,13.14,0,0,0,1.93,7.371,20.79,20.79,0,0,0,8.5,8.212c.61.322.688.612.3,1.174a6.963,6.963,0,0,1-5.056,3.082,1.179,1.179,0,0,0-.2.06H9.164ZM6.3,114.032a10.929,10.929,0,0,0,.755-1.1,1.843,1.843,0,0,0,.067-1.568.894.894,0,0,0-1.578-.248,1.666,1.666,0,0,0-.284.975A2.69,2.69,0,0,0,6.3,114.033Z" transform="translate(0 -80.435)" fill="#328128" />
-                  <path id="Path_19733" data-name="Path 19733" d="M192.107,9.356a9.824,9.824,0,0,1-2.355,6.54,10.982,10.982,0,0,1-5.42,3.22c-.6.169-1.206.285-1.813.413a.666.666,0,0,1-.784-.239c-.251-.386-.017-.828.485-.934.561-.118,1.127-.218,1.678-.372a9.832,9.832,0,0,0,5.075-3.039,8.549,8.549,0,0,0,1.9-5.953,8.027,8.027,0,1,0-15.987,1.232,7.815,7.815,0,0,0,2.854,5.194c.444.372.51.525.3,1.06-.186.466-.412.916-.638,1.365-.191.379-.132.549.269.682a.594.594,0,0,1,.468.74.6.6,0,0,1-.742.423,1.567,1.567,0,0,1-1.13-2.264c.148-.292.3-.583.463-.866.128-.221.076-.362-.112-.533a9.028,9.028,0,0,1-2.8-4.885,9.234,9.234,0,1,1,18.149-3.393c.09.529.1,1.071.146,1.608Z" transform="translate(-157.29 0)" fill="#328128" />
-                  <path id="Path_19734" data-name="Path 19734" d="M222.906,60.392c-.867,0-1.721.093-2.344-.644a2.4,2.4,0,0,1-.426-1.726,1.805,1.805,0,0,1,.878-1.583c.574-.369,1.225-.21,1.89-.271,0-.288,0-.565,0-.842a1.806,1.806,0,0,1,1.917-1.917,4.155,4.155,0,0,1,.943.064,1.763,1.763,0,0,1,1.34,1.688c.008.326,0,.652,0,1.024.327,0,.628,0,.927,0a1.781,1.781,0,0,1,1.846,1.73,5.631,5.631,0,0,1,0,.667,1.8,1.8,0,0,1-1.82,1.8c-.3.012-.606,0-.956,0,0,.317,0,.605,0,.894a1.79,1.79,0,0,1-1.881,1.873,4.726,4.726,0,0,1-.841-.03,1.8,1.8,0,0,1-1.479-1.8c-.009-.292,0-.584,0-.936Zm3,.2h0c0-.234,0-.469,0-.7.008-.475.213-.69.684-.7s.938.007,1.407-.006a.613.613,0,0,0,.682-.674c.007-.14,0-.281,0-.422-.016-.5-.223-.7-.715-.706-.434,0-.867,0-1.3,0-.551,0-.754-.211-.757-.772,0-.422,0-.844,0-1.266,0-.517-.206-.722-.721-.734-.129,0-.258,0-.387,0-.471.016-.682.221-.692.7-.01.457,0,.914,0,1.371-.008.492-.221.7-.715.7-.469,0-.938-.006-1.407,0a.6.6,0,0,0-.645.631c-.006.14,0,.281,0,.422,0,.532.21.74.749.748.422.007.844,0,1.266,0,.564,0,.749.194.755.767,0,.3,0,.61,0,.914,0,.993.122,1.112,1.113,1.087.035,0,.07,0,.105,0a.593.593,0,0,0,.58-.59c.013-.257,0-.516,0-.773Z" transform="translate(-199.444 -48.387)" fill="#328128" />
-                </g>
-              </svg>
-              <span className='veritical-align-text-top ml-1'>{t("Emergency Contact")}</span></h6>
-          </div>
-        </div>
-        {contactAccordian.length < 3 &&
-          <div className="row ui form mb-4 emergencycontact">
-            <div className="col-12 col-md-6 px-4 px-sm-2">
-              <div className="field w-100  my-3">
-                <label className='fw-500 fs-7 mb-2'>{t("First Name")}<i className="text-danger ">*</i></label>
-                <input value={emergencyContactDetails.emergencyFname} onChange={(e) => emergencyhandlechange(e)} onBlur={(e) => validateEmergencyContactInfo(emergencyContactDetails.emergencyFname, "emergencyFname")} name="emergencyFname" type='text' placeholder={t("First Name")} />
-                <div className="text-danger mt-1">{fname_err}</div>
-              </div>
-            </div>
-            <div className="col-12 col-md-6 px-4 px-sm-2">
-              <div className="field w-100  my-3">
-                <label className='fw-500 fs-7 mb-2'>{t("Last Name")}</label>
-                <input value={emergencyContactDetails.emergencyname} onChange={(e) => emergencyhandlechange(e)} type='text' name="emergencyLname" onBlur={(e) => validateEmergencyContactInfo(emergencyContactDetails.emergencyname, "emergencyLname")} placeholder={t('Last Name')} />
-              </div>
-            </div>
-            <div className="col-12 col-md-6 px-4 px-sm-2">
-              <div className="field w-100  my-3">
-                <label className='fw-500 fs-7 mb-2'>{t("Email")} <i className="text-danger ">*</i></label>
-                <input value={emergencyContactDetails.emergencyEmail} onChange={(e) => emergencyhandlechange(e)} onBlur={(e) => validateEmergencyContactInfo(emergencyContactDetails.emergencyEmail, "emergencyEmail")} type='email' name="emergencyEmail" placeholder={t('Enter Email')} />
-                <div className="text-danger mt-1">{email_err}</div>
-              </div>
-            </div>
-            <div className="col-12 col-md-6 px-4 px-sm-2">
-              <div className="field w-100  my-3">
-                <label className='fw-500 fs-7 mb-2'>{t("Phone Number")} <i className="text-danger ">*</i></label>
-                {/* <input value={contactPhone} onChange={e=>SetContactPhone(e.target.value)} className="noCounterNumber" type='number' placeholder='Enter Phone Number' /> */}
-                {/* <Input value={emergencyContactDetails.emergencyPhoneNo} onChange={(e) => emergencyhandlechange(e)} className="noCounterNumber" onBlur={(e) => validateEmergencyContactInfo(e.target.value)} type="number" name="emergencyPhoneNo" placeholder="Enter Mobile Number"
+                {contactAccordian.length < 3 &&
+                  <div className="row ui form mb-4 emergencycontact">
+                    <div className="col-12 col-md-6 px-4 px-sm-2">
+                      <div className="field w-100  my-3">
+                        <label className='fw-500 fs-7 mb-2'>{t("First Name")}<i className="text-danger ">*</i></label>
+                        <input value={emergencyContactDetails.emergencyFname} onChange={(e) => emergencyhandlechange(e)} onBlur={(e) => validateEmergencyContactInfo(emergencyContactDetails)} name="emergencyFname" type='text' placeholder={t("First Name")} />
+                        {emergencyContactErr.emergencyFname && <p className="text-danger mt-1">{emergencyContactErr.emergencyFname}</p>}
+                      </div>
+                    </div>
+                    <div className="col-12 col-md-6 px-4 px-sm-2">
+                      <div className="field w-100  my-3">
+                        <label className='fw-500 fs-7 mb-2'>{t("Last Name")}</label>
+                        <input value={emergencyContactDetails.emergencyLname} onChange={(e) => emergencyhandlechange(e)} type='text' name="emergencyLname" onBlur={(e) => validateEmergencyContactInfo(emergencyContactDetails)} placeholder={t('Last Name')} />
+                      </div>
+                    </div>
+                    <div className="col-12 col-md-6 px-4 px-sm-2">
+                      <div className="field w-100  my-3">
+                        <label className='fw-500 fs-7 mb-2'>{t("Email")} <i className="text-danger ">*</i></label>
+                        <input value={emergencyContactDetails.emergencyEmail} onChange={(e) => emergencyhandlechange(e)} onBlur={(e) => validateEmergencyContactInfo(emergencyContactDetails)} type='email' name="emergencyEmail" placeholder={t('Enter Email')} />
+                        {emergencyContactErr.emergencyEmail && <div className="text-danger mt-1">{emergencyContactErr.emergencyEmail}</div>}
+                      </div>
+                    </div>
+                    <div className="col-12 col-md-6 px-4 px-sm-2">
+                      <div className="field w-100  my-3">
+                        <label className='fw-500 fs-7 mb-2'>{t("Phone Number")} <i className="text-danger ">*</i></label>
+                        {/* <input value={contactPhone} onChange={e=>SetContactPhone(e.target.value)} className="noCounterNumber" type='number' placeholder='Enter Phone Number' /> */}
+                        {/* <Input value={emergencyContactDetails.emergencyPhoneNo} onChange={(e) => emergencyhandlechange(e)} className="noCounterNumber" onBlur={(e) => validateEmergencyContactInfo(e.target.value)} type="number" name="emergencyPhoneNo" placeholder="Enter Mobile Number"
                   label={<Dropdown defaultValue='+91' search options={countriecodes} />}
                   labelPosition='left' /> */}
-                <ReactPhoneInput
-                  country={`no`}
-                  className={`profilePhoneNumber`}
-                  value={emergencyContactDetails.emergencyPhoneNo}
-                  placeholder={t("Enter Mobile Number")}
-                  name="emergencyPhoneNo"
-                  onBlur={(e) => validateEmergencyContactInfo(emergencyContactDetails.emergencyPhoneNo, "emergencyPhoneNo")}
-                  onChange={(e, d) => onChangePhoneInput(e, d)} />
-                <div className="text-danger mt-1">{[phone_err]}</div>
+                        <ReactPhoneInput
+                          country={`no`}
+                          className={`profilePhoneNumber`}
+                          value={emergencyContactDetails.emergencyPhoneNo}
+                          placeholder={t("Enter Mobile Number")}
+                          name="emergencyPhoneNo"
+                          onBlur={(e) => validateEmergencyContactInfo(emergencyContactDetails)}
+                          onChange={(e, d) => onChangePhoneInput(e, d)} />
+                        <div className="text-danger mt-1">{[phone_err]}</div>
+                      </div>
+                    </div>
+                    <div className="col-12">
+                      <a onClick={(e) => addEmergencyContact(e)} className="text-success fs-7 px-4 px-sm-2 cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="18" viewBox="0 0 27.505 27.5">
+                          <path id="floating" d="M577.346,2164.47h1.719c.468.061.939.108,1.4.186a13.8,13.8,0,0,1,11.276,11.2c.089.5.142,1.006.211,1.51v1.719c-.04.327-.075.656-.122.981a13.749,13.749,0,1,1-23.4-11.494,13.464,13.464,0,0,1,7.4-3.886C576.337,2164.593,576.843,2164.539,577.346,2164.47Zm2,14.892h4.82a1.14,1.14,0,1,0,.027-2.278c-1.5-.009-3.007,0-4.51,0h-.336v-4.813a1.118,1.118,0,0,0-.693-1.111,1.131,1.131,0,0,0-1.588,1.07c-.01,1.5,0,3.007,0,4.51v.344h-4.806a1.141,1.141,0,1,0-.055,2.28c1.512.011,3.025,0,4.537,0h.323v.364c0,1.477,0,2.953,0,4.43a1.141,1.141,0,1,0,2.28.068c.012-1.5,0-3.007,0-4.51Z" transform="translate(-564.451 -2164.47)" fill="#328128" />
+                        </svg><span className="veritical-align-text-top ml-1">{t("Add more")}</span>
+                      </a>
+                    </div>
+                  </div>
+                }
+                <div className="col-12 px-sm-2" id="EmergencyContactDiv">
+                  {
+                    contactAccordian.map((data, index) => (
+                      <TenantDetailEmergengycontactAccordian key={index} removefunction={removeEmergencyContact} index={index} contactLength={data.contactAccordianLength} name={data.name} lname={data.lname} email={data.email} phone={data.phone} />
+                    ))
+                  }
+                </div>
+
               </div>
-            </div>
-            <div className="col-12">
-              <a onClick={(e) => addEmergencyContact(e)} className="text-success fs-7 px-4 px-sm-2 cursor-pointer">
-                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="18" viewBox="0 0 27.505 27.5">
-                  <path id="floating" d="M577.346,2164.47h1.719c.468.061.939.108,1.4.186a13.8,13.8,0,0,1,11.276,11.2c.089.5.142,1.006.211,1.51v1.719c-.04.327-.075.656-.122.981a13.749,13.749,0,1,1-23.4-11.494,13.464,13.464,0,0,1,7.4-3.886C576.337,2164.593,576.843,2164.539,577.346,2164.47Zm2,14.892h4.82a1.14,1.14,0,1,0,.027-2.278c-1.5-.009-3.007,0-4.51,0h-.336v-4.813a1.118,1.118,0,0,0-.693-1.111,1.131,1.131,0,0,0-1.588,1.07c-.01,1.5,0,3.007,0,4.51v.344h-4.806a1.141,1.141,0,1,0-.055,2.28c1.512.011,3.025,0,4.537,0h.323v.364c0,1.477,0,2.953,0,4.43a1.141,1.141,0,1,0,2.28.068c.012-1.5,0-3.007,0-4.51Z" transform="translate(-564.451 -2164.47)" fill="#328128" />
-                </svg><span className="veritical-align-text-top ml-1">{t("Add more")}</span>
-              </a>
-            </div>
-          </div>
-        }
-        <div className="col-12 px-sm-2" id="EmergencyContactDiv">
-          {
-            contactAccordian.map((data, index) => (
-              <TenantDetailEmergengycontactAccordian key={index} removefunction={removeEmergencyContact} index={index} contactLength={data.contactAccordianLength} name={data.name} lname={data.lname} email={data.email} phone={data.phone} />
-            ))
-          }
-        </div>
-
+              <div className="ui container text-center my-5">
+                <Button onClick={() => navigate('/preBooking/addOns')} disabled={isLoading || isBtnLoading} className="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">{t("BACK")}</Button>
+                <Button onClick={e => navigateToPayNowPage(e)} loading={isLoading || isBtnLoading} disabled={isLoading || isBtnLoading} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">{t("NEXT")}</Button>
+              </div>
+            </div>)}
       </div>
-      <div className="ui container text-center my-5">
-        <Button onClick={() => navigate('/preBooking/addOns')} disabled={isLoading} className="ui button  basic border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2">{t("BACK")}</Button>
-        {/* <Button onClick={e => submitTenantInfo(e)} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">{t("NEXT")}</Button> */}
-        <Button onClick={e => creditCheckSettingsInformation(e)} loading={isLoading} disabled={isLoading} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">{t("NEXT")}</Button>
-        {/* <Button onClick={() => checkCreditScore()} class/Name="ui button bg-success-dark   fs-7 fw-400 text-white px-5">{t("NEXT")}</Button> */}
-        {/* <Button onClick={() => SetCreditCheckModal({ open: true })} className="ui button bg-success-dark   fs-7 fw-400 text-white px-5">{t("NEXT")}</Button> */}
-
-      </div>
-
 
       <Modal
         dimmer={creditCheckModal.dimmer}
