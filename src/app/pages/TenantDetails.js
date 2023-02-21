@@ -54,6 +54,8 @@ export default function TenantDetails() {
       phoneNumber: '',
       addressLineOne: '',
       addressLineTwo: '',
+      companyName: '',
+      companyRegistrationNumber: '',
       city: '',
       country: '',
       state: '',
@@ -62,7 +64,7 @@ export default function TenantDetails() {
     });
 
   const [tenantInfoError, setTenantInfoError] = useState({
-    firstName: '', email: '', phoneNumber: '', addressLineOne: '', city: '', state: '', zipCode: '', ssn: ''
+    firstName: '', email: '', phoneNumber: '', addressLineOne: '', city: '', state: '', zipCode: '', ssn: '', companyName:'', companyRegistrationNumber:''
   });
 
   const [emergencyContactDetails, setEmergencyContactDetails] = useState({
@@ -200,7 +202,8 @@ export default function TenantDetails() {
 
 
   const validatePersonalInfo = (details) => {
-    const { firstName, lastName, email, phoneNumber, ssn, birthDate, companyName, city, state, zipCode } = details;
+    console.log(details);
+    const { firstName, lastName, email, phoneNumber, ssn, birthDate, companyName,companyRegistrationNumber, city, state, zipCode } = details;
     const errors = {};
     console.log(details);
     if (!firstName) {
@@ -235,9 +238,15 @@ export default function TenantDetails() {
     if (!zipCode) {
       errors.zipCode = "Zip Code is required";
     }
+    console.log("businessUser",BusinessUser);
+    console.log("companyName",!companyName);
+
 
     if (BusinessUser && !companyName) {
       errors.companyName = "Company Name is required";
+    }
+    if (BusinessUser && !companyRegistrationNumber ) {
+      errors.companyRegistrationNumber = "Company Registration Number is required";
     }
 
     setTenantInfoError(errors);
@@ -774,7 +783,6 @@ export default function TenantDetails() {
       }
 
       const response = await instance.post(request.lease_profile, requestbody, config);
-
       if (response.data.result !== null && response.data.result !== 'undefined') {
         sessionStorage.setItem("leaseProfileid", response.data.result);
         // navigate('/preBooking/esignPayment')
@@ -993,8 +1001,8 @@ export default function TenantDetails() {
                     <div className="col-12  col-md-6  px-4 px-sm-2">
                       <div className="field w-100  my-3">
                         <label className='fw-500 fs-7 mb-2'>{t("Company Name")}<i className="text-danger ">*</i></label>
-                        <input className="noCounterNumber" ref={companyName} type='text' name="companyname" placeholder='Company Name' />
-                        {tenantInfoError.companyname && <p className="text-danger mt-1">{tenantInfoError.companyname}</p>}
+                        <input className="noCounterNumber" ref={companyName} value={TenantInfoDetails.companyName} type='text' name="companyName" placeholder='Company Name' onChange={(e) => handlechange(e)} onBlur={() => validatePersonalInfo(TenantInfoDetails)}/>
+                        {tenantInfoError.companyName && <p className="text-danger mt-1">{tenantInfoError.companyName}</p>}
                       </div>
                     </div>
                     : ""
@@ -1004,9 +1012,9 @@ export default function TenantDetails() {
                     <div className="col-12  col-md-6  px-4 px-sm-2">
                       <div className="field w-100  my-3">
                         <label className='fw-500 fs-7 mb-2'>{t("Company registration No")} <i className="text-danger ">*</i></label>
-                        <input className="noCounterNumber" ref={companyRegistrationNumber} type='text' name="companyregistration" placeholder='Company registration No' />
+                        <input className="noCounterNumber" ref={companyRegistrationNumber} value={TenantInfoDetails.companyRegistrationNumber} type='text' name="companyRegistrationNumber" placeholder='Company registration No' onChange={(e) => handlechange(e)} onBlur={() => validatePersonalInfo(TenantInfoDetails)} />
                         <div id="registration" className="text-danger mt-1 d-none"> {t("Please Enter registration No")} </div>
-                        {tenantInfoError.companyregistration && <p className="text-danger mt-1">{tenantInfoError.companyregistration}</p>}
+                        {tenantInfoError.companyRegistrationNumber && <p className="text-danger mt-1">{tenantInfoError.companyRegistrationNumber}</p>}
 
                       </div>
                     </div> : ""
