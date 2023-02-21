@@ -202,7 +202,8 @@ export default function AddOn() {
         provider_name: insurancePolicyProvider !== '' ? insurancePolicyProvider : '',
         policy_number: policyNumber !== '' ? policyNumber : '',
         effective_to_date: effectiveToDate !== '' ? effectiveToDate : '',
-        effective_from_date: effectiveFromDate !== '' ? effectiveFromDate : ''
+        effective_from_date: effectiveFromDate !== '' ? effectiveFromDate : '',
+        policy_phonenumber: policyPhoneNumber !== '' ? policyPhoneNumber : ''
       }
       Object.entries(insuranceValue).forEach(([key, value]) => {
         if (value === '') {
@@ -454,6 +455,16 @@ export default function AddOn() {
     list.splice(index, 1);
     SetVehicleAccordian(list)
   }
+  const handleInputKeyDown = (event) => {
+    console.log(event);
+    const pattern = /^[0-9\b]+$/;
+    const mathSymbols = /[-+*/^()]/;
+    const inputChar = String.fromCharCode(event.keyCode);
+
+    if (!pattern.test(inputChar) || mathSymbols.test(inputChar)) {
+      event.preventDefault();
+    }
+  };
   return (
     <>
 
@@ -566,7 +577,7 @@ export default function AddOn() {
                       </div>
                       <div className="field w-100 datePicker my-3">
                         <label className='fw-500 fs-7 mb-2'>{t("Policy Phone Number")}</label>
-                        <input placeholder={`${t("Policy Phone Number")}`} value={policyPhoneNumber} onChange={(e) => { setPolicyPhoneNumber(e.target.value) }} />
+                        <input  placeholder={`${t("Policy Phone Number")}`} value={policyPhoneNumber} onChange={(e) => { setPolicyPhoneNumber(e.target.value) }} type='number' onKeyDown={(e) => handleInputKeyDown(e)}/>
                         <p className="error py-1 policy_phonenumber d-none">{t("Please Enter Policy Phone Number")}</p>
                       </div>
                       <div className="field w-100 datePicker my-3">
