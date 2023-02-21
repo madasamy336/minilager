@@ -207,15 +207,21 @@ export default function AddOn() {
       }
       Object.entries(insuranceValue).forEach(([key, value]) => {
         if (value === '') {
-          document.querySelector(`.${key}`).classList.remove("d-none");
-          document.querySelector(`.${key}`).scrollIntoView({ behavior: 'smooth' });
+          const element = document.querySelector(`.${key}`);
+          if (element) {
+            element.classList.remove("d-none");
+            element.scrollIntoView({ behavior: 'smooth' });
+          }
           errorcount = errorcount + 1;
           setLoader(false);
           return
         } else {
-          document.querySelector(`.${key}`).classList.add("d-none");
+          console.log(key);
+          const element = document.querySelector(`.${key}`);
+          if (element) {
+            element.classList.add("d-none");
+          }
         }
-
       });
       if (errorcount === 0) {
         setLoader(false);
