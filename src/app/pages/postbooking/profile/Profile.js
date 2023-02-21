@@ -82,6 +82,10 @@ export default function Profile() {
   const EditTenantAddressHandler = () => {
     setIsAddressEditable(!isAddressEditable);
   };
+  const cancelEditInfo = () => {
+    setIsTenantDetailEditable(false);
+    setIsAddressEditable(false);
+  }
 
   const fetchTenantDetails = async () => {
     setLoading(true);
@@ -367,7 +371,7 @@ export default function Profile() {
                   <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                     <div className="field w-100 datePicker my-3">
                       <label className="text-dark fs-7 fw-500">Date of Birth<span className="error">*</span></label>
-                      <SemanticDatepicker  format='DD.MM.YYYY' datePickerOnly minDate={minDate} name="dateOfBirth" placeholder='Select date' maxDate={new Date()}  value={typeof birthDateReq !== "undefined" && birthDateReq !== null && birthDateReq !== "" ? new Date(birthDateReq) : new Date()} className='w-100' onChange={handleChangeBirthdate} />
+                      <SemanticDatepicker format='DD.MM.YYYY' datePickerOnly minDate={minDate} name="dateOfBirth" placeholder='Select date' maxDate={new Date()} value={typeof birthDateReq !== "undefined" && birthDateReq !== null && birthDateReq !== "" ? new Date(birthDateReq) : new Date()} className='w-100' onChange={handleChangeBirthdate} />
                       {errors["dateOfBirth"] && <div className="error">{errors["dateOfBirth"]}</div>}
                     </div>
                     <div className="field my-3">
@@ -398,10 +402,10 @@ export default function Profile() {
                     </div>
                   </div>
                 </div>
-                <div className="mt-2 text-center">
-                  <button className="ui button text-dark fs-7 fw-400 px-5 mx-1 mb-sm-1" disabled={isLoading} onClick={EditTenantDetailsHandler}>{t("CANCEL")}</button>
+                {/* <div className="mt-2 text-center">
+                  <Button className="ui button text-dark fs-7 fw-400 px-5 mx-1 mb-sm-1" disabled={isLoading} onClick={EditTenantDetailsHandler}>{t("CANCEL")}</Button>
                   <Button className="ui button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-sm-1" loading={isLoading} disabled={isLoading} onClick={() => updateTenantInfo(tenantDetails)}>{t("SAVE")}</Button>
-                </div>
+                </div> */}
               </div>}
 
               {!isTenantDetailEditable && <div className="row reverse-sm">
@@ -534,10 +538,6 @@ export default function Profile() {
                     </div>
                   </div>
                 </div>
-                <div className="mt-2 text-center">
-                  <button className="ui button text-dark fs-7 fw-400 px-5 mx-1 mb-sm-1" disabled={isLoading} onClick={setIsAddressEditable}>{t("CANCEL")}</button>
-                  <button className="ui button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-sm-1 " loading={isLoading} disabled={isLoading} onClick={() => updateTenantInfo(tenantDetails)}>{t("SAVE")}</button>
-                </div>
               </div>}
 
               {!isAddressEditable && <div className="row reverse-sm">
@@ -583,6 +583,10 @@ export default function Profile() {
             </div>
           </div>
 
+          {(isAddressEditable || isTenantDetailEditable) && <div className="mt-2 mb-2 text-center">
+            <Button className="ui button text-dark fs-7 fw-400 px-5 mx-1 mb-sm-1" disabled={isLoading} onClick={cancelEditInfo}>{t("CANCEL")}</Button>
+            <Button className="ui button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-sm-1 " loading={isLoading} disabled={isLoading} onClick={() => updateTenantInfo(tenantDetails)}>{t("SAVE")}</Button>
+          </div>}
           <div className="bg-white card-boxShadow border-radius-15 py-2 mb-2 d-none">
             <div className="row dashed-bottom px-3 py-2 px-sm-2">
               <div className="col-lg-6 col-md-6 col-sm-12">
