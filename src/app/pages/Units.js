@@ -398,7 +398,7 @@ const Units = () => {
 
                                     </div>
                                 </div>
-                                {!loader && typeof unitLoadMoreButtonVal !== 'undefined' && unitLoadMoreButtonVal !== null && unitLoadMoreButtonVal !== '' && unitLoadMoreButtonVal > 0 && unitLoadMoreButtonVal !== 0 ? (
+                                {!loader && typeof unitLoadMoreButtonVal !== 'undefined' && unitLoadMoreButtonVal !== null && unitLoadMoreButtonVal !== '' && unitLoadMoreButtonVal > 0 && unitLoadMoreButtonVal !== 0 && !noUnits ? (
                                     <div className='pagination-div mt-2 mb-3 text-center'>
                                         <Pagination ellipsisItem={{ content: <Icon name='ellipsis horizontal' />, icon: true }}
                                             firstItem={{ content: <Icon name='angle double left' />, icon: true }}
