@@ -17,7 +17,7 @@ const SuccessfulMoveIn = () => {
             </div>
             <h6 className="text-success-dark fs-7 fw-500 mb-1">{t("You have successfully Moved In")}</h6>
             <p className="mb-2">{t("Check your inbox for lease-related information")}</p>
-            <button onClick={e=>RentNow(e)} className="ui button bg-success-dark text-white fw-100">{t("Go to Dashboard")}</button>
+            <button onClick={e=>RentNow(e)} className="ui button bg-success-dark text-white fw-100">{t("Go to Profile")}</button>
         </div>
     )
 }
