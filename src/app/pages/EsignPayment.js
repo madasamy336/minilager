@@ -661,7 +661,7 @@ export default function EsignPayment() {
                       </div>
                       <div className='col-lg-6 col-md-12 col-sm-12'>
                         <div className='card-border border-radius-5 ml-2 ml-md-0'>
-                          <h6 className='card-bg-secondary p-2 text-success-dark fs-6'>{t("INITIATOR")}</h6>
+                          <h6 className='card-bg-secondary p-2 text-success-dark fs-6'>{t("SIGNING PARTY")}</h6>
                           <div className='py-2 px-1'>
                             <p className='fw-600 fs-6 mb-1'>{tenantInfo.firstName} {tenantInfo.lastName}</p>
                             <p>{t("Signatory Party")}</p>
