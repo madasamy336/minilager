@@ -680,7 +680,7 @@ export default function TenantDetails() {
 
     if (BusinessUser) {
       delete requestBody.identity_number;
-      requestBody.organization_number = `${companyRegistrationNumber.current.value}`;
+      requestBody.organization_number = TenantInfoDetails.companyRegistrationNumber;
     }
     var creditCheckConfig = {
       headers: {
