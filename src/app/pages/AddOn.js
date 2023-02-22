@@ -510,8 +510,8 @@ export default function AddOn() {
                               addOnsResponse.insurance !== 'undefined' && addOnsResponse.insurance !== null && addOnsResponse.insurance.map(item => {
                                 return <div key={item.id} className='col-lg-3 col-md-6 col-sm-12 px-1 mb-1'>
                                   <div className={`card changePlanCard cursor-pointer  border-radius-10 text-center p-2 ${activePlan === item.planName && 'active'}`} onClick={(e) => selectAdminInsurance(item.planName, item.id)}>
-                                    <p className=' fs-7 fw-500 pb-1 mt-1'>{item.planName}</p>
-                                    <h4 className={` fs-6 fw-500 pb-2 ${activePlan === item.planName ? 'text-white' : 'text-success-dark'}`}>{helper.displayCurrency(item.coverage)}</h4>
+                                    <p className=' fs-7 fw-600 pb-1 mt-1'>{item.planName}</p>
+                                    <h4 className={` fs-3 fw-500 pb-2 ${activePlan === item.planName ? 'text-white' : 'text-success-dark'}`}>{helper.displayCurrency(item.coverage)}</h4>
                                     <span className='fs-8 fw-600 d-block mb-1'>{helper.displayCurrency(item.premium.domestic.netAmount)} Per Month</span>
                                   </div>
                                 </div>
@@ -522,7 +522,7 @@ export default function AddOn() {
                             }
                             <div className='col-lg-3 col-md-6 col-sm-12 px-1 mb-1'>
                               <div className={`card changePlanCard cursor-pointer  border-radius-10 text-center p-2  ${activePlan === 'Own Insurance' && 'active'}`} onClick={(e) => ownInsuranceHandler(e)} >
-                                <p className=' fs-7 fw-500 pb-1 mt-1'>{t("I HAVE A")}</p>
+                                <p className=' fs-7 fw-600 pb-1 mt-1'>{t("I HAVE A")}</p>
                                 <h4 className={` fs-6 fw-500 pb-2 ${activePlan === 'Own Insurance' ? 'text-white' : 'text-success-dark'}`}>{t("OWN INSURANCE")}</h4>
                               </div>
                             </div>
