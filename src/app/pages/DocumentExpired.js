@@ -56,8 +56,8 @@ export default function DocumentExpired(props) {
                 'Authorization': `Bearer ${authorizationToken}`
             },
         }
-
-        axios.post('https://usuat-sixverifier-api.8storage.com/esign', requestBody, config).then(response => {
+        const eSignUrl =process.env.REACT_APP_ESIGN_URL
+        axios.post(eSignUrl, requestBody, config).then(response => {
             // console.log(response);
             return response
         }).then(result => {

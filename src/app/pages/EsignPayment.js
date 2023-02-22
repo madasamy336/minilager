@@ -90,7 +90,8 @@ export default function EsignPayment() {
           },
         };
 
-        await axios.post("https://id.8storage.com/connect/token", data, config)
+        const authorityUrl =process.env.REACT_APP_AUTHORITY
+        await axios.post(authorityUrl, data, config)
           .then(response => {
             const accessToken = response.data.access_token;
             const expirationTimestamp = currentTimestamp + response.data.expires_in;
@@ -126,8 +127,10 @@ export default function EsignPayment() {
         'Authorization': `Bearer ${localStorage.getItem("accessToken")}`,
       },
     };
+    const sixVerifierSettingsUrl = process.env.REACT_APP_SIX_VERIFIER_SETTINGS_URL
+
     try {
-      const response = await axios.post('https://usuat-sixverifier-api.8storage.com/integration', requestBody, creditCheckConfig);
+      const response = await axios.post(sixVerifierSettingsUrl, requestBody, creditCheckConfig);
       setEsignSettingData(response.data)
       console.log(response.data);
       if (response.data.status === 200 && response.data.body.is_enabled_in_booking_portal) {
@@ -471,7 +474,8 @@ export default function EsignPayment() {
         'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
       },
     }
-    axios.post('https://usuat-sixverifier-api.8storage.com/esign', requestBody, config).then(response => {
+    const eSignUrl = process.env.REACT_APP_ESIGN_URL
+    axios.post(eSignUrl, requestBody, config).then(response => {
       // console.log(response);
       return response
     }).then(result => {

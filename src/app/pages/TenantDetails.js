@@ -460,8 +460,9 @@ export default function TenantDetails() {
             'Content-Type': 'application/x-www-form-urlencoded'
           },
         };
+        const authorityUrl =process.env.REACT_APP_AUTHORITY
 
-        await axios.post("https://id.8storage.com/connect/token", data, config)
+        await axios.post(authorityUrl, data, config)
           .then(response => {
             const accessToken = response.data.access_token;
             const expirationTimestamp = currentTimestamp + response.data.expires_in;
@@ -499,8 +500,10 @@ export default function TenantDetails() {
         'Authorization': `Bearer ${localStorage.getItem("accessToken")}`,
       },
     };
+    const sixVerifierSettingsUrl = process.env.REACT_APP_SIX_VERIFIER_SETTINGS_URL
+
     try {
-      const response = await axios.post('https://usuat-sixverifier-api.8storage.com/integration', requestBody, creditCheckConfig);
+      const response = await axios.post(sixVerifierSettingsUrl, requestBody, creditCheckConfig);
       // setCreditCheckSettingData(response.data)
       console.log(response.data);
       if (response.data.status === 200 && response.data.body.is_enabled_in_booking_portal) {
@@ -682,8 +685,9 @@ export default function TenantDetails() {
         'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
       },
     };
-
-    await axios.post('https://usuat-sixverifier-api.8storage.com/creditcheck', requestBody, creditCheckConfig)
+    
+    const creditCheckUrl =process.env.REACT_APP_CREDIT_CHECK_URL
+    await axios.post(creditCheckUrl, requestBody, creditCheckConfig)
       .then(response => {
         return response;
       }).then(result => {
