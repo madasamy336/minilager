@@ -9,6 +9,7 @@ import request from '../services/request';
 import { ToastContainer, toast } from 'react-toastify';
 import { useTranslation } from "react-i18next";
 import 'react-toastify/dist/ReactToastify.css';
+import {sortUnitOptions } from "../constant/constant";
 
 let isBussinessUser;
 let totatCount;
@@ -18,7 +19,7 @@ let pages = 0;
 const Units = () => {
     const [tenantTypes, setTenantTypes] = useState(null);
     const [tenantTypeError, setTenantTypeError] = useState(false);
-    const [SortByPriceRange, setSortByPriceRange] = useState("Descending");
+    const [sortByPriceRange, setSortByPriceRange] = useState(sortUnitOptions[0].value);
     const [unitLoadMoreButtonVal, setUnitLoadMoreButtonVal] = useState();
     const [pageNumber, setPageNumber] = useState(1);
     const [noUnits, setNoUnits] = useState(false);
@@ -41,28 +42,32 @@ const Units = () => {
     const filters = JSON.parse(localStorage.getItem('Units'));
     let locationId = localStorage.getItem('locationid');
     let userInfo = JSON.parse(localStorage.getItem('tenantInfo'));
-    useEffect(() => {
-        if (!isRendered) {
-            fetchUnitFilter(locationId);
-            setIsRendered(true);
-        }
-    }, [storageTypeValue]);
-
-    useEffect(() => {
-
+      
+      useEffect(() => {
         if (typeof userInfo !== "undefined" && userInfo !== null && userInfo !== "") {
-            if (userInfo.businessUser === true) {
-                setTenantTypes(tenantTypeOptions[1].value);
-                sessionStorage.setItem("isBussinessUser", tenantTypeOptions[1].value);
-            } else {
-                setTenantTypes(tenantTypeOptions[0].value);
-                sessionStorage.setItem("isBussinessUser", tenantTypeOptions[0].value);
-            }
-            sessionStorage.removeItem("applypromo");
+          if (userInfo.businessUser === true) {
+            setTenantTypes(tenantTypeOptions[1].value);
+            sessionStorage.setItem("isBussinessUser", tenantTypeOptions[1].value);
+          } else {
+            setTenantTypes(tenantTypeOptions[0].value);
+            sessionStorage.setItem("isBussinessUser", tenantTypeOptions[0].value);
+          }
+          sessionStorage.removeItem("applypromo");
         }
-      sixStorageLoadUnitList(storageTypeValue);
-    }, [pageNumber]);
-
+      
+        if (storageTypeValue) {
+          sixStorageLoadUnitList(storageTypeValue, sortByPriceRange);
+        }
+      
+        fetchUnitFilter(locationId);
+      }, [pageNumber, sortByPriceRange]);
+      
+      const sortByPriceRangeHandler = (event_, data) => {
+        if (data.value !== sortByPriceRange) {
+          setSortByPriceRange(data.value);
+        }
+      };
+      
     const fetchUnitFilter = async (loactionid) => {
         let config = {
             headers: {
@@ -84,7 +89,7 @@ const Units = () => {
                         setStorageTypeValue(data.storageType[0].storageTypeId);
                         await sixStorageLoadUnitList(data.storageType[0].storageTypeId);
                     } else {
-                        setStorageTypeValue(storageTypeValue);
+                        // setStorageTypeValue(storageTypeValue);
                         await sixStorageLoadUnitList(storageTypeValue);
                     }
                 }
@@ -93,7 +98,7 @@ const Units = () => {
             console.error(error);
         }
     }
-    
+
 
     const constructFilterValues = (unitFilterResponse) => {
         let storageTypeValues = [];
@@ -193,14 +198,12 @@ const Units = () => {
     }
 
     const sixStorageLoadUnitList = async (storageTypeid, searchFilterValues) => {
-        console.log(storageTypeid, searchFilterValues);
         try {
             let buidingId;
             let unitTypeId;
             let amenitiesId;
             let minvalues;
             let maxvalues;
-            console.log(searchFilterValues);
             if (typeof searchFilterValues !== "undefined" && searchFilterValues !== null && searchFilterValues !== "") {
                 buidingId = searchFilterValues.buildingid;
                 unitTypeId = searchFilterValues.unitTypeid;
@@ -212,14 +215,21 @@ const Units = () => {
             }
             setLoading(true);
 
+            const storageTypeJson = localStorage.getItem('Units');
+
+            // Parse the JSON string into a JavaScript object
+            const storageTypeObj = JSON.parse(storageTypeJson);
+
+            // Access the storageTypeId value
+            const storageTypeId = storageTypeObj.storageType[0].storageTypeId;
             let config = {
                 headers: {
                     "Content-Type": "application/json",
                 },
             };
-
+            console.log(Units.storageType);
             let requestbody = {
-                storageTypeId: [storageTypeid],
+                storageTypeId: storageTypeid ? [storageTypeid] : [storageTypeId],
                 locationId: [locationId],
                 buildingId: buidingId,
                 unitTypeId: unitTypeId,
@@ -230,7 +240,7 @@ const Units = () => {
                     minPrice: minvalues,
                     maxPrice: maxvalues
                 },
-                sortDirection: SortByPriceRange,
+                sortDirection: sortByPriceRange,
                 pageNumber: pageNumber,
                 pageSize: 10,
                 isBusinessUser: isBussinessUser === "true" ? true : false,
@@ -238,7 +248,6 @@ const Units = () => {
             }
             const response = await instance.post(request.user_search, requestbody, config);
             setUnitResponse(response.data.result);
-            console.log(response.data.result);
             let loadmoreUnitCount = response.data.totalCount - response.data.pageCount;
             totatCount = response.data.totalCount;
             let quotient = Math.floor(totatCount / pagesizepagination);
@@ -287,13 +296,7 @@ const Units = () => {
         setTenantTypeError(data);
     }
 
-    const sortByPriceRange = async (event_, data) => {
-        console.log(data);
-        setSortByPriceRange(data.value);
-        console.log("4");
-
-        await sixStorageLoadUnitList(storageTypeValue);
-    }
+    
 
     const PaginationHandleChange = (event, value) => {
         window.scroll(0, 300);
@@ -325,20 +328,20 @@ const Units = () => {
         }, 500)
     }
 
-    const sortUnitOptions = [
-        {
-            key: 'Descending',
-            text: `${t("Price Low to High")}`,
-            value: 'Descending',
-            content: `${t("Price Low to High")}`,
-        },
-        {
-            key: 'Ascending',
-            text: `${t("Price High to Low")}`,
-            value: 'Ascending',
-            content: `${t("Price High to Low")}`,
-        }
-    ]
+    // const sortUnitOptions = [
+    //     {
+    //         key: 'Ascending',
+    //         text: `${t("Price Low to High")}`,
+    //         value: 'Ascending',
+    //         content: `${t("Price Low to High")}`,
+    //     },
+    //     {
+    //         key: 'Descending',
+    //         text: `${t("Price High to Low")}`,
+    //         value: 'Descending',
+    //         content: `${t("Price High to Low")}`,
+    //     }
+    // ]
 
     return (
         <div className="units-wrapper">
@@ -354,7 +357,7 @@ const Units = () => {
                             </div>
                             <div className='col-lg-6 col-md-6 col-sm-12'>
                                 {storageTypeOptions !== null && typeof storageTypeOptions !== 'undefined' && storageTypeOptions !== '' && typeof storageTypeOptions[0].value !== 'undefined' && storageTypeOptions[0].value !== null && storageTypeOptions[0].value !== '' ?
-                                    <Dropdown placeholder="Choose Storage Type" value={storageTypeValue} clonChange={changeStorageType} fluid selection options={storageTypeOptions} className={`opacity-1`} disabled={storageTypeOptions.length === 1} />
+                                    <Dropdown placeholder="Choose Storage Type" value={storageTypeValue} onChange={changeStorageType} fluid selection options={storageTypeOptions} className={`opacity-1`} disabled={storageTypeOptions.length === 1} />
                                     : ''}
                             </div>
                         </div>
@@ -380,7 +383,7 @@ const Units = () => {
                                                 inline
                                                 options={sortUnitOptions}
                                                 defaultValue={sortUnitOptions[0].value}
-                                                onChange={sortByPriceRange}
+                                                onChange={sortByPriceRangeHandler}
                                             />
                                         </Header.Content>
                                     </Header>

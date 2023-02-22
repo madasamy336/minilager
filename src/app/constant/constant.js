@@ -1,3 +1,6 @@
+import { useTranslation } from "react-i18next";
+import { t } from "../../i18n";
+
 export const PHOTO_URl_BUSINESS_USER = (data) => {
     const url = {
       A: "/assets/images/A.png",
@@ -55,3 +58,18 @@ export const PHOTO_URl_BUSINESS_USER = (data) => {
       return '/assets/images/poor_credit_score.svg'
     }
   }
+
+  export const sortUnitOptions = [
+    {
+        key: 'Ascending',
+        text: `${t("Price Low to High")}`,
+        value: 'Ascending',
+        content: `${t("Price Low to High")}`,
+    },
+    {
+        key: 'Descending',
+        text: `${t("Price High to Low")}`,
+        value: 'Descending',
+        content: `${t("Price High to Low")}`,
+    }
+]

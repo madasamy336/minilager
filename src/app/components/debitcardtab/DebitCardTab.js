@@ -83,10 +83,8 @@ const DebitCardTab = (props) => {
             .then(response => {
                 return response;
             }).then(data => {
-                console.log(data);
                 setLoading(false);
                 const res = data.data;
-                console.log(res);
                 if (res.isSuccess !== false && res.isSuccess === true && res.returnCode === "SUCCESS") {
                     listACHCards();
                 }
@@ -121,10 +119,8 @@ const DebitCardTab = (props) => {
             .then(response => {
                 return response;
             }).then(data => {
-                console.log(data);
                 setLoading(false);
                 const res = data.data;
-                console.log(res);
                 if (res.isSuccess !== false && res.isSuccess === true && res.returnCode === "SUCCESS") {
                     listACHCards();
                 }
