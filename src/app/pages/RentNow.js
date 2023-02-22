@@ -167,7 +167,7 @@ const RentNow = () => {
                                 <div className="ui centered inline">{t("No record found")}</div>
                             )
                             
-                        }{ !loading ?
+                        }{ !loading && Array.isArray(LocationResponse) && LocationResponse.length > 10 ?
                             <div className='pagination-div mt-2 mb-3 text-center'>
                           <Pagination activePage={currentPage} totalPages={totalPages}  onPageChange={handlePageChange} />
                           </div>:""
