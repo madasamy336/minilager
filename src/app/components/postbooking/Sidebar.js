@@ -33,6 +33,7 @@ export default function SidebarPostBooking(props) {
       sessionStorage.removeItem("invoiceData");
       sessionStorage.removeItem("recurringData");
       sessionStorage.removeItem("fieldid");
+      sessionStorage.removeItem("emergencyDetail");
       setLogoutModalOpen(({
         open: false,
         dimmer: undefined
