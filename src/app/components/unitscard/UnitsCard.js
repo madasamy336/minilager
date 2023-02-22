@@ -36,8 +36,9 @@ const UnitsCard = (props) => {
                                 {typeof details.discounts !== 'undefined' && details.discounts !== null && details.discounts.length > 0 ? (
                                     details.discounts.map((item) => {
                                         return <Popup key="" wide inverted size='tiny'
-                                            trigger={<p className='position-absolute t-2 r-0'>{item.name}</p>}
-                                            content={item.description}
+                                            trigger={<p className='position-absolute t-2 cursor-pointer r-0'>{item.name}</p>}
+                                            content={item.description} 
+                                            position='bottom left'
                                             hideOnScroll />
                                     })
                                 ) : ''
