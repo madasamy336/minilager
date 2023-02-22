@@ -435,7 +435,6 @@ const AccordionExampleStyled = (selectedStorageType) => {
 
             {typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof UnitTypeDimension !== 'undefined' && UnitTypeDimension !== null && UnitTypeDimension !== "" ?
               Object.keys(UnitTypeDimension).map(data => {
-                console.log(data);
                 return UnitTypeDimension[data].map(dimension => {
                   return <li key={dimension.key}><input  disabled={true} value={dimension.unitTypeId}  className={`mr-1 mb-1 dimension_${data.split(" ").join("").replace(/[&\\+()~%'",:?<>{}!@#]/g, '')}`} type="checkbox" onChange={(e) => onChangeUnitMesurement(e, dimension.unitMeasurement, dimension.unitTypeId)} />{dimension.unitMeasurement}{helper.measurementDisplayFormat(dimension.measurementType)}</li>
                 })

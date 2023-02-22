@@ -106,10 +106,8 @@ const CreditCardTab = (props) => {
             .then(response => {
                 return response;
             }).then(data => {
-                console.log(data);
                 setLoading(false);
                 const res = data.data;
-                console.log(res);
                 if (res.isSuccess !== false && res.isSuccess === true && res.returnCode === "SUCCESS") {
                     listCreditCards();
                     setShowCard(true);
@@ -145,7 +143,6 @@ const CreditCardTab = (props) => {
             .then(response => {
                 return response;
             }).then(data => {
-                console.log(data);
                 setLoading(false);
                 const res = data.data;
                 console.log(res);

@@ -202,8 +202,6 @@ export default function MyLeases() {
 
     }
     setErrorMessage("");
-    console.log(data);
-    console.log(bindScheduledMovedDate);
     // console.log(leaseId)
     let config = {
       headers: {
@@ -305,7 +303,6 @@ export default function MyLeases() {
   }
 
   function handleChange(_e, data) {
-    console.log(data);
     SetScheduleMoveOutDate({ ...scheduleMoveOutDate, [data.name]: data.value })
   }
 
