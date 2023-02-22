@@ -442,13 +442,14 @@ export default function TenantDetails() {
   const oAuthTokenGeneration = async () => {
     const currentTimestamp = new Date().getTime() / 1000;
     const tokenExpirationTimestamp = localStorage.getItem("tokenExpirationTimestamp");
-
+    const client_id = process.env.REACT_APP_CLIENT_ID
+    const client_secret = process.env.REACT_APP_CLIENT_SECRET
     // Check if the token has expired
     if (!tokenExpirationTimestamp || currentTimestamp > parseInt(tokenExpirationTimestamp)) {
       try {
         const data = {
-          client_id: '6StorageTenantPortal',
-          client_secret: 'eea7aee6-e7fd-976b-164a-20b9a5b75166',
+          client_id: client_id,
+          client_secret: client_secret,
           grant_type: 'client_credentials',
           acr_values: `tenant:${clientDataconfig.clientId}`,
           scopes: 'sixstorage_admin_api_scope'
@@ -460,15 +461,17 @@ export default function TenantDetails() {
             'Content-Type': 'application/x-www-form-urlencoded'
           },
         };
-        const authorityUrl =process.env.REACT_APP_AUTHORITY
+        const authorityUrl = process.env.REACT_APP_AUTHORITY
 
         await axios.post(authorityUrl, data, config)
           .then(response => {
             const accessToken = response.data.access_token;
             const expirationTimestamp = currentTimestamp + response.data.expires_in;
             // Store the new token and its expiration timestamp
-            localStorage.setItem("accessToken", accessToken);
-            localStorage.setItem("tokenExpirationTimestamp", expirationTimestamp);
+            // localStorage.setItem("accessToken", accessToken);
+            // localStorage.setItem("tokenExpirationTimestamp", expirationTimestamp);
+            sessionStorage.setItem("accessToken", accessToken);
+            sessionStorage.setItem("tokenExpirationTimestamp", expirationTimestamp);
             return accessToken;
           })
           .catch(error => {
@@ -478,7 +481,7 @@ export default function TenantDetails() {
         console.error(error);
       }
     } else {
-      return localStorage.getItem("accessToken");
+      return sessionStorage.getItem("accessToken");
     }
   };
 
@@ -497,7 +500,7 @@ export default function TenantDetails() {
     const creditCheckConfig = {
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem("accessToken")}`,
+        'Authorization': `Bearer ${sessionStorage.getItem("accessToken")}`,
       },
     };
     const sixVerifierSettingsUrl = process.env.REACT_APP_SIX_VERIFIER_SETTINGS_URL
@@ -685,8 +688,8 @@ export default function TenantDetails() {
         'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
       },
     };
-    
-    const creditCheckUrl =process.env.REACT_APP_CREDIT_CHECK_URL
+
+    const creditCheckUrl = process.env.REACT_APP_CREDIT_CHECK_URL
     await axios.post(creditCheckUrl, requestBody, creditCheckConfig)
       .then(response => {
         return response;
