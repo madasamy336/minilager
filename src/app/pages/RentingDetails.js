@@ -157,7 +157,7 @@ export default function RentingDetails() {
       }));
     }
    
-    childRef.current.unitInfodetailscall();
+    // childRef.current.unitInforecurringPeriodIdCall(item.value);
 
   }
   const recurringOnchange = (e, item) => {
@@ -166,7 +166,7 @@ export default function RentingDetails() {
     sessionStorage.setItem("invoiceRecurringValue", (item.value));
     // document.querySelector('.inovice-recurring>.divider.text').innerHTML="text";
     setRecurringValue(item.value)
-    childRef.current.unitInfodetailscall();
+    //childRef.current.unitInfodetailscall();
 
   }
   const [inputValue, setInputValue] = useState({})
@@ -298,7 +298,7 @@ export default function RentingDetails() {
   useEffect(() => {
     customFieldsSettings();
     PricesummaryData();
-  }, [newArray]);
+  }, []);
 
   useEffect(() => {
     if (customfieldBindingData) {
