@@ -112,7 +112,7 @@ export default function Profile() {
         birthDateReq = data["birthDate"];
         data["phoneNumber"] = data["phoneNumber"].replace(DefaultCountryCode, "");
         setTenantDetails(data);
-        setprofileImageSrc(data.photoPath);
+        setprofileImageSrc(data.photoPath)
         setTimeout(() => {
           setLoading(false);
         }, 1000);
@@ -163,7 +163,7 @@ export default function Profile() {
     setFile(event.target.files[0]);
     const reader = new FileReader();
     reader.readAsDataURL(event.target.files[0]);
-    reader.onload = () => setPreviewSrc(reader.result);
+    reader.onload = () => setprofileImageSrc(reader.result);
 
     // Below code for reaize the image. Need to implement in Future if required
     // reader.onload = () => {
@@ -353,8 +353,8 @@ export default function Profile() {
                   <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                     <div className="edit-profile-img position-relative">
                       {/* <img src={profileImageSrc && profileImageSrc.length > 0 ? profileImageSrc : '/assets/images/profile_.png'} className="ui medium circular image object-fit-cover TenantDetailsProfileImage mx-auto" id="tenantProfileImage" alt="Profile" /> */}
-                      {previewSrc ? (
-                        <Image src={previewSrc} className="ui medium circular image object-fit-cover TenantDetailsProfileImage mx-auto" id="tenantProfileImage" alt="Profile" />
+                      {profileImageSrc ? (
+                        <Image src={profileImageSrc} className="ui medium circular image object-fit-cover TenantDetailsProfileImage mx-auto" id="tenantProfileImage" alt="Profile" />
                       ) : (
                         <Image src='/default-profile-pic.jpg' className="ui medium circular image object-fit-cover TenantDetailsProfileImage mx-auto" id="tenantProfileImage" alt="Profile" />
                       )}
