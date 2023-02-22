@@ -90,8 +90,10 @@ export default function ViewDocuments(props) {
                 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
             },
         }
+        const eSignUrl = process.env.REACT_APP_ESIGN_URL
+
         try {
-            const response = await axios.post("https://usuat-sixverifier-api.8storage.com/esign", requestBody, config);
+            const response = await axios.post(eSignUrl, requestBody, config);
             console.log("eSignCompletionREsponse:-", JSON.stringify(response.data.body));
             setESignData(response.data.body)
             sessionStorage.setItem("eSignDocumentURL", response.data.body.document_url)

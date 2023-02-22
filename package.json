@@ -22,6 +22,7 @@
     "pdf-merger-js": "^4.1.2",
     "pdf-viewer-reactjs": "^2.2.3",
     "react": "^18.2.0",
+    "react-cropper": "^2.1.8",
     "react-datepicker": "^4.8.0",
     "react-dom": "^18.2.0",
     "react-dropdown": "^1.11.0",
@@ -52,6 +53,12 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "start:qa": "env-cmd -f ./.env.qa react-scripts start",
+    "start:staging": "env-cmd -f ./.env.staging react-scripts start",
+    "start:production": "env-cmd -f ./.env.production react-scripts start",
+    "build:qa": "env-cmd -f ./.env.qa react-scripts build",
+    "build:staging": "env-cmd -f ./.env.staging react-scripts build",
+    "build:production": "env-cmd -f ./.env.production react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint src/**/*.js src/**/*.jsx"
@@ -75,6 +82,7 @@
     ]
   },
   "devDependencies": {
+    "env-cmd": "^10.1.0",
     "eslint": "^8.26.0",
     "eslint-plugin-react": "^7.31.10"
   }
