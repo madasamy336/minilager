@@ -87,7 +87,7 @@ export default function ViewDocuments(props) {
         const config = {
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
             },
         }
         const eSignUrl = process.env.REACT_APP_ESIGN_URL

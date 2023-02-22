@@ -441,7 +441,7 @@ export default function TenantDetails() {
 
   const oAuthTokenGeneration = async () => {
     const currentTimestamp = new Date().getTime() / 1000;
-    const tokenExpirationTimestamp = localStorage.getItem("tokenExpirationTimestamp");
+    const tokenExpirationTimestamp = sessionStorage.getItem("tokenExpirationTimestamp");
     const client_id = process.env.REACT_APP_CLIENT_ID
     const client_secret = process.env.REACT_APP_CLIENT_SECRET
     // Check if the token has expired
@@ -685,7 +685,7 @@ export default function TenantDetails() {
     var creditCheckConfig = {
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+        'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`,
       },
     };
 
