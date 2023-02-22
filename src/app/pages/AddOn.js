@@ -572,27 +572,27 @@ export default function AddOn() {
                     )}
                     {!insuranceGrid && (<div className="ui form px-4 px-sm-2">
                       <div className="field w-100 datePicker my-3">
-                        <label className='fw-500 fs-7 mb-2'>{t("Policy Provider Name")}</label>
+                        <label className='fw-500 fs-7 mb-2'>{t("Policy Provider Name")} <i className="text-danger ">*</i> </label>
                         <input placeholder={`${t("Policy Provider Name")}`} name="ProviderName" ref={inputRefs.current.ProviderName} value={insurancePolicyProvider} onChange={(e) => { setPolicyProvider(e.target.value) }} />
                         <p className="error py-1 provider_name d-none">{t("Please Enter Policy Provider Name")}</p>
                       </div>
                       <div className="field w-100 datePicker my-3">
-                        <label className='fw-500 fs-7 mb-2'>{t("Policy Number")}</label>
+                        <label className='fw-500 fs-7 mb-2'>{t("Policy Number")} <i className="text-danger ">*</i></label>
                         <input placeholder={`${t("Policy Number")}`} value={policyNumber} onChange={(e) => { setPolicyNumber(e.target.value) }} />
                         <p className="error py-1 policy_number d-none">{t("Please Enter Policy Number")}</p>
                       </div>
                       <div className="field w-100 datePicker my-3">
-                        <label className='fw-500 fs-7 mb-2'>{t("Policy Phone Number")}</label>
+                        <label className='fw-500 fs-7 mb-2'>{t("Policy Phone Number")} <i className="text-danger ">*</i></label>
                         <input  placeholder={`${t("Policy Phone Number")}`} value={policyPhoneNumber} onChange={(e) => { setPolicyPhoneNumber(e.target.value) }} type='number' onKeyDown={(e) => handleInputKeyDown(e)}/>
                         <p className="error py-1 policy_phonenumber d-none">{t("Please Enter Policy Phone Number")}</p>
                       </div>
                       <div className="field w-100 datePicker my-3">
-                        <label className='fw-500 fs-7 mb-2' >{t("Effective From Date")}</label>
+                        <label className='fw-500 fs-7 mb-2' >{t("Effective From Date")} <i className="text-danger ">*</i></label>
                         <SemanticDatepicker datePickerOnly placeholder={`${t("Effective From Date")}`} value={effectiveFromDate} className='w-100' onChange={(e, item) => setEffectiveFromDate(item.value)} />
                         <p className="error py-1 effective_from_date  d-none">{t("Please Enter Effective From Date")}</p>
                       </div>
                       <div className="field w-100 datePicker my-3">
-                        <label className='fw-500 fs-7 mb-2' >{t("Effective To Date")}</label>
+                        <label className='fw-500 fs-7 mb-2' >{t("Effective To Date")} <i className="text-danger ">*</i></label>
                         <SemanticDatepicker datePickerOnly placeholder={t("Effective To Date")} value={effectiveToDate} className='w-100' onChange={(e, item) => setEffectiveToDate(item.value)} />
                         <p className="error py-1 effective_to_date d-none">{t("Please Enter Effective To Date")}</p>
                       </div>
