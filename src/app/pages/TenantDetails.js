@@ -33,7 +33,6 @@ export default function TenantDetails() {
   let customFieldAccess = JSON.parse(localStorage.getItem('CustomFieldsSetting'));
   let unitDetailCustomField = JSON.parse(sessionStorage.getItem("customFieldstorage"));
   let startdate = Number(localStorage.getItem('storedate'));
-  let companyDetail = [];
   const clientDataconfig = JSON.parse(sessionStorage.getItem("configdata"));
   const today = new Date();
   const minDate = new Date(today.setFullYear(today.getFullYear() - 18));
@@ -54,6 +53,8 @@ export default function TenantDetails() {
       phoneNumber: '',
       addressLineOne: '',
       addressLineTwo: '',
+      companyName: '',
+      companyRegistrationNumber: '',
       city: '',
       country: '',
       state: '',
@@ -62,7 +63,7 @@ export default function TenantDetails() {
     });
 
   const [tenantInfoError, setTenantInfoError] = useState({
-    firstName: '', email: '', phoneNumber: '', addressLineOne: '', city: '', state: '', zipCode: '', ssn: ''
+    firstName: '', email: '', phoneNumber: '', addressLineOne: '', city: '', state: '', zipCode: '', ssn: '', companyName: '', companyRegistrationNumber: ''
   });
 
   const [emergencyContactDetails, setEmergencyContactDetails] = useState({
@@ -200,9 +201,8 @@ export default function TenantDetails() {
 
 
   const validatePersonalInfo = (details) => {
-    const { firstName, lastName, email, phoneNumber, ssn, birthDate, companyName, city, state, zipCode } = details;
+    const { firstName, lastName, email, phoneNumber, ssn, birthDate, companyName, companyRegistrationNumber, city, state, zipCode } = details;
     const errors = {};
-    console.log(details);
     if (!firstName) {
       errors.firstName = "First Name is required";
     }
@@ -228,16 +228,22 @@ export default function TenantDetails() {
     }
     if (!city) {
       errors.city = "City is required";
-    } 
+    }
     if (!state) {
       errors.state = "State is required";
     }
     if (!zipCode) {
       errors.zipCode = "Zip Code is required";
     }
+    console.log("businessUser", BusinessUser);
+    console.log("companyName", !companyName);
+
 
     if (BusinessUser && !companyName) {
       errors.companyName = "Company Name is required";
+    }
+    if (BusinessUser && !companyRegistrationNumber) {
+      errors.companyRegistrationNumber = "Company Registration Number is required";
     }
 
     setTenantInfoError(errors);
@@ -311,14 +317,35 @@ export default function TenantDetails() {
   //   return true;
   // };
 
-  const addEmergencyContact = (data) => {
-    if (data !== "next") {
-      const isValid = validateEmergencyContactInfo(emergencyContactDetails);
-      if (!isValid) {
-        return false;
-      }
+  const addEmergencyContact = () => {
+    const isValid = validateEmergencyContactInfo(emergencyContactDetails);
+    if (!isValid) {
+      return false;
     }
+    const newContactDetails = {
+      name: emergencyContactDetails.emergencyFname,
+      lname: emergencyContactDetails.emergencyLname,
+      email: emergencyContactDetails.emergencyEmail,
+      phone: emergencyContactDetails.emergencyPhoneNo,
+      contactAccordianLength: contactAccordian.length + 1
+    };
 
+    setContactAccordian(prevState => [...prevState, newContactDetails]);
+    setEmergencyContactDetails({
+      emergencyFname: '',
+      emergencyLname: '',
+      emergencyEmail: '',
+      emergencyPhoneNo: '',
+    });
+
+    return true;
+  };
+
+  const addEmergencyContactNext = () => {
+    const isValid = validateEmergencyContactInfo(emergencyContactDetails);
+    if (!isValid && !contactAccordian.length) {
+      return false;
+    }
     const newContactDetails = {
       name: emergencyContactDetails.emergencyFname,
       lname: emergencyContactDetails.emergencyLname,
@@ -339,12 +366,11 @@ export default function TenantDetails() {
   };
 
 
-
-
   const removeEmergencyContact = (index) => {
     const list = [...contactAccordian]
     list.splice(index, 1);
     setContactAccordian(list)
+    sessionStorage.setItem('emergencyDetail', JSON.stringify(list));
   }
 
   const handleFileSelect = (e) => {
@@ -361,7 +387,6 @@ export default function TenantDetails() {
 
   async function saveTenantPhoto() {
     const userId = localStorage.getItem("userid");
-    console.log(file);
     if (!file) {
       toast.error("Please select a file", {
         position: "top-right",
@@ -723,7 +748,7 @@ export default function TenantDetails() {
   const leaseProfileSave = async (customfield) => {
     console.log("leaseProfileSave", contactAccordian);
     setIsBtnLoading(true)
-    addEmergencyContact("next")
+    addEmergencyContactNext()
     try {
       let emergencyContactArray = [];
       if (contactAccordian.length > 0) {
@@ -748,6 +773,10 @@ export default function TenantDetails() {
         },
       };
 
+      let companyDetail = {
+        companyName: TenantInfoDetails.companyName,
+      }
+
       let requestbody = {
         profileAddress: {
           id: null,
@@ -760,9 +789,9 @@ export default function TenantDetails() {
         },
         companyDetails: BusinessUser ? companyDetail : {},
         deliveryAddress: {},
-        customFields: customfield ? customfield : [],
+        customFields: customfield ? JSON.parse(customfield) : [],
         emergencyContact: emergencyContactArray,
-        id: leaseProfileId ? leaseProfileId : "",
+        id: leaseProfileId ? leaseProfileId : null,
         tenantId: userid,
         firstName: TenantInfoDetails.firstName,
         lastName: TenantInfoDetails.lastName,
@@ -774,7 +803,6 @@ export default function TenantDetails() {
       }
 
       const response = await instance.post(request.lease_profile, requestbody, config);
-
       if (response.data.result !== null && response.data.result !== 'undefined') {
         sessionStorage.setItem("leaseProfileid", response.data.result);
         // navigate('/preBooking/esignPayment')
@@ -795,10 +823,8 @@ export default function TenantDetails() {
 
     // step 2: Perform validations
     console.log(contactAccordian.length);
-    if (!contactAccordian.length) {
-      if (!validateEmergencyContactInfo(emergencyContactDetails)) {
-        errorcount++
-      }
+    if (!validateEmergencyContactInfo(emergencyContactDetails)) {
+      errorcount++
     }
 
     const customFieldsErrorCount = checkCustomfieldValue();
@@ -854,9 +880,9 @@ export default function TenantDetails() {
     const mathSymbols = /[-+*/^()]/;
     const inputChar = String.fromCharCode(event.keyCode);
 
-  if (!pattern.test(inputChar) || mathSymbols.test(inputChar)) {
-    event.preventDefault();
-  }
+    if (!pattern.test(inputChar) || mathSymbols.test(inputChar)) {
+      event.preventDefault();
+    }
   };
 
   return (
@@ -919,7 +945,6 @@ export default function TenantDetails() {
                   <div className="col-12 col-md-6 d-flex justify-content-center mb-2">
                     <div className="edit-profile-img position-relative">
                       {/* <img src={profileImageSrc && profileImageSrc.length > 0 ? profileImageSrc : '/assets/images/profile_.png'} className="ui medium circular image object-fit-cover TenantDetailsProfileImage mx-auto" id="tenantProfileImage" alt="Profile" /> */}
-                      {console.log(previewSrc)}
                       {previewSrc ? (
                         <Image src={previewSrc} className="ui medium circular image object-fit-cover TenantDetailsProfileImage mx-auto" id="tenantProfileImage" alt="Profile" />
                       ) : (
@@ -993,8 +1018,8 @@ export default function TenantDetails() {
                     <div className="col-12  col-md-6  px-4 px-sm-2">
                       <div className="field w-100  my-3">
                         <label className='fw-500 fs-7 mb-2'>{t("Company Name")}<i className="text-danger ">*</i></label>
-                        <input className="noCounterNumber" ref={companyName} type='text' name="companyname" placeholder='Company Name' />
-                        {tenantInfoError.companyname && <p className="text-danger mt-1">{tenantInfoError.companyname}</p>}
+                        <input className="noCounterNumber" ref={companyName} value={TenantInfoDetails.companyName} type='text' name="companyName" placeholder='Company Name' onChange={(e) => handlechange(e)} onBlur={() => validatePersonalInfo(TenantInfoDetails)} />
+                        {tenantInfoError.companyName && <p className="text-danger mt-1">{tenantInfoError.companyName}</p>}
                       </div>
                     </div>
                     : ""
@@ -1004,9 +1029,9 @@ export default function TenantDetails() {
                     <div className="col-12  col-md-6  px-4 px-sm-2">
                       <div className="field w-100  my-3">
                         <label className='fw-500 fs-7 mb-2'>{t("Company registration No")} <i className="text-danger ">*</i></label>
-                        <input className="noCounterNumber" ref={companyRegistrationNumber} type='text' name="companyregistration" placeholder='Company registration No' />
+                        <input className="noCounterNumber" ref={companyRegistrationNumber} value={TenantInfoDetails.companyRegistrationNumber} type='text' name="companyRegistrationNumber" placeholder='Company registration No' onChange={(e) => handlechange(e)} onBlur={() => validatePersonalInfo(TenantInfoDetails)} />
                         <div id="registration" className="text-danger mt-1 d-none"> {t("Please Enter registration No")} </div>
-                        {tenantInfoError.companyregistration && <p className="text-danger mt-1">{tenantInfoError.companyregistration}</p>}
+                        {tenantInfoError.companyRegistrationNumber && <p className="text-danger mt-1">{tenantInfoError.companyRegistrationNumber}</p>}
 
                       </div>
                     </div> : ""

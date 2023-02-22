@@ -223,6 +223,8 @@ const Units = () => {
             buildingId: buidingId,
             unitTypeId: unitTypeId,
             amenityId: amenitiesId,
+            unitVisibility: 1,
+            availability: 2,
             priceRange: {
                 minPrice: minvalues,
                 maxPrice: maxvalues
@@ -237,6 +239,7 @@ const Units = () => {
             .post(request.user_search, requestbody, config)
             .then(response => {
                 setUnitResponse(response.data.result);
+                console.log(response.data.result);
                 let loadmoreUnitCount = response.data.totalCount - response.data.pageCount;
                 totatCount = response.data.totalCount;
                 let quotient = Math.floor(totatCount / pagesizepagination);
