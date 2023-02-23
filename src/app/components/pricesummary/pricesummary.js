@@ -18,15 +18,6 @@ const Pricesummary = forwardRef((props, ref) => {
   let invoiceRecurringValue = JSON.parse(sessionStorage.getItem("invoiceRecurringValue"));
   let BusinessUser =  JSON.parse(sessionStorage.getItem('isBussinessUser'));
   let promocheck = JSON.parse(sessionStorage.getItem('promoApplied'));
-  const { t, i18n } = useTranslation();
-  let promoAppliedsession;
-  promoAppliedsession = sessionStorage.getItem("applypromo");
-  useImperativeHandle(ref, () => ({
-    unitInfodetailscall() {
-      unitinfodetails();
-    }
-  }));
-
   const [PromoDiscount, setPromoDiscount] = useState();
   const [promoValidate, setPromoValidate] = useState('');
   const [validateMsg, setValidateMsg] = useState();
@@ -36,6 +27,7 @@ const Pricesummary = forwardRef((props, ref) => {
   const [movinDate, setMovinDate] = useState(new Date());
   const [promoOnchangebutton, setpromoOnchangebutton] = useState();
   const[promcodeError, setpromcodeError] = useState();
+  const[invoicePeriodVal,setInvoicePeriodVal]= useState(invoicePeriodValue);
   const[removePromo, setRemovePromo] = useState(0)
 
   let unitid = localStorage.getItem('unitid');
@@ -45,7 +37,29 @@ const Pricesummary = forwardRef((props, ref) => {
     dimmer: undefined,
   })
 
+  
+  const { t, i18n } = useTranslation();
+  let promoAppliedsession;
+  promoAppliedsession = sessionStorage.getItem("applypromo");
+  useImperativeHandle(ref, () => ({
+    // unitInfodetailscall() {
+    //   console.log(`unitInfoCall`)
+    //   unitinfodetails();
+    // },
+    // unitInforecurringPeriodIdCall(periodValue){
+    //   setUnitInfoDetails('');
+    //   sessionStorage.setItem("invoicePeriodValue",periodValue);
+    //   setInvoicePeriodVal(periodValue)
+    //   unitinfodetails();
+
+    // }
+
+
+  }));
+
+  
 useEffect(() => {
+  setUnitInfoDetails('');
   unitinfodetails();
 }, [invoicePeriodValue,invoiceRecurringValue])
 
