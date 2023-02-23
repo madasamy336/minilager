@@ -16,6 +16,7 @@ let  units_info;
 const Pricesummary = forwardRef((props, ref) => {
   let invoicePeriodValue = JSON.parse(sessionStorage.getItem("invoicePeriodValue"));
   let invoiceRecurringValue = JSON.parse(sessionStorage.getItem("invoiceRecurringValue"));
+  let moveinDate = sessionStorage.getItem("moveinDate");
   let BusinessUser =  JSON.parse(sessionStorage.getItem('isBussinessUser'));
   let promocheck = JSON.parse(sessionStorage.getItem('promoApplied'));
   const [PromoDiscount, setPromoDiscount] = useState();
@@ -42,10 +43,10 @@ const Pricesummary = forwardRef((props, ref) => {
   let promoAppliedsession;
   promoAppliedsession = sessionStorage.getItem("applypromo");
   useImperativeHandle(ref, () => ({
-    // unitInfodetailscall() {
-    //   console.log(`unitInfoCall`)
-    //   unitinfodetails();
-    // },
+    unitInfodetailscall() {
+      console.log(`unitInfoCall`)
+      unitinfodetails();
+    },
     // unitInforecurringPeriodIdCall(periodValue){
     //   setUnitInfoDetails('');
     //   sessionStorage.setItem("invoicePeriodValue",periodValue);
@@ -61,7 +62,7 @@ const Pricesummary = forwardRef((props, ref) => {
 useEffect(() => {
   setUnitInfoDetails('');
   unitinfodetails();
-}, [invoicePeriodValue,invoiceRecurringValue])
+}, [invoicePeriodValue,invoiceRecurringValue,moveinDate])
 
 useEffect(()=> {
 
@@ -106,7 +107,7 @@ useEffect(()=> {
           id: unitid
         }
       ],
-      moveInDate: helper.readDate(new Date(props.movinDate)),
+      moveInDate: helper.readDate(new Date(moveinDate)),
       additionalMonths: 0,
       recurringPeriodId: invoicePeriodValue,
       recurringTypeId: invoiceRecurringValue,

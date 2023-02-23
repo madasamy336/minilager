@@ -17,6 +17,7 @@ const requests = {
     check_addons: "v1/moveIn/rent/rentDetails",
     tenant_details :"v1/user",
     lease_documents : "/v1/movein/lease/documents/",
+    save_vehicledetail:"/v1/movein/vehicleDetails/",
     custom_Fields: "v2/common/custom-fields",
     move_out: "v1/moveout/schedulemoveout/",
     cancel_move_out: "v1/moveout/cancel/",

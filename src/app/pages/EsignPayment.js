@@ -25,6 +25,7 @@ export default function EsignPayment() {
   let servicesArray = [];
   let taxpecentage
   let getMoveindate = sessionStorage.getItem('moveindate');
+  let vehicleDetail =  JSON.parse(sessionStorage.getItem('vehicleDetail'));
   let getRecurringPeriodId = sessionStorage.getItem('invoiceData');
   let getRecurringTypeid = sessionStorage.getItem('recurringData');
   let insuranceDetail = JSON.parse(sessionStorage.getItem('insurancedetail'));
@@ -115,7 +116,6 @@ export default function EsignPayment() {
       return sessionStorage.getItem("accessToken");
     }
   };
-
   const eSignSettingsInformation = async () => {
     setIsLoading(true)
     await oAuthTokenGeneration()
@@ -146,11 +146,9 @@ export default function EsignPayment() {
           console.log("PERSONAL");
           setShowEsignContent(true)
         } else {
-          console.log("BOTH");
           setShowEsignContent(true)
         }
       } else {
-        console.log("Show Pay Buttons");
         setShowEsignContent(false)
       }
       setIsLoading(false);
@@ -202,6 +200,7 @@ export default function EsignPayment() {
   };
 
   useEffect(() => {
+    
     unitInfoDetails();
     getSitedetail();
     const ReceiveIframeResponse = (event) => {
@@ -257,6 +256,7 @@ export default function EsignPayment() {
           setUnitdetail(unit_info_data.result);
           settotalAmount(unit_info_data.result.grossAmount);
           previewLeaseAgreement(leaseProfileIdValue, unit_info_data.result);
+          saveVehicleDetail();
         }
         setIsLoading(false)
 
@@ -285,7 +285,35 @@ export default function EsignPayment() {
         console.log(error)
       })
   }
+  //Save  vehicle detail
+  function saveVehicleDetail(){
+    vehicleDetail.forEach((element)=>{
+     delete element.VehicleAccordianLength;
+   });
+   console.log(vehicleDetail);
+    let config ={
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
 
+    let data = [{
+      unitId:unitid,
+      vehicleDetails:vehicleDetail
+      
+
+    }]
+    instance
+    .post(request.save_vehicledetail + `${leaseProfileIdValue}`, data, config)
+    .then((response) => {
+
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+
+
+  }
   //preview Leaseagreement
   function previewLeaseAgreement(leaseProfileId, unitinfo) {
     let config = {
@@ -312,6 +340,7 @@ export default function EsignPayment() {
       });
 
   }
+
 
   function onPaymentProcessed(paymentresponse) {
     if (typeof paymentresponse !== 'undefined' && paymentresponse !== null && paymentresponse !== '' && typeof paymentresponse.paymentStatus !== 'undefined' && paymentresponse.paymentStatus !== '' && paymentresponse.paymentStatus !== null && paymentresponse.paymentStatus.toUpperCase() === "SUCCESS") {

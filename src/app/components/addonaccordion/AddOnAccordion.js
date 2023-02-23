@@ -28,31 +28,31 @@ export default function AddOnAccordion(props) {
           </div>
 
           <div className='col-lg-4 col-md-6 col-sm-12 px-1 mb-2'>
-            <p><span className='fs-7 fw-500 mr-1'>{t("Year")}:</span>{props.Year}</p>
+            <p><span className='fs-7 fw-500 mr-1'>{t("Year")}:</span>{props.vehicleYear}</p>
           </div>
 
           <div className='col-lg-4 col-md-6 col-sm-12 px-1 mb-2'>
-            <p><span className='fs-7 fw-500 mr-1'>{t("Brand")}:</span>{props.Brand}</p>
+            <p><span className='fs-7 fw-500 mr-1'>{t("Brand")}:</span>{props.vehicleBrand}</p>
           </div>
 
           <div className='col-lg-4 col-md-6 col-sm-12 px-1 mb-2'>
-            <p><span className='fs-7 fw-500 mr-1'>{t("Model")}:</span>{props.Model}</p>
+            <p><span className='fs-7 fw-500 mr-1'>{t("Model")}:</span>{props.vehicleModel}</p>
           </div>
 
           <div className='col-lg-4 col-md-6 col-sm-12 px-1 mb-2'>
-            <p><span className='fs-7 fw-500 mr-1'>{t("Color")}:</span>{props.Color}</p>
+            <p><span className='fs-7 fw-500 mr-1'>{t("Color")}:</span>{props.vehicleColor}</p>
           </div>
 
           <div className='col-lg-4 col-md-6 col-sm-12 px-1 mb-2'>
-            <p><span className='fs-7 fw-500 mr-1'>{t("Vehicle State")}:</span>{props.VehicleState}</p>
+            <p><span className='fs-7 fw-500 mr-1'>{t("Vehicle State")}:</span>{props.vehicleLicenceSate}</p>
           </div>
 
           <div className='col-lg-4 col-md-6 col-sm-12 px-1 mb-2'>
-            <p><span className='fs-7 fw-500 mr-1'>{t("Registration No")}:</span>{props.RegistrationNo}</p>
+            <p><span className='fs-7 fw-500 mr-1'>{t("Registration No")}:</span>{props.vehicleRegNumber}</p>
           </div>
 
           <div className='col-lg-4 col-md-6 col-sm-12 px-1 mb-2'>
-            <p><span className='fs-7 fw-500 mr-1'>{t("License No")}:</span>{props.LicenseNo}</p>
+            <p><span className='fs-7 fw-500 mr-1'>{t("License No")}:</span>{props.vehicleLicenceNumber}</p>
           </div>
         </div>
           <div className='text-center'>

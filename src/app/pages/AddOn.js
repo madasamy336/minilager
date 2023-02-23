@@ -251,7 +251,7 @@ export default function AddOn() {
         saveThirdPartyInsuranceDetailsValues.push({
           "insuranceInfo": {
             "isThirdParty": true,
-            "providerPhone": '',
+            "providerPhone":policyPhoneNumber,
             "providerName": insurancePolicyProvider,
             "policyNumber": policyNumber,
             "effectiveFrom": effectiveFromDate,
@@ -443,13 +443,13 @@ export default function AddOn() {
       ...vehicleaccordian,
       {
         VehicleType: vehicleType,
-        Year: year,
-        Brand: brand,
-        Model: model,
-        Color: color,
-        VehicleState: vehicleState,
-        RegistrationNo: registrationNo,
-        LicenseNo: licenseNo,
+        vehicleYear: year,
+        vehicleBrand: brand,
+        vehicleModel: model,
+        vehicleColor: color,
+        vehicleLicenceSate: vehicleState,
+        vehicleRegNumber: registrationNo,
+        vehicleLicenceNumber: licenseNo,
         VehicleAccordianLength: vehicleaccordian.length + 1
       }
     ])
@@ -821,7 +821,7 @@ export default function AddOn() {
                     )}
                     <div className='addon-accordion-div mt-5'>
                       {vehicleaccordian.map((data, index) => (
-                        <AddOnAccordion RemoveFunction={removeVehicleForm} key={index} index={index} VehicleLength={data.VehicleAccordianLength} VehicleType={data.VehicleType} Year={data.Year} Brand={data.Brand} Model={data.Model} Color={data.Color} VehicleState={data.VehicleState} RegistrationNo={data.RegistrationNo} LicenseNo={data.LicenseNo} />
+                        <AddOnAccordion RemoveFunction={removeVehicleForm} key={index} index={index} VehicleLength={data.VehicleAccordianLength} VehicleType={data.VehicleType} vehicleYear={data.vehicleYear} vehicleBrand={data.vehicleBrand} vehicleModel={data.vehicleModel} vehicleColor={data.vehicleColor} vehicleLicenceSate={data.vehicleLicenceSate} RegistrationNo={data.vehicleRegNumber} vehicleLicenceNumber={data.vehicleLicenceNumber} />
                       ))}
                     </div>
                   </div>

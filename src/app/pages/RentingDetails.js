@@ -32,6 +32,8 @@ export default function RentingDetails() {
   let invoiceRecurrValue = sessionStorage.getItem('invoiceRecurringValue');
   let invoiceset = sessionStorage.getItem('invoiceSet');
   let invoicePeriodSet = sessionStorage.getItem('invoicePeriodset');
+  let moveindate = sessionStorage.getItem('moveindate');
+  let desiredMoveoutDate = sessionStorage.getItem('desiredMoveoutDate')
   const childRef = useRef(null);
   const customFieldRef = useRef([]);
   const today = new Date();
@@ -47,8 +49,8 @@ export default function RentingDetails() {
   const [invoiceDefault, setInvoiceDefault] = useState(invoicePeriod);
   const [recurring, setRecurring] = useState();
   const [checkInvoiceRecurring, setcheckInvoiceRecurring] = useState(false);
-  const [movinDate, setMovinDate] = useState(new Date());
-  const [desiredMoveOutDate, setDesiredMoveOutDate] = useState();
+  const [movinDate, setMovinDate] = useState(moveindate?new Date(moveindate):moveindate);
+  const [desiredMoveOutDate, setDesiredMoveOutDate] = useState(desiredMoveoutDate?new Date(desiredMoveoutDate):'');
   const [customFieldAccess, SetCustomFieldAccess] = useState();
   const [invoiceRecurringDisabled, setInvoiceRecurringDisabled] = useState(false);
   const clientDataconfig = JSON.parse(sessionStorage.getItem("configdata"));
@@ -127,7 +129,8 @@ export default function RentingDetails() {
   const movindateOnchange = (e, item) => {
     setMovinDate(item.value);
     setDesiredMoveOutDate('');
-    sessionStorage.removeItem('desiredMoveoutDate')
+    sessionStorage.setItem('moveinDate',item.value)
+    sessionStorage.removeItem('desiredMoveoutDate');
     childRef.current.unitInfodetailscall();
   }
 
@@ -538,7 +541,7 @@ export default function RentingDetails() {
                             <div className="col-12">
                               <div className="field w-100 datePicker my-2">
                                 <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}</label>
-                                <SemanticDatepicker datePickerOnly id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} className='w-100' data-name={item.fieldName} fieldId={item.fieldId} unitId={unitid} required={item.matadata.isMandatory} fieldpage={item.matadata.displayOn} type={item.matadata.type} onChange={(e, data) => customhandlechange(e, data, "date")} />
+                                <SemanticDatepicker datePickerOnly  format='DD.MM.YYYY' id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} className='w-100' data-name={item.fieldName} fieldId={item.fieldId} unitId={unitid} required={item.matadata.isMandatory} fieldpage={item.matadata.displayOn} type={item.matadata.type} onChange={(e, data) => customhandlechange(e, data, "date")} />
                                 <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
                               </div>
                             </div>
