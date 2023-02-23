@@ -488,8 +488,8 @@ export default function TenantDetails() {
 
 
   const creditCheckSettingsInformation = async (e) => {
-    setIsLoading(true)
-    oAuthTokenGeneration()
+    // setIsLoading(true)
+    await oAuthTokenGeneration()
     const requestBody = {
       country_code: "NOR",
       event_type: "GET_CREDIT_CHECK_SETTINGS",
@@ -497,6 +497,7 @@ export default function TenantDetails() {
       integrated_with: "signicat",
       initiated_by: "karthick"
     }
+    console.log(sessionStorage.getItem("accessToken"));
     const creditCheckConfig = {
       headers: {
         'Content-Type': 'application/json',
@@ -509,28 +510,32 @@ export default function TenantDetails() {
       const response = await axios.post(sixVerifierSettingsUrl, requestBody, creditCheckConfig);
       // setCreditCheckSettingData(response.data)
       console.log(response.data);
+      console.log("response.data.status", response.data.status === 200);
+      console.log("response.data.body.is_enabled_in_booking_porta", response.data.body.is_enabled_in_booking_portal);
       if (response.data.status === 200 && response.data.body.is_enabled_in_booking_portal) {
+        console.log("is_enabled_in_booking_portal");
         if (response.data.body.enable_in_booking_portal_for == "BUSINESS" && BusinessUser) {
           console.log("BUSINESS");
-          SetCreditCheckModal({ open: true })
+          await proceedCreditCheck(e);
         } else if (response.data.body.enable_in_booking_portal_for == "PERSONAL" && !BusinessUser) {
           console.log("PERSONAL");
-          SetCreditCheckModal({ open: true })
+          await proceedCreditCheck(e);
         } else {
           console.log("BOTH");
-          SetCreditCheckModal({ open: true })
+          await proceedCreditCheck(e);
         }
       } else {
+        setIsLoading(true);
         console.log("Continue with Normal Move-in");
         navigate('/preBooking/esignPayment');
-        return true
       }
-      setIsLoading(false);
+      // setIsLoading(false);
     } catch (error) {
       console.error(error);
-      setIsLoading(false)
+      // setIsLoading(false)
     }
   };
+
 
   const navigateEsign = async (e) => {
     if (typeof e !== 'undefined' && e !== null) {
@@ -664,9 +669,11 @@ export default function TenantDetails() {
   };
 
   const proceedCreditCheck = async (e) => {
-    e.preventDefault()
-    await updateTenantInfo();
-    setCreditCheckLoader(true);
+    // e.preventDefault()
+    // await updateTenantInfo();
+    // setCreditCheckLoader(true);
+    console.log("proceedCreditCheck");
+
     const requestBody = {
       country_code: "NOR",
       event_type: "CREDIT_CHECK_ENQUIRY",
@@ -694,33 +701,132 @@ export default function TenantDetails() {
       .then(response => {
         return response;
       }).then(result => {
-        if (result.data.status === 500) {
-          if (result.data.message === "TRY_CREDITCHECK_AFTER_SOMETIME") {
-            setTenantCreditCheckDetails({ ...tenantCreditCheckDetails, credit_check_details: result.data.message, credit_check_discription: result.data.description, modified_on: new Date() })
-            setCreditCheckLoader(false);
-            SetCreditStatus(true)
-          } else {
-            setTenantCreditCheckDetails({ ...tenantCreditCheckDetails, credit_check_details: result.data.message, credit_check_discription: result.data.description, modified_on: new Date() })
-            setCreditCheckLoader(false);
-            SetCreditStatus(true)
-          }
+        const tenantId = JSON.parse(sessionStorage.getItem("tenantInfo")).userId;
+        const data = {
+          creditCheckResponse: result,
+          tenantId: tenantId
+        };
+        localStorage.setItem("creditCheckResponse", JSON.stringify(data));
+        checkCreditCheckStatus()
+        // if (result.data.status === 500) {
+        //   if (result.data.message === "TRY_CREDITCHECK_AFTER_SOMETIME") {
+        //     setTenantCreditCheckDetails({ ...tenantCreditCheckDetails, credit_check_details: result.data.message, credit_check_discription: result.data.description, modified_on: new Date() })
+        //     setCreditCheckLoader(false);
+        //     SetCreditStatus(true)
+        //   } else {
+        //     setTenantCreditCheckDetails({ ...tenantCreditCheckDetails, credit_check_details: result.data.message, credit_check_discription: result.data.description, modified_on: new Date() })
+        //     setCreditCheckLoader(false);
+        //     SetCreditStatus(true)
+        //   }
 
-        } else {
-          localStorage.setItem('nextpage', result.data.body.is_movein_recommended ? true : false)
-          localStorage.setItem('eSignatureCompleted', false)
-          // setCreditCheckStatusResponse(response.data)
-          setTenantCreditCheckDetails({ ...tenantCreditCheckDetails, credit_check_details: result.data.body, modified_on: new Date() })
-          setCreditCheckLoader(false);
-          SetCreditStatus(true)
-        }
+        // } else {
+        //   localStorage.setItem('nextpage', result.data.body.is_movein_recommended ? true : false)
+        //   localStorage.setItem('eSignatureCompleted', false)
+        //   // setCreditCheckStatusResponse(response.data)
+        //   setTenantCreditCheckDetails({ ...tenantCreditCheckDetails, credit_check_details: result.data.body, modified_on: new Date() })
+        //   setCreditCheckLoader(false);
+        //   SetCreditStatus(true)
+        // }
       })
       .catch((error) => {
         console.log(error);
-        setCreditCheckLoader(false);
-        setCreditCheckError(true);
+        // setCreditCheckLoader(false);
+        // setCreditCheckError(true);
       })
     return;
   }
+
+  const checkCreditCheckStatus = () => {
+    const storedData = JSON.parse(localStorage.getItem("creditCheckResponse"));
+    const currentTenantId = JSON.parse(sessionStorage.getItem("tenantInfo")).userId;
+
+    if (storedData.tenantId === currentTenantId) {
+      // use the stored data
+    } else {
+      // update with new tenant data or ignore
+    }
+    console.log("checkCreditCheckStatus");
+    const isCreditCheckResponseStored = localStorage.getItem('creditCheckResponse');
+    const parsedResponse = JSON.parse(isCreditCheckResponseStored);
+    console.log(parsedResponse);
+    if (parsedResponse.data.status === 500) {
+      if (parsedResponse.data.message === "TRY_CREDITCHECK_AFTER_SOMETIME") {
+        console.log("Continue with Normal Move-in");
+        navigate('/preBooking/esignPayment');
+      }
+      else {
+        setTenantCreditCheckDetails({ ...tenantCreditCheckDetails, credit_check_details: parsedResponse.data.message, credit_check_discription: parsedResponse.data.description, modified_on: new Date() })
+        setCreditCheckLoader(false);
+        SetCreditStatus(true)
+      }
+    } else {
+      localStorage.setItem('nextpage', parsedResponse.data.body.is_movein_recommended ? true : false)
+      localStorage.setItem('eSignatureCompleted', false)
+      // setCreditCheckStatusResponse(response.data)
+      setTenantCreditCheckDetails({ ...tenantCreditCheckDetails, credit_check_details: parsedResponse.data.body, modified_on: new Date() })
+      setCreditCheckLoader(false);
+      SetCreditStatus(true)
+    }
+  };
+
+  // const proceedCreditCheck = async (e) => {
+  //   e.preventDefault()
+  //   await updateTenantInfo();
+  //   setCreditCheckLoader(true);
+  //   const requestBody = {
+  //     country_code: "NOR",
+  //     event_type: "CREDIT_CHECK_ENQUIRY",
+  //     identity_number: TenantInfoDetails.ssn,
+  //     // identity_number: "24014021406",
+  //     initiated_by: `${TenantInfoDetails.firstName} ${TenantInfoDetails.lastName}`,
+  //     request_from: "BOOKING_PORTAL",
+  //     tenant_id: `${userid}`,
+  //     tenant_type: BusinessUser ? "BUSINESS" : "PERSON",
+  //   }
+
+  //   if (BusinessUser) {
+  //     delete requestBody.identity_number;
+  //     requestBody.organization_number = TenantInfoDetails.companyRegistrationNumber;
+  //   }
+  //   var creditCheckConfig = {
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`,
+  //     },
+  //   };
+
+  //   const creditCheckUrl = process.env.REACT_APP_CREDIT_CHECK_URL
+  //   await axios.post(creditCheckUrl, requestBody, creditCheckConfig)
+  //     .then(response => {
+  //       return response;
+  //     }).then(result => {
+  //       if (result.data.status === 500) {
+  //         if (result.data.message === "TRY_CREDITCHECK_AFTER_SOMETIME") {
+  //           setTenantCreditCheckDetails({ ...tenantCreditCheckDetails, credit_check_details: result.data.message, credit_check_discription: result.data.description, modified_on: new Date() })
+  //           setCreditCheckLoader(false);
+  //           SetCreditStatus(true)
+  //         } else {
+  //           setTenantCreditCheckDetails({ ...tenantCreditCheckDetails, credit_check_details: result.data.message, credit_check_discription: result.data.description, modified_on: new Date() })
+  //           setCreditCheckLoader(false);
+  //           SetCreditStatus(true)
+  //         }
+
+  //       } else {
+  //         localStorage.setItem('nextpage', result.data.body.is_movein_recommended ? true : false)
+  //         localStorage.setItem('eSignatureCompleted', false)
+  //         // setCreditCheckStatusResponse(response.data)
+  //         setTenantCreditCheckDetails({ ...tenantCreditCheckDetails, credit_check_details: result.data.body, modified_on: new Date() })
+  //         setCreditCheckLoader(false);
+  //         SetCreditStatus(true)
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //       setCreditCheckLoader(false);
+  //       setCreditCheckError(true);
+  //     })
+  //   return;
+  // }
 
   const bindCustomFieldValue = () => {
     unitDetailCustomField.filter((i => i.fieldpage === 'Movein Tenant Details')).forEach((item) => {
@@ -1016,7 +1122,7 @@ export default function TenantDetails() {
                   <div className="col-12  col-md-6  px-4 px-sm-2">
                     <div className="field w-100  my-3">
                       <label className='fw-500 fs-7 mb-2'>{t("Social Security Number")} <i className="text-danger ">*</i></label>
-                      <input className="noCounterNumber" ref={ssn} type='number' name="ssn" value={TenantInfoDetails.ssn} placeholder={t("Social Security Number")} onChange={(e) => handlechange(e)} onBlur={() => validatePersonalInfo(TenantInfoDetails)} />
+                      <input className="noCounterNumber" ref={ssn} type='number' name="ssn" value={TenantInfoDetails.ssn} placeholder={t("Social Security Number")} onChange={(e) => handlechange(e)} onBlur={() => validatePersonalInfo(TenantInfoDetails)} onKeyDown={(e) => handleInputKeyDown(e)} />
                       {tenantInfoError.ssn && <p className="text-danger mt-1">{tenantInfoError.ssn}</p>}
 
                     </div>
