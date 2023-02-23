@@ -70,7 +70,7 @@ export default function EsignPayment() {
 
   const oAuthTokenGeneration = async () => {
     const currentTimestamp = new Date().getTime() / 1000;
-    const tokenExpirationTimestamp = localStorage.getItem("tokenExpirationTimestamp");
+    const tokenExpirationTimestamp = sessionStorage.getItem("tokenExpirationTimestamp");
     const authorityUrl =process.env.REACT_APP_AUTHORITY
     const client_id =process.env.REACT_APP_CLIENT_ID
     const client_secret =process.env.REACT_APP_CLIENT_SECRET
