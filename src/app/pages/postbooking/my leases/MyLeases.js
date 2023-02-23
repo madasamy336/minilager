@@ -471,7 +471,7 @@ export default function MyLeases() {
             </div>
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-1' >{t("Reason")} <i className="text-danger">*</i></label>
-              <TextArea disabled={isButtonLoading} placeholder='Please tell us reason' name="reason" value={scheduleMoveOutDate.reason} onChange={(e, data) => handleChange(e, data)} />
+              <TextArea disabled={isButtonLoading} placeholder='Please Enter Reason' name="reason" value={scheduleMoveOutDate.reason} onChange={(e, data) => handleChange(e, data)} />
               <div className="text-danger">{errorMessage} </div>
             </div>
             <div className='text-center my-6'>
@@ -501,11 +501,11 @@ export default function MyLeases() {
             </div>
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-1' >{t("Reason")}</label>
-              <TextArea disabled={isButtonLoading} required placeholder='Please tell us reason' name="reason" value={scheduleMoveOutDate.reason} onChange={(e, data) => handleChange(e, data)} />
+              <TextArea disabled={isButtonLoading} required placeholder='Please Enter Reason' name="reason" value={scheduleMoveOutDate.reason} onChange={(e, data) => handleChange(e, data)} />
               <div className="text-danger">{errorMessage} </div>
             </div>
             <div className='text-center my-6'>
-              <Button className="ui button bg-success-dark fs-7 fw-400 text-white px-3 py-1" disabled={isButtonLoading} loading={isButtonLoading} onClick={() => cancelScheduleMOveOutDate(leaseInfoById[0])}>Schedule</Button>
+              <Button className="ui button bg-success-dark fs-7 fw-400 text-white px-3 py-1" disabled={isButtonLoading} loading={isButtonLoading} onClick={() => cancelScheduleMOveOutDate(leaseInfoById[0])}>Cancel schedule date</Button>
             </div>
           </div>
         </Modal.Content>
