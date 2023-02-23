@@ -118,7 +118,7 @@ export default function EsignPayment() {
 
   const eSignSettingsInformation = async () => {
     setIsLoading(true)
-    oAuthTokenGeneration()
+    await oAuthTokenGeneration()
     const requestBody = {
       country_code: "NOR",
       event_type: "GET_ESIGN_SETTINGS",
@@ -476,7 +476,7 @@ export default function EsignPayment() {
     const config = {
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+        'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
       },
     }
     const eSignUrl = process.env.REACT_APP_ESIGN_URL

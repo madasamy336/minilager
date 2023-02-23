@@ -341,29 +341,29 @@ export default function TenantDetails() {
     return true;
   };
 
-  const addEmergencyContactNext = () => {
-    const isValid = validateEmergencyContactInfo(emergencyContactDetails);
-    if (!isValid && !contactAccordian.length) {
-      return false;
-    }
-    const newContactDetails = {
-      name: emergencyContactDetails.emergencyFname,
-      lname: emergencyContactDetails.emergencyLname,
-      email: emergencyContactDetails.emergencyEmail,
-      phone: emergencyContactDetails.emergencyPhoneNo,
-      contactAccordianLength: contactAccordian.length + 1
-    };
+  // const addEmergencyContactNext = () => {
+  //   const isValid = validateEmergencyContactInfo(emergencyContactDetails);
+  //   if (!isValid && !contactAccordian.length) {
+  //     return false;
+  //   }
+  //   const newContactDetails = {
+  //     name: emergencyContactDetails.emergencyFname,
+  //     lname: emergencyContactDetails.emergencyLname,
+  //     email: emergencyContactDetails.emergencyEmail,
+  //     phone: emergencyContactDetails.emergencyPhoneNo,
+  //     contactAccordianLength: contactAccordian.length + 1
+  //   };
 
-    setContactAccordian(prevState => [...prevState, newContactDetails]);
-    setEmergencyContactDetails({
-      emergencyFname: '',
-      emergencyLname: '',
-      emergencyEmail: '',
-      emergencyPhoneNo: '',
-    });
+  //   setContactAccordian(prevState => [...prevState, newContactDetails]);
+  //   setEmergencyContactDetails({
+  //     emergencyFname: '',
+  //     emergencyLname: '',
+  //     emergencyEmail: '',
+  //     emergencyPhoneNo: '',
+  //   });
 
-    return true;
-  };
+  //   return true;
+  // };
 
 
   const removeEmergencyContact = (index) => {
@@ -755,7 +755,7 @@ export default function TenantDetails() {
   const leaseProfileSave = async (customfield) => {
     console.log("leaseProfileSave", contactAccordian);
     setIsBtnLoading(true)
-    addEmergencyContactNext()
+    // addEmergencyContactNext()
     try {
       let emergencyContactArray = [];
       if (contactAccordian.length > 0) {
@@ -829,10 +829,10 @@ export default function TenantDetails() {
     let errorcount = 0;
 
     // step 2: Perform validations
-    console.log(contactAccordian.length);
-    if (!validateEmergencyContactInfo(emergencyContactDetails)) {
-      errorcount++
-    }
+    // console.log(contactAccordian.length);
+    // if (!validateEmergencyContactInfo(emergencyContactDetails)) {
+    //   errorcount++
+    // }
 
     const customFieldsErrorCount = checkCustomfieldValue();
     if (customFieldsErrorCount > 0) {
