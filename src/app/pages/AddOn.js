@@ -53,6 +53,22 @@ export default function AddOn() {
   const[insuranceDeleteModal, setinsuranceModal] = useState(false);
   const [isLoading, setLoader] = useState(false);
   const [startDate, setStartDate] = useState(new Date());
+  const [vehicleaccordian, SetVehicleAccordian] = useState([]);
+  const [vehicleType, setVehicleType] = useState("");
+  const [year, setYear] = useState("");
+  const [brand, setBrand] = useState("");
+  const [model, setModel] = useState("");
+  const [color, setColor] = useState("");
+  const [vehicleState, setVehicleState] = useState("");
+  const [registrationNo, setRegistrationNo] = useState("");
+  const [licenseNo, setLicenseNo] = useState("");
+  //insurance
+  const [insurancePolicyProvider, setPolicyProvider] = useState("");
+  const [policyNumber, setPolicyNumber] = useState("");
+  const [policyPhoneNumber, setPolicyPhoneNumber] = useState("");
+  const [effectiveFromDate, setEffectiveFromDate] = useState("");
+  const [effectiveToDate, setEffectiveToDate] = useState("");
+  const [insuranceGrid, setInsuranceGrid] = useState(true);
   const ownInsuranceHandler = (e) => {  
     SetactivePlan('Own Insurance')
     e.preventDefault()
@@ -191,6 +207,13 @@ export default function AddOn() {
   }, []);
 
   const navigateTenantDetails = (e) => {
+    // if(vehicleaccordian.length === 0){
+    //   if(vehicleType.length > 0 || year.length > 0 || brand.length > 0 ||model.length > 0 || color.length > 0 || vehicleState.length > 0 || registrationNo.length > 0 || licenseNo.length > 0){
+    //     VehicleFormSubmitHandler(e);
+    //   }
+
+
+    // }
     setLoader(true)
     e.preventDefault();
     let errorcount = 0;
@@ -412,22 +435,7 @@ export default function AddOn() {
 
   }
 
-  const [vehicleaccordian, SetVehicleAccordian] = useState([]);
-  const [vehicleType, setVehicleType] = useState("");
-  const [year, setYear] = useState("");
-  const [brand, setBrand] = useState("");
-  const [model, setModel] = useState("");
-  const [color, setColor] = useState("");
-  const [vehicleState, setVehicleState] = useState("");
-  const [registrationNo, setRegistrationNo] = useState("");
-  const [licenseNo, setLicenseNo] = useState("");
-  //insurance
-  const [insurancePolicyProvider, setPolicyProvider] = useState("");
-  const [policyNumber, setPolicyNumber] = useState("");
-  const [policyPhoneNumber, setPolicyPhoneNumber] = useState("");
-  const [effectiveFromDate, setEffectiveFromDate] = useState("");
-  const [effectiveToDate, setEffectiveToDate] = useState("");
-  const [insuranceGrid, setInsuranceGrid] = useState(true);
+ 
 
   const VehicleFormSubmitHandler = (e) => {
     e.preventDefault();
@@ -453,7 +461,6 @@ export default function AddOn() {
     setLicenseNo('');
     setVehicleState('');
     setVehicleType('');
-
 
   }
   const removeVehicleForm = (index) => {
@@ -805,7 +812,7 @@ export default function AddOn() {
                           <input placeholder={t("License No")} value={licenseNo} onChange={(e) => setLicenseNo(e.target.value)} />
                         </div>
                         <div className={`text-success-dark mb-2 ${(vehicleType === '' && year === '' && brand === '' && color === '' && vehicleState === '' && registrationNo === '' && licenseNo === '') && `d-none`}`}>
-                          <a onClick={e => VehicleFormSubmitHandler(e)} href="/" className='text-success fs-7 cursor-pointer'> <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 27.505 27.5">
+                          <a onClick={(e) => VehicleFormSubmitHandler(e)} href="/" className='text-success fs-7 cursor-pointer'> <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 27.505 27.5">
                             <path id="floating" d="M577.346,2164.47h1.719c.468.061.939.108,1.4.186a13.8,13.8,0,0,1,11.276,11.2c.089.5.142,1.006.211,1.51v1.719c-.04.327-.075.656-.122.981a13.749,13.749,0,1,1-23.4-11.494,13.464,13.464,0,0,1,7.4-3.886C576.337,2164.593,576.843,2164.539,577.346,2164.47Zm2,14.892h4.82a1.14,1.14,0,1,0,.027-2.278c-1.5-.009-3.007,0-4.51,0h-.336v-4.813a1.118,1.118,0,0,0-.693-1.111,1.131,1.131,0,0,0-1.588,1.07c-.01,1.5,0,3.007,0,4.51v.344h-4.806a1.141,1.141,0,1,0-.055,2.28c1.512.011,3.025,0,4.537,0h.323v.364c0,1.477,0,2.953,0,4.43a1.141,1.141,0,1,0,2.28.068c.012-1.5,0-3.007,0-4.51Z" transform="translate(-564.451 -2164.47)" fill="#328128" />
                           </svg>
                             <span className='veritical-align-text-top ml-1 fs-7'>{t("Add more")}</span></a>
