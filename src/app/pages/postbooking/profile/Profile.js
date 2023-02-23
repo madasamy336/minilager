@@ -231,21 +231,17 @@ export default function Profile() {
       }
     };
     const userid = localStorage.getItem('userid');
-    tenantDetails.addressLine1 = addressLineOneReq;
-    tenantDetails.addressLine2 = addressLineTwoReq;
-    tenantDetails.postalCode = postalCodeReq;
-    tenantDetails.dateOfBirth = new Date(birthDateReq);
-    const newErrors = {};
-    const addressFields = [
-      { name: 'addressLine1', message: `${t('Address Line 1 is a required field')}` },
-      { name: 'addressLine2', message: `${t('Address Line 2 is a required field')}` },
-      { name: 'city', message: `${t('City is a required field')}` },
-      { name: 'state', message: `${t('State is a required field')}` },
-      { name: 'postalCode', message: 'Zip Code is a required field' },
-    ];
-
-    console.log(isAddressEditable);
+    
     if (isAddressEditable) {
+      const addressFields = [
+        { name: 'addressLine1', message: `${t('Address Line 1 is a required field')}` },
+        { name: 'addressLine2', message: `${t('Address Line 2 is a required field')}` },
+        { name: 'city', message: `${t('City is a required field')}` },
+        { name: 'state', message: `${t('State is a required field')}` },
+        { name: 'postalCode', message: 'Zip Code is a required field' },
+      ];
+  
+      const newErrors = {};
       addressFields.forEach(field => {
         console.log(tenantDetails[field.name]);
         if (!tenantDetails[field.name]) {
@@ -253,18 +249,35 @@ export default function Profile() {
           newErrors[field.name] = field.message;
         }
       });
-    }
-    requiredFields.forEach(field => {
-      if (!tenantDetails[field.name] && (field.name !== 'addressLine1' || isAddressEditable) && (field.name !== 'addressLine2' || isAddressEditable) && (field.name !== 'postalCode' || isAddressEditable)) {
-        console.log(field.name);
-        newErrors[field.name] = field.message;
+  
+      if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
+        return;
       }
-    });
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
+    } else {
+      const requiredFields = [
+        { name: 'firstName', message: `${t('First Name is a required field')}` },
+        { name: 'lastName', message: `${t('Last Name is a required field')}` },
+        { name: 'email', message: `${t('Email is a required field')}` },
+        { name: 'phone', message: `${t('Phone Number is a required field')}` },
+        { name: 'gender', message: `${t('Gender is a required field')}` },
+        { name: 'dateOfBirth', message: `${t('Date of Birth is a required field')}` },
+      ];
+  
+      const newErrors = {};
+      requiredFields.forEach(field => {
+        if (!tenantDetails[field.name]) {
+          console.log(field.name);
+          newErrors[field.name] = field.message;
+        }
+      });
+  
+      if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
+        return;
+      }
     }
+    
     try {
       setLoading(true);
       await saveTenantPhoto();
@@ -293,10 +306,20 @@ export default function Profile() {
       console.log(err);
       setLoading(false);
     }
-
+  
     setErrors({});
   };
+  
+  const handleInputKeyDown = (event) => {
+    console.log(event);
+    const pattern = /^[0-9\b]+$/;
+    const mathSymbols = /[-+*/^()]/;
+    const inputChar = String.fromCharCode(event.keyCode);
 
+    if (!pattern.test(inputChar) || mathSymbols.test(inputChar)) {
+      event.preventDefault();
+    }
+  };
 
   const handleChangeBirthdate = (event, data) => {
     const newDate = new Date(data.value);
@@ -396,7 +419,7 @@ export default function Profile() {
                     </div>
                     <div className="field my-3">
                       <label className="text-dark fs-7 fw-500">{t("Social Security Number")}</label>
-                      <Input type="text" value={tenantDetails.ssn} name="ssn" onChange={e => onChangePersonalInfo(e)} />
+                      <Input type='number' value={tenantDetails.ssn} name="ssn" onChange={e => onChangePersonalInfo(e)} onKeyDown={(e) => handleInputKeyDown(e)} />
                       {errors["ssn"] && <div className="error">{errors["ssn"]}</div>}
 
                     </div>
