@@ -58,6 +58,7 @@ export default function MYInvoices() {
     let invoiceNumber = 0;
     let selectallcheckbox = document.querySelectorAll(`.six-multi-select-check-${unitid}`);
     if (e.target.checked == true) {
+      setIsCheck(isCheck.concat(unitid));
       selectallcheckbox.forEach((data) => {
         if (data.dataset.latefees === e.target.dataset.latefees) {
           data.checked = true;
@@ -74,6 +75,7 @@ export default function MYInvoices() {
         }
       })
     } else {
+      setIsCheck(isCheck.filter((e) => e !== unitid));
       selectallcheckbox.forEach((data) => {
         if (data.dataset.latefees === e.target.dataset.latefees) {
           data.checked = false;
@@ -111,7 +113,7 @@ export default function MYInvoices() {
       setIsCheck([]);
     }
     if (e.target.checked) {
-      setIsCheckAll(true);
+      setIsCheckAll(true);  
       TotalAmountArray = [];
       unPaidInvoiceStaus.forEach(item => {
         TotalAmountArray.push(item.unPaidBalance);
@@ -272,7 +274,7 @@ export default function MYInvoices() {
   return (
     <div className="mx-2 mx-sm-1">
       <div>
-        <p className="fs-6 fw-500 text-success-dark ml-1 mb-2"> {isCheck.length} {t("Records Selected")}</p>
+        {isCheck.length > 0 && <p className="fs-6 fw-500 text-success-dark ml-1 mb-2"> {isCheck.length} {t("Records Selected")}</p> }
         <div className="bg-white card-boxShadow border-radius-15 py-1 mb-2">
           <div className="row dashed-bottom px-4 py-2 px-sm-2">
             <div className="col-lg-6 col-md-6 col-sm-6">
