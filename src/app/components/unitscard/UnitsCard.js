@@ -51,7 +51,7 @@ const UnitsCard = (props) => {
                                         <div className='col-lg-12 col-md-12 col-sm-12'>
 
                                             <div className='d-flex align-items-center justify-content-between'>
-                                                <h2 className='fw-700 mb-1'>{helper.displayMeasurementSize(details.unitMeasurement)} <small className='fw-500'>{details.unitTypeName}</small></h2>
+                                                <h2 className='fw-700 mb-1'>{helper.displayMeasurementSize(details.unitMeasurement, details.measurementType)} <small className='fw-500'>{details.unitTypeName}</small></h2>
                                                 <div className='units-left'>
                                                     <p className='unit-count'>{`${t("Only")} ${details.unitIds.length} ${t("Units left")}`}</p>
                                                 </div>

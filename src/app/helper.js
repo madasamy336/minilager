@@ -42,7 +42,7 @@ class Helper {
 
         return today.toLocaleDateString("en-US", options);
     }
-    showDateFormat(datevalue){
+    showDateFormat(datevalue) {
         return date.format(new Date(datevalue), 'DD.MM.YYYY')
     }
     checkNumber(event) {
@@ -159,8 +159,8 @@ class Helper {
             returnFormat = `SAR ` + amount;
         } else if (this.culture === 'is-IS') {
             returnFormat = amount + 'kr';
-        }else if(this.culture === 'nn-NO'){
-            returnFormat =`${amount} kr `
+        } else if (this.culture === 'nn-NO') {
+            returnFormat = `${amount} kr `
         }
 
         return returnFormat;
@@ -183,13 +183,13 @@ class Helper {
 
     //Display Number In Localised Format
     displayNumber(number) {
-
         let returnFormat = new Intl.NumberFormat(this.culture, {
             maximumFractionDigits: 2,
-            minimumFractionDigits: 0
+            minimumFractionDigits: 0,
+            useGrouping: false // disable grouping separators if needed
         }).format(number);
-        if (this.culture === 'ar-SA') {
-            returnFormat = number;
+        if (this.culture === 'nn-NO') {
+            returnFormat = returnFormat.replace('.', ',');
         }
         return returnFormat;
     }
