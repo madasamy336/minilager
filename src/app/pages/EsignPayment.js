@@ -57,6 +57,8 @@ export default function EsignPayment() {
   const [esignMethod, setEsignMethod] = useState(false);
   const [eSignatureCompleted, setESignatureCompleted] = useState(JSON.parse(localStorage.getItem("eSignatureCompleted")) || false);
   const [showPaymentMethods, setShowPaymentMethods] = useState(false);
+  const [payNowActive, setPayNowActive] = useState(false);
+  const [payLaterActive, setPayLaterActive] = useState(false);
 
 
   const { t, i18n } = useTranslation();
@@ -453,6 +455,8 @@ export default function EsignPayment() {
   const payLater = (value) => {
     setShowPaymentMethods(false)
     setPayLaterModal(true);
+    setPayLaterActive(true)
+    setPayNowActive(false)
   }
 
   const changeSavedCard = (e) => {
@@ -543,6 +547,8 @@ export default function EsignPayment() {
   const payNow = (e) => {
     e.preventDefault()
     console.log("pay");
+    setPayNowActive(true);
+    setPayLaterActive(false)
     setShowPaymentMethods(!showPaymentMethods)
   }
   return (
@@ -711,8 +717,8 @@ export default function EsignPayment() {
                       </div>}
 
                       {(!showEsignContent || eSignatureCompleted) && <div className='pt-4 d-flex justify-content-center flex-wrap'>
-                        <Button className="ui button bg-white d-flex align-items-center border-radius-5 card-border fs-6 fw-400 text-dark px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1" onClick={(e) => payNow(e)} ><img src='/assets/images/executed-payment.svg' alt='Pay Now' id="paynow" /><span className='ml-1' onClick={(e) => payNow(e)}>{t("Pay Now")}</span></Button>
-                        <Button className="ui button bg-success-dark d-flex align-items-center border-radius-5 card-border fs-6 fw-400 text-white px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1" onClick={(e) => payLater(e)} ><img src='/assets/images/pay.svg' alt='Pay Later' id="paylater" /><span className='ml-1' onClick={(e) => payLater(e)}>{t("Pay Later")}</span></Button>
+                        <Button className={`d-flex align-items-center border-radius-5 card-border fs-6 fw-400 px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1 ${payNowActive ? "bg-success-dark text-white" : "bg-white text-dark"}`} onClick={(e) => payNow(e)} ><img src={payNowActive ? '/assets/images/executed-payment-white.svg' : '/assets/images/executed-payment.svg'} alt='Pay Now' id="paynow" /><span className='ml-1' onClick={(e) => payNow(e)}>{t("Pay Now")}</span></Button>
+                        <Button className={`d-flex align-items-center border-radius-5 card-border fs-6 fw-400 px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1 ${payLaterActive ? "bg-success-dark text-white" : "bg-white text-dark"}`} onClick={(e) => payLater(e)} ><img src={payLaterActive ? '/assets/images/pay-white.svg' : '/assets/images/pay.svg' }alt='Pay Later' id="paylater" /><span className='ml-1' onClick={(e) => payLater(e)}>{t("Pay Later")}</span></Button>
                       </div>}
                     </div>
                     {/* {console.log(esignMethod)} */}
