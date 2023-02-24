@@ -757,16 +757,25 @@ export default function TenantDetails() {
       }
       else {
         setTenantCreditCheckDetails({ ...tenantCreditCheckDetails, credit_check_details: parsedResponse.creditCheckResponse.data.message, credit_check_discription: parsedResponse.creditCheckResponse.data.description, modified_on: new Date() })
-        setCreditCheckLoader(false);
-        SetCreditStatus(true)
+        SetCreditCheckModal({ open: true })
+        setCreditCheckLoader(true);
+        setTimeout(() => {
+          setCreditCheckLoader(false);
+          SetCreditStatus(true)
+        }, 1500);
       }
     } else {
       localStorage.setItem('nextpage', parsedResponse.creditCheckResponse.data.body.is_movein_recommended ? true : false)
       localStorage.setItem('eSignatureCompleted', false)
       // setCreditCheckStatusResponse(response.data)
       setTenantCreditCheckDetails({ ...tenantCreditCheckDetails, credit_check_details: parsedResponse.creditCheckResponse.data.body, modified_on: new Date() })
-      setCreditCheckLoader(false);
-      SetCreditStatus(true)
+      SetCreditCheckModal({ open: true })
+      setCreditCheckLoader(true);
+        setTimeout(() => {
+          setCreditCheckLoader(false);
+          SetCreditStatus(true)
+        }, 1500);
+
     }
   };
 
@@ -994,7 +1003,7 @@ export default function TenantDetails() {
     const mathSymbols = /[-+*/^()]/;
     const inputChar = String.fromCharCode(event.keyCode);
 
-    if (!pattern.test(inputChar) || mathSymbols.test(inputChar)) {
+    if (!pattern.test(inputChar) && !mathSymbols.test(inputChar)) {
       event.preventDefault();
     }
   };
