@@ -49,7 +49,7 @@ export default function RentingDetails() {
   const [invoiceDefault, setInvoiceDefault] = useState(invoicePeriod);
   const [recurring, setRecurring] = useState();
   const [checkInvoiceRecurring, setcheckInvoiceRecurring] = useState(false);
-  const [movinDate, setMovinDate] = useState(moveindate?new Date(moveindate):moveindate);
+  const [movinDate, setMovinDate] = useState(moveindate !== null ?new Date(moveindate) :new Date());
   const [desiredMoveOutDate, setDesiredMoveOutDate] = useState(desiredMoveoutDate?new Date(desiredMoveoutDate):'');
   const [customFieldAccess, SetCustomFieldAccess] = useState();
   const [invoiceRecurringDisabled, setInvoiceRecurringDisabled] = useState(false);
