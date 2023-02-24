@@ -749,21 +749,22 @@ export default function TenantDetails() {
     const isCreditCheckResponseStored = localStorage.getItem('creditCheckResponse');
     const parsedResponse = JSON.parse(isCreditCheckResponseStored);
     console.log(parsedResponse);
-    if (parsedResponse.data.status === 500) {
-      if (parsedResponse.data.message === "TRY_CREDITCHECK_AFTER_SOMETIME") {
+    console.log(parsedResponse.creditCheckResponse);
+    if (parsedResponse.creditCheckResponse.data.status === 500) {
+      if (parsedResponse.creditCheckResponse.data.message === "TRY_CREDITCHECK_AFTER_SOMETIME") {
         console.log("Continue with Normal Move-in");
         navigate('/preBooking/esignPayment');
       }
       else {
-        setTenantCreditCheckDetails({ ...tenantCreditCheckDetails, credit_check_details: parsedResponse.data.message, credit_check_discription: parsedResponse.data.description, modified_on: new Date() })
+        setTenantCreditCheckDetails({ ...tenantCreditCheckDetails, credit_check_details: parsedResponse.creditCheckResponse.data.message, credit_check_discription: parsedResponse.creditCheckResponse.data.description, modified_on: new Date() })
         setCreditCheckLoader(false);
         SetCreditStatus(true)
       }
     } else {
-      localStorage.setItem('nextpage', parsedResponse.data.body.is_movein_recommended ? true : false)
+      localStorage.setItem('nextpage', parsedResponse.creditCheckResponse.data.body.is_movein_recommended ? true : false)
       localStorage.setItem('eSignatureCompleted', false)
       // setCreditCheckStatusResponse(response.data)
-      setTenantCreditCheckDetails({ ...tenantCreditCheckDetails, credit_check_details: parsedResponse.data.body, modified_on: new Date() })
+      setTenantCreditCheckDetails({ ...tenantCreditCheckDetails, credit_check_details: parsedResponse.creditCheckResponse.data.body, modified_on: new Date() })
       setCreditCheckLoader(false);
       SetCreditStatus(true)
     }
