@@ -27,13 +27,14 @@ let recurringTempvalue;
 
 
 export default function RentingDetails() {
+  
   let unitid = localStorage.getItem('unitid');
   let invoicePeriod = sessionStorage.getItem('invoicePeriodValue');
   let invoiceRecurrValue = sessionStorage.getItem('invoiceRecurringValue');
   let invoiceset = sessionStorage.getItem('invoiceSet');
   let invoicePeriodSet = sessionStorage.getItem('invoicePeriodset');
   let moveindate = sessionStorage.getItem('moveindate');
-  let desiredMoveoutDate = sessionStorage.getItem('desiredMoveoutDate')
+  let desiredMoveoutDate = sessionStorage.getItem('desiredMoveoutDate');
   const childRef = useRef(null);
   const customFieldRef = useRef([]);
   const today = new Date();
@@ -59,6 +60,63 @@ export default function RentingDetails() {
   let customFieldId;
   let customfieldValue;
   let customfieldBindingData = JSON.parse(sessionStorage.getItem("customFieldstorage"));
+  useEffect(() => {
+    fetchAppConfig();
+   
+  },[])
+
+  const fetchAppConfig = () => {
+        let config = {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        };
+        instance
+            .get(request.common_config, config)
+            .then(response => {
+                const configData = response.data.result;
+                const culture = response.data.result.culture;
+                console.log(configData.invoicePeriods);
+                sessionStorage.setItem('moveinDate',movinDate)
+                const invoiceperiodval = configData.invoicePeriods !== null && typeof configData.invoicePeriods !== "undefined" && configData.invoicePeriods.length > 0 ?
+                configData.invoicePeriods.map((value) => {
+                    if (value.preferred) {
+                        sessionStorage.setItem("invoiceData", (value.invoicePeriodId));
+                        debugger
+                        if (value.preferred) {
+                            setInvoiceDefault(value.invoicePeriodId);
+                        }
+                        
+                    }
+                    return {
+                      key: value.invoicePeriodId,
+                      text: value.invoicePeriod,
+                      value: value.invoicePeriodId,
+                      default: value.preferred,
+          
+                    }
+                }):"";
+                const recurringtype = typeof configData.recurringTypes !== "undefined" && configData.recurringTypes !== null && configData.recurringTypes.length > 0 ?
+
+                configData.recurringTypes.map((item) => {
+                  return {
+                    key: item.recurringTypeId,
+                    text: item.recurringLabel,
+                    value: item.recurringTypeId,
+                  }
+        
+                }) : "";
+                setRecurring(recurringtype);
+                setInvoice(invoiceperiodval);
+                
+                 
+    
+            })
+            .catch(error => {
+            })
+    
+
+}
   const PricesummaryData = () => {
     if (clientDataconfig !== null && typeof clientDataconfig !== "undefined") {
       const invoiceperiodval = clientDataconfig.invoicePeriods !== null && typeof clientDataconfig.invoicePeriods !== "undefined" && clientDataconfig.invoicePeriods.length > 0 ?
@@ -101,8 +159,6 @@ export default function RentingDetails() {
       sessionStorage.setItem("invoicePeriodValue", (invoicePeriod));
 
     }else{
-      console.log('testhdhdhddjjk');
-      console.log(invoiceDefault);
     sessionStorage.setItem("invoicePeriodValue", (invoiceDefault));
     }
   }
@@ -110,8 +166,16 @@ export default function RentingDetails() {
     sessionStorage.setItem("invoiceRecurringValue", (recurringvalue));
   }
 
+  
+
   useEffect(() => {
-    if(Number(invoiceDefault) >=1 && Number(invoiceDefault) <= 4){
+    let invoicevalue ;
+    if(invoicePeriodSet){
+      invoicevalue = invoicePeriod
+    }else{
+      invoicevalue = invoiceDefault
+    }
+    if(Number(invoicevalue) >=1 && Number(invoicevalue) <= 4){
       let newvalue
       if(recurring !== null && typeof recurring !== 'undefined'){
        newvalue = recurring.filter(i=> i.key === 3);
@@ -123,7 +187,7 @@ export default function RentingDetails() {
       
     }
    
-  },[invoicePeriod])
+  },[invoicePeriod,invoiceDefault])
 
 
   const movindateOnchange = (e, item) => {
@@ -300,7 +364,7 @@ export default function RentingDetails() {
 
   useEffect(() => {
     customFieldsSettings();
-    PricesummaryData();
+    //PricesummaryData();
   }, []);
 
   useEffect(() => {

@@ -110,6 +110,7 @@ export default function TenantDetails() {
   //   setEmergencyContactErr({ emergencyFname: '', emergencyEmail: '', emergencyPhoneNo: '' });
   // }, []);
   useEffect(() => {
+    customFieldsSettings();
     var diff = (Date.now() - startdate) / 60000;
     if (diff > 40) {
       localStorage.setItem('nextpage', JSON.stringify(false))
@@ -127,6 +128,29 @@ export default function TenantDetails() {
       }
     }, 1000)
   }, [customFieldAccess])
+
+  const customFieldsSettings = () => {
+    let config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    instance
+      .get(request.custom_Fields, config)
+      .then((response) => {
+        const custom_fields = response.data;
+        if (typeof custom_fields !== "undefined" && custom_fields !== null && custom_fields !== "") {
+          const custom_field_result = response.data.result;
+          if (typeof custom_field_result !== "undefined" && custom_field_result !== null && custom_field_result !== "") {
+            localStorage.setItem("CustomFieldsSetting", JSON.stringify(custom_field_result));
+          }
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }
 
   const handlechange = (e) => {
     e.persist();
@@ -1132,7 +1156,7 @@ export default function TenantDetails() {
                   <div className="col-12  col-md-6  px-4 px-sm-2">
                     <div className="field w-100  my-3">
                       <label className='fw-500 fs-7 mb-2'>{t("Social Security Number")} <i className="text-danger ">*</i></label>
-                      <input className="noCounterNumber" ref={ssn} type='number' name="ssn" value={TenantInfoDetails.ssn} placeholder={t("Social Security Number")} onChange={(e) => handlechange(e)} onBlur={() => validatePersonalInfo(TenantInfoDetails)} onKeyDown={(e) => handleInputKeyDown(e)} />
+                      <input className="noCounterNumber" ref={ssn} type='number'  name="ssn" value={TenantInfoDetails.ssn} placeholder={t("Social Security Number")} onChange={(e) => handlechange(e)} onBlur={() => validatePersonalInfo(TenantInfoDetails)} onKeyDown={(e) => handleInputKeyDown(e)} />
                       {tenantInfoError.ssn && <p className="text-danger mt-1">{tenantInfoError.ssn}</p>}
 
                     </div>
