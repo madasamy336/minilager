@@ -118,7 +118,67 @@ const CreditCardTab = (props) => {
                 console.log(err);
             });
     }
+     const autoPayactivate = () => {
 
+        let config = {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        }
+
+        const data = {"logger":{}};
+        instance
+        .post(request.autopayactivate + userId, data, config)
+        .then(response => {
+            return response;
+        }).then(data => {
+            const res = data.data;
+            if (res.isSuccess !== false && res.isSuccess === true && res.returnCode === "SUCCESS") {
+                listCreditCards();
+                setShowCard(true);
+            }
+           
+        })
+        .catch((err) => {
+            setLoading(false);
+            console.log(err);
+        });
+
+
+
+     }
+     
+     const autoPayDeactivate = () =>{
+
+        
+        let config = {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        }
+
+        const data = {"logger":{}};
+        instance
+        .post(request.autopaydeactivate + userId, data, config)
+        .then(response => {
+            return response;
+        }).then(data => {
+            setLoading(false);
+                const res = data.data;
+                if (res.isSuccess !== false && res.isSuccess === true && res.returnCode === "SUCCESS") {
+                    listCreditCards();
+                    setShowCard(true);
+                }
+           
+        })
+        .catch((err) => {
+            setLoading(false);
+            console.log(err);
+        });
+
+
+     }
+       
     const deleteCardDetail = (cardData) => {
 
         let configVal = JSON.parse(sessionStorage.getItem('configdata'));
@@ -216,13 +276,15 @@ const CreditCardTab = (props) => {
                     {showcard &&
                         <div className="row">
                             {typeof creditCardDetails !== 'undefined' && creditCardDetails !== null && creditCardDetails !== "" && creditCardDetails.length !== 0 ? creditCardDetails.map(card => {
+                                console.log(card);
+                                let configVal = JSON.parse(sessionStorage.getItem('configdata'));
+                                let activestatus = configVal.culture.isSavedCardsByDefault;
                                 return <div className="col-lg-4 col-md-6 col-sm-12 px-1 mb-2" key={card.id}>
                                     <div className="card p-2 border-radius-20">
                                         {creditCardDetails.length > 1 ? (
                                             <div className="card-dropdown-div text-right mb-1">
                                                 <Dropdown downward="true" floating trigger={trigger} >
                                                     <Dropdown.Menu onMouseLeave={() => SetopenAutopayDropdown(false)}>
-                                                        {card.isDefault ? (<Dropdown.Item key={1} onClick={(e, data) => handleDropdownChange(e, data, card)}><Radio className="autopayToggle" toggle label='Autopay' /> </Dropdown.Item>) : ""}
                                                         <>{card.isDefault === false ? (
                                                             <>
                                                                 <Dropdown.Item key={2} value={'make_default'} onClick={(e, data) => handleDropdownChange(e, data, card)}><img src="/assets/images/credit-cardd.svg" /> Make as primary </Dropdown.Item>
@@ -235,7 +297,9 @@ const CreditCardTab = (props) => {
                                                 </Dropdown>
                                             </div>
                                         ) : ''}
-                                        <div className="card-title d-flex justify-content-between align-items-start mb-5">
+                                        
+                                        <div className="card-title d-flex justify-content-between align-items-start mb-3">
+                                       
                                             {card.isDefault && <p className="fs-7 text-white-light">Primary Card</p>}
                                             <div className="card-master-img mr-2">
                                                 <img src="/assets/images/Mastercard-img.png" alt="Master Card" />
@@ -245,6 +309,7 @@ const CreditCardTab = (props) => {
                                             <p className="fs-7 text-white-light">{card.customerName}</p>
                                             <p className="fs-7 text-white">{card.cardNumber}</p>
                                         </div>
+                                        {card.isDefault && !activestatus? <p> <p className="fs-7 text-white-light">Autopay</p>{card.autoPay ? <Radio className="autopayToggle" toggle  defaultChecked={card.autoPay} onChange={autoPayDeactivate}/>:<Radio className="autopayToggle" toggle  defaultChecked={card.autoPay} onChange={autoPayactivate}/> } </p> :""}
                                     </div>
                                 </div>
                             }) : ''}
@@ -262,4 +327,4 @@ const CreditCardTab = (props) => {
         </div>)
 }
 
-export default CreditCardTab;
+export default CreditCardTab;   
