@@ -58,6 +58,7 @@ export default function MYInvoices() {
     let invoiceNumber = 0;
     let selectallcheckbox = document.querySelectorAll(`.six-multi-select-check-${unitid}`);
     if (e.target.checked == true) {
+      setIsCheck(isCheck.concat(unitid));
       selectallcheckbox.forEach((data) => {
         if (data.dataset.latefees === e.target.dataset.latefees) {
           data.checked = true;
@@ -74,6 +75,7 @@ export default function MYInvoices() {
         }
       })
     } else {
+      setIsCheck(isCheck.filter((e) => e !== unitid));
       selectallcheckbox.forEach((data) => {
         if (data.dataset.latefees === e.target.dataset.latefees) {
           data.checked = false;
