@@ -567,7 +567,8 @@ export default function TenantDetails() {
     }
     // await updateTenantInfo();
     navigate('/preBooking/esignPayment');
-    sessionStorage.setItem('customFieldstorage', JSON.stringify(unitDetailCustomField));
+
+    //sessionStorage.setItem('customFieldstorage', JSON.stringify(unitDetailCustomField));
     // leaseProfileSave(unitDetailCustomField)
   };
 
@@ -863,7 +864,8 @@ export default function TenantDetails() {
   // }
 
   const bindCustomFieldValue = () => {
-    unitDetailCustomField.filter((i => i.fieldpage === 'Movein Tenant Details')).forEach((item) => {
+    let filtervalue = unitDetailCustomField.filter((i => i.fieldpage === 'Movein Tenant Details'));
+    filtervalue.forEach((item) => {
       let element = document.getElementById(`${item.typeof}_${item.fieldId}`);
       if (item.typeof === 'textbox' || item.typeof === 'textarea' && element) {
         element.value = item.value
@@ -893,7 +895,7 @@ export default function TenantDetails() {
   }
 
   const leaseProfileSave = async (customfield) => {
-    console.log("leaseProfileSave", contactAccordian);
+    sessionStorage.setItem('customFieldstorage', JSON.stringify(customfield));
     setIsBtnLoading(true)
     // addEmergencyContactNext()
     try {
@@ -1019,6 +1021,7 @@ export default function TenantDetails() {
     const userUpdateResponse = response.data.data;
     console.log(customFieldValue);
     Array.prototype.push.apply(unitDetailCustomField, customFieldValue);
+    console.log(unitDetailCustomField);
     await leaseProfileSave(unitDetailCustomField);
     await creditCheckSettingsInformation();
   };
