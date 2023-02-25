@@ -567,7 +567,7 @@ export default function TenantDetails() {
     }
     // await updateTenantInfo();
     navigate('/preBooking/esignPayment');
-    // sessionStorage.setItem('customFieldstorage', JSON.stringify(unitDetailCustomField));
+    sessionStorage.setItem('customFieldstorage', JSON.stringify(unitDetailCustomField));
     // leaseProfileSave(unitDetailCustomField)
   };
 
@@ -795,10 +795,10 @@ export default function TenantDetails() {
       setTenantCreditCheckDetails({ ...tenantCreditCheckDetails, credit_check_details: parsedResponse.creditCheckResponse.data.body, modified_on: new Date() })
       SetCreditCheckModal({ open: true })
       setCreditCheckLoader(true);
-        setTimeout(() => {
-          setCreditCheckLoader(false);
-          SetCreditStatus(true)
-        }, 1500);
+      setTimeout(() => {
+        setCreditCheckLoader(false);
+        SetCreditStatus(true)
+      }, 1500);
 
     }
   };
@@ -936,7 +936,7 @@ export default function TenantDetails() {
         },
         companyDetails: BusinessUser ? companyDetail : {},
         deliveryAddress: {},
-        customFields: customfield ? JSON.parse(customfield) : [],
+        customFields: customfield ? customfield : [],
         emergencyContact: emergencyContactArray,
         id: leaseProfileId ? leaseProfileId : null,
         tenantId: userid,
@@ -1017,7 +1017,9 @@ export default function TenantDetails() {
     };
     const response = await instance.post(request.update_user_info + `/${userid}`, requestBody, config);
     const userUpdateResponse = response.data.data;
-    await leaseProfileSave(sessionStorage.getItem('customFieldstorage'));
+    console.log(customFieldValue);
+    Array.prototype.push.apply(unitDetailCustomField, customFieldValue);
+    await leaseProfileSave(unitDetailCustomField);
     await creditCheckSettingsInformation();
   };
 
@@ -1156,7 +1158,7 @@ export default function TenantDetails() {
                   <div className="col-12  col-md-6  px-4 px-sm-2">
                     <div className="field w-100  my-3">
                       <label className='fw-500 fs-7 mb-2'>{t("Social Security Number")} <i className="text-danger ">*</i></label>
-                      <input className="noCounterNumber" ref={ssn} type='number'  name="ssn" value={TenantInfoDetails.ssn} placeholder={t("Social Security Number")} onChange={(e) => handlechange(e)} onBlur={() => validatePersonalInfo(TenantInfoDetails)} onKeyDown={(e) => handleInputKeyDown(e)} />
+                      <input className="noCounterNumber" ref={ssn} type='number' name="ssn" value={TenantInfoDetails.ssn} placeholder={t("Social Security Number")} onChange={(e) => handlechange(e)} onBlur={() => validatePersonalInfo(TenantInfoDetails)} onKeyDown={(e) => handleInputKeyDown(e)} />
                       {tenantInfoError.ssn && <p className="text-danger mt-1">{tenantInfoError.ssn}</p>}
 
                     </div>
