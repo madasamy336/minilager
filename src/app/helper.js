@@ -23,8 +23,8 @@ class Helper {
             this.currency = JSON.parse(sessionStorage.getItem("culture")).currency;
             this.dateFormat = JSON.parse(sessionStorage.getItem("culture")).dateFormat
         } else {
-            this.culture = 'en-US';
-            this.currency = 'USD';
+            this.culture = 'nn-NO';
+            this.currency = 'NOK';
             this.dateFormat = 'DD-MM-YYYY'
         }
     }
@@ -149,7 +149,6 @@ class Helper {
 
     //Display Float In Localised Currency
     displayCurrency(amount) {
-
         let returnFormat = new Intl.NumberFormat(this.culture, {
             style: "currency",
             currency: typeof this.currency !== 'undefined' && this.currency != null ? this.currency : 'USD',
