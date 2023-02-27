@@ -36,6 +36,9 @@ export default function SidebarPostBooking(props) {
       sessionStorage.removeItem("emergencyDetail");
       sessionStorage.removeItem("accessToken");
       sessionStorage.removeItem("tokenExpirationTimestamp");
+      sessionStorage.removeItem('rememberPassword');
+      sessionStorage.removeItem('username');
+      sessionStorage.removeItem('password');
       setLogoutModalOpen(({
         open: false,
         dimmer: undefined

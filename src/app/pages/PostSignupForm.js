@@ -117,8 +117,6 @@ export default function PostSignupForm(props) {
         setValues({ ...values, [name]: value });
 
     }
-
-
     const onChangePhoneInput = (e, data) => {
         setValues({ ...values, ['phoneNumber']: e });
     }
