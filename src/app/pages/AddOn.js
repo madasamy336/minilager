@@ -16,6 +16,7 @@ import { useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import Helper from "../helper";
 import { useTranslation } from "react-i18next";
+import Spinner from '../components/Spinner/Spinner';
 let helper = new Helper();
 let saveThirdPartyInsuranceDetailsValues = [];
 let ownInsuranceArray = [];
@@ -483,7 +484,8 @@ export default function AddOn() {
 
       <div>
         {isLoading ? (
-          <Loader size='large' active>Loading</Loader>
+          <Spinner/>
+          // <Loader size='large' active>Loading</Loader>
         ) : 
         (
           <div>

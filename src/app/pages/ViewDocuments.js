@@ -6,6 +6,7 @@ import { json, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from "react-i18next";
 
 import axios from "axios";
+import Spinner from "../components/Spinner/Spinner";
 
 export default function ViewDocuments(props) {
     const [showEsignDocument, setEsignDocument] = useState(false);
@@ -128,7 +129,10 @@ export default function ViewDocuments(props) {
     }
 
     return (<> {
-        isLoading ? <Loader size='large' active>{t("Loading")}</Loader> :
+        isLoading ?
+        <Spinner/>
+        //  <Loader size='large' active>{t("Loading")}</Loader> 
+        :
             (<>{showEsignDocument ?
                 <div className="iframe-container"><iframe height="100vh" width="100%" src={eSignData.document_url} title="ESigned Data"></iframe>
                     <div className="d-flex justify-content-center mb-2 mt-2"><Button className="ui button text-black close-btn fs-7 fw-400 text-dark px-5 mr-2" onClick={() => setEsignDocument(false)}>{t("Close")}</Button><Button className="ui button fs-7 fw-400 text-white px-5 mr-2 download-btn" onClick={() => downloadFile()}>{("Preview to Download")}</Button></div>

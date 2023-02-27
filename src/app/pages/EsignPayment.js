@@ -10,6 +10,7 @@ import Helper from "../helper";
 import { Modal, Button, Loader, Placeholder, Segment } from 'semantic-ui-react';
 import parse from "html-react-parser";
 import { useTranslation } from "react-i18next";
+import Spinner from '../components/Spinner/Spinner';
 
 let helper = new Helper();
 let unitDetailRespones = {};
@@ -573,7 +574,8 @@ export default function EsignPayment() {
       {console.log(showPaymentMethods)}
       <ToastContainer />
       {isLoading ? (
-       <Loader size='large' active>{t("Loading")}</Loader>
+        <Spinner/>
+      //  <Loader size='large' active>{t("Loading")}</Loader>
       ) : (<div>
         <PreBookingBreadcrumb activeStep='1234' />
         <div className="esign">
