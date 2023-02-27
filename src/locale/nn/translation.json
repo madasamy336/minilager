@@ -17,7 +17,7 @@
   "WELCOME": "VELKOMMEN",
   "Don't have an account?": "Har du ikke en konto?",
   "Signup Now": "Registrer deg nå",
-  "Username is required": "Brukernavn er påkrevd",
+  "Email is required": "Brukernavn er påkrevd",
   "Username": "Brukernavn",
   "Password ": "Passord",
   "Enter First Name": "Skriv inn fornavn",
@@ -223,5 +223,6 @@
   "Do you really want to cancel your insurance?":"Vil du virkelig avbryte forsikringen din?",
   "Cancel Insurance!":"Avbryt forsikring!",
   "Cancel Schedule Move-Out Date":"Avbryt tidsplan flyttingsdato",
+  "Add":"Legg til",
   "Payment Form":"Betalingsskjema"
 }
