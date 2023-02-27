@@ -110,6 +110,7 @@ export default function TenantDetails() {
   //   setEmergencyContactErr({ emergencyFname: '', emergencyEmail: '', emergencyPhoneNo: '' });
   // }, []);
   useEffect(() => {
+    customFieldsSettings();
     var diff = (Date.now() - startdate) / 60000;
     if (diff > 40) {
       localStorage.setItem('nextpage', JSON.stringify(false))
@@ -127,6 +128,29 @@ export default function TenantDetails() {
       }
     }, 1000)
   }, [customFieldAccess])
+
+  const customFieldsSettings = () => {
+    let config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    instance
+      .get(request.custom_Fields, config)
+      .then((response) => {
+        const custom_fields = response.data;
+        if (typeof custom_fields !== "undefined" && custom_fields !== null && custom_fields !== "") {
+          const custom_field_result = response.data.result;
+          if (typeof custom_field_result !== "undefined" && custom_field_result !== null && custom_field_result !== "") {
+            localStorage.setItem("CustomFieldsSetting", JSON.stringify(custom_field_result));
+          }
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }
 
   const handlechange = (e) => {
     e.persist();
@@ -543,7 +567,8 @@ export default function TenantDetails() {
     }
     // await updateTenantInfo();
     navigate('/preBooking/esignPayment');
-    // sessionStorage.setItem('customFieldstorage', JSON.stringify(unitDetailCustomField));
+
+    //sessionStorage.setItem('customFieldstorage', JSON.stringify(unitDetailCustomField));
     // leaseProfileSave(unitDetailCustomField)
   };
 
@@ -757,16 +782,25 @@ export default function TenantDetails() {
       }
       else {
         setTenantCreditCheckDetails({ ...tenantCreditCheckDetails, credit_check_details: parsedResponse.creditCheckResponse.data.message, credit_check_discription: parsedResponse.creditCheckResponse.data.description, modified_on: new Date() })
-        setCreditCheckLoader(false);
-        SetCreditStatus(true)
+        SetCreditCheckModal({ open: true })
+        setCreditCheckLoader(true);
+        setTimeout(() => {
+          setCreditCheckLoader(false);
+          SetCreditStatus(true)
+        }, 1500);
       }
     } else {
       localStorage.setItem('nextpage', parsedResponse.creditCheckResponse.data.body.is_movein_recommended ? true : false)
       localStorage.setItem('eSignatureCompleted', false)
       // setCreditCheckStatusResponse(response.data)
       setTenantCreditCheckDetails({ ...tenantCreditCheckDetails, credit_check_details: parsedResponse.creditCheckResponse.data.body, modified_on: new Date() })
-      setCreditCheckLoader(false);
-      SetCreditStatus(true)
+      SetCreditCheckModal({ open: true })
+      setCreditCheckLoader(true);
+      setTimeout(() => {
+        setCreditCheckLoader(false);
+        SetCreditStatus(true)
+      }, 1500);
+
     }
   };
 
@@ -830,7 +864,8 @@ export default function TenantDetails() {
   // }
 
   const bindCustomFieldValue = () => {
-    unitDetailCustomField.filter((i => i.fieldpage === 'Movein Tenant Details')).forEach((item) => {
+    let filtervalue = unitDetailCustomField.filter((i => i.fieldpage === 'Movein Tenant Details'));
+    filtervalue.forEach((item) => {
       let element = document.getElementById(`${item.typeof}_${item.fieldId}`);
       if (item.typeof === 'textbox' || item.typeof === 'textarea' && element) {
         element.value = item.value
@@ -860,7 +895,7 @@ export default function TenantDetails() {
   }
 
   const leaseProfileSave = async (customfield) => {
-    console.log("leaseProfileSave", contactAccordian);
+    sessionStorage.setItem('customFieldstorage', JSON.stringify(customfield));
     setIsBtnLoading(true)
     // addEmergencyContactNext()
     try {
@@ -903,7 +938,7 @@ export default function TenantDetails() {
         },
         companyDetails: BusinessUser ? companyDetail : {},
         deliveryAddress: {},
-        customFields: customfield ? JSON.parse(customfield) : [],
+        customFields: customfield ? customfield : [],
         emergencyContact: emergencyContactArray,
         id: leaseProfileId ? leaseProfileId : null,
         tenantId: userid,
@@ -984,7 +1019,10 @@ export default function TenantDetails() {
     };
     const response = await instance.post(request.update_user_info + `/${userid}`, requestBody, config);
     const userUpdateResponse = response.data.data;
-    await leaseProfileSave(sessionStorage.getItem('customFieldstorage'));
+    console.log(customFieldValue);
+    Array.prototype.push.apply(unitDetailCustomField, customFieldValue);
+    console.log(unitDetailCustomField);
+    await leaseProfileSave(unitDetailCustomField);
     await creditCheckSettingsInformation();
   };
 
@@ -994,7 +1032,7 @@ export default function TenantDetails() {
     const mathSymbols = /[-+*/^()]/;
     const inputChar = String.fromCharCode(event.keyCode);
 
-    if (!pattern.test(inputChar) || mathSymbols.test(inputChar)) {
+    if (!pattern.test(inputChar) && !mathSymbols.test(inputChar)) {
       event.preventDefault();
     }
   };

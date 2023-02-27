@@ -27,13 +27,14 @@ let recurringTempvalue;
 
 
 export default function RentingDetails() {
+
   let unitid = localStorage.getItem('unitid');
   let invoicePeriod = sessionStorage.getItem('invoicePeriodValue');
   let invoiceRecurrValue = sessionStorage.getItem('invoiceRecurringValue');
   let invoiceset = sessionStorage.getItem('invoiceSet');
   let invoicePeriodSet = sessionStorage.getItem('invoicePeriodset');
   let moveindate = sessionStorage.getItem('moveindate');
-  let desiredMoveoutDate = sessionStorage.getItem('desiredMoveoutDate')
+  let desiredMoveoutDate = sessionStorage.getItem('desiredMoveoutDate');
   const childRef = useRef(null);
   const customFieldRef = useRef([]);
   const today = new Date();
@@ -49,8 +50,8 @@ export default function RentingDetails() {
   const [invoiceDefault, setInvoiceDefault] = useState(invoicePeriod);
   const [recurring, setRecurring] = useState();
   const [checkInvoiceRecurring, setcheckInvoiceRecurring] = useState(false);
-  const [movinDate, setMovinDate] = useState(moveindate !== null ?new Date(moveindate) :new Date());
-  const [desiredMoveOutDate, setDesiredMoveOutDate] = useState(desiredMoveoutDate?new Date(desiredMoveoutDate):'');
+  const [movinDate, setMovinDate] = useState(moveindate !== null ? new Date(moveindate) : new Date());
+  const [desiredMoveOutDate, setDesiredMoveOutDate] = useState(desiredMoveoutDate ? new Date(desiredMoveoutDate) : '');
   const [customFieldAccess, SetCustomFieldAccess] = useState();
   const [invoiceRecurringDisabled, setInvoiceRecurringDisabled] = useState(false);
   const clientDataconfig = JSON.parse(sessionStorage.getItem("configdata"));
@@ -59,12 +60,69 @@ export default function RentingDetails() {
   let customFieldId;
   let customfieldValue;
   let customfieldBindingData = JSON.parse(sessionStorage.getItem("customFieldstorage"));
+  useEffect(() => {
+    fetchAppConfig();
+
+  }, [])
+
+  const fetchAppConfig = () => {
+    let config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    instance
+      .get(request.common_config, config)
+      .then(response => {
+        const configData = response.data.result;
+        const culture = response.data.result.culture;
+        console.log(configData.invoicePeriods);
+        sessionStorage.setItem('moveinDate', movinDate)
+        const invoiceperiodval = configData.invoicePeriods !== null && typeof configData.invoicePeriods !== "undefined" && configData.invoicePeriods.length > 0 ?
+          configData.invoicePeriods.map((value) => {
+            if (value.preferred) {
+              sessionStorage.setItem("invoiceData", (value.invoicePeriodId));
+              debugger
+              if (value.preferred) {
+                setInvoiceDefault(value.invoicePeriodId);
+              }
+
+            }
+            return {
+              key: value.invoicePeriodId,
+              text: value.invoicePeriod,
+              value: value.invoicePeriodId,
+              default: value.preferred,
+
+            }
+          }) : "";
+        const recurringtype = typeof configData.recurringTypes !== "undefined" && configData.recurringTypes !== null && configData.recurringTypes.length > 0 ?
+
+          configData.recurringTypes.map((item) => {
+            return {
+              key: item.recurringTypeId,
+              text: item.recurringLabel,
+              value: item.recurringTypeId,
+            }
+
+          }) : "";
+        setRecurring(recurringtype);
+        setInvoice(invoiceperiodval);
+
+
+
+      })
+      .catch(error => {
+      })
+
+
+  }
   const PricesummaryData = () => {
     if (clientDataconfig !== null && typeof clientDataconfig !== "undefined") {
       const invoiceperiodval = clientDataconfig.invoicePeriods !== null && typeof clientDataconfig.invoicePeriods !== "undefined" && clientDataconfig.invoicePeriods.length > 0 ?
         clientDataconfig.invoicePeriods.map(item => {
           if (item.preferred) {
-          
+
             if (invoicePeriod) {
               setInvoiceDefault(Number(invoicePeriod));
             } else {
@@ -95,41 +153,49 @@ export default function RentingDetails() {
 
     }
   }
-  
+
+
+
   if (typeof invoiceDefault !== "undefined" && invoiceDefault !== null && invoiceDefault !== "") {
-    if(invoicePeriodSet){
+    if (invoicePeriodSet) {
       sessionStorage.setItem("invoicePeriodValue", (invoicePeriod));
 
-    }else{
-      console.log('testhdhdhddjjk');
-      console.log(invoiceDefault);
-    sessionStorage.setItem("invoicePeriodValue", (invoiceDefault));
+    } else {
+      sessionStorage.setItem("invoicePeriodValue", (invoiceDefault));
     }
   }
   if (typeof recurringDefaultValue !== "undefined" && recurringDefaultValue !== null && recurringDefaultValue !== "") {
     sessionStorage.setItem("invoiceRecurringValue", (recurringvalue));
   }
 
+
+
   useEffect(() => {
-    if(Number(invoiceDefault) >=1 && Number(invoiceDefault) <= 4){
-      let newvalue
-      if(recurring !== null && typeof recurring !== 'undefined'){
-       newvalue = recurring.filter(i=> i.key === 3);
-       console.log(newvalue);
-       setRecurring(newvalue);
-       setRecurringValue(3);
-       setInvoiceRecurringDisabled(true);
-      }
-      
+    let invoicevalue;
+    if (invoicePeriodSet) {
+      invoicevalue = invoicePeriod
+    } else {
+      invoicevalue = invoiceDefault
     }
-   
-  },[invoicePeriod])
+    if (Number(invoicevalue) >= 1 && Number(invoicevalue) <= 4) {
+      let newvalue
+      if (recurring !== null && typeof recurring !== 'undefined') {
+        newvalue = recurring.filter(i => i.key === 3);
+        console.log(newvalue);
+        setRecurring(newvalue);
+        setRecurringValue(3);
+        setInvoiceRecurringDisabled(true);
+      }
+
+    }
+
+  }, [invoicePeriod, invoiceDefault])
 
 
   const movindateOnchange = (e, item) => {
     setMovinDate(item.value);
     setDesiredMoveOutDate('');
-    sessionStorage.setItem('moveinDate',item.value)
+    sessionStorage.setItem('moveinDate', item.value)
     sessionStorage.removeItem('desiredMoveoutDate');
     childRef.current.unitInfodetailscall();
   }
@@ -142,13 +208,13 @@ export default function RentingDetails() {
     sessionStorage.setItem("invoicePeriodValue", (item.value));
     sessionStorage.setItem("invoicePeriodset", true);
     recurringTempvalue = recurring
-    if(item.value >=1 && item.value <= 4){
-      let newvalue = recurring.filter(i=> i.key === 3);
+    if (item.value >= 1 && item.value <= 4) {
+      let newvalue = recurring.filter(i => i.key === 3);
       setRecurring(newvalue);
       setRecurringValue(3);
       setInvoiceRecurringDisabled(true);
-      
-    }else{
+
+    } else {
       setInvoiceRecurringDisabled(false);
       setRecurring(clientDataconfig.recurringTypes.map((item) => {
         return {
@@ -159,7 +225,7 @@ export default function RentingDetails() {
 
       }));
     }
-   
+
     // childRef.current.unitInforecurringPeriodIdCall(item.value);
 
   }
@@ -300,7 +366,7 @@ export default function RentingDetails() {
 
   useEffect(() => {
     customFieldsSettings();
-    PricesummaryData();
+    //PricesummaryData();
   }, []);
 
   useEffect(() => {
@@ -437,9 +503,9 @@ export default function RentingDetails() {
     const mathSymbols = /[-+*/^()]/;
     const inputChar = String.fromCharCode(event.keyCode);
 
-  if (!pattern.test(inputChar) || mathSymbols.test(inputChar)) {
-    event.preventDefault();
-  }
+    if (!pattern.test(inputChar) || mathSymbols.test(inputChar)) {
+      event.preventDefault();
+    }
   };
   return (
     <>
@@ -477,7 +543,7 @@ export default function RentingDetails() {
                   <div className="ui form px-4 px-sm-2">
                     <div className="field w-100 datePicker my-3">
                       <label className='fw-500 fs-7 mb-2' >{t("Move-In Date")}</label>
-                      <SemanticDatepicker datePickerOnly clearable={false} placeholder='Select date' className='w-100'   format='DD.MM.YYYY' clearOnSameDateClick={false} value={movinDate} maxDate={maxDate} onChange={movindateOnchange}
+                      <SemanticDatepicker datePickerOnly clearable={false} placeholder='Select date' className='w-100' format='DD.MM.YYYY' clearOnSameDateClick={false} value={movinDate} maxDate={maxDate} onChange={movindateOnchange}
                         filterDate={
                           (date) => {
                             const semanticdate = new Date(date)
@@ -496,11 +562,11 @@ export default function RentingDetails() {
                     {typeof recurring !== "undefined" && recurring !== null && recurring.length > 0 ?
                       <div className="field w-100  my-3">
                         <label className='fw-500 fs-7 mb-2'>{t("Invoice Recurring")}</label>
-                        <Dropdown className='inovice-recurring' placeholder='Select Invoice Recurring' fluid selection  disabled={invoiceRecurringDisabled} options={recurring} value={invoiceRecurringDisabled === true ?3:recurring.value} defaultValue={invoiceRecurringDisabled === true?3:Number(recurringvalue)} onChange={recurringOnchange} />
+                        <Dropdown className='inovice-recurring' placeholder='Select Invoice Recurring' fluid selection disabled={invoiceRecurringDisabled} options={recurring} value={invoiceRecurringDisabled === true ? 3 : recurring.value} defaultValue={invoiceRecurringDisabled === true ? 3 : Number(recurringvalue)} onChange={recurringOnchange} />
                       </div> : ""}
                     <div className="field w-100 datePicker my-3">
                       <label className='fw-500 fs-7 mb-2' >{t("Desired Move Out date")}</label>
-                      <SemanticDatepicker  format='DD.MM.YYYY' datePickerOnly placeholder='Select date' className='w-100' value={desiredMoveOutDate} filterDate={(date) => {
+                      <SemanticDatepicker format='DD.MM.YYYY' datePickerOnly placeholder='Select date' className='w-100' value={desiredMoveOutDate} filterDate={(date) => {
                         const now = new Date(movinDate);
                         now.setDate(now.getDate() + 1);
                         return date >= now;
@@ -541,7 +607,7 @@ export default function RentingDetails() {
                             <div className="col-12">
                               <div className="field w-100 datePicker my-2">
                                 <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}</label>
-                                <SemanticDatepicker datePickerOnly  format='DD.MM.YYYY' id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} className='w-100' data-name={item.fieldName} fieldId={item.fieldId} unitId={unitid} required={item.matadata.isMandatory} fieldpage={item.matadata.displayOn} type={item.matadata.type} onChange={(e, data) => customhandlechange(e, data, "date")} />
+                                <SemanticDatepicker datePickerOnly format='DD.MM.YYYY' id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} className='w-100' data-name={item.fieldName} fieldId={item.fieldId} unitId={unitid} required={item.matadata.isMandatory} fieldpage={item.matadata.displayOn} type={item.matadata.type} onChange={(e, data) => customhandlechange(e, data, "date")} />
                                 <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
                               </div>
                             </div>
@@ -564,8 +630,7 @@ export default function RentingDetails() {
                             <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
                           </div>
                         }
-
-                        else if (item.matadata.displayOn === "Unit specific details" && item.matadata.type === "textarea") {
+                        else if (item.matadata.displayOn === "Unit specific details" && item.matadata.type === "textarea" && item.matadata.dataType === "Alphabet") {
 
                           return <div key={item.fieldId} className='row'>
                             <div className="col-12">
@@ -576,9 +641,17 @@ export default function RentingDetails() {
                               </div>
                             </div>
                           </div>
+                        } else if (item.matadata.displayOn === "Unit specific details" && item.matadata.type === "textarea" && item.matadata.dataType === "Digits (0-9)") {
+                          return <div key={item.fieldId} className='row'>
+                            <div className="col-12">
+                              <div className="field w-100 my-2">
+                                <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}</label>
+                                <textarea onKeyDown={(e) => handleInputKeyDown(e)} id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} data-name={item.fieldName} data-type={item.matadata.type} value={customInputFieldValue} rows="3" data-fieldid={item.fieldId} data-unitid={unitid} data-required={item.matadata.isMandatory} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)}></textarea>
+                                <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
+                              </div>
+                            </div>
+                          </div>
                         }
-
-
                         else if (item.matadata.displayOn === "Unit specific details" && item.matadata.type === "checkbox") {
 
                           return <div key={item.fieldId} className='row mt-2'>
@@ -601,7 +674,7 @@ export default function RentingDetails() {
                             <input type='number' onKeyDown={(e) => handleInputKeyDown(e)} id={`${item.matadata.type}_${item.fieldId}`} name={item.fieldId} placeholder={item.fieldName} value={cusomfieldPhone} data-name={item.fieldName} data-fieldid={item.fieldId} data-unitid={unitid} data-required={item.matadata.isMandatory} data-type={item.matadata.type} data-fieldpage={item.matadata.displayOn} onChange={(e) => customhandlechange(e)} onBlur={(e) => customfleldvalidate(e)} />
                             <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
                           </div>
-                          
+
 
                         } else if (item.matadata.displayOn === "Unit specific details" && item.matadata.type === "radio") {
                           return <div key={item.fieldId} className="col-12 my-2">

@@ -25,7 +25,7 @@ export default function EsignPayment() {
   let servicesArray = [];
   let taxpecentage
   let getMoveindate = sessionStorage.getItem('moveindate');
-  let vehicleDetail =  JSON.parse(sessionStorage.getItem('vehicleDetail'));
+  let vehicleDetail = JSON.parse(sessionStorage.getItem('vehicleDetail'));
   let getRecurringPeriodId = sessionStorage.getItem('invoiceData');
   let getRecurringTypeid = sessionStorage.getItem('recurringData');
   let insuranceDetail = JSON.parse(sessionStorage.getItem('insurancedetail'));
@@ -57,6 +57,8 @@ export default function EsignPayment() {
   const [esignMethod, setEsignMethod] = useState(false);
   const [eSignatureCompleted, setESignatureCompleted] = useState(JSON.parse(localStorage.getItem("eSignatureCompleted")) || false);
   const [showPaymentMethods, setShowPaymentMethods] = useState(false);
+  const [payNowActive, setPayNowActive] = useState(false);
+  const [payLaterActive, setPayLaterActive] = useState(false);
 
 
   const { t, i18n } = useTranslation();
@@ -68,13 +70,22 @@ export default function EsignPayment() {
 
     eSignSettingsInformation();
   }, []);
+  let paymodeArray = [];
+
+  checkPaymentModes.map((result) => {
+    paymodeArray.push(result["value"]);
+
+  })
+
+  let paymentMode = checkPaymentModes.filter(i => i.value !== "PayLater");
+  console.log(paymodeArray);
 
   const oAuthTokenGeneration = async () => {
     const currentTimestamp = new Date().getTime() / 1000;
     const tokenExpirationTimestamp = sessionStorage.getItem("tokenExpirationTimestamp");
-    const authorityUrl =process.env.REACT_APP_AUTHORITY
-    const client_id =process.env.REACT_APP_CLIENT_ID
-    const client_secret =process.env.REACT_APP_CLIENT_SECRET
+    const authorityUrl = process.env.REACT_APP_AUTHORITY
+    const client_id = process.env.REACT_APP_CLIENT_ID
+    const client_secret = process.env.REACT_APP_CLIENT_SECRET
 
     // Check if the token has expired
     if (!tokenExpirationTimestamp || currentTimestamp > parseInt(tokenExpirationTimestamp)) {
@@ -200,7 +211,7 @@ export default function EsignPayment() {
   };
 
   useEffect(() => {
-    
+
     unitInfoDetails();
     getSitedetail();
     const ReceiveIframeResponse = (event) => {
@@ -286,31 +297,31 @@ export default function EsignPayment() {
       })
   }
   //Save  vehicle detail
-  function saveVehicleDetail(){
-    vehicleDetail.forEach((element)=>{
-     delete element.VehicleAccordianLength;
-   });
-   console.log(vehicleDetail);
-    let config ={
+  function saveVehicleDetail() {
+    vehicleDetail.forEach((element) => {
+      delete element.VehicleAccordianLength;
+    });
+    console.log(vehicleDetail);
+    let config = {
       headers: {
         "Content-Type": "application/json",
       },
     }
 
     let data = [{
-      unitId:unitid,
-      vehicleDetails:vehicleDetail
-      
+      unitId: unitid,
+      vehicleDetails: vehicleDetail
+
 
     }]
     instance
-    .post(request.save_vehicledetail + `${leaseProfileIdValue}`, data, config)
-    .then((response) => {
+      .post(request.save_vehicledetail + `${leaseProfileIdValue}`, data, config)
+      .then((response) => {
 
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
 
 
   }
@@ -332,7 +343,7 @@ export default function EsignPayment() {
         if (response.data.result) {
           console.log(response.data.result);
           setSaveAgreement(response.data.result);
-        } 
+        }
 
       })
       .catch((error) => {
@@ -453,6 +464,8 @@ export default function EsignPayment() {
   const payLater = (value) => {
     setShowPaymentMethods(false)
     setPayLaterModal(true);
+    setPayLaterActive(true)
+    setPayNowActive(false)
   }
 
   const changeSavedCard = (e) => {
@@ -539,10 +552,20 @@ export default function EsignPayment() {
       console.log(err);
     })
   }
+  let ContractPaymentMode;
+  if (paymodeArray.includes('PayLater') === true && paymodeArray.includes('DirectDebit') === true && paymodeArray.includes('CreditCard') === true) {
+    ContractPaymentMode = <div><Button className={`ui button bg-white d-flex align-items-center border-radius-5 card-border fs-6 fw-400 text-dark px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1  `} onClick={(e) => payNow(e)} ><img src='/assets/images/executed-payment.svg' alt='Pay Now' id="paynow" /><span className='ml-1' onClick={(e) => payNow(e)}>{t("Pay Now")}</span></Button><Button className={`ui button bg-success-dark d-flex align-items-center border-radius-5 card-border fs-6 fw-400 text-white px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1 `} onClick={(e) => payLater(e)} ><img src='/assets/images/pay.svg' alt='Pay Later' id="paylater" /><span className='ml-1' onClick={(e) => payLater(e)}>{t("Pay Later")}</span></Button></div>
+  }
+
+
+
+
 
   const payNow = (e) => {
     e.preventDefault()
     console.log("pay");
+    setPayNowActive(true);
+    setPayLaterActive(false)
     setShowPaymentMethods(!showPaymentMethods)
   }
   return (
@@ -666,15 +689,15 @@ export default function EsignPayment() {
 
                       )
                       :
-                      saveAgreement && saveAgreement.previewLease.length === 0?
+                      saveAgreement && saveAgreement.previewLease.length === 0 ?
 
-                      
-                      < div key="" className='card-bg-secondary w-100 px-2 py-2 mb-6' >
 
-                        <div className="text-center mt-4">
-                          {t("No document found")}
-                        </div>
-                      </div>:<div className="ui active centered inline loader"></div>
+                        < div key="" className='card-bg-secondary w-100 px-2 py-2 mb-6' >
+
+                          <div className="text-center mt-4">
+                            {t("No document found")}
+                          </div>
+                        </div> : <div className="ui active centered inline loader"></div>
                     }
 
 
@@ -711,8 +734,30 @@ export default function EsignPayment() {
                       </div>}
 
                       {(!showEsignContent || eSignatureCompleted) && <div className='pt-4 d-flex justify-content-center flex-wrap'>
-                        <Button className="ui button bg-white d-flex align-items-center border-radius-5 card-border fs-6 fw-400 text-dark px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1" onClick={(e) => payNow(e)} ><img src='/assets/images/executed-payment.svg' alt='Pay Now' id="paynow" /><span className='ml-1' onClick={(e) => payNow(e)}>{t("Pay Now")}</span></Button>
-                        <Button className="ui button bg-success-dark d-flex align-items-center border-radius-5 card-border fs-6 fw-400 text-white px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1" onClick={(e) => payLater(e)} ><img src='/assets/images/pay.svg' alt='Pay Later' id="paylater" /><span className='ml-1' onClick={(e) => payLater(e)}>{t("Pay Later")}</span></Button>
+                        {paymodeArray.includes('PayLater') === true && paymodeArray.includes('DirectDebit') === true && paymodeArray.includes('CreditCard') === true ?
+                          <div className='row mt-2'>
+                            <Button className={`d-flex align-items-center border-radius-5 card-border fs-6 fw-400 px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1 ${payNowActive ? "bg-success-dark text-white" : "bg-white text-dark"}`} onClick={(e) => payNow(e)} ><img src={payNowActive ? '/assets/images/executed-payment-white.svg' : '/assets/images/executed-payment.svg'} alt='Pay Now' id="paynow" /><span className='ml-1' onClick={(e) => payNow(e)}>{t("Pay Now")}</span></Button>
+                            <Button className={`d-flex align-items-center border-radius-5 card-border fs-6 fw-400 px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1 ${payLaterActive ? "bg-success-dark text-white" : "bg-white text-dark"}`} onClick={(e) => payLater(e)} ><img src={payLaterActive ? '/assets/images/pay-white.svg' : '/assets/images/pay.svg'} alt='Pay Later' id="paylater" /><span className='ml-1' onClick={(e) => payLater(e)}>{t("Pay Later")}</span></Button>
+                          </div>
+                          : paymodeArray.includes('PayLater') === true && paymodeArray.includes('DirectDebit') === false && paymodeArray.includes('CreditCard') === true ?
+                            <div className='row mt-2'>
+                              <Button className={`d-flex align-items-center border-radius-5 card-border fs-6 fw-400 px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1 ${payNowActive ? "bg-success-dark text-white" : "bg-white text-dark"}`} onClick={(e) => payNow(e)} ><img src={payNowActive ? '/assets/images/executed-payment-white.svg' : '/assets/images/executed-payment.svg'} alt='Pay Now' id="paynow" /><span className='ml-1' onClick={(e) => payNow(e)}>{t("Pay Now")}</span></Button>
+                              <Button className={`d-flex align-items-center border-radius-5 card-border fs-6 fw-400 px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1 ${payLaterActive ? "bg-success-dark text-white" : "bg-white text-dark"}`} onClick={(e) => payLater(e)} ><img src={payLaterActive ? '/assets/images/pay-white.svg' : '/assets/images/pay.svg'} alt='Pay Later' id="paylater" /><span className='ml-1' onClick={(e) => payLater(e)}>{t("Pay Later")}</span></Button>
+                            </div>
+                            : paymodeArray.includes('PayLater') === true && paymodeArray.includes('DirectDebit') === false && paymodeArray.includes('CreditCard') === false ?
+                              <div className='row mt-2'>
+                                <Button className={`ui button bg-success-dark d-flex align-items-center border-radius-5 card-border fs-6 fw-400 text-white px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1 `} onClick={(e) => payLater(e)} ><img src='/assets/images/pay.svg' alt='Pay Later' id="paylater" /><span className='ml-1' onClick={(e) => payLater(e)}>{t("Pay Later")}</span></Button>
+                              </div> : paymodeArray.includes('PayLater') === false && paymodeArray.includes('DirectDebit') === true && paymodeArray.includes('CreditCard') === true ?
+                                <Button className={`ui button bg-white d-flex align-items-center border-radius-5 card-border fs-6 fw-400 text-dark px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1  `} onClick={(e) => payNow(e)} ><img src='/assets/images/executed-payment.svg' alt='Pay Now' id="paynow" /><span className='ml-1' onClick={(e) => payNow(e)}>{t("Pay Now")}</span></Button> :
+                                paymodeArray.includes('PayLater') === false && paymodeArray.includes('DirectDebit') === false && paymodeArray.includes('CreditCard') === true ?
+                                  <Button className={`ui button bg-white d-flex align-items-center border-radius-5 card-border fs-6 fw-400 text-dark px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1  `} onClick={(e) => payNow(e)} ><img src='/assets/images/executed-payment.svg' alt='Pay Now' id="paynow" /><span className='ml-1' onClick={(e) => payNow(e)}>{t("Pay Now")}</span></Button> : ""
+
+
+
+
+
+                        }
+
                       </div>}
                     </div>
                     {/* {console.log(esignMethod)} */}
