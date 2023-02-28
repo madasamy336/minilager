@@ -382,7 +382,6 @@ export default function Profile() {
                 <div className="row">
                   <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                     <div className="field w-100 datePicker my-3">
-
                       <label className="text-dark fs-7 fw-500">Date of Birth<span className="error">*</span></label>
                       <SemanticDatepicker
                         datePickerOnly
@@ -395,7 +394,6 @@ export default function Profile() {
                         maxDate={new Date()}
                         onChange={dateOfBirthChange}
                       />
-
                       {errors["dateOfBirth"] && <div className="error">{errors["dateOfBirth"]}</div>}
                     </div>
                     <div className="field my-3">
@@ -491,7 +489,7 @@ export default function Profile() {
                       <path id="Path_14953" data-name="Path 14953" d="M2077.969-231.344c.167,0,.334-.009.5,0a.622.622,0,0,1,.5.956c-.569.751-.4.909-.334,1.7a4.1,4.1,0,0,0,.069.551,1.054,1.054,0,0,1-.083.643c-.112.277-.21.557-.311.839a.368.368,0,0,1-.371.279.363.363,0,0,1-.371-.276c-.13-.359-.264-.717-.391-1.077a.522.522,0,0,1-.023-.21c.037-.452.074-.905.129-1.356a1.125,1.125,0,0,0-.184-.783c-.055-.085-.115-.167-.168-.254a.647.647,0,0,1,.513-1.011C2077.621-231.355,2077.8-231.344,2077.969-231.344Z" transform="translate(-2071.693 240.273)" fill="#328128" />
                     </g>
                   </svg>
-                    <span className="text-success-dark ml-1 fw-500"> {tenantDetails.businessUser ?`${t("Business User")}`: `${t("Personal User")}`}</span></p>
+                    <span className="text-success-dark ml-1 fw-500"> {tenantDetails.businessUser ? `${t("Business User")}`: `${t("Personal User")}`}</span></p>
                 </div>
               </div>}
             </div>
