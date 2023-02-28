@@ -108,5 +108,6 @@
   "City is a required field": "City is a required field",
   "State is a required field": "State is a required field",
   "Zipcode is a required field": "Zipcode is a required field",
-  "Forgot your password?": "Forgot your password?"
+  "Forgot your password?": "Forgot your password?",
+  "Payment Form":"Payment Form"
 }
