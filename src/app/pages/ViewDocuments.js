@@ -104,23 +104,20 @@ export default function ViewDocuments(props) {
         setEsignDocument(true);
     }
 
-    const downloadFile = (url, fileName) => {
-        url = eSignData.document_url;
-        fileName = 'eSign.pdf'
-        fetch(url, { method: 'get', mode: 'no-cors', referrerPolicy: 'no-referrer' })
-            .then(res => res.blob())
-            .then(res => {
-                const aElement = document.createElement('a');
-                aElement.setAttribute('download', fileName);
-                const href = URL.createObjectURL(res);
-                aElement.href = eSignData.document_url;
-                aElement.setAttribute('target', '_blank');
-                document.body.appendChild(aElement);
-                aElement.download = fileName
-                aElement.click();
-                URL.revokeObjectURL(href);
-            });
-    }
+    const downloadFile = async () => {
+        const response = await axios({
+            url: eSignData.document_url, // Replace with your own AWS S3 bucket URL
+            method: 'GET',
+            responseType: 'blob',
+        });
+
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', "Esign"); // Replace with the desired filename
+        document.body.appendChild(link);
+        link.click();
+    };
 
     const continueToMoveIn = () => {
         localStorage.setItem("eSignatureCompleted", true)
@@ -131,7 +128,7 @@ export default function ViewDocuments(props) {
         isLoading ? <Loader size='large' active>{t("Loading")}</Loader> :
             (<>{showEsignDocument ?
                 <div className="iframe-container"><iframe height="100vh" width="100%" src={eSignData.document_url} title="ESigned Data"></iframe>
-                    <div className="d-flex justify-content-center mb-2 mt-2"><Button className="ui button text-black close-btn fs-7 fw-400 text-dark px-5 mr-2" onClick={() => setEsignDocument(false)}>{t("Close")}</Button><Button className="ui button fs-7 fw-400 text-white px-5 mr-2 download-btn" onClick={() => downloadFile()}>{("Preview to Download")}</Button></div>
+                    <div className="d-flex justify-content-center mb-2 mt-2"><Button className="ui button text-black close-btn fs-7 fw-400 text-dark px-5 mr-2" onClick={() => setEsignDocument(false)}>{t("Close")}</Button><Button className="ui button fs-7 fw-400 text-white px-5 mr-2 download-btn" onClick={() => downloadFile()}>{("Download")}</Button></div>
                 </div> :
                 <div className="bg-white border-radius-15 text-center card-boxshadow border-radius-15 border-top-success-4 w-35 mx-auto px-2 py-5 mt-5">
                     <div className="success-img text-center mb-2">
