@@ -14,6 +14,8 @@ import { useTranslation } from "react-i18next";
 import Helper from "../helper";
 import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
+import Spinner from "../components/Spinner/Spinner";
+
 
 
 let helper = new Helper();
@@ -1041,7 +1043,8 @@ export default function TenantDetails() {
     <>
       <div>
         {isLoading ? (
-          <Loader size='large' active>{t("Loading")}</Loader>
+          <Spinner/>
+          // <Loader size='large' active>{t("Loading")}</Loader>
         ) :
           (
             <div>

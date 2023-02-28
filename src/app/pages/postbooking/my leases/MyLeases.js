@@ -9,6 +9,7 @@ import instance from '../../../services/instance';
 import request from '../../../services/request';
 import Helper from "../../../helper";
 import { useTranslation } from "react-i18next";
+import Spinner from "../../../components/Spinner/Spinner";
 
 const helper = new Helper()
 export default function MyLeases() {
@@ -309,7 +310,8 @@ export default function MyLeases() {
 
 
   return isLoading ? (
-    <Loader size='large' active>Loading</Loader>
+    <Spinner/>
+    // <Loader size='large' active>Loading</Loader>
   ) : (
     <div className="mx-2 mx-sm-1">
       {typeof leaseResponse !== 'undefined' && leaseResponse !== null && leaseResponse !== '' && leaseResponse.length > 0 ?

@@ -13,6 +13,7 @@ import 'react-toastify/dist/ReactToastify.css';
 // import 'react-phone-number-input/style.css';
 import 'react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css';
 import { useTranslation } from "react-i18next";
+import Spinner from "../../../components/Spinner/Spinner";
 
 let helper = new Helper();
 let addressLineOneReq;
@@ -336,7 +337,8 @@ export default function Profile() {
   return (
     <>
       {isLoading ? (
-        <Loader size='large' active>{t("Loading")}</Loader>
+        <Spinner/>
+        // <Loader size='large' active>{t("Loading")}</Loader>
       ) : (
         <div className="mx-2 mx-sm-1">
           <ToastContainer />

@@ -4,6 +4,7 @@
 @import './grid';
 @import './fonts';
 @import './breakpoints';
+@import './animation';
 @import './base';
 @import './components/RentNow/RentNow';
 @import './components/Header/header';
@@ -22,3 +23,4 @@
 @import './components/Payment/Payment';
 @import './components/TenantDetails/TenantDetails';
 @import './components/UpdatePassword/UpdatePassword';
+@import './components/Spinner/Spinner';
