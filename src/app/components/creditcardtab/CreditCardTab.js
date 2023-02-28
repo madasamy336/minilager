@@ -359,7 +359,7 @@ const CreditCardTab = (props) => {
                                         
                                         <div className="card-title d-flex justify-content-between align-items-start mb-3">
                                        
-                                            {card.isDefault && <p className="fs-7 text-white-light">Primary Card</p>}
+                                            {card.isDefault && <p className="fs-7 text-white-light">{t("Primary Card")}</p>}
                                             <div className="card-master-img mr-2">
                                                 <img src="/assets/images/Mastercard-img.png" alt="Master Card" />
                                             </div>
@@ -368,7 +368,7 @@ const CreditCardTab = (props) => {
                                             <p className="fs-7 text-white-light">{card.customerName}</p>
                                             <p className="fs-7 text-white">{card.cardNumber}</p>
                                         </div>
-                                        {card.isDefault && !activestatus? <p> <p className="fs-7 text-white-light">Autopay</p>{card.autoPay ? <Radio className="autopayToggle" toggle  defaultChecked={card.autoPay} onChange={autoPayDeactivate}/>:<Radio className="autopayToggle" toggle  defaultChecked={card.autoPay} onChange={autoPayactivate}/> } </p> :""}
+                                        {card.isDefault && !activestatus? <p> <p className="fs-7 text-white-light">{t("Autopay")}</p>{card.autoPay ? <Radio className="autopayToggle" toggle  defaultChecked={card.autoPay} onChange={autoPayDeactivate}/>:<Radio className="autopayToggle" toggle  defaultChecked={card.autoPay} onChange={autoPayactivate}/> } </p> :""}
                                     </div>
                                 </div>
                             }) : ''}
@@ -376,7 +376,7 @@ const CreditCardTab = (props) => {
                                 <div className="card bgImg-none card-border-secondary-dashed p-2 border-radius-20 d-flex justify-content-center align-items-center text-center">
                                     <div className="cursor-pointer" onClick={CreditFormHandler}>
                                         <p className="fs-1 fw-500">+</p>
-                                        <p>Add New Card</p>
+                                        <p>{t("Add New Card")}</p>
                                     </div>
                                 </div>
                             </div>

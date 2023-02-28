@@ -347,8 +347,8 @@ export default function MyLeases() {
                 <span className="text-success ml-1 veritical-align-text-top fw-600" >{t("Schedule Move-Out")}</span></button>
             </div> :
             <div className="col-12 col-md-6 text-right" >
-              <span className="text-secondary fw-500">{t("Schedule Move-Out date")}:<span className="mx-1 text-success">{helper.showDateFormat(leaseInfoById[0].leaseInfo.moveOutScheduledOn)}</span></span>
-              <button className="ui button bg-success-dark cancel-shecdule-btn fs-7 fw-400 text-white px-3 py-1 m-2" onClick={e => CancelScheduleMOveOut(leaseInfoById[0].leaseInfo.moveOutScheduledOn)}>Cancel</button>
+              <span className="text-secondary fw-500">{t("Schedule Move-Out Date")}:<span className="mx-1 text-success">{helper.showDateFormat(leaseInfoById[0].leaseInfo.moveOutScheduledOn)}</span></span>
+              <button className="ui button bg-success-dark cancel-shecdule-btn fs-7 fw-400 text-white px-3 py-1 m-2" onClick={e => CancelScheduleMOveOut(leaseInfoById[0].leaseInfo.moveOutScheduledOn)}>{t("Cancel")}</button>
             </div>
           }
           <div className="py-4 px-3">
@@ -468,7 +468,7 @@ export default function MyLeases() {
         size='tiny'
         onClose={() => SetScheduleMoveOutModal({ open: false })}
       >
-        <Modal.Header className='bg-success-dark text-white text-center fs-6 py-2 fw-400 position-relative'>Schedule Move-Out
+        <Modal.Header className='bg-success-dark text-white text-center fs-6 py-2 fw-400 position-relative'>{t("Schedule Move-Out")}
 
           {!isButtonLoading && <svg onClick={() => SetScheduleMoveOutModal({ open: false })} className='r-3 cursor-pointer position-absolute' xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 17.473 17.47">
             <path id="wrong-5" d="M978.609-438.353l-2.052-2.043-4.37-4.366a1.33,1.33,0,0,1-.4-1.425,1.3,1.3,0,0,1,.833-.843,1.3,1.3,0,0,1,1.171.183,3.019,3.019,0,0,1,.353.321q3.009,3,6.009,6.01c.088.088.159.193.254.309.127-.118.217-.2.3-.281l6.156-6.156a1.332,1.332,0,0,1,1.325-.431,1.3,1.3,0,0,1,.927.828,1.3,1.3,0,0,1-.188,1.228,3.412,3.412,0,0,1-.325.35q-3,3.009-6.011,6.009a3.233,3.233,0,0,1-.317.244c.132.14.213.23.3.316q3.052,3.053,6.108,6.1a1.36,1.36,0,0,1,.441,1.387,1.305,1.305,0,0,1-2.205.564c-.59-.568-1.163-1.157-1.74-1.736l-4.487-4.491a2.068,2.068,0,0,1-.183-.248l-.142-.051a1.52,1.52,0,0,1-.191.325q-3.047,3.059-6.1,6.111a1.341,1.341,0,0,1-1.45.419,1.3,1.3,0,0,1-.851-.866,1.3,1.3,0,0,1,.235-1.19,3.215,3.215,0,0,1,.257-.274l6.034-6.033C978.386-438.167,978.484-438.245,978.609-438.353Z" transform="translate(-971.716 447.116)" fill="#fff" />
@@ -486,7 +486,7 @@ export default function MyLeases() {
               <div className="text-danger">{errorMessage} </div>
             </div>
             <div className='text-center my-6'>
-              <Button className="ui button bg-success-dark fs-7 fw-400 text-white px-3 py-1" disabled={isButtonLoading} loading={isButtonLoading} onClick={() => addScheduleMOveOutDate(leaseInfoById[0])}>Schedule</Button>
+              <Button className="ui button bg-success-dark fs-7 fw-400 text-white px-3 py-1" disabled={isButtonLoading} loading={isButtonLoading} onClick={() => addScheduleMOveOutDate(leaseInfoById[0])}>{t("Schedule")}</Button>
             </div>
           </div>
         </Modal.Content>
@@ -498,7 +498,7 @@ export default function MyLeases() {
         size='tiny'
         onClose={() => CancelScheduleMoveOutMOdal({ open: false })}
       >
-        <Modal.Header className='bg-success-dark text-white text-center fs-6 py-2 fw-400 position-relative'>Cancel Schedule Move-Out
+        <Modal.Header className='bg-success-dark text-white text-center fs-6 py-2 fw-400 position-relative'>{t("Cancel Schedule Move-Out")}
 
           {!isButtonLoading && <svg onClick={() => CancelScheduleMoveOutMOdal({ open: false })} className='r-3 cursor-pointer position-absolute' xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 17.473 17.47">
             <path id="wrong-5" d="M978.609-438.353l-2.052-2.043-4.37-4.366a1.33,1.33,0,0,1-.4-1.425,1.3,1.3,0,0,1,.833-.843,1.3,1.3,0,0,1,1.171.183,3.019,3.019,0,0,1,.353.321q3.009,3,6.009,6.01c.088.088.159.193.254.309.127-.118.217-.2.3-.281l6.156-6.156a1.332,1.332,0,0,1,1.325-.431,1.3,1.3,0,0,1,.927.828,1.3,1.3,0,0,1-.188,1.228,3.412,3.412,0,0,1-.325.35q-3,3.009-6.011,6.009a3.233,3.233,0,0,1-.317.244c.132.14.213.23.3.316q3.052,3.053,6.108,6.1a1.36,1.36,0,0,1,.441,1.387,1.305,1.305,0,0,1-2.205.564c-.59-.568-1.163-1.157-1.74-1.736l-4.487-4.491a2.068,2.068,0,0,1-.183-.248l-.142-.051a1.52,1.52,0,0,1-.191.325q-3.047,3.059-6.1,6.111a1.341,1.341,0,0,1-1.45.419,1.3,1.3,0,0,1-.851-.866,1.3,1.3,0,0,1,.235-1.19,3.215,3.215,0,0,1,.257-.274l6.034-6.033C978.386-438.167,978.484-438.245,978.609-438.353Z" transform="translate(-971.716 447.116)" fill="#fff" />
@@ -516,7 +516,7 @@ export default function MyLeases() {
               <div className="text-danger">{errorMessage} </div>
             </div>
             <div className='text-center my-6'>
-              <Button className="ui button bg-success-dark fs-7 fw-400 text-white px-3 py-1" disabled={isButtonLoading} loading={isButtonLoading} onClick={() => cancelScheduleMOveOutDate(leaseInfoById[0])}>Cancel Schedule Date</Button>
+              <Button className="ui button bg-success-dark fs-7 fw-400 text-white px-3 py-1" disabled={isButtonLoading} loading={isButtonLoading} onClick={() => cancelScheduleMOveOutDate(leaseInfoById[0])}>{t("Cancel Schedule Date")}</Button>
             </div>
           </div>
         </Modal.Content>

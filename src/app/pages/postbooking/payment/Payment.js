@@ -5,6 +5,7 @@ import DebitCardTab from "../../../components/debitcardtab/DebitCardTab";
 import { useEffect, useState, useRef } from "react";
 import instance from '../../../services/instance';
 import request from '../../../services/request';
+import { useTranslation } from "react-i18next";
 
 export default function Payment() {
   const [paymentForm, setPaymentFormUrl] = useState();
@@ -12,6 +13,7 @@ export default function Payment() {
   const [achCardDetails, setACHCardDetails] = useState([]);
   const [isLoading, setLoader] = useState(true);
   const [showcard, setShowCard] = useState(false);
+  const { t } = useTranslation();
 
 
   function renderAddCardForm(id) {
@@ -55,7 +57,7 @@ export default function Payment() {
       menuItem: (
         <Menu.Item key={filteredPaymentmode.value}>
           {filteredPaymentmode.value == 'CreditCard' ? <Image className="mr-1" src="/assets/images/credit-card.svg" /> : <Image className="mr-1" src="/assets/images/direct-debit-tab.svg" />}
-          {filteredPaymentmode.value == 'CreditCard' ? 'Credit Card' : "Debit Card"}
+          {filteredPaymentmode.value == 'CreditCard' ? `${t("Credit Card")}` : `${t("Debit Card")}`}
         </Menu.Item>
       ), render: () => filteredPaymentmode.value == 'CreditCard' ? <Tab.Pane><CreditCardTab addCreditCardForm={() => renderAddCardForm(filteredPaymentmode.id)} cards={creditCardDetails} loading={isLoading} paymentFom={paymentForm} /></Tab.Pane> : <Tab.Pane><DebitCardTab addCreditCardForm={() => renderAddCardForm(filteredPaymentmode.id)} cards={achCardDetails} loader={isLoading} cardForm={paymentForm} /></Tab.Pane>
     }
