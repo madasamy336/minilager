@@ -109,5 +109,12 @@
   "State is a required field": "State is a required field",
   "Zipcode is a required field": "Zipcode is a required field",
   "Forgot your password?": "Forgot your password?",
-  "Payment Form":"Payment Form"
+  "Payment Form":"Payment Form",
+  "Company Registration Number":"Company Registration Number",
+  "Good Standing":"Good Standing",
+  "Primary Card":"Primary Card",
+  "Autopay":"Autopay",
+  "Update":"Update",
+  "Year":"Year",
+  "Brand":"Brand"
 }

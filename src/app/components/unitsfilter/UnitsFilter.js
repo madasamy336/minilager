@@ -429,7 +429,7 @@ const AccordionExampleStyled = (selectedStorageType) => {
       <Accordion.Content active={activeIndex === 3}>
         <div>
           <div className='text-success text-right'>
-            {selectAll ? <a onClick={() => selectAllDimension()}>{t("Select All")}</a> : ""}  | <a onClick={() => clearAllDimension()} >Clear All</a>
+            {selectAll ? <a onClick={() => selectAllDimension()}>{t("Select All")}</a> : ""}  | <a onClick={() => clearAllDimension()} >{t("Clear All")}</a>
           </div>
           <ul>
 
@@ -491,7 +491,7 @@ const AccordionExampleStyled = (selectedStorageType) => {
               <div>
 
                 <div className='text-success text-right'>
-                  {selectAll ? <a onClick={() => selectAllAmenityCheckbox()} >{t("Select All")}</a> : ""} | <a onClick={() => clearAllAmenityCheckbox()}>Clear All</a>
+                  {selectAll ? <a onClick={() => selectAllAmenityCheckbox()} >{t("Select All")}</a> : ""} | <a onClick={() => clearAllAmenityCheckbox()}>{t("Clear All")}</a>
                 </div>
 
                 <ul>
