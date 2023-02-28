@@ -83,7 +83,7 @@
   "My Invoices": "My Invoices",
   "My Leases": "My Leases",
   "Update Password": "Update Password",
-  "Schedule Move-Out date": "Schedule Move-Out date",
+  "Schedule Move-Out Date": "Schedule Move-Out Date",
   "Schedule Move-Out": "Schedule Move-Out",
   "Password is Required": "Password is Required",
   "First Name is Required": "First Name is Required",
@@ -116,5 +116,16 @@
   "Autopay":"Autopay",
   "Update":"Update",
   "Year":"Year",
-  "Brand":"Brand"
+  "Brand":"Brand",
+  "SIGNING PARTY":"SIGNING PARTY",
+  "Great! You've Successfully signed the documents":"Great! You've Successfully signed the documents",
+  "View Documents":"View Documents",
+  "You have successfully Moved In":"You have successfully Moved In",
+  "Check your inbox for lease-related information":"Check your inbox for lease-related information",
+  "Go to Profile":"Go to Profile",
+  "Schedule":"Schedule",
+  "Cancel Schedule Move-Out":"Cancel Schedule Move-Out",
+  "Cancel Schedule Date":"Cancel Schedule Date",
+  "Price Low to High":"Price Low to High",
+  "Price High to Low":"Price High to Low"
 }

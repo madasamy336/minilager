@@ -708,7 +708,7 @@ export default function EsignPayment() {
                           return < div key="" className='card-bg-secondary w-100 px-2 py-2 mb-6' >
                             <iframe key="" src={url} style={{ width: "100%" }} />
                             <div className="text-center mt-4">
-                              <a className="ui button bg-white text-success-dark border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2 mb-sm-1" href={url} target="_blank" rel="noreferrer" >Preview</a>
+                              <a className="ui button bg-white text-success-dark border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2 mb-sm-1" href={url} target="_blank" rel="noreferrer" >{t("Preview")}</a>
                             </div>
                           </div>
                         });
