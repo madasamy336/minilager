@@ -593,3 +593,14 @@ display: block !important;
         min-width: 1rem * $i !important;
     }
 }
+
+.toast-success{
+    color: #000 !important;
+  width: 100% !important;
+  }
+  .bg-toast-success svg{
+    color:#328128 !important;
+  }
+  .bg-toast-success{
+    background-color: #DFF6DD !important ;
+  }

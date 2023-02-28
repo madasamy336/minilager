@@ -95,8 +95,8 @@ const ForgotPassword = (props) => {
                         position: "top-right",
                         autoClose: 3000,
                         duration:100,
-                        hideProgressBar: false,
-                        closeOnClick: true,
+                        className:"bg-toast-success toast-success",
+                        hideProgressBar: true,
                         draggable: true,
                         progress: undefined,
                         theme: "colored",
@@ -108,7 +108,7 @@ const ForgotPassword = (props) => {
                         position: "top-right",
                         autoClose: 3000,
                         duration:100,
-                        hideProgressBar: false,
+                        hideProgressBar: true,
                         closeOnClick: true,
                         draggable: true,
                         progress: undefined,
@@ -129,7 +129,7 @@ const ForgotPassword = (props) => {
         <div className="forgot-password pt-2 pb-5">
             <div className="ui container">
                 <div className="actionMsgContainer" >
-                <ToastContainer />
+                <ToastContainer  />
                 </div>
                 <div className="row justify-content-center mt-3">
                     <div className="col-12 col-lg-4">

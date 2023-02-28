@@ -13,6 +13,7 @@ import 'react-toastify/dist/ReactToastify.css';
 // import 'react-phone-number-input/style.css';
 import 'react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css';
 import { useTranslation } from "react-i18next";
+import Spinner from "../../../components/Spinner/Spinner";
 
 let helper = new Helper();
 let addressLineOneReq;
@@ -176,7 +177,7 @@ export default function Profile() {
         position: "top-right",
         autoClose: 3000,
         duration: 100,
-        hideProgressBar: false,
+        hideProgressBar: true,
         closeOnClick: true,
         draggable: true,
         progress: undefined,
@@ -282,7 +283,8 @@ export default function Profile() {
           position: "top-right",
           autoClose: 3000,
           duration: 100,
-          hideProgressBar: false,
+          className:"bg-toast-success toast-success",
+          hideProgressBar: true,
           closeOnClick: true,
           draggable: true,
           progress: undefined,
@@ -321,7 +323,8 @@ export default function Profile() {
   return (
     <>
       {isLoading ? (
-        <Loader size='large' active>{t("Loading")}</Loader>
+        <Spinner/>
+        // <Loader size='large' active>{t("Loading")}</Loader>
       ) : (
         <div className="mx-2 mx-sm-1">
           <ToastContainer />

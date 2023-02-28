@@ -16,6 +16,7 @@ import { useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import Helper from "../helper";
 import { useTranslation } from "react-i18next";
+import Spinner from '../components/Spinner/Spinner';
 let helper = new Helper();
 let saveThirdPartyInsuranceDetailsValues = [];
 let ownInsuranceArray = [];
@@ -483,7 +484,8 @@ export default function AddOn() {
 
       <div>
         {isLoading ? (
-          <Loader size='large' active>Loading</Loader>
+          <Spinner/>
+          // <Loader size='large' active>Loading</Loader>
         ) : 
         (
           <div>
@@ -815,7 +817,7 @@ export default function AddOn() {
                           <a onClick={(e) => VehicleFormSubmitHandler(e)} href="/" className='text-success fs-7 cursor-pointer'> <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 27.505 27.5">
                             <path id="floating" d="M577.346,2164.47h1.719c.468.061.939.108,1.4.186a13.8,13.8,0,0,1,11.276,11.2c.089.5.142,1.006.211,1.51v1.719c-.04.327-.075.656-.122.981a13.749,13.749,0,1,1-23.4-11.494,13.464,13.464,0,0,1,7.4-3.886C576.337,2164.593,576.843,2164.539,577.346,2164.47Zm2,14.892h4.82a1.14,1.14,0,1,0,.027-2.278c-1.5-.009-3.007,0-4.51,0h-.336v-4.813a1.118,1.118,0,0,0-.693-1.111,1.131,1.131,0,0,0-1.588,1.07c-.01,1.5,0,3.007,0,4.51v.344h-4.806a1.141,1.141,0,1,0-.055,2.28c1.512.011,3.025,0,4.537,0h.323v.364c0,1.477,0,2.953,0,4.43a1.141,1.141,0,1,0,2.28.068c.012-1.5,0-3.007,0-4.51Z" transform="translate(-564.451 -2164.47)" fill="#328128" />
                           </svg>
-                            <span className='veritical-align-text-top ml-1 fs-7'>{t("Add more")}</span></a>
+                            <span className='veritical-align-text-top ml-1 fs-7'>{t("Add")}</span></a>
                         </div>
                       </div>
                     )}

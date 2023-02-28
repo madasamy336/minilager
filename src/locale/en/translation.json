@@ -68,7 +68,7 @@
   "Save this card for future transaction": "Save this card for future transaction",
   "Use the saved card for future recurring payments": "Use the saved card for future recurring payments",
   "Confirm Movein": "Confirm Movein",
-  "Are you sure you want to do payLater?": "Are you sure you want to do pay Later?",
+  "Are you sure you want to do payLater?": "Are you sure you want to do Pay Later?",
   "Yes": "Yes",
   "No": "No",
   "Close": "Close",
@@ -108,5 +108,6 @@
   "City is a required field": "City is a required field",
   "State is a required field": "State is a required field",
   "Zipcode is a required field": "Zipcode is a required field",
-  "Forgot your password?": "Forgot your password?"
+  "Forgot your password?": "Forgot your password?",
+  "Payment Form":"Payment Form"
 }

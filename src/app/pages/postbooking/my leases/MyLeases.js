@@ -10,6 +10,7 @@ import request from '../../../services/request';
 import Helper from "../../../helper";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
+import Spinner from "../../../components/Spinner/Spinner";
 
 const helper = new Helper()
 export default function MyLeases() {
@@ -315,7 +316,8 @@ export default function MyLeases() {
 
 
   return isLoading ? (
-    <Loader size='large' active>Loading</Loader>
+    <Spinner/>
+    // <Loader size='large' active>Loading</Loader>
   ) : (
     <div className="mx-2 mx-sm-1">
       {typeof leaseResponse !== 'undefined' && leaseResponse !== null && leaseResponse !== '' && leaseResponse.length > 0 ?
@@ -477,7 +479,7 @@ export default function MyLeases() {
             </div>
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-1' >{t("Reason")} <i className="text-danger">*</i></label>
-              <TextArea disabled={isButtonLoading} placeholder='Please Enter Reason' name="reason" value={scheduleMoveOutDate.reason} onChange={(e, data) => handleChange(e, data)} />
+              <TextArea disabled={isButtonLoading} placeholder='' name="reason" value={scheduleMoveOutDate.reason} onChange={(e, data) => handleChange(e, data)} />
               <div className="text-danger">{errorMessage} </div>
             </div>
             <div className='text-center my-6'>
@@ -502,16 +504,16 @@ export default function MyLeases() {
         <Modal.Content className=' p-1'>
           <div className="ui form px-4 px-sm-2">
             <div className="field w-100 datePicker my-3">
-              <label className='fw-500 fs-7 mb-1' >{t("Cancel Schedule Move-Out Date")}</label>
-              <SemanticDatepicker format='DD.MM.YYYY' datePickerOnly disabled={true} name="date" onChange={(e, data) => handleChange(e, data)} value={bindScheduledMovedDate} placeholder='Select date' className='w-100' />
+              <label className='fw-500 fs-7 mb-1' >{t("Schedule Move-Out Date")}</label>
+              <SemanticDatepicker  format='DD.MM.YYYY' datePickerOnly disabled={true} name="date" onChange={(e, data) => handleChange(e, data)} value={bindScheduledMovedDate} placeholder='Select date' className='w-100' />
             </div>
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-1' >{t("Reason")}</label>
-              <TextArea disabled={isButtonLoading} required placeholder='Please Enter Reason' name="reason" value={scheduleMoveOutDate.reason} onChange={(e, data) => handleChange(e, data)} />
+              <TextArea disabled={isButtonLoading} required placeholder='' name="reason" value={scheduleMoveOutDate.reason} onChange={(e, data) => handleChange(e, data)} />
               <div className="text-danger">{errorMessage} </div>
             </div>
             <div className='text-center my-6'>
-              <Button className="ui button bg-success-dark fs-7 fw-400 text-white px-3 py-1" disabled={isButtonLoading} loading={isButtonLoading} onClick={() => cancelScheduleMOveOutDate(leaseInfoById[0])}>Cancel schedule date</Button>
+              <Button className="ui button bg-success-dark fs-7 fw-400 text-white px-3 py-1" disabled={isButtonLoading} loading={isButtonLoading} onClick={() => cancelScheduleMOveOutDate(leaseInfoById[0])}>Cancel Schedule Date</Button>
             </div>
           </div>
         </Modal.Content>

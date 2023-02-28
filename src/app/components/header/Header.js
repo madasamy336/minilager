@@ -61,7 +61,8 @@ export default function Header(props) {
           }
           {
             props.width < 980 &&
-            <div className='d-inline-block float-right pr-3'>
+            <div className='d-inline-block pt-1 float-right pr-2'>
+              <Dropdown defaultValue={selectedLanguage} className='fs-8 min-width-5 mr-1' onChange={(e, data) => handleLanguageChange(e, data)} placeholder='Choose Language' selection options={Languages} />
               <Menu className='min-h-100' compact>
                 <Dropdown className='fs-8' text='Menu' simple item direction='left'>
                   <Dropdown.Menu>

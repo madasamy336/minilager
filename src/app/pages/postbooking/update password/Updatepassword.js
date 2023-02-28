@@ -64,7 +64,8 @@ export default function Updatepassword() {
           toast.success('Password Updated Successfully',{
             position: "top-right",
             autoClose: 5000,
-            hideProgressBar: false,
+            className:"bg-toast-success toast-success",
+            hideProgressBar: true,
             closeOnClick: true,
             pauseOnHover: true,
             draggable: true,
@@ -80,7 +81,7 @@ export default function Updatepassword() {
           toast.error(res.returnMessage, {
             position: "top-right",
             autoClose: 5000,
-            hideProgressBar: false,
+            hideProgressBar: true,
             closeOnClick: true,
             pauseOnHover: true,
             draggable: true,
