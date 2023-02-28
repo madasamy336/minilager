@@ -24,7 +24,7 @@ let servicesArray = [];
 let merchandiseId = [];
 let merchandiseItem = [];
 const yearOptions = [];
-const currentYear = new Date().getFullYear();
+const currentYear = new Date().getFullYear()+1;
 for (let i = currentYear; i > currentYear - 101 ; i--) {
   yearOptions.push({ key: i, text: i, value: i });
 }

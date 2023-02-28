@@ -1033,7 +1033,6 @@ export default function TenantDetails() {
     const pattern = /^[0-9\b]+$/;
     const mathSymbols = /[-+*/^()]/;
     const inputChar = String.fromCharCode(event.keyCode);
-
     if (!pattern.test(inputChar) && !mathSymbols.test(inputChar)) {
       event.preventDefault();
     }

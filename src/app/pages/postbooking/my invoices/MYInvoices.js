@@ -342,7 +342,7 @@ export default function MYInvoices() {
                       }
                       return <tr key={item.id}>
                         <td className="text-center">
-                          {item.invoiceStatus === "PAID" || item.invoiceStatus === "Processing" ? <input type="checkbox" disabled /> : item.invoiceStatus === "UNPAID" || item.invoiceStatus === "PARTIALLY-PAID" && item.unPaidBalance > 0 ? <input className={`six-multi-select-check-${item.unitId}`} type="checkbox" name={item.id} id={item.id} value={item.id} data-latefees={invoiceFeeid} data-unitid={item.unitId} data-amount={item.unPaidBalance} data-invoicenumber={item.invoiceNo} onChange={(e) => selectInvoice(e, item.unitId, invoiceFeeid)} /> : ''}
+                          {item.invoiceStatus === "PAID" || item.invoiceStatus === "Processing" ||item.invoiceStatus === "PARTIALLY-PAID"? <input type="checkbox" disabled /> : item.invoiceStatus === "UNPAID"  && item.unPaidBalance > 0 ? <input className={`six-multi-select-check-${item.unitId}`} type="checkbox" name={item.id} id={item.id} value={item.id} data-latefees={invoiceFeeid} data-unitid={item.unitId} data-amount={item.unPaidBalance} data-invoicenumber={item.invoiceNo} onChange={(e) => selectInvoice(e, item.unitId, invoiceFeeid)} /> : ''}
                         </td>
                         <td className="text-center">
                           <p className="fw-500">

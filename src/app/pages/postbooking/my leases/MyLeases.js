@@ -356,11 +356,11 @@ export default function MyLeases() {
               <div className="col-lg-7 col-md-7 col-12 px-1">
                 <div className="card-desc  p-2 border-radius-10 mt-sm-2 mb-sm-2">
                   <div className=""> <h2 className="fs-3 fw-600 mb-3 d-inline-block mr-1  ">#{leaseInfoById[0].unitInfo.unitNumber}</h2>
-                    {leaseInfoById[0].unitInfo.dueAmount > 0 ? (<span className={`danger-label-leases veritical-align-super py-1 px-2 fw-500`}>
+                    {leaseInfoById[0].leaseInfo.dueAmount > 0 ? (<span className={`danger-label-leases veritical-align-super py-1 px-2 fw-500`}>
                       {t("Poor Standing")}
                     </span>) :
                       <span className={`success-label-leases veritical-align-super py-1 px-2 fw-500`}>
-                        {t("Good Standing")}
+                        {t("Good Stand")}
                       </span>}
                     {/* {leaseInfoById[0].leaseInfo.gateStatus.descreption == 'Denied' && <span className={`danger-label-leases veritical-align-super py-1 px-2 fw-500`}>
                       {t("Access Denied")}
