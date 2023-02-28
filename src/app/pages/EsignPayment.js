@@ -7,6 +7,7 @@ import instance from '../services/instance';
 import request from '../services/request';
 import axios from 'axios';
 import Helper from "../helper";
+import date from 'date-and-time';
 import { Modal, Button, Loader, Placeholder, Segment } from 'semantic-ui-react';
 import parse from "html-react-parser";
 import { useTranslation } from "react-i18next";
@@ -48,8 +49,8 @@ export default function EsignPayment() {
   const [isLoading, setIsLoading] = useState(false);
   const [isButtonLoading, setButtonLoader] = useState(false);
   const [businessName, setbusinessName] = useState();
-  const [saveCard, setSavecard] = useState(true);
-  const [autoPayEnabled, setAutopayEnabled] = useState(true);
+  const [saveCard, setSavecard] = useState(false);
+  const [autoPayEnabled, setAutopayEnabled] = useState(false);
   const [iFrameResponse, setIframeRespones] = useState(false);
   const [paymentModeId, setpaymentModeId] = useState('');
   const [eSignSetting, setEsignSettingData] = useState(null);
@@ -233,6 +234,8 @@ export default function EsignPayment() {
 
   //get Unit detail
   const unitInfoDetails = () => {
+    console.log(date.format(new Date(getMoveindate), 'DD.MM.YYYY')); 
+    console.log(new Date(getMoveindate));
     setIsLoading(true)
     let config = {
       headers: {
@@ -252,7 +255,7 @@ export default function EsignPayment() {
           id: unitid
         }
       ],
-      moveInDate: new Date(getMoveindate),
+      moveInDate: date.format(new Date(getMoveindate), 'YYYY-MM-DD'),
       additionalMonths: 0,
       recurringPeriodId: getRecurringPeriodId,
       recurringTypeId: getRecurringTypeid,
@@ -362,8 +365,9 @@ export default function EsignPayment() {
   }
 
   const loadPaymentForm = (id, leaseProfileId) => {
+    setSavecard(true);
+    setAutopayEnabled(true);
     setpaymentModal({ open: true });
-
     let config = {
       headers: {
         "Content-Type": "application/json",
@@ -394,8 +398,40 @@ export default function EsignPayment() {
       });
 
   }
+  
+  const changeSavedCard = (e) => {
+    if (e.target.checked) {
+      setSavecard(true);
+    } else {
+      setSavecard(false);
+      setAutopayEnabled(false);
+    }
+    
+
+  }
+  
+  const changeAutoPayEnabled = (e) => {
+    if (e.target.checked) {
+      setAutopayEnabled(true);
+      setSavecard(true);
+    } else {
+      setAutopayEnabled(false);
+    }
+  }
 
   const saveMoveinDetails = (cardResponse, leaseprofileid, paylater) => {
+
+    let savecardinput =  document.getElementById('savedcard');
+    let autopayInput = document.getElementById('autopayenabled');
+    let saveCardvalue;
+    let autopayValue;
+    if(savecardinput !== null && typeof savecardinput !== "undefined" && autopayInput !== null && typeof autopayInput !== 'undefined'){
+      saveCardvalue = savecardinput.checked;
+      autopayValue = autopayInput.checked;
+    }else{
+      saveCardvalue = true;
+      autopayValue = true;
+    }
     let config = {
       headers: {
         "Content-Type": "application/json",
@@ -468,22 +504,12 @@ export default function EsignPayment() {
     setPayNowActive(false)
   }
 
-  const changeSavedCard = (e) => {
-    if (e.target.checked) {
-      setSavecard(true);
-    } else {
-      setSavecard(false);
-      setAutopayEnabled(false);
-    }
-  }
-  const changeAutoPayEnabled = (e) => {
-    if (e.target.checked) {
-      setAutopayEnabled(true);
-      setSavecard(true);
-    } else {
-      setAutopayEnabled(false);
-    }
-  }
+  useEffect(()=>{
+    console.log(saveCard);
+    console.log(autoPayEnabled);
+
+  },[saveCard,autoPayEnabled])
+  
 
   const triggerEsign = (e) => {
     e.preventDefault();
@@ -570,7 +596,6 @@ export default function EsignPayment() {
   }
   return (
     <>
-      {console.log(showPaymentMethods)}
       <ToastContainer />
       {isLoading ? (
         <Loader size='large' active>{t("Loading")}</Loader>

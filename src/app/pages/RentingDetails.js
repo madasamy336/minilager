@@ -27,14 +27,13 @@ let recurringTempvalue;
 
 
 export default function RentingDetails() {
-
   let unitid = localStorage.getItem('unitid');
   let invoicePeriod = sessionStorage.getItem('invoicePeriodValue');
   let invoiceRecurrValue = sessionStorage.getItem('invoiceRecurringValue');
   let invoiceset = sessionStorage.getItem('invoiceSet');
   let invoicePeriodSet = sessionStorage.getItem('invoicePeriodset');
   let moveindate = sessionStorage.getItem('moveindate');
-  let desiredMoveoutDate = sessionStorage.getItem('desiredMoveoutDate');
+  let desiredMoveoutDatevalue =sessionStorage.getItem('desiredMoveoutDate');
   const childRef = useRef(null);
   const customFieldRef = useRef([]);
   const today = new Date();
@@ -50,8 +49,8 @@ export default function RentingDetails() {
   const [invoiceDefault, setInvoiceDefault] = useState(invoicePeriod);
   const [recurring, setRecurring] = useState();
   const [checkInvoiceRecurring, setcheckInvoiceRecurring] = useState(false);
-  const [movinDate, setMovinDate] = useState(moveindate !== null ? new Date(moveindate) : new Date());
-  const [desiredMoveOutDate, setDesiredMoveOutDate] = useState(desiredMoveoutDate ? new Date(desiredMoveoutDate) : '');
+  const [movinDate, setMovinDate] = useState(moveindate !== null && typeof moveindate !== 'undefined' ? new Date(moveindate) : new Date());
+  const [desiredMoveOutDate, setDesiredMoveOutDate] = useState(desiredMoveoutDatevalue !== 'null'&& desiredMoveoutDatevalue !== null && typeof desiredMoveoutDatevalue != 'undefined'  ? new Date(desiredMoveoutDatevalue) :'' );
   const [customFieldAccess, SetCustomFieldAccess] = useState();
   const [invoiceRecurringDisabled, setInvoiceRecurringDisabled] = useState(false);
   const clientDataconfig = JSON.parse(sessionStorage.getItem("configdata"));
@@ -59,7 +58,7 @@ export default function RentingDetails() {
   const [recurringvalue, setRecurringValue] = useState(invoiceset ? invoiceRecurrValue : recurringDefaultValue);
   let customFieldId;
   let customfieldValue;
-  let customfieldBindingData = JSON.parse(sessionStorage.getItem("customFieldstorage"));
+  let customfieldBindingData = JSON.parse(sessionStorage.getItem("customFieldstorage")); 
   useEffect(() => {
     fetchAppConfig();
 
@@ -82,7 +81,6 @@ export default function RentingDetails() {
           configData.invoicePeriods.map((value) => {
             if (value.preferred) {
               sessionStorage.setItem("invoiceData", (value.invoicePeriodId));
-              debugger
               if (value.preferred) {
                 setInvoiceDefault(value.invoicePeriodId);
               }
