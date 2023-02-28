@@ -1,23 +1,18 @@
 import { t } from 'i18next';
-import { componentsToColor } from 'pdf-lib';
-import { propTypes } from 'pdf-viewer-reactjs';
-import React, { Component, useState, useEffect } from 'react';
-import {Popup } from 'semantic-ui-react'
-import { Accordion, Item } from 'semantic-ui-react';
-import UnitsRangeSlider from '../unitsrangeslider/UnitsRangeSlider';
+import React, { Component, useState, useEffect, useCallback, contextObject } from 'react';
+import {Accordion, Item, Popup, Grid, Segment, Placeholder } from 'semantic-ui-react'
 import Helper from "../../helper";
+import instance from '../../services/instance';
+import request from '../../services/request';
 import { useTranslation } from "react-i18next";
-let Buildingfilter;
-let unitTypeFilter;
-let UnitTypeDimension = [];
-let NewPriceValue;
-let AmenityFilter;
 const helper = new Helper();
-const AccordionExampleStyled = (selectedStorageType) => {
+const AccordionExampleStyled = (props) => {
+  console.log(props);
+  const selectedStorageType = props.storageTypeValue || sessionStorage.getItem("storageTypeValue") || '';
   const filters = JSON.parse(localStorage.getItem('Units'));
   const [filterBuilding, setFilterBuiding] = useState([]);
-  const [filterUnitType, setfilterUnitType] = useState([]);
-  const [filterDimensions, setfilterDimensions] = useState([]);
+  const [filterUnitType, setFilterUnitType] = useState([]);
+  const [filterDimensions, setFilterDimensions] = useState([]);
   const [PriceRangeArrayvalue, setPriceRangeArrayvalue] = useState();
   const [filterAmenity, setfilterAmenity] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -26,6 +21,25 @@ const AccordionExampleStyled = (selectedStorageType) => {
   const [maxPriceState, setMaxPriceState] = useState();
   const [PriceRangeStatus, setPriceRangeStatus] = useState(true);
   const { t, i18n } = useTranslation();
+  // const selectedBuildingIds = [];
+  const [selectedBuildingIds, setSelectedBuildingIds] = useState([]);
+  const [selectedUnitTypes, setSelectedUnitTypes] = useState('');
+  const [buildingFilter, setBuildingFilter] = useState([]);
+  const [unitTypeFilter, setUnitTypeFilter] = useState([]);
+  const [unitTypeDimension, setUnitTypeDimension] = useState({});
+  const [originalDimensions, setOriginalDimensions] = useState([]);
+  const [newPriceValue, setNewPriceValue] = useState({
+    minPrice: 0,
+    maxPrice: 0,
+  });
+  const [amenityFilter, setAmenityFilter] = useState([]);
+  // const [newPriceValue, setNewPriceValue] = useState({
+  //   minPrice: 0,
+  //   maxPrice: 0
+  // });
+  // New Stated for filters
+  const [selectedBuilding, setSelectedBuilding] = useState(null);
+
   const handleClick = (e, titleProps) => {
     const { index } = titleProps;
     const newIndex = activeIndex === index ? -1 : index
@@ -36,6 +50,63 @@ const AccordionExampleStyled = (selectedStorageType) => {
     setPriceRangeArrayvalue(data);
   }
 
+  useEffect(() => {
+    let locationId = localStorage.getItem('locationid');
+    const fetchData = async () => {
+      const config = {
+        headers: {
+          "Content-Type": "application/json"
+        }
+      };
+      const buildingIdsParam = selectedBuildingIds.length > 0 ? `&BuildingId=${selectedBuildingIds.join(",")}` : "";
+      const cacheKey = `unitFilters-${locationId}-${buildingIdsParam}`;
+
+      try {
+        let response = localStorage.getItem(cacheKey);
+        if (!response) {
+          response = await instance.get(
+            request.unit_filters +
+            `&LocationId=${locationId}${buildingIdsParam}`,
+            config
+          );
+          localStorage.setItem(cacheKey, JSON.stringify(response));
+        } else {
+          response = JSON.parse(response);
+        }
+
+        if (
+          Array.isArray(response.data.result) &&
+          response.data.result.length > 0 &&
+          response.data.result
+        ) {
+          console.log(response.data.result);
+          const storageTypeFilter = response.data.result.find((i) => i.storageTypeId === selectedStorageType);
+
+          if (storageTypeFilter && Array.isArray(storageTypeFilter.unitTypes) && storageTypeFilter.unitTypes.length > 0) {
+            const unitTypeFilter = storageTypeFilter.unitTypes;
+            console.log("unitTypeFilter", unitTypeFilter);
+            const unitTypesarr = Object.values(unitTypeFilter.reduce((acc, cur) => Object.assign(acc, { [cur.unitTypeName]: cur }), {}));
+            const result = unitTypeFilter.reduce((r, a) => {
+              r[a.unitTypeName] = r[a.unitTypeName] || [];
+              r[a.unitTypeName].push(a);
+              return r;
+            }, Object.create(null));
+            setUnitTypeFilter(unitTypesarr);
+            setUnitTypeDimension(result);
+          } else {
+            console.log("No unit types found for selected storage type");
+          }
+
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchData();
+  }, [selectedBuildingIds]);
+
+
+
 
   function checkStoragePriceRange(PriceRangeArray, storageCategoryValue) {
     let PriceArray = [];
@@ -45,61 +116,123 @@ const AccordionExampleStyled = (selectedStorageType) => {
       }
     });
 
-    if (typeof PriceArray !== "undefined" && PriceArray !==null && PriceArray !=="" && PriceArray.length > 0){
+    if (typeof PriceArray !== "undefined" && PriceArray !== null && PriceArray !== "" && PriceArray.length > 0) {
       let minvalue = Math.min.apply(Math, PriceArray.map(function (o) { return o.MinPrice; }));
-    
-      let maxValue = Math.max.apply(Math, PriceArray.map(function (o) { return o.MaxPrice; }));
-      
-      NewPriceValue = {
-        "minPrice": minvalue,
-        "maxPrice": maxValue,
-      }
 
-      if (NewPriceValue.maxPrice === NewPriceValue.minPrice) {
+      let maxValue = Math.max.apply(Math, PriceArray.map(function (o) { return o.MaxPrice; }));
+      console.log("maxValue", maxValue);
+      console.log("minvalue", minvalue);
+      setNewPriceValue({
+        minPrice: minvalue,
+        maxPrice: maxValue
+      });
+
+      if (maxValue === minvalue) {
         let priceRangeHiding = document.getElementById("pricerange-hide");
-        if (typeof priceRangeHiding !=="undefined" && priceRangeHiding !==null && priceRangeHiding !==""){
+        if (typeof priceRangeHiding !== "undefined" && priceRangeHiding !== null && priceRangeHiding !== "") {
           priceRangeHiding.style.display = 'none';
         }
-      }else{
+      } else {
         let priceRangeHiding = document.getElementById("pricerange-hide");
-        if (typeof priceRangeHiding !=="undefined" && priceRangeHiding !==null && priceRangeHiding !==""){
+        if (typeof priceRangeHiding !== "undefined" && priceRangeHiding !== null && priceRangeHiding !== "") {
           priceRangeHiding.style.display = 'block';
         }
       }
       sessionStorage.setItem("MinValue", minvalue);
       sessionStorage.setItem("MaxValue", maxValue);
     }
-
-   
-    
-
-  
-    
   }
 
-  if (typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof filters.building !== 'undefined' && filters.building !== null && filters.building !== "" && filters.building.length > 0 && selectedStorageType.storageTypeValue !== 'undefined' && selectedStorageType.storageTypeValue !== null) {
-    Buildingfilter = filters.building.filter(i => i.storageTypeId === selectedStorageType.storageTypeValue);
-  }
-  if (typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof filters.unitType !== 'undefined' && filters.unitType !== null && filters.unitType !== "" && filters.unitType.length > 0 && selectedStorageType.storageTypeValue !== 'undefined' && selectedStorageType.storageTypeValue !== null) {
-    // /console.log(`check test`+unitTypesarr);
-    unitTypeFilter = filters.unitType.filter(i => i.storageTypeId === selectedStorageType.storageTypeValue);
-    let unitTypesarr = (Object.values(unitTypeFilter.reduce((acc, cur) => Object.assign(acc, { [cur.unitTypeName]: cur }), {})));
-    let result = unitTypeFilter.reduce(function (r, a) {
-      r[a.unitTypeName] = r[a.unitTypeName] || [];
-      r[a.unitTypeName].push(a);
-      return r;
-    }, Object.create(null));
-    UnitTypeDimension = result;
-    unitTypeFilter = unitTypesarr;
-  }
+  useEffect(() => {
+    console.log("filters -", filters);
+    // Building filter
+    if (
+      typeof filters !== 'undefined' &&
+      filters !== null &&
+      filters !== '' &&
+      typeof filters.building !== 'undefined' &&
+      filters.building !== null &&
+      filters.building !== "" &&
+      filters.building.length > 0 &&
+      typeof selectedStorageType !== 'undefined' &&
+      selectedStorageType !== null
+    ) {
+      console.log("buildingFilter pssed", selectedStorageType);
+      const buildingFilter = filters.building.filter(i => i.storageTypeId === selectedStorageType);
 
-  if (typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof filters.priceRangeValue !== 'undefined' && filters.priceRangeValue !== null && filters.priceRangeValue !== "" && filters.priceRangeValue.length > 0 && selectedStorageType.storageTypeValue !== 'undefined' && selectedStorageType.storageTypeValue !== null) {
+      setBuildingFilter(buildingFilter);
+    }
 
-    checkStoragePriceRange(filters.priceRangeValue, selectedStorageType.storageTypeValue);
-  }
-  if (typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof filters.amenityValue !== 'undefined' && filters.amenityValue !== null && filters.amenityValue !== "" && filters.amenityValue.length > 0 && selectedStorageType.storageTypeValue !== 'undefined' && selectedStorageType.storageTypeValue !== null) {
-    AmenityFilter = filters.amenityValue.filter(i => i.storageTypeId === selectedStorageType.storageTypeValue);
-  }
+    // Unit Type filter
+    if (
+      typeof filters !== 'undefined' &&
+      filters !== null &&
+      filters !== '' &&
+      typeof filters.unitType !== 'undefined' &&
+      filters.unitType !== null &&
+      filters.unitType !== "" &&
+      filters.unitType.length > 0 &&
+      typeof selectedStorageType !== 'undefined' &&
+      selectedStorageType !== null
+    ) {
+      const unitTypeFilter = filters.unitType.filter(i => i.storageTypeId === selectedStorageType);
+      let unitTypesarr = (Object.values(unitTypeFilter.reduce((acc, cur) => Object.assign(acc, { [cur.unitTypeName]: cur }), {})));
+      console.log("unitTypesarr", unitTypesarr);
+      let result = unitTypeFilter.reduce(function (r, a) {
+        r[a.unitTypeName] = r[a.unitTypeName] || [];
+        r[a.unitTypeName].push(a);
+        return r;
+      }, Object.create(null));
+      setUnitTypeFilter(unitTypesarr);
+
+      setUnitTypeDimension(result);
+    }
+
+    // Price Range filter
+    if (
+      typeof filters !== 'undefined' &&
+      filters !== null &&
+      filters !== '' &&
+      typeof filters.priceRangeValue !== 'undefined' &&
+      filters.priceRangeValue !== null &&
+      filters.priceRangeValue !== "" &&
+      filters.priceRangeValue.length > 0 &&
+      typeof selectedStorageType !== 'undefined' &&
+      selectedStorageType !== null
+    ) {
+      const priceRangeValue = checkStoragePriceRange(filters.priceRangeValue, selectedStorageType);
+      setNewPriceValue(priceRangeValue);
+    }
+
+    // Amenity filter
+    if (
+      typeof filters !== 'undefined' &&
+      filters !== null &&
+      filters !== '' &&
+      typeof filters.amenityValue !== 'undefined' &&
+      filters.amenityValue !== null &&
+      filters.amenityValue !== "" &&
+      filters.amenityValue.length > 0 &&
+      typeof selectedStorageType !== 'undefined' &&
+      selectedStorageType !== null
+    ) {
+      const amenityFilter = filters.amenityValue.filter(i => i.storageTypeId === selectedStorageType);
+      console.log("amenityFilter", amenityFilter);
+      const uniqueAmenities = amenityFilter.filter((item, index, self) => index === self.findIndex(t => t.name === item.name));
+      console.log("uniqueAmenities", uniqueAmenities);
+      setAmenityFilter(uniqueAmenities);
+    }
+
+    // }
+    // fetchData();
+    console.log("fetchData",);
+  }, []);
+
+
+  useEffect(() => {
+    console.log("buildingFilter", buildingFilter);
+    console.log("unitTypesarr", unitTypeFilter);
+  }, [buildingFilter, unitTypeFilter]);
 
   const storageTypeOptions = typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof filters.storageType !== 'undefined' && filters.storageType !== null && filters.storageType !== "" && filters.storageType.length > 0 ?
     filters.storageType.map(storageType => {
@@ -111,26 +244,25 @@ const AccordionExampleStyled = (selectedStorageType) => {
     }) : '';
 
   const onChangeUnitMesurement = (e, unitMeasurement, unitTypeId) => {
-    debugger
     if (e.target.checked) {
-      setfilterDimensions([...filterDimensions, { unitmesurement: unitMeasurement, unitTypeid: unitTypeId }]);
+      setFilterDimensions([...filterDimensions, { unitMeasurement: unitMeasurement, unitTypeid: unitTypeId }]);
     } else {
-      setfilterDimensions((item) => item.filter((i) => i.unitTypeid !== unitTypeId));
+      setFilterDimensions((item) => item.filter((i) => i.unitTypeid !== unitTypeId));
     }
+  };
 
-  }
 
   const selectAllBuilding = () => {
     setFilterBuiding([]);
-    Buildingfilter.forEach((item) => {
+    buildingFilter.forEach((item) => {
       setFilterBuiding((items) => [...items, { buildingname: item.buildingName, buildingid: item.buildingId }]);
     });
   }
 
   const selectAllUnitType = () => {
-    setfilterUnitType([]);
+    setFilterUnitType([]);
     unitTypeFilter.forEach((item) => {
-      setfilterUnitType((items) => [...items, { unitTypename: item.unitTypeName, unitTypeid: item.unitTypeId }]);
+      setFilterUnitType((items) => [...items, { unitTypename: item.unitTypeName, unitTypeid: item.unitTypeId }]);
     });
   }
 
@@ -139,25 +271,25 @@ const AccordionExampleStyled = (selectedStorageType) => {
   }
 
   const clearAllUnitType = () => {
-    setfilterUnitType([]);
+    setFilterUnitType([]);
   }
 
 
   const selectAllDimension = () => {
-    setfilterDimensions([]);
+    setFilterDimensions([]);
     unitTypeFilter.forEach((item) => {
-      setfilterDimensions((items) => [...items, { unitTypeid: item.unitTypeId, unitmesurement: item.unitMeasurement }]);
+      setFilterDimensions((items) => [...items, { unitTypeid: item.unitTypeId, unitmesurement: item.unitMeasurement }]);
     });
   }
 
   const clearAllDimension = () => {
-    setfilterDimensions([]);
+    setFilterDimensions([]);
   }
 
 
   const selectAllAmenityCheckbox = () => {
     setfilterAmenity([]);
-    AmenityFilter.forEach((item) => {
+    amenityFilter.forEach((item) => {
       setfilterAmenity((items) => [...items, { amenitiesname: item.name, amenitiesid: item.id }]);
     });
   }
@@ -166,13 +298,50 @@ const AccordionExampleStyled = (selectedStorageType) => {
     setfilterAmenity([]);
   }
 
-  const onChangeBuilding = (e, buildingname, buildingid) => {
-    if (e.target.checked === true) {
-      setFilterBuiding([...filterBuilding, { buildingname: buildingname, buildingid: buildingid }]);
+
+  const onChangeBuilding = useCallback((e, buildingname, buildingid) => {
+    if (e.target.checked) {
+      setFilterBuiding([...filterBuilding, { buildingname, buildingid }]);
+      setSelectedBuildingIds(prevIds => [...prevIds, buildingid]);
     } else {
-      setFilterBuiding((item) => item.filter((i) => i.buildingid !== buildingid));
+      setFilterBuiding(filterBuilding.filter(b => b.buildingid !== buildingid));
+      setSelectedBuildingIds(prevIds => prevIds.filter(id => id !== buildingid));
     }
-  }
+  }, [filterBuilding]);
+
+  const onChangeUnitType = useCallback((e, unitTypeName, unitTypeId) => {
+    if (e.target.checked) {
+      setSelectedUnitTypes(unitTypeName);
+      setFilterUnitType([...filterUnitType, { unitTypename: unitTypeName, unitTypeid: unitTypeId }]);
+    } else {
+      setSelectedUnitTypes('');
+      setFilterDimensions(filterDimensions.filter((i) => i.unitTypeid !== unitTypeId));
+      setFilterUnitType((item) => item.filter((i) => i.unitTypeid !== unitTypeId));
+    }
+  }, [filterUnitType]);
+
+  const dimensions = unitTypeFilter.reduce((acc, curr) => {
+    if (selectedUnitTypes.includes(curr.unitTypeName)) {
+      const unitTypeDimensions = unitTypeDimension[curr.unitTypeName];
+      acc.push(...unitTypeDimensions.map((dim) => ({
+        ...dim,
+        unitTypeName: curr.unitTypeName,
+        unitTypeId: curr.unitTypeId,
+      })));
+    }
+    return acc;
+  }, []);
+
+  useEffect(() => {
+    // Prepopulate filterDimensions with selected dimensions from filters
+    if (filters && filters.length > 0) {
+      const selectedDimensions = filters.filter((item) => item.dimension !== undefined);
+      setFilterDimensions(selectedDimensions);
+    }
+  }, [filters]);
+
+
+
 
   const sixStorageOnChangeAmenity = (e, amenitiesName, amenitiesId) => {
     if (e.target.checked === true) {
@@ -181,47 +350,17 @@ const AccordionExampleStyled = (selectedStorageType) => {
       setfilterAmenity((items) => items.filter((i) => i.amenitiesid !== amenitiesId));
     }
   }
-  const onChangeUnitType = (e, unitTypeName, unitTypeId) => {
-    console.log(`dimension_${unitTypeName.split(" ").join("")}`);
-   let dimension = document.querySelectorAll(`.dimension_${unitTypeName.split(" ").join("").replace(/[&\\+()~%'",:?<>{}!@#]/g, '')}`);
-   console.log(dimension);
-    if (e.target.checked) {
-      dimension.forEach((element)=> {
-        console.log(element);
-       
-        element.disabled = false;
-      })
-      
-      setfilterUnitType([...filterUnitType, { unitTypename: unitTypeName, unitTypeid: unitTypeId }]);
-    } else {
-      let removeFilter;
-      dimension.forEach((element)=> {
-        if(element.checked){
-          console.log(element.value);
-          setfilterDimensions((item) => item.filter((i) => i.unitTypeid !== element.value));
 
-        }
-        element.checked = false;
-        element.disabled = true;
-        console.log(removeFilter);
-       
-       
-      })
-     
-  
-      setfilterUnitType((item) => item.filter((i) => i.unitTypeid !== unitTypeId));
-    }
-  }
 
   const removeBuilding = (buildingid) => {
     setFilterBuiding((item) => item.filter((i) => i.buildingid !== buildingid));
   }
   const removeUnitType = (unitTypeId) => {
-    setfilterUnitType((item) => item.filter((i) => i.unitTypeid !== unitTypeId));
+    setFilterUnitType((item) => item.filter((i) => i.unitTypeid !== unitTypeId));
   }
 
   const removeUnitDimension = (unitTypeId) => {
-    setfilterDimensions((item) => item.filter((i) => i.unitTypeid !== unitTypeId));
+    setFilterDimensions((item) => item.filter((i) => i.unitTypeid !== unitTypeId));
   }
 
   const removeAmenities = (amenitiesId) => {
@@ -229,8 +368,8 @@ const AccordionExampleStyled = (selectedStorageType) => {
   }
   const clearAllFilters = () => {
     setFilterBuiding([]);
-    setfilterUnitType([]);
-    setfilterDimensions([]);
+    setFilterUnitType([]);
+    setFilterDimensions([]);
     setfilterAmenity([]);
     setPriceRangeArrayvalue([]);
     setMaxPriceState(0);
@@ -239,71 +378,92 @@ const AccordionExampleStyled = (selectedStorageType) => {
 
   function arrayUnique(array) {
     var a = array.concat();
-    for(var i=0; i<a.length; ++i) {
-        for(var j=i+1; j<a.length; ++j) {
-            if(a[i] === a[j])
-                a.splice(j--, 1);
-        }
+    for (var i = 0; i < a.length; ++i) {
+      for (var j = i + 1; j < a.length; ++j) {
+        if (a[i] === a[j])
+          a.splice(j--, 1);
+      }
     }
 
     return a;
-}
+  }
 
 
   const applyAllFiterValues = () => {
-    debugger
     let selectedbuildingId;
-    let selectedUnitTypeId;
+    let selectedUnitTypeId = [];
     let selectedAmenitiesId;
-    let selectedDimension;
-    let finalUnitTypeId=[];
-    
+    let selectedDimension = [];
+
     if (typeof filterBuilding !== "undefined" && filterBuilding !== "" && filterBuilding !== null) {
       selectedbuildingId = filterBuilding.filter((i) => i.buildingid).map((item) => {
         return item.buildingid;
       });
     }
-    if (typeof filterUnitType !== "undefined" && filterUnitType !== "" && filterUnitType !== null) {
-      filterUnitType.forEach((i)=> {
-        let dimension = document.querySelectorAll(`.dimension_${i.unitTypename.split(" ").join("").replace(/[&\\+()~%'",:?<>{}!@#]/g, '')}`);
-        dimension.forEach((element)=>{
-         if(!element.checked){
-          console.log(element.value);
 
-         }
-        })
-        
-      })
+    if (typeof filterUnitType !== "undefined" && filterUnitType !== "" && filterUnitType !== null) {
       selectedUnitTypeId = filterUnitType.filter((i) => i.unitTypeid).map((item) => {
         return item.unitTypeid;
       });
     }
+
     if (typeof filterAmenity !== "undefined" && filterAmenity !== "" && filterAmenity !== null) {
       selectedAmenitiesId = filterAmenity.filter((i) => i.amenitiesid).map((item) => {
         return item.amenitiesid;
       });
     }
 
-    if(typeof filterDimensions !== "undefined" && filterDimensions !== "" && filterDimensions !== null ){
-      
-      selectedDimension = filterDimensions.filter((i) => i.unitTypeid).map((item) => {
-        return item.unitTypeid;
+    if (typeof filterDimensions !== "undefined" && filterDimensions !== "" && filterDimensions !== null) {
+      filterUnitType.forEach((i) => {
+        filterDimensions.forEach((j) => {
+          if (i.unitTypeid === j.unitTypeid) {
+            selectedDimension.push(j.unitTypeid);
+          }
+        })
       });
-
-      
     }
 
-    finalUnitTypeId =arrayUnique(selectedUnitTypeId.concat(selectedDimension));
-    console.log(finalUnitTypeId);
     let FilterSearchId = {
       buildingid: selectedbuildingId,
-      unitTypeid: finalUnitTypeId,
+      unitTypeid: selectedUnitTypeId.concat(selectedDimension),
       amenitiesid: selectedAmenitiesId,
-      priceRange: PriceRangeArrayvalue
-    }
+      priceRange: newPriceValue
+    };
 
-    selectedStorageType.unitsearchFilters(FilterSearchId);
+    console.log("FilterSearchId", FilterSearchId);
+    props.unitsearchFilters(FilterSearchId);
+  }
 
+
+  if (props.loader) {
+    return (
+      <Grid className='px-1' columns={1} stackable>
+        <Grid.Column>
+          <Segment raised>
+            <Placeholder>
+              <Placeholder.Paragraph>
+                <Placeholder.Line length='medium' />
+                <Placeholder.Line length='short' />
+                <Placeholder.Line length='medium' />
+                <Placeholder.Line length='short' />
+              </Placeholder.Paragraph>
+              <Placeholder.Paragraph>
+                <Placeholder.Line length='medium' />
+                <Placeholder.Line length='short' />
+                <Placeholder.Line length='medium' />
+                <Placeholder.Line length='short' />
+              </Placeholder.Paragraph>
+              <Placeholder.Paragraph>
+                <Placeholder.Line length='medium' />
+                <Placeholder.Line length='short' />
+                <Placeholder.Line length='medium' />
+                <Placeholder.Line length='short' />
+              </Placeholder.Paragraph>
+            </Placeholder>
+          </Segment>
+        </Grid.Column>
+      </Grid>
+    );
   }
 
   return (
@@ -323,7 +483,7 @@ const AccordionExampleStyled = (selectedStorageType) => {
           {typeof filterBuilding !== "undefined" && filterBuilding !== null && filterBuilding !== "" && filterBuilding.length > 0 ?
             filterBuilding.map((item) => {
               return <div key={item.buildingid} className='col-lg-4 col-md-6 col-sm-4'>
-                <p className='fs-8 d-flex justify-content-between align-items-center p-1 mr-1 mb-1'>{item.buildingname}<a onClick={() => removeBuilding(item.buildingid)}><img src='/assets/images/wrong.svg' alt='Close' /></a></p>
+                <p key={item.buildingid} className='fs-8 d-flex justify-content-between align-items-center p-1 mr-1 mb-1'>{item.buildingname}<a onClick={() => removeBuilding(item.buildingid)}><img src='/assets/images/wrong.svg' alt='Close' /></a></p>
               </div>
             }) : ""}
 
@@ -331,24 +491,24 @@ const AccordionExampleStyled = (selectedStorageType) => {
           {typeof filterUnitType !== "undefined" && filterUnitType !== null && filterUnitType !== "" && filterUnitType.length > 0 ?
             filterUnitType.map((item) => {
               return <div key={item.unitTypeid} className='col-lg-4 col-md-6 col-sm-4'>
-                <p className='fs-8 d-flex justify-content-between align-items-center p-1 mr-1'>{item.unitTypename}<a onClick={() => removeUnitType(item.unitTypeid)}><img src='/assets/images/wrong.svg' alt='Close' /></a></p>
+                <p key={item.unitTypeid} className='fs-8 d-flex justify-content-between align-items-center p-1 mr-1'>{item.unitTypename}<a onClick={() => removeUnitType(item.unitTypeid)}><img src='/assets/images/wrong.svg' alt='Close' /></a></p>
               </div>
 
             }) : ""}
 
 
           {typeof filterDimensions !== "undefined" && filterDimensions !== "" && filterDimensions !== null && filterDimensions.length > 0 ?
-            filterDimensions.map((item) => {
-              return <div key={item.unitTypeid} className='col-lg-4 col-md-6 col-sm-4'>
-                <p className='fs-8 d-flex justify-content-between align-items-center p-1 mr-1'>{item.unitmesurement}<a onClick={() => removeUnitDimension(item.unitTypeid)}><img src='/assets/images/wrong.svg' alt='Close' /></a></p>
+            filterDimensions.map((item) => (
+              <div key={item.unitTypeId} className='col-lg-4 col-md-6 col-sm-4'>
+                <p className='fs-8 d-flex justify-content-between align-items-center p-1 mr-1'>{item.unitMeasurement}<a onClick={() => setFilterDimensions((prevState) => prevState.filter((i) => i.unitTypeId !== item.unitTypeId))}><img src='/assets/images/wrong.svg' alt='Close' /></a></p>
               </div>
-            }) : ""
+            )) : ""
           }
 
           {typeof filterAmenity !== "undefined" && filterAmenity !== "" && filterAmenity !== null && filterAmenity.length > 0 ?
             filterAmenity.map((item) => {
               return <div key={item.amenitiesid} className='col-lg-4 col-md-6 col-sm-4'>
-                <p className='fs-8 d-flex justify-content-between align-items-center p-1 mr-1'>{item.amenitiesname}<a onClick={() => removeAmenities(item.amenitiesid)}><img src='/assets/images/wrong.svg' alt='Close' /></a></p>
+                <p key={item.amenitiesid} className='fs-8 d-flex justify-content-between align-items-center p-1 mr-1'>{item.amenitiesname}<a onClick={() => removeAmenities(item.amenitiesid)}><img src='/assets/images/wrong.svg' alt='Close' /></a></p>
               </div>
             }) : ""
 
@@ -375,14 +535,24 @@ const AccordionExampleStyled = (selectedStorageType) => {
             {selectAll ? <a onClick={() => selectAllBuilding()} >{t("Select All")}</a> : ""} | <a onClick={() => clearAllBuilding()}>{t("Clear All")}</a>
           </div>
           <ul>
-            {typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof filters.building !== 'undefined' && filters.building !== null && filters.building !== "" && filters.building.length > 0 ?
-              Buildingfilter.map(buildingVal => {
-                return <li key={buildingVal.key}><input value={buildingVal.buildingId} id={buildingVal.buildingId}
-                  className='mr-1 mb-1' type="checkbox" checked={filterBuilding.find((item) => item.buildingid === buildingVal.buildingId)} onChange={(e) => onChangeBuilding(e, buildingVal.buildingName, buildingVal.buildingId)} />{buildingVal.buildingName}</li>
-              })
-              : ''}
+            {buildingFilter.length > 0 && buildingFilter.map(buildingVal => {
+              return (
+                <li key={buildingVal.key}>
+                  <input
+                    key={buildingVal.key}
+                    value={buildingVal.buildingId}
+                    id={buildingVal.buildingId}
+                    className='mr-1 mb-1'
+                    type="checkbox"
+                    checked={filterBuilding.find((item) => item.buildingid === buildingVal.buildingId)}
+                    onChange={(e) => onChangeBuilding(e, buildingVal.buildingName, buildingVal.buildingId)}
+                  />
+                  {buildingVal.buildingName}
+                </li>
+              )
+            })}
           </ul>
-          {typeof Buildingfilter !== 'undefined' && Buildingfilter !== null && Buildingfilter !== '' && Buildingfilter.length > 5 ? (
+          {typeof buildingFilter !== 'undefined' && buildingFilter !== null && buildingFilter !== '' && buildingFilter.length > 5 ? (
             <a className='text-success text-right d-none' href='/'>MORE</a>
           ) : ''}
         </div>
@@ -406,9 +576,22 @@ const AccordionExampleStyled = (selectedStorageType) => {
             {selectAll ? <a onClick={() => selectAllUnitType()}>{t("Select All")}</a> : ""}  | <a onClick={() => clearAllUnitType()}>{t("Clear All")}</a>
           </div>
           <ul>
-            {typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof filters.unitType !== 'undefined' && filters.unitType !== null && filters.unitType !== "" && filters.unitType.length > 0 ?
+            {console.log("unitTypeFilter UI", unitTypeFilter)}
+            {Array.isArray(unitTypeFilter) && unitTypeFilter.length > 0 && typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof filters.unitType !== 'undefined' && filters.unitType !== null && filters.unitType !== "" && filters.unitType.length > 0 ?
               unitTypeFilter.map(unitTypeValue => {
-                return <li key={unitTypeValue.key}><input value={unitTypeValue.unitTypeId} checked={filterUnitType.find((item) => item.unitTypeid === unitTypeValue.unitTypeId)} className='mr-1 mb-1' type="checkbox" onChange={(e) => onChangeUnitType(e, unitTypeValue.unitTypeName, unitTypeValue.unitTypeId)} />{unitTypeValue.unitTypeName}</li>
+                return (
+                  <li key={unitTypeValue.unitTypeId}>
+                    <input
+                      key={unitTypeValue.unitTypeId}
+                      value={unitTypeValue.unitTypeId}
+                      checked={filterUnitType.some(item => item.unitTypeid === unitTypeValue.unitTypeId)}
+                      className='mr-1 mb-1'
+                      type="checkbox"
+                      onChange={(e) => onChangeUnitType(e, unitTypeValue.unitTypeName, unitTypeValue.unitTypeId)}
+                    />
+                    {unitTypeValue.unitTypeName}
+                  </li>
+                )
               })
               : ''}
           </ul>
@@ -431,20 +614,62 @@ const AccordionExampleStyled = (selectedStorageType) => {
           <div className='text-success text-right'>
             {selectAll ? <a onClick={() => selectAllDimension()}>{t("Select All")}</a> : ""}  | <a onClick={() => clearAllDimension()} >{t("Clear All")}</a>
           </div>
-          <ul>
+          {Array.isArray(unitTypeFilter) && unitTypeFilter.length > 0 && filterUnitType.length > 0 ?
+            filterUnitType.map(filterUnitTypeValue => {
+              const unitTypeName = filterUnitTypeValue.unitTypename;
+              const unitTypeId = filterUnitTypeValue.unitTypeid;
+              const dimensions = unitTypeDimension[unitTypeName];
+              const filterUnitMeasurement = filterDimensions.filter(item => item.unitTypeid === unitTypeId).map(item => item.unitMeasurement);
+              return (
+                <ul key={unitTypeId}>
+                  {dimensions.map(dimension => (
+                    <li key={dimension.key}>
+                      <input
+                        key={dimension.key}
+                        value={dimension.unitTypeId}
+                        className={`mr-1 mb-1 dimension_${unitTypeName.split(" ").join("").replace(/[&\\+()~%'",:?<>{}!@#]/g, '')}`}
+                        type="checkbox"
+                        onChange={(e) => onChangeUnitMesurement(e, dimension.unitMeasurement, dimension.unitTypeId)}
+                        checked={filterUnitMeasurement.includes(dimension.unitMeasurement)}
+                      />
+                      {dimension.unitMeasurement}
+                      {helper.measurementDisplayFormat(dimension.measurementType)}
+                    </li>
+                  ))}
+                </ul>
+              );
+            })
+            :
+            unitTypeFilter.map(unitTypeValue => {
+              const unitTypeName = unitTypeValue.unitTypeName;
+              const unitTypeId = unitTypeValue.unitTypeId;
+              const dimensions = unitTypeDimension[unitTypeName];
+              const filterUnitMeasurement = filterDimensions.filter(item => item.unitTypeid === unitTypeId).map(item => item.unitMeasurement);
+              return (
+                <ul key={unitTypeId}>
+                  {dimensions.map(dimension => (
+                    <li key={dimension.key}>
+                      <input
+                        key={dimension.key}
+                        value={dimension.unitTypeId}
+                        className={`mr-1 mb-1 dimension_${unitTypeName.split(" ").join("").replace(/[&\\+()~%'",:?<>{}!@#]/g, '')}`}
+                        type="checkbox"
+                        onChange={(e) => onChangeUnitMesurement(e, dimension.unitMeasurement, dimension.unitTypeId)}
+                        checked={filterUnitMeasurement.includes(dimension.unitMeasurement)}
+                      />
+                      {dimension.unitMeasurement}
+                      {helper.measurementDisplayFormat(dimension.measurementType)}
+                    </li>
+                  ))}
+                </ul>
+              );
+            })
+          }
 
-            {typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof UnitTypeDimension !== 'undefined' && UnitTypeDimension !== null && UnitTypeDimension !== "" ?
-              Object.keys(UnitTypeDimension).map(data => {
-                return UnitTypeDimension[data].map(dimension => {
-                  return <li key={dimension.key}><input  disabled={true} value={dimension.unitTypeId}  className={`mr-1 mb-1 dimension_${data.split(" ").join("").replace(/[&\\+()~%'",:?<>{}!@#]/g, '')}`} type="checkbox" onChange={(e) => onChangeUnitMesurement(e, dimension.unitMeasurement, dimension.unitTypeId)} />{dimension.unitMeasurement}{helper.measurementDisplayFormat(dimension.measurementType)}</li>
-                })
-              })
-              : ''
-              }
-          </ul>
-          {/* onClick={this.props.modal} */}
           <a href="javascript:void(0);" className='text-success text-right d-none' >MORE</a>
         </div>
+
+
       </Accordion.Content>
 
       {/* <div id="pricerange-hide">
@@ -463,8 +688,8 @@ const AccordionExampleStyled = (selectedStorageType) => {
         </Accordion.Title>
         <Accordion.Content active={activeIndex === 4}>
           <div>
-          {NewPriceValue?
-          <UnitsRangeSlider priceRange={NewPriceValue} minprice = {(min)=> setMinPriceState(min)} maxprice = {(max)=>setMaxPriceState(max)}  pricerangeinitialvalue={pricerangeOnchangevalue}/>
+          {newPriceValue?
+          <UnitsRangeSlider priceRange={newPriceValue} minprice = {(min)=> setMinPriceState(min)} maxprice = {(max)=>setMaxPriceState(max)}  pricerangeinitialvalue={pricerangeOnchangevalue}/>
           : ""
           }
           </div>
@@ -474,7 +699,7 @@ const AccordionExampleStyled = (selectedStorageType) => {
 
 
       {
-        typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof AmenityFilter !== 'undefined' && AmenityFilter !== null && AmenityFilter !== "" && AmenityFilter.length > 0 ?
+        typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof amenityFilter !== 'undefined' && amenityFilter !== null && amenityFilter !== "" && amenityFilter.length > 0 ?
           <><Accordion.Title className={`d-flex justify-content-between align-items-center`}
             active={activeIndex === 5}
             index={5}
@@ -495,9 +720,9 @@ const AccordionExampleStyled = (selectedStorageType) => {
                 </div>
 
                 <ul>
-                  {typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof AmenityFilter !== 'undefined' && AmenityFilter !== null && AmenityFilter !== "" && AmenityFilter.length > 0 ?
-                    AmenityFilter.map(amenityfilterValue => {
-                      return <li key={amenityfilterValue.key}><input value={amenityfilterValue.id} checked={filterAmenity.find((item) => item.amenitiesid === amenityfilterValue.id)} className='mr-1 mb-1' type="checkbox" onChange={(e) => sixStorageOnChangeAmenity(e, amenityfilterValue.name, amenityfilterValue.id)} />{amenityfilterValue.name}</li>
+                  {typeof filters !== 'undefined' && filters !== null && filters !== '' && typeof amenityFilter !== 'undefined' && amenityFilter !== null && amenityFilter !== "" && amenityFilter.length > 0 ?
+                    amenityFilter.map(amenityfilterValue => {
+                      return <li key={amenityfilterValue.key}><input key={amenityfilterValue.key} value={amenityfilterValue.id} checked={filterAmenity.find((item) => item.amenitiesid === amenityfilterValue.id)} className='mr-1 mb-1' type="checkbox" onChange={(e) => sixStorageOnChangeAmenity(e, amenityfilterValue.name, amenityfilterValue.id)} />{amenityfilterValue.name}</li>
                     })
                     : ''}
                 </ul>

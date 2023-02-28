@@ -9,7 +9,7 @@ import request from '../services/request';
 import { ToastContainer, toast } from 'react-toastify';
 import { useTranslation } from "react-i18next";
 import 'react-toastify/dist/ReactToastify.css';
-import {sortUnitOptions } from "../constant/constant";
+import { sortUnitOptions } from "../constant/constant";
 
 let isBussinessUser;
 let totatCount;
@@ -42,8 +42,8 @@ const Units = () => {
     const filters = JSON.parse(localStorage.getItem('Units'));
     let locationId = localStorage.getItem('locationid');
     let userInfo = JSON.parse(localStorage.getItem('tenantInfo'));
-      
-      useEffect(() => {
+
+    useEffect(() => {
         if (typeof userInfo !== "undefined" && userInfo !== null && userInfo !== "") {
           if (userInfo.businessUser === true) {
             setTenantTypes(tenantTypeOptions[1].value);
@@ -55,49 +55,82 @@ const Units = () => {
           sessionStorage.removeItem("applypromo");
         }
       
+        fetchUnitFilter(locationId);
+      
+      }, []);
+      
+      useEffect(() => {
         if (storageTypeValue) {
           sixStorageLoadUnitList(storageTypeValue, sortByPriceRange);
         }
-      
-        fetchUnitFilter(locationId);
       }, [pageNumber, sortByPriceRange]);
-      
-      const sortByPriceRangeHandler = (event_, data) => {
+
+    const sortByPriceRangeHandler = (event_, data) => {
         if (data.value !== sortByPriceRange) {
-          setSortByPriceRange(data.value);
+            setSortByPriceRange(data.value);
         }
-      };
-      
+    };
+
     const fetchUnitFilter = async (loactionid) => {
         let config = {
-            headers: {
-                "Content-Type": "application/json",
-            },
+          headers: {
+            "Content-Type": "application/json",
+          },
         };
         try {
-            const response = await instance.get(request.unit_filters + `&LocationId=${loactionid} `, config);
-            const unitFilterResponse = response.data;
-            if (unitFilterResponse.returnMessage === "NO_RECORDS_FOUND" && unitFilterResponse.isSuccess === true) {
-                setNoUnits(true);
-                setLoading(false);
+          const response = await instance.get(
+            request.unit_filters + `&LocationId=${loactionid} `,
+            config
+          );
+          const unitFilterResponse = response.data;
+          if (
+            unitFilterResponse.returnMessage === "NO_RECORDS_FOUND" &&
+            unitFilterResponse.isSuccess === true
+          ) {
+            setNoUnits(true);
+            setLoading(false);
+          }
+          if (
+            typeof unitFilterResponse !== "undefined" &&
+            unitFilterResponse !== null &&
+            unitFilterResponse !== "" &&
+            unitFilterResponse.isSuccess === true &&
+            unitFilterResponse.result.length > 0
+          ) {
+            let data = constructFilterValues(unitFilterResponse.result);
+            localStorage.setItem("Units", JSON.stringify(data));
+            if (
+              typeof data !== "undefined" &&
+              data !== null &&
+              data !== "" &&
+              typeof data.storageType !== "undefined" &&
+              data.storageType !== null &&
+              data.storageType !== "" &&
+              data.storageType.length > 0
+            ) {
+              if (
+                typeof storageTypeValue === "undefined" ||
+                storageTypeValue === null ||
+                storageTypeValue === ""
+              ) {
+                setStorageTypeValue(data.storageType[0].storageTypeId);
+                sessionStorage.setItem(
+                  "storageTypeValue",
+                  data.storageType[0].storageTypeId
+                );
+                await sixStorageLoadUnitList(
+                  data.storageType[0].storageTypeId,
+                  sortByPriceRange
+                );
+              } else {
+                await sixStorageLoadUnitList(storageTypeValue, sortByPriceRange);
+              }
             }
-            if (typeof unitFilterResponse !== 'undefined' && unitFilterResponse !== null && unitFilterResponse !== '' && unitFilterResponse.isSuccess === true && unitFilterResponse.result.length > 0) {
-                let data = constructFilterValues(unitFilterResponse.result);
-                localStorage.setItem("Units", JSON.stringify(data));
-                if (typeof data !== 'undefined' && data !== null && data !== '' && typeof data.storageType !== 'undefined' && data.storageType !== null && data.storageType !== "" && data.storageType.length > 0) {
-                    if (typeof storageTypeValue === "undefined" || storageTypeValue === null || storageTypeValue === "") {
-                        setStorageTypeValue(data.storageType[0].storageTypeId);
-                        await sixStorageLoadUnitList(data.storageType[0].storageTypeId);
-                    } else {
-                        // setStorageTypeValue(storageTypeValue);
-                        await sixStorageLoadUnitList(storageTypeValue);
-                    }
-                }
-            }
+          }
         } catch (error) {
-            console.error(error);
+          console.error(error);
         }
-    }
+      };
 
 
     const constructFilterValues = (unitFilterResponse) => {
@@ -198,17 +231,23 @@ const Units = () => {
     }
 
     const sixStorageLoadUnitList = async (storageTypeid, searchFilterValues) => {
+        console.log("function triggered");
         try {
             let buidingId;
             let unitTypeId;
             let amenitiesId;
             let minvalues;
             let maxvalues;
+            console.log("searchFilterValues", searchFilterValues);
             if (typeof searchFilterValues !== "undefined" && searchFilterValues !== null && searchFilterValues !== "") {
                 buidingId = searchFilterValues.buildingid;
                 unitTypeId = searchFilterValues.unitTypeid;
                 amenitiesId = searchFilterValues.amenitiesid;
+                console.log(searchFilterValues.priceRange !== "undefined");
+                console.log(searchFilterValues.priceRange !== null);
+                console.log(searchFilterValues.priceRange !== "");
                 if (typeof searchFilterValues.priceRange !== "undefined" && searchFilterValues.priceRange !== null && searchFilterValues.priceRange !== "") {
+                    console.log("hello");
                     minvalues = searchFilterValues.priceRange[0];
                     maxvalues = searchFilterValues.priceRange[1];
                 }
@@ -227,7 +266,6 @@ const Units = () => {
                     "Content-Type": "application/json",
                 },
             };
-            console.log(Units.storageType);
             let requestbody = {
                 storageTypeId: storageTypeid ? [storageTypeid] : [storageTypeId],
                 locationId: [locationId],
@@ -296,7 +334,7 @@ const Units = () => {
         setTenantTypeError(data);
     }
 
-    
+
 
     const PaginationHandleChange = (event, value) => {
         window.scroll(0, 300);
@@ -368,7 +406,7 @@ const Units = () => {
                     <div className="row">
                         <div className="col-lg-3 col-md-3 col-sm-12">
                             <div className="filters-div">
-                                <AccordionExampleStyled filterValue={filterValue} unitsearchFilters={(items) => sixStorageLoadUnitList(storageTypeValue, items)} storageTypeValue={storageTypeValue} modal={() => SetunitTypeModal({ open: true, size: 'tiny', dimmer: 'blurring' })} />
+                                <AccordionExampleStyled loader={loader} filterValue={filterValue} unitsearchFilters={(items) => sixStorageLoadUnitList(storageTypeValue, items)} storageTypeValue={storageTypeValue} modal={() => SetunitTypeModal({ open: true, size: 'tiny', dimmer: 'blurring' })} />
                             </div>
                         </div>
                         <div className="col-lg-9 col-md-9 col-sm-12">
@@ -393,7 +431,7 @@ const Units = () => {
                                         {noUnits ? <div className='col-12'><p id="nounits-available" className='text-center error py-1'>No Units Available</p></div> : ""}
 
                                         {loader ? (<div>
-                                            <PlaceholderLoader cardCount={7} />
+                                            <PlaceholderLoader cardCount={7} keyPrefix="uniquePrefix" />
                                         </div>) : (<UnitsCard tenantType={tenantTypes} checkTenantType={() => checkTenantType()} filterRequest={filterRequest} storageTypevalue={storageTypeValue} UnitResponse={UnitResponse} setUnitResponse={setUnitResponse} setLoading={setLoading} />)}
 
                                     </div>

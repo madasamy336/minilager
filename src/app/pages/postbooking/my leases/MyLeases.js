@@ -9,6 +9,7 @@ import instance from '../../../services/instance';
 import request from '../../../services/request';
 import Helper from "../../../helper";
 import { useTranslation } from "react-i18next";
+import axios from "axios";
 import Spinner from "../../../components/Spinner/Spinner";
 
 const helper = new Helper()
@@ -289,14 +290,19 @@ export default function MyLeases() {
 
 
   // Open Pdf File to New Tab and Download
-  const download = (path) => {
-    const anchor = document.createElement('a');
-    anchor.href = path;
-    anchor.download = "Rental Agreement";
-    anchor.target = "_blank"
-    document.body.appendChild(anchor);
-    anchor.click();
-    document.body.removeChild(anchor);
+  const download = async (path) => {
+    const response = await axios({
+      url: path, // Replace with your own AWS S3 bucket URL
+      method: 'GET',
+      responseType: 'blob',
+    });
+
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', "lease"); // Replace with the desired filename
+    document.body.appendChild(link);
+    link.click();
   };
 
   function sixStorageChangeReason(e) {
@@ -432,7 +438,7 @@ export default function MyLeases() {
                 </div>
               </div>
               <div className='text-center'>
-                <button className="ui button basic box-shadow-none border-success-dark-light-1 fs-8 px-2 py-1 my-2" onClick={() => download(selectedUnitLeasedocument)}>{t("Preview to Download")}</button>
+                <button className="ui button basic box-shadow-none border-success-dark-light-1 fs-8 px-2 py-1 my-2" onClick={() => download(selectedUnitLeasedocument)}>{t("Download")}</button>
               </div>
 
             </div> :
@@ -469,7 +475,7 @@ export default function MyLeases() {
           <div className="ui form px-4 px-sm-2">
             <div className="field w-100 datePicker my-3">
               <label className='fw-500 fs-7 mb-1' >{t("Schedule Move-Out Date")}</label>
-              <SemanticDatepicker datePickerOnly disabled={isButtonLoading}  format='DD.MM.YYYY' showToday={true} value={scheduleMoveOutDateValue} name="date" onChange={(e, { name, value }) => SetScheduleMoveOutDate(name, value)} placeholder='Select date' className='w-100' />
+              <SemanticDatepicker datePickerOnly disabled={isButtonLoading} format='DD.MM.YYYY' showToday={true} value={scheduleMoveOutDateValue} name="date" onChange={(e, { name, value }) => SetScheduleMoveOutDate(name, value)} placeholder='Select date' className='w-100' />
             </div>
             <div className="field w-100  my-3">
               <label className='fw-500 fs-7 mb-1' >{t("Reason")} <i className="text-danger">*</i></label>

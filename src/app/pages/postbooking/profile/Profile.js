@@ -40,34 +40,17 @@ export default function Profile() {
   const { t } = useTranslation();
 
   const [tenantDetails, setTenantDetails] = useState({
-    ssn: '',
     firstName: '',
-    userId: '',
     lastName: '',
     email: '',
-    birthDate: null,
     phoneNumber: '',
-    addressLine1: '',
-    addressLine2: '',
+    ssn: '',
+    addressLineOne: '',
+    addressLineTwo: '',
     city: '',
     state: '',
-    country: '',
-    postalCode: '',
-    photoPath: null
+    zipCode: ''
   });
-  const requiredFields = [
-    { name: 'firstName', message: `${t('First Name is a required field')}` },
-    { name: 'lastName', message: `${t('Last Name is a required field')}` },
-    { name: 'email', message: `${t('Email is a required field')}` },
-    { name: 'phoneNumber', message: `${t('Phone Number is a required field')}` },
-    { name: 'ssn', message: `${t('Social Security Number is a required field')}` },
-    { name: 'addressLine1', message: `${t('Address Line 1 is a required field')}` },
-    { name: 'addressLine2', message: `${t('Address Line 2 is a required field')}` },
-    { name: 'city', message: `${t('City is a required field')}` },
-    { name: 'state', message: `${t('State is a required field')}` },
-    { name: 'postalCode', message: 'ZipCode is a required field' },
-    // other fields
-  ];
 
   // UseEffect Start
   useEffect(() => {
@@ -75,6 +58,11 @@ export default function Profile() {
   }, []);
   // UseEffect End
 
+  useEffect(() => {
+    // This code will run after each update to tenantDetails and profileImageSrc
+    // and will update the UI with the latest values
+    // ...
+  }, [tenantDetails, profileImageSrc]);
 
   // Functionalities
   const EditTenantDetailsHandler = () => {
@@ -99,24 +87,27 @@ export default function Profile() {
     try {
       const response = await instance.get(`${request.get_user_info}/${userId}`, config);
       const userInfoResponse = response.data;
-      if (
-        typeof userInfoResponse !== "undefined" &&
-        userInfoResponse !== null &&
-        userInfoResponse !== "" &&
-        userInfoResponse.isSuccess === true
-      ) {
-        const data = userInfoResponse.result;
+      if (userInfoResponse?.isSuccess) {
+        const { result: data } = userInfoResponse;
         localStorage.setItem("tenantInfo", JSON.stringify(data));
-        addressLineOneReq = data["addressLineOne"];
-        addressLineTwoReq = data["addressLineTwo"];
-        postalCodeReq = data["zipCode"];
-        birthDateReq = data["birthDate"];
-        data["phoneNumber"] = data["phoneNumber"].replace(DefaultCountryCode, "");
-        setTenantDetails(data);
-        setprofileImageSrc(data.photoPath)
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000);
+        const { firstName, lastName, email, birthDate: dateOfBirth, ssn, addressLineOne, addressLineTwo, zipCode, birthDate, phoneNumber, photoPath } = data;
+        console.log("data", data);
+        const updatedPhoneNumber = phoneNumber.replace(DefaultCountryCode, "");
+        setTenantDetails(prevDetails => ({
+          ...prevDetails,
+          firstName: firstName || "",
+          lastName: lastName || "",
+          email: email || "",
+          addressLine1: addressLineOne || "",
+          addressLine2: addressLineTwo || "",
+          postalCode: zipCode || "",
+          birthDate: birthDate || null,
+          phoneNumber: updatedPhoneNumber || "",
+          photoPath: photoPath || null,
+          ssn: ssn || ""
+        }));
+        setprofileImageSrc(photoPath);
+        setLoading(false);
       } else {
         console.log("No records found");
         setLoading(false);
@@ -128,21 +119,19 @@ export default function Profile() {
   };
 
   const onChangePersonalInfo = (e) => {
-    console.log(e.target.value);
-    console.log(e.target.name);
-    if (e.target.name === 'addressLine1') {
-      tenantDetails['addressLineOne'] = e.target.value;
-      addressLineOneReq = e.target.value;
-    } else if (e.target.name === 'addressLine2') {
-      tenantDetails['addressLineTwo'] = e.target.value;
-      addressLineTwoReq = e.target.value;
-    } else if (e.target.name === 'postalCode') {
-      tenantDetails['zipCode'] = e.target.value;
-      postalCodeReq = e.target.value;
+    const { name, value } = e.target;
+    console.log(value);
+    console.log(name);
+
+    // Update tenantDetails object with the correct field names
+    if (name === 'addressLine1') {
+      setTenantDetails({ ...tenantDetails, addressLineOne: value });
+    } else if (name === 'addressLine2') {
+      setTenantDetails({ ...tenantDetails, addressLineTwo: value });
+    } else {
+      setTenantDetails({ ...tenantDetails, [name]: value });
     }
-    // let { name, value } = e.target
-    setTenantDetails({ ...tenantDetails, [e.target.name]: e.target.value });
-  }
+  };
 
   // const profileImageUpload = (e) => {
   //   e.preventDefault();
@@ -232,7 +221,7 @@ export default function Profile() {
       }
     };
     const userid = localStorage.getItem('userid');
-    
+
     if (isAddressEditable) {
       const addressFields = [
         { name: 'addressLine1', message: `${t('Address Line 1 is a required field')}` },
@@ -241,20 +230,21 @@ export default function Profile() {
         { name: 'state', message: `${t('State is a required field')}` },
         { name: 'postalCode', message: 'Zip Code is a required field' },
       ];
-  
+
       const newErrors = {};
       addressFields.forEach(field => {
-        console.log(tenantDetails[field.name]);
-        if (!tenantDetails[field.name]) {
-          console.log(field.name);
-          newErrors[field.name] = field.message;
+        const fieldName = field.name === 'addressLine1' ? 'addressLineOne' : field.name === 'addressLine2' ? 'addressLineTwo' : field.name === 'postalCode' ? 'zipCode' : field.name;
+        if (!tenantDetails[fieldName]) {
+          newErrors[fieldName] = field.message;
         }
       });
-  
+      console.log("hello",newErrors);
+
       if (Object.keys(newErrors).length > 0) {
         setErrors(newErrors);
         return;
       }
+
     } else {
       const requiredFields = [
         { name: 'firstName', message: `${t('First Name is a required field')}` },
@@ -264,21 +254,20 @@ export default function Profile() {
         { name: 'gender', message: `${t('Gender is a required field')}` },
         { name: 'dateOfBirth', message: `${t('Date of Birth is a required field')}` },
       ];
-  
+
       const newErrors = {};
       requiredFields.forEach(field => {
         if (!tenantDetails[field.name]) {
-          console.log(field.name);
           newErrors[field.name] = field.message;
         }
       });
-  
+
       if (Object.keys(newErrors).length > 0) {
         setErrors(newErrors);
         return;
       }
     }
-    
+
     try {
       setLoading(true);
       await saveTenantPhoto();
@@ -308,10 +297,14 @@ export default function Profile() {
       console.log(err);
       setLoading(false);
     }
-  
+
     setErrors({});
   };
-  
+
+  const dateOfBirthChange = (e, date) => {
+    tenantDetails['birthDate'] = date.value;
+  }
+
   const handleInputKeyDown = (event) => {
     console.log(event);
     const pattern = /^[0-9\b]+$/;
@@ -322,13 +315,6 @@ export default function Profile() {
       event.preventDefault();
     }
   };
-
-  const handleChangeBirthdate = (event, data) => {
-    const newDate = new Date(data.value);
-    birthDateReq = newDate;
-    setTenantDetails({ ...tenantDetails, ['dateOfBirth']: newDate });
-  };
-
 
   const onChangePhoneInput = (e, data) => {
     setTenantDetails({ ...tenantDetails, ['phoneNumber']: e });
@@ -396,8 +382,20 @@ export default function Profile() {
                 <div className="row">
                   <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                     <div className="field w-100 datePicker my-3">
-                      <label className="text-dark fs-7 fw-500">{t("Date of Birth")}<span className="error">*</span></label>
-                      <SemanticDatepicker format='DD.MM.YYYY' datePickerOnly minDate={minDate} name="dateOfBirth" placeholder='Select date' maxDate={new Date()} value={typeof birthDateReq !== "undefined" && birthDateReq !== null && birthDateReq !== "" ? new Date(birthDateReq) : new Date()} className='w-100' onChange={handleChangeBirthdate} />
+
+                      <label className="text-dark fs-7 fw-500">Date of Birth<span className="error">*</span></label>
+                      <SemanticDatepicker
+                        datePickerOnly
+                        placeholder={t('Select date')}
+                        name="birthDate"
+                        className="w-100"
+                        format="DD-MM-YYYY"
+                        value={tenantDetails.birthDate ? new Date(tenantDetails.birthDate) : tenantDetails.birthDate}
+                        minDate={minDate}
+                        maxDate={new Date()}
+                        onChange={dateOfBirthChange}
+                      />
+
                       {errors["dateOfBirth"] && <div className="error">{errors["dateOfBirth"]}</div>}
                     </div>
                     <div className="field my-3">
@@ -528,15 +526,15 @@ export default function Profile() {
                   <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                     <div className="field my-2">
                       <label className="text-dark fs-7 fw-500">{t("Address Line 1")}<span className="error">*</span></label>
-                      <Input type="text" name="addressLine1" value={addressLineOneReq} onChange={e => onChangePersonalInfo(e)} />
-                      {errors["addressLine1"] && <div className="error">{errors["addressLine1"]}</div>}
+                      <Input type="text" name="addressLineOne" value={tenantDetails.addressLineOne} onChange={e => onChangePersonalInfo(e)} />
+                      {errors["addressLineOne"] && <div className="error">{errors["addressLineOne"]}</div>}
                     </div>
                   </div>
                   <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                     <div className="field my-2">
                       <label className="text-dark fs-7 fw-500">{t("Address Line 2")}<span className="error">*</span></label>
-                      <Input type="text" name="addressLine2" value={addressLineTwoReq} onChange={e => onChangePersonalInfo(e)} />
-                      {errors["addressLine2"] && <div className="error">{errors["addressLine2"]}</div>}
+                      <Input type="text" name="addressLineTwo" value={tenantDetails.addressLineTwo} onChange={e => onChangePersonalInfo(e)} />
+                      {errors["addressLineTwo"] && <div className="error">{errors["addressLineTwo"]}</div>}
                     </div>
                   </div>
                   <div className="col-lg-6 col-md-6 col-sm-12 px-2">
@@ -558,8 +556,8 @@ export default function Profile() {
                   <div className="col-lg-6 col-md-6 col-sm-12 px-2">
                     <div className="field my-2">
                       <label className="text-dark fs-7 fw-500">{t("Zip/Postal Code")}<span className="error">*</span></label>
-                      <Input type="text" name="postalCode" value={postalCodeReq} onChange={e => onChangePersonalInfo(e)} />
-                      {errors["postalCode"] && <div className="error">{errors["postalCode"]}</div>}
+                      <Input type="text" name="zipCode" value={tenantDetails.zipCode} onChange={e => onChangePersonalInfo(e)} />
+                      {errors["zipCode"] && <div className="error">{errors["zipCode"]}</div>}
 
                     </div>
                   </div>
@@ -601,7 +599,7 @@ export default function Profile() {
                       <p className="fs-7 fw-500 text-dark">{t("Zip/Postal Code")}</p>
                     </div>
                     <div className="col-lg-8 col-md-8 col-sm-8">
-                      <p className="fs-7">{postalCodeReq}</p>
+                      <p className="fs-7">{tenantDetails.zipCode}</p>
                     </div>
                   </div>
                 </div>
