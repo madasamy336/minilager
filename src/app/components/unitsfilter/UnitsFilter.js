@@ -7,9 +7,10 @@ import request from '../../services/request';
 import { useTranslation } from "react-i18next";
 const helper = new Helper();
 const AccordionExampleStyled = (props) => {
-  console.log(props);
-  const selectedStorageType = props.storageTypeValue || sessionStorage.getItem("storageTypeValue") || '';
-  const filters = JSON.parse(localStorage.getItem('Units'));
+  console.log("props",props);
+  const selectedStorageType = props.storageTypeValue || sessionStorage.getItem("storageTypeValue");
+  const [loader, setLoading] = useState(props.loader || true)
+  const filters = props.constructFilterValues ||JSON.parse(localStorage.getItem('Units'));
   const [filterBuilding, setFilterBuiding] = useState([]);
   const [filterUnitType, setFilterUnitType] = useState([]);
   const [filterDimensions, setFilterDimensions] = useState([]);
@@ -33,10 +34,6 @@ const AccordionExampleStyled = (props) => {
     maxPrice: 0,
   });
   const [amenityFilter, setAmenityFilter] = useState([]);
-  // const [newPriceValue, setNewPriceValue] = useState({
-  //   minPrice: 0,
-  //   maxPrice: 0
-  // });
   // New Stated for filters
   const [selectedBuilding, setSelectedBuilding] = useState(null);
 
@@ -143,8 +140,13 @@ const AccordionExampleStyled = (props) => {
     }
   }
 
-  useEffect(() => {
-    console.log("filters -", filters);
+useEffect(() => {
+  console.log("filters -", filters);
+  if (
+    typeof selectedStorageType !== 'undefined' &&
+    selectedStorageType !== null
+  ) {
+    setLoading(false); // Set loading to false if selectedStorageType has a value
     // Building filter
     if (
       typeof filters !== 'undefined' &&
@@ -153,13 +155,10 @@ const AccordionExampleStyled = (props) => {
       typeof filters.building !== 'undefined' &&
       filters.building !== null &&
       filters.building !== "" &&
-      filters.building.length > 0 &&
-      typeof selectedStorageType !== 'undefined' &&
-      selectedStorageType !== null
+      filters.building.length > 0
     ) {
-      console.log("buildingFilter pssed", selectedStorageType);
+      console.log("buildingFilter passed", selectedStorageType);
       const buildingFilter = filters.building.filter(i => i.storageTypeId === selectedStorageType);
-
       setBuildingFilter(buildingFilter);
     }
 
@@ -171,9 +170,7 @@ const AccordionExampleStyled = (props) => {
       typeof filters.unitType !== 'undefined' &&
       filters.unitType !== null &&
       filters.unitType !== "" &&
-      filters.unitType.length > 0 &&
-      typeof selectedStorageType !== 'undefined' &&
-      selectedStorageType !== null
+      filters.unitType.length > 0
     ) {
       const unitTypeFilter = filters.unitType.filter(i => i.storageTypeId === selectedStorageType);
       let unitTypesarr = (Object.values(unitTypeFilter.reduce((acc, cur) => Object.assign(acc, { [cur.unitTypeName]: cur }), {})));
@@ -184,7 +181,6 @@ const AccordionExampleStyled = (props) => {
         return r;
       }, Object.create(null));
       setUnitTypeFilter(unitTypesarr);
-
       setUnitTypeDimension(result);
     }
 
@@ -196,9 +192,7 @@ const AccordionExampleStyled = (props) => {
       typeof filters.priceRangeValue !== 'undefined' &&
       filters.priceRangeValue !== null &&
       filters.priceRangeValue !== "" &&
-      filters.priceRangeValue.length > 0 &&
-      typeof selectedStorageType !== 'undefined' &&
-      selectedStorageType !== null
+      filters.priceRangeValue.length > 0
     ) {
       const priceRangeValue = checkStoragePriceRange(filters.priceRangeValue, selectedStorageType);
       setNewPriceValue(priceRangeValue);
@@ -212,9 +206,7 @@ const AccordionExampleStyled = (props) => {
       typeof filters.amenityValue !== 'undefined' &&
       filters.amenityValue !== null &&
       filters.amenityValue !== "" &&
-      filters.amenityValue.length > 0 &&
-      typeof selectedStorageType !== 'undefined' &&
-      selectedStorageType !== null
+      filters.amenityValue.length > 0
     ) {
       const amenityFilter = filters.amenityValue.filter(i => i.storageTypeId === selectedStorageType);
       console.log("amenityFilter", amenityFilter);
@@ -222,11 +214,12 @@ const AccordionExampleStyled = (props) => {
       console.log("uniqueAmenities", uniqueAmenities);
       setAmenityFilter(uniqueAmenities);
     }
+  } else {
+    setLoading(true); // Set loading to true if selectedStorageType has no value
+  }
+  console.log("fetchData");
+}, [props]);
 
-    // }
-    // fetchData();
-    console.log("fetchData",);
-  }, []);
 
 
   useEffect(() => {
@@ -435,7 +428,7 @@ const AccordionExampleStyled = (props) => {
   }
 
 
-  if (props.loader) {
+  if (loader) {
     return (
       <Grid className='px-1' columns={1} stackable>
         <Grid.Column>
