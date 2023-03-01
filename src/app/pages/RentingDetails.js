@@ -76,12 +76,12 @@ export default function RentingDetails() {
         const configData = response.data.result;
         const culture = response.data.result.culture;
         console.log(configData.invoicePeriods);
-        sessionStorage.setItem('moveinDate', movinDate)
+        sessionStorage.setItem('moveinDate', movinDate);
         const invoiceperiodval = configData.invoicePeriods !== null && typeof configData.invoicePeriods !== "undefined" && configData.invoicePeriods.length > 0 ?
           configData.invoicePeriods.map((value) => {
             if (value.preferred) {
               let periodId;
-              if (invoicePeriodSet) {
+              if (invoicePeriodSet !== null && invoicePeriodSet !== 'null') {
                 periodId = Number(invoicePeriod);
               } else {
                 periodId = value.invoicePeriodId
