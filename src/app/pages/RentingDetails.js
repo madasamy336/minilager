@@ -80,10 +80,17 @@ export default function RentingDetails() {
         const invoiceperiodval = configData.invoicePeriods !== null && typeof configData.invoicePeriods !== "undefined" && configData.invoicePeriods.length > 0 ?
           configData.invoicePeriods.map((value) => {
             if (value.preferred) {
-              sessionStorage.setItem("invoiceData", (value.invoicePeriodId));
-              if (value.preferred) {
-                setInvoiceDefault(value.invoicePeriodId);
+              let periodId;
+              if (invoicePeriodSet) {
+                periodId = Number(invoicePeriod);
+              } else {
+                periodId = value.invoicePeriodId
               }
+              sessionStorage.setItem("invoiceData", (periodId));
+             
+                setInvoiceDefault(periodId);
+                
+              
 
             }
             return {

@@ -313,9 +313,12 @@ useEffect(()=> {
                       <span>{t("Services")}</span><span>{helper.displayCurrency(item.estimation.serviceCharges)}</span>
                     </div> : ""}
 
+                    { item.estimation.taxAmount > 0 ?
                     <div className='mb-2 d-flex px-1 justify-content-between text-light-gray fw-500'>
-                      <span>{t("Tax")} {(helper.displayPercent(item.unitInfo.taxPercentage))}</span><span >{helper.displayCurrency(item.estimation.taxAmount)}</span>
-                    </div>
+                    <span>{t("Tax")} {(helper.displayPercent(item.unitInfo.taxPercentage))}</span><span >{helper.displayCurrency(item.estimation.taxAmount)}</span>
+                  </div>:""
+
+                    }
                     <div className='mb-2 d-flex px-1 justify-content-between text-light-gray fw-500'>
                       <span>{t("Total rent for the payment period")}</span><span >{helper.displayCurrency(item.estimation.netAmount)}</span>
                     </div>

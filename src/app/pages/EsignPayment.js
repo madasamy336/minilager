@@ -473,6 +473,7 @@ console.log(customSettings[0].settingValue === 'YES');
           sessionStorage.removeItem('insurancedetail');
           sessionStorage.removeItem('vehicleDetail');
           sessionStorage.removeItem('merchandiseItem');
+          sessionStorage.removeItem('invoicePeriodValue');
           localStorage.removeItem("eSignatureCompleted")
           navigate('/preBooking/thankyou')
         } else {
