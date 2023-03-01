@@ -1029,12 +1029,21 @@ export default function TenantDetails() {
   };
 
   const handleInputKeyDown = (event) => {
-    console.log(event);
     const pattern = /^[0-9\b]+$/;
     const mathSymbols = /[-+*/^()]/;
     const inputChar = String.fromCharCode(event.keyCode);
     if (!pattern.test(inputChar) && !mathSymbols.test(inputChar)) {
-      event.preventDefault();
+      if (event.ctrlKey || event.metaKey) {
+        return true;
+      }
+      if (event.clipboardData) {
+        const pasteData = event.clipboardData.getData('text/plain');
+        if (!pattern.test(pasteData)) {
+          event.preventDefault();
+        }
+      } else {
+        event.preventDefault();
+      }
     }
   };
 
