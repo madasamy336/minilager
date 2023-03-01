@@ -34,6 +34,8 @@ export default function EsignPayment() {
   let merchandiseItem = JSON.parse(sessionStorage.getItem('merchandiseItem'));
   let servicesDetail = JSON.parse(sessionStorage.getItem('servicedetail'));
   let facilityaddress = JSON.parse(sessionStorage.getItem('facilityaddress'));
+  let clientConfig = JSON.parse(sessionStorage.getItem("configdata"));
+  let customSettings = clientConfig.customSettings.filter(i => i.settingName === 'ENABLE_MOVEIN_APPROVAL');
   let checkPaymentModes = JSON.parse(sessionStorage.getItem('configdata')).paymentModes;
   let promoAppliedsession = sessionStorage.getItem("applypromo");
   let makeSavedCardMandatory = JSON.parse(sessionStorage.getItem('configdata')).culture.isSavedCardsByDefault;
@@ -64,7 +66,7 @@ export default function EsignPayment() {
 
 
   const { t, i18n } = useTranslation();
-
+console.log(customSettings[0].settingValue === 'YES');
 
   useEffect(() => {
     //  Check ESign Settings
@@ -708,7 +710,7 @@ export default function EsignPayment() {
                           return < div key="" className='card-bg-secondary w-100 px-2 py-2 mb-6' >
                             <iframe key="" src={url} style={{ width: "100%" }} />
                             <div className="text-center mt-4">
-                              <a className="ui button bg-white text-success-dark border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2 mb-sm-1" href={url} target="_blank" rel="noreferrer" >Preview</a>
+                              <a className="ui button bg-white text-success-dark border-success-dark-1 fs-7 fw-400 text-dark px-5 mr-2 mb-sm-1" href={url} target="_blank" rel="noreferrer" >{t("Preview")}</a>
                             </div>
                           </div>
                         });
@@ -763,12 +765,13 @@ export default function EsignPayment() {
                       {(!showEsignContent || eSignatureCompleted) && <div className='pt-4 d-flex justify-content-center flex-wrap'>
                         {paymodeArray.includes('PayLater') === true && paymodeArray.includes('DirectDebit') === true && paymodeArray.includes('CreditCard') === true ?
                           <div className='row mt-2'>
-                            <Button className={`d-flex align-items-center border-radius-5 card-border fs-6 fw-400 px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1 ${payNowActive ? "bg-success-dark text-white" : "bg-white text-dark"}`} onClick={(e) => payNow(e)} ><img src={payNowActive ? '/assets/images/executed-payment-white.svg' : '/assets/images/executed-payment.svg'} alt='Pay Now' id="paynow" /><span className='ml-1' onClick={(e) => payNow(e)}>{t("Pay Now")}</span></Button>
+                         
+                            {customSettings[0].settingValue !== 'YES'?   <Button className={`d-flex align-items-center border-radius-5 card-border fs-6 fw-400 px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1 ${payNowActive ? "bg-success-dark text-white" : "bg-white text-dark"}`} onClick={(e) => payNow(e)} ><img src={payNowActive ? '/assets/images/executed-payment-white.svg' : '/assets/images/executed-payment.svg'} alt='Pay Now' id="paynow" /><span className='ml-1' onClick={(e) => payNow(e)}>{t("Pay Now")}</span></Button>:''}
                             <Button className={`d-flex align-items-center border-radius-5 card-border fs-6 fw-400 px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1 ${payLaterActive ? "bg-success-dark text-white" : "bg-white text-dark"}`} onClick={(e) => payLater(e)} ><img src={payLaterActive ? '/assets/images/pay-white.svg' : '/assets/images/pay.svg'} alt='Pay Later' id="paylater" /><span className='ml-1' onClick={(e) => payLater(e)}>{t("Pay Later")}</span></Button>
                           </div>
                           : paymodeArray.includes('PayLater') === true && paymodeArray.includes('DirectDebit') === false && paymodeArray.includes('CreditCard') === true ?
                             <div className='row mt-2'>
-                              <Button className={`d-flex align-items-center border-radius-5 card-border fs-6 fw-400 px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1 ${payNowActive ? "bg-success-dark text-white" : "bg-white text-dark"}`} onClick={(e) => payNow(e)} ><img src={payNowActive ? '/assets/images/executed-payment-white.svg' : '/assets/images/executed-payment.svg'} alt='Pay Now' id="paynow" /><span className='ml-1' onClick={(e) => payNow(e)}>{t("Pay Now")}</span></Button>
+                               {customSettings[0].settingValue !== 'YES'?   <Button className={`d-flex align-items-center border-radius-5 card-border fs-6 fw-400 px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1 ${payNowActive ? "bg-success-dark text-white" : "bg-white text-dark"}`} onClick={(e) => payNow(e)} ><img src={payNowActive ? '/assets/images/executed-payment-white.svg' : '/assets/images/executed-payment.svg'} alt='Pay Now' id="paynow" /><span className='ml-1' onClick={(e) => payNow(e)}>{t("Pay Now")}</span></Button>:''}
                               <Button className={`d-flex align-items-center border-radius-5 card-border fs-6 fw-400 px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1 ${payLaterActive ? "bg-success-dark text-white" : "bg-white text-dark"}`} onClick={(e) => payLater(e)} ><img src={payLaterActive ? '/assets/images/pay-white.svg' : '/assets/images/pay.svg'} alt='Pay Later' id="paylater" /><span className='ml-1' onClick={(e) => payLater(e)}>{t("Pay Later")}</span></Button>
                             </div>
                             : paymodeArray.includes('PayLater') === true && paymodeArray.includes('DirectDebit') === false && paymodeArray.includes('CreditCard') === false ?

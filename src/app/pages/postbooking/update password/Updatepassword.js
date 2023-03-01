@@ -136,8 +136,8 @@ export default function Updatepassword() {
             {password.conformNewPasswordErr && <span className="errorMessage">Please Enter the current Password</span>}
 
             <div className="mt-2 text-left">
-              <Button className="ui button text-dark fs-7 fw-400 px-5 mx-1 mb-sm-1 px-sm-3" onClick={clearOnSumbit} disabled={isDisabled || password.currentPassword.length == 0 || password.conformNewPassword.length == 0 || password.newPassword.length == 0}>Cancel</Button>
-              <Button className="ui Button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-sm-1 px-sm-3" disabled={isDisabled || loadingButton || password.currentPassword.length == 0 || password.conformNewPassword.length == 0 || password.newPassword.length == 0} onClick={handleOnSubmit} loading={loadingButton}>Update</Button>
+              <Button className="ui button text-dark fs-7 fw-400 px-5 mx-1 mb-sm-1 px-sm-3" onClick={clearOnSumbit} disabled={isDisabled || password.currentPassword.length == 0 || password.conformNewPassword.length == 0 || password.newPassword.length == 0}>{t("Cancel")}</Button>
+              <Button className="ui Button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-sm-1 px-sm-3" disabled={isDisabled || loadingButton || password.currentPassword.length == 0 || password.conformNewPassword.length == 0 || password.newPassword.length == 0} onClick={handleOnSubmit} loading={loadingButton}>{t("Update")}</Button>
             </div>
 
             <ToastContainer />

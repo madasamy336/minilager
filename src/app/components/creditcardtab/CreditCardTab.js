@@ -3,10 +3,14 @@ import { useEffect, useState } from "react";
 import { Dropdown, Image, Radio, Loader, Grid, Placeholder, Segment } from 'semantic-ui-react';
 import instance from '../../services/instance';
 import request from '../../services/request';
+import { useTranslation } from "react-i18next";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const CreditCardTab = (props) => {
 
     const [creditCardDetails, setCreditCardDetails] = useState([]);
+    const { t, i18n } = useTranslation();
     const [showcard, setShowCard] = useState(true);
     const [isLoading, setLoading] = useState(false);
     const [openAutopayDropdown, SetopenAutopayDropdown] = useState(false);
@@ -51,6 +55,18 @@ const CreditCardTab = (props) => {
 
     function sixStorageOnPaymentProcessed(paymentResponse) {
         if (paymentResponse?.paymentStatus?.toUpperCase() === "SUCCESS") {
+             toast.success(`${t('you have added the card sucessfully')}`, {
+                        position: "top-right",
+                        autoClose: 3000,
+                        duration:100,
+                        className:"bg-toast-success toast-success",
+                        hideProgressBar: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                        });
+                   
+            
             listCreditCards();
         }
     }
@@ -109,6 +125,18 @@ const CreditCardTab = (props) => {
                 setLoading(false);
                 const res = data.data;
                 if (res.isSuccess !== false && res.isSuccess === true && res.returnCode === "SUCCESS") {
+                    toast.success(`${t('You have made the card as default')}`, {
+                        position: "top-right",
+                        autoClose: 3000,
+                        duration:100,
+                        className:"bg-toast-success toast-success",
+                        hideProgressBar: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                        });
+
+                    
                     listCreditCards();
                     setShowCard(true);
                 }
@@ -134,6 +162,17 @@ const CreditCardTab = (props) => {
         }).then(data => {
             const res = data.data;
             if (res.isSuccess !== false && res.isSuccess === true && res.returnCode === "SUCCESS") {
+                toast.success(`${t('The card is added for autopayment sucessfully')}`, {
+                    position: "top-right",
+                    autoClose: 3000,
+                    duration:100,
+                    className:"bg-toast-success toast-success",
+                    hideProgressBar: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                    });
+               
                 listCreditCards();
                 setShowCard(true);
             }
@@ -166,8 +205,18 @@ const CreditCardTab = (props) => {
             setLoading(false);
                 const res = data.data;
                 if (res.isSuccess !== false && res.isSuccess === true && res.returnCode === "SUCCESS") {
+                    toast.error(`${t('The card is deactivate for autopayment sucessfully')}`, {
+                        position: "top-right",
+                        autoClose: 3000,
+                        duration:100,
+                        hideProgressBar: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                        });
                     listCreditCards();
                     setShowCard(true);
+
                 }
            
         })
@@ -207,6 +256,15 @@ const CreditCardTab = (props) => {
                 const res = data.data;
                 console.log(res);
                 if (res.isSuccess !== false && res.isSuccess === true && res.returnCode === "SUCCESS") {
+                    toast.error(`${t('you have deleted the card sucessfully')}`, {
+                        position: "top-right",
+                        autoClose: 3000,
+                        duration:100,
+                        hideProgressBar: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                        });
                     listCreditCards();
                     setShowCard(true);
                 }
@@ -218,8 +276,9 @@ const CreditCardTab = (props) => {
     };
 
     return (
-
+        
         <div className="creditCardtab py-4 px-3 px-sm-1">
+            <ToastContainer  />
             {isLoading ? (
                 <Grid columns={3} stackable>
                     <Grid.Column>
@@ -300,7 +359,7 @@ const CreditCardTab = (props) => {
                                         
                                         <div className="card-title d-flex justify-content-between align-items-start mb-3">
                                        
-                                            {card.isDefault && <p className="fs-7 text-white-light">Primary Card</p>}
+                                            {card.isDefault && <p className="fs-7 text-white-light">{t("Primary Card")}</p>}
                                             <div className="card-master-img mr-2">
                                                 <img src="/assets/images/Mastercard-img.png" alt="Master Card" />
                                             </div>
@@ -309,7 +368,7 @@ const CreditCardTab = (props) => {
                                             <p className="fs-7 text-white-light">{card.customerName}</p>
                                             <p className="fs-7 text-white">{card.cardNumber}</p>
                                         </div>
-                                        {card.isDefault && !activestatus? <p> <p className="fs-7 text-white-light">Autopay</p>{card.autoPay ? <Radio className="autopayToggle" toggle  defaultChecked={card.autoPay} onChange={autoPayDeactivate}/>:<Radio className="autopayToggle" toggle  defaultChecked={card.autoPay} onChange={autoPayactivate}/> } </p> :""}
+                                        {card.isDefault && !activestatus? <p> <p className="fs-7 text-white-light">{t("Autopay")}</p>{card.autoPay ? <Radio className="autopayToggle" toggle  defaultChecked={card.autoPay} onChange={autoPayDeactivate}/>:<Radio className="autopayToggle" toggle  defaultChecked={card.autoPay} onChange={autoPayactivate}/> } </p> :""}
                                     </div>
                                 </div>
                             }) : ''}
@@ -317,7 +376,7 @@ const CreditCardTab = (props) => {
                                 <div className="card bgImg-none card-border-secondary-dashed p-2 border-radius-20 d-flex justify-content-center align-items-center text-center">
                                     <div className="cursor-pointer" onClick={CreditFormHandler}>
                                         <p className="fs-1 fw-500">+</p>
-                                        <p>Add New Card</p>
+                                        <p>{t("Add New Card")}</p>
                                     </div>
                                 </div>
                             </div>

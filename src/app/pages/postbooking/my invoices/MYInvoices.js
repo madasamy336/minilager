@@ -221,10 +221,13 @@ export default function MYInvoices() {
           const invoiceResult = response.data.result;
           if (typeof invoiceResult !== "undefined" && invoiceResult !== null && invoiceResult !== "") {
             setInvoiceItems(invoiceResult);
+          }else{
+            setInvoiceItems([]);
           }
 
         }
         setLoader(false)
+       
       })
       .catch((error) => {
         console.log(error);
@@ -273,6 +276,7 @@ export default function MYInvoices() {
 
   return (
     <div className="mx-2 mx-sm-1">
+      { invoiceitems !== null && typeof invoiceitems !== 'undefined' && invoiceitems.length > 0 ?
       <div>
         {isCheck.length > 0 && <p className="fs-6 fw-500 text-success-dark ml-1 mb-2"> {isCheck.length} {t("Records Selected")}</p> }
         <div className="bg-white card-boxShadow border-radius-15 py-1 mb-2">
@@ -342,7 +346,7 @@ export default function MYInvoices() {
                       }
                       return <tr key={item.id}>
                         <td className="text-center">
-                          {item.invoiceStatus === "PAID" || item.invoiceStatus === "Processing" ? <input type="checkbox" disabled /> : item.invoiceStatus === "UNPAID" || item.invoiceStatus === "PARTIALLY-PAID" && item.unPaidBalance > 0 ? <input className={`six-multi-select-check-${item.unitId}`} type="checkbox" name={item.id} id={item.id} value={item.id} data-latefees={invoiceFeeid} data-unitid={item.unitId} data-amount={item.unPaidBalance} data-invoicenumber={item.invoiceNo} onChange={(e) => selectInvoice(e, item.unitId, invoiceFeeid)} /> : ''}
+                          {item.invoiceStatus === "PAID" || item.invoiceStatus === "Processing" ||item.invoiceStatus === "PARTIALLY-PAID"? <input type="checkbox" disabled /> : item.invoiceStatus === "UNPAID"  && item.unPaidBalance > 0 ? <input className={`six-multi-select-check-${item.unitId}`} type="checkbox" name={item.id} id={item.id} value={item.id} data-latefees={invoiceFeeid} data-unitid={item.unitId} data-amount={item.unPaidBalance} data-invoicenumber={item.invoiceNo} onChange={(e) => selectInvoice(e, item.unitId, invoiceFeeid)} /> : ''}
                         </td>
                         <td className="text-center">
                           <p className="fw-500">
@@ -419,6 +423,8 @@ export default function MYInvoices() {
         { /** Payment Form Modal End */}
 
       </div>
+      :`${t("No records found")}`
+      }
     </div>
   )
 }

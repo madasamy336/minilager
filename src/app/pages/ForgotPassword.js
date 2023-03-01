@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Transition } from "semantic-ui-react";
 // import { useSelector, useDispatch } from 'react-redux';
 import instance from '../services/instance';
 import request from '../services/request';
