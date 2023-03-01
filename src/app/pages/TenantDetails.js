@@ -227,7 +227,7 @@ export default function TenantDetails() {
 
 
   const validatePersonalInfo = (details) => {
-    const { firstName, lastName, email, phoneNumber, ssn, birthDate, companyName, companyRegistrationNumber, city, state, zipCode } = details;
+    const { firstName, lastName, email, phoneNumber, ssn, birthDate, companyName, companyRegistrationNumber, addressLineOne, city, state, zipCode } = details;
     const errors = {};
     if (!firstName) {
       errors.firstName = "First Name is required";
@@ -252,6 +252,9 @@ export default function TenantDetails() {
     if (!birthDate) {
       errors.birthDate = "Date Of Birth is required";
     }
+    if (!addressLineOne) {
+      errors.addressLineOne = "Address Line One is required";
+    }  
     if (!city) {
       errors.city = "City is required";
     }
@@ -1051,7 +1054,7 @@ export default function TenantDetails() {
     <>
       <div>
         {isLoading ? (
-          <Spinner/>
+          <Spinner />
           // <Loader size='large' active>{t("Loading")}</Loader>
         ) :
           (
@@ -1329,7 +1332,7 @@ export default function TenantDetails() {
                   </div>
                   <div className="col-12 col-md-6 px-4 px-sm-2">
                     <div className="field w-100  my-3">
-                      <label className='fw-500 fs-7 mb-2'>{t("Address Line 1")}</label>
+                      <label className='fw-500 fs-7 mb-2'>{t("Address Line 1")}<i className="text-danger ">*</i></label>
                       <input type='text' placeholder={t("Address Line 1")} name="addressLineOne" value={TenantInfoDetails.addressLineOne} onChange={(e) => handlechange(e)} onBlur={() => validatePersonalInfo(TenantInfoDetails)} />
                       <div className="text-danger mt-1">{addressLine1Error}</div>
                     </div>
@@ -1337,7 +1340,7 @@ export default function TenantDetails() {
                   <div className="col-12 col-md-6 px-4 px-sm-2">
                     <div className="field w-100  my-3">
                       <label className='fw-500 fs-7 mb-2'>{t("Address Line 2")}</label>
-                      <input type='text' placeholder={t("Address Line 2")} name="addressLineTwo" value={TenantInfoDetails.addressLineTwo} onChange={(e) => handlechange(e)} />
+                      <input type='text' placeholder={t("Address Line 2")} name="addressLineTwo" value={TenantInfoDetails.addressLineTwo} onChange={(e) => handlechange(e)} onBlur={() => validatePersonalInfo(TenantInfoDetails)} />
                     </div>
                   </div>
                   <div className="col-12 col-md-6 px-4 px-sm-2">
