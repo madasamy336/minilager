@@ -32,7 +32,7 @@ const Units = () => {
     const [loader, setLoading] = useState(true);
     const [filtercall, setFilterCall] = useState(false);
     const { t, i18n } = useTranslation();
-
+    const [constructedFiltersValue, setConstructedFilters] = useState({})
 
     const [unitTypeModal, SetunitTypeModal] = useState({
         open: false,
@@ -45,25 +45,25 @@ const Units = () => {
 
     useEffect(() => {
         if (typeof userInfo !== "undefined" && userInfo !== null && userInfo !== "") {
-          if (userInfo.businessUser === true) {
-            setTenantTypes(tenantTypeOptions[1].value);
-            sessionStorage.setItem("isBussinessUser", tenantTypeOptions[1].value);
-          } else {
-            setTenantTypes(tenantTypeOptions[0].value);
-            sessionStorage.setItem("isBussinessUser", tenantTypeOptions[0].value);
-          }
-          sessionStorage.removeItem("applypromo");
+            if (userInfo.businessUser === true) {
+                setTenantTypes(tenantTypeOptions[1].value);
+                sessionStorage.setItem("isBussinessUser", tenantTypeOptions[1].value);
+            } else {
+                setTenantTypes(tenantTypeOptions[0].value);
+                sessionStorage.setItem("isBussinessUser", tenantTypeOptions[0].value);
+            }
+            sessionStorage.removeItem("applypromo");
         }
-      
+
         fetchUnitFilter(locationId);
-      
-      }, []);
-      
-      useEffect(() => {
+
+    }, []);
+
+    useEffect(() => {
         if (storageTypeValue) {
-          sixStorageLoadUnitList(storageTypeValue, sortByPriceRange);
+            sixStorageLoadUnitList(storageTypeValue, sortByPriceRange);
         }
-      }, [pageNumber, sortByPriceRange]);
+    }, [pageNumber, sortByPriceRange]);
 
     const sortByPriceRangeHandler = (event_, data) => {
         if (data.value !== sortByPriceRange) {
@@ -73,64 +73,68 @@ const Units = () => {
 
     const fetchUnitFilter = async (loactionid) => {
         let config = {
-          headers: {
-            "Content-Type": "application/json",
-          },
+            headers: {
+                "Content-Type": "application/json",
+            },
         };
         try {
-          const response = await instance.get(
-            request.unit_filters + `&LocationId=${loactionid} `,
-            config
-          );
-          const unitFilterResponse = response.data;
-          if (
-            unitFilterResponse.returnMessage === "NO_RECORDS_FOUND" &&
-            unitFilterResponse.isSuccess === true
-          ) {
-            setNoUnits(true);
-            setLoading(false);
-          }
-          if (
-            typeof unitFilterResponse !== "undefined" &&
-            unitFilterResponse !== null &&
-            unitFilterResponse !== "" &&
-            unitFilterResponse.isSuccess === true &&
-            unitFilterResponse.result.length > 0
-          ) {
-            let data = constructFilterValues(unitFilterResponse.result);
-            localStorage.setItem("Units", JSON.stringify(data));
+            const response = await instance.get(
+                request.unit_filters + `&LocationId=${loactionid} `,
+                config
+            );
+            const unitFilterResponse = response.data;
             if (
-              typeof data !== "undefined" &&
-              data !== null &&
-              data !== "" &&
-              typeof data.storageType !== "undefined" &&
-              data.storageType !== null &&
-              data.storageType !== "" &&
-              data.storageType.length > 0
+                unitFilterResponse.returnMessage === "NO_RECORDS_FOUND" &&
+                unitFilterResponse.isSuccess === true
             ) {
-              if (
-                typeof storageTypeValue === "undefined" ||
-                storageTypeValue === null ||
-                storageTypeValue === ""
-              ) {
-                setStorageTypeValue(data.storageType[0].storageTypeId);
-                sessionStorage.setItem(
-                  "storageTypeValue",
-                  data.storageType[0].storageTypeId
-                );
-                await sixStorageLoadUnitList(
-                  data.storageType[0].storageTypeId,
-                  sortByPriceRange
-                );
-              } else {
-                await sixStorageLoadUnitList(storageTypeValue, sortByPriceRange);
-              }
+                setNoUnits(true);
+                setLoading(false);
             }
-          }
+            if (
+                typeof unitFilterResponse !== "undefined" &&
+                unitFilterResponse !== null &&
+                unitFilterResponse !== "" &&
+                unitFilterResponse.isSuccess === true &&
+                unitFilterResponse.result.length > 0
+            ) {
+                let data = constructFilterValues(unitFilterResponse.result);
+                console.log("constructFilterValues", data);
+                setConstructedFilters(data)
+                localStorage.setItem("Units", JSON.stringify(data));
+                if (
+                    typeof data !== "undefined" &&
+                    data !== null &&
+                    data !== "" &&
+                    typeof data.storageType !== "undefined" &&
+                    data.storageType !== null &&
+                    data.storageType !== "" &&
+                    data.storageType.length > 0
+                ) {
+                    if (
+                        typeof storageTypeValue === "undefined" ||
+                        storageTypeValue === null ||
+                        storageTypeValue === ""
+                    ) {
+                        setStorageTypeValue(data.storageType[0].storageTypeId);
+                        sessionStorage.setItem(
+                            "storageTypeValue",
+                            data.storageType[0].storageTypeId
+                        );
+                        await sixStorageLoadUnitList(
+                            data.storageType[0].storageTypeId,
+                            sortByPriceRange
+                        );
+                    } else {
+                        await sixStorageLoadUnitList(storageTypeValue, sortByPriceRange);
+                    }
+                }
+            }
+            setLoading(false); // set loading state to false after the API call is completed
         } catch (error) {
-          console.error(error);
+            console.error(error);
+            setLoading(false); // set loading state to false after the API call is completed
         }
-      };
+    };
 
 
     const constructFilterValues = (unitFilterResponse) => {
@@ -357,7 +361,6 @@ const Units = () => {
     }
     const filterValue = (data) => {
         setFilterRequest(data);
-
     }
     const checkTenantType = () => {
         document.getElementById('tenantTypeError').classList.remove('d-none')
@@ -406,7 +409,7 @@ const Units = () => {
                     <div className="row">
                         <div className="col-lg-3 col-md-3 col-sm-12">
                             <div className="filters-div">
-                                <AccordionExampleStyled loader={loader} filterValue={filterValue} unitsearchFilters={(items) => sixStorageLoadUnitList(storageTypeValue, items)} storageTypeValue={storageTypeValue} modal={() => SetunitTypeModal({ open: true, size: 'tiny', dimmer: 'blurring' })} />
+                                <AccordionExampleStyled loader={loader} filterValue={filterValue} unitsearchFilters={(items) => sixStorageLoadUnitList(storageTypeValue, items)} storageTypeValue={storageTypeValue} constructFilterValues={constructedFiltersValue} modal={() => SetunitTypeModal({ open: true, size: 'tiny', dimmer: 'blurring' })} />
                             </div>
                         </div>
                         <div className="col-lg-9 col-md-9 col-sm-12">
