@@ -365,7 +365,7 @@ export default function MyLeases() {
                       {t("Poor Standing")}
                     </span>) :
                       <span className={`success-label-leases veritical-align-super py-1 px-2 fw-500`}>
-                        {t("Good Stand")}
+                        {t("Good Standing")}
                       </span>}
                     {/* {leaseInfoById[0].leaseInfo.gateStatus.descreption == 'Denied' && <span className={`danger-label-leases veritical-align-super py-1 px-2 fw-500`}>
                       {t("Access Denied")}

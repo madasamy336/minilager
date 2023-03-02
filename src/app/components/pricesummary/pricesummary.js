@@ -44,7 +44,6 @@ const Pricesummary = forwardRef((props, ref) => {
   promoAppliedsession = sessionStorage.getItem("applypromo");
   useImperativeHandle(ref, () => ({
     unitInfodetailscall() {
-      console.log(`unitInfoCall`)
       unitinfodetails();
     },
     // unitInforecurringPeriodIdCall(periodValue){
@@ -65,11 +64,9 @@ useEffect(() => {
 }, [invoicePeriodValue,invoiceRecurringValue,moveinDate])
 
 useEffect(()=> {
-
       unitinfodetails();
 
-    
-  
+
 },[removePromo]);
 
   useEffect(() => {
@@ -84,6 +81,7 @@ useEffect(()=> {
   const unitinfodetails = (initialCall) => {
     setLoader(false);
     sessionStorage.setItem("moveindate", props.movinDate);
+    let userTypes = sessionStorage.getItem("isBussinessUser");
     if (promoAppliedsession) {
       setPromoValidate(promoAppliedsession);
       // applyCoupon();
@@ -111,6 +109,7 @@ useEffect(()=> {
       additionalMonths: 0,
       recurringPeriodId: invoicePeriodValue,
       recurringTypeId: invoiceRecurringValue,
+      isBusinessUser: userTypes,
       promocode: promoAppliedsession ? promoAppliedsession : promoValidate
     }
 
@@ -313,9 +312,12 @@ useEffect(()=> {
                       <span>{t("Services")}</span><span>{helper.displayCurrency(item.estimation.serviceCharges)}</span>
                     </div> : ""}
 
+                    { item.estimation.taxAmount > 0 ?
                     <div className='mb-2 d-flex px-1 justify-content-between text-light-gray fw-500'>
-                      <span>{t("Tax")} {(helper.displayPercent(item.unitInfo.taxPercentage))}</span><span >{helper.displayCurrency(item.estimation.taxAmount)}</span>
-                    </div>
+                    <span>{t("Tax")} {(helper.displayPercent(item.unitInfo.taxPercentage))}</span><span >{helper.displayCurrency(item.estimation.taxAmount)}</span>
+                  </div>:""
+
+                    }
                     <div className='mb-2 d-flex px-1 justify-content-between text-light-gray fw-500'>
                       <span>{t("Total rent for the payment period")}</span><span >{helper.displayCurrency(item.estimation.netAmount)}</span>
                     </div>

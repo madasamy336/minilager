@@ -39,6 +39,12 @@ export default function SidebarPostBooking(props) {
       sessionStorage.removeItem('rememberPassword');
       sessionStorage.removeItem('username');
       sessionStorage.removeItem('password');
+      sessionStorage.removeItem('leaseProfileid');
+      sessionStorage.removeItem('invoicePeriodValue');
+      sessionStorage.removeItem('insurancedetail');
+      sessionStorage.removeItem('servicedetail');
+      sessionStorage.removeItem('merchandiseItem');
+      sessionStorage.removeItem('invoicePeriodset');
       setLogoutModalOpen(({
         open: false,
         dimmer: undefined
