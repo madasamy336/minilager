@@ -7,7 +7,6 @@ import request from '../../../services/request';
 import Helper from "../../../helper";
 import ReactPhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
-import PhoneInput, { formatPhoneNumber, formatPhoneNumberIntl } from 'react-phone-number-input'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 // import 'react-phone-number-input/style.css';
@@ -109,13 +108,7 @@ export default function Profile() {
   const onChangePersonalInfo = (e) => {
     const { name, value } = e.target;
     // Update tenantDetails object with the correct field names
-    if (name === 'addressLine1') {
-      setTenantDetails({ ...tenantDetails, addressLineOne: value });
-    } else if (name === 'addressLine2') {
-      setTenantDetails({ ...tenantDetails, addressLineTwo: value });
-    } else {
       setTenantDetails({ ...tenantDetails, [name]: value });
-    }
   };
 
   // const profileImageUpload = (e) => {
@@ -209,18 +202,16 @@ export default function Profile() {
 
     if (isAddressEditable) {
       const addressFields = [
-        { name: 'addressLine1', message: `${t('Address Line 1 is a required field')}` },
-        { name: 'addressLine2', message: `${t('Address Line 2 is a required field')}` },
+        { name: 'addressLineOne', message: `${t('Address Line 1 is a required field')}` },
         { name: 'city', message: `${t('City is a required field')}` },
         { name: 'state', message: `${t('State is a required field')}` },
-        { name: 'postalCode', message: 'Zip Code is a required field' },
+        { name: 'zipCode', message: 'Zip Code is a required field' },
       ];
 
       const newErrors = {};
       addressFields.forEach(field => {
-        const fieldName = field.name === 'addressLine1' ? 'addressLineOne' : field.name === 'addressLine2' ? 'addressLineTwo' : field.name === 'postalCode' ? 'zipCode' : field.name;
-        if (!tenantDetails[fieldName]) {
-          newErrors[fieldName] = field.message;
+        if (!tenantDetails[field.name]) {
+          newErrors[field.name] = field.message;
         }
       });
       if (Object.keys(newErrors).length > 0) {
