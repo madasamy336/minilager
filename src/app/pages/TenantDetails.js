@@ -625,10 +625,6 @@ export default function TenantDetails() {
     }
   };
 
-
-
-
-
   const customhandlechange = (e, data, checkfield) => {
     // setInputValue({"id":e.target.id,"":e.target.})
     if (checkfield === 'date') {
@@ -1008,6 +1004,7 @@ export default function TenantDetails() {
     }
 
     // Step 4: Update and Proceed to next step
+    setIsLoading(true)
     await updateTenantInfo();
   }
 
@@ -1033,13 +1030,18 @@ export default function TenantDetails() {
       phoneNumber: TenantInfoDetails.phoneNumber,
       ssn: TenantInfoDetails.ssn
     };
-    const response = await instance.post(request.update_user_info + `/${userid}`, requestBody, config);
-    const userUpdateResponse = response.data.data;
-    console.log(customFieldValue);
-    Array.prototype.push.apply(unitDetailCustomField, customFieldValue);
-    console.log(unitDetailCustomField);
-    await leaseProfileSave(unitDetailCustomField);
-    await creditCheckSettingsInformation();
+    try {
+      const response = await instance.post(request.update_user_info + `/${userid}`, requestBody, config);
+      const userUpdateResponse = response.data.data;
+      console.log(customFieldValue);
+      Array.prototype.push.apply(unitDetailCustomField, customFieldValue);
+      console.log(unitDetailCustomField);
+      await leaseProfileSave(unitDetailCustomField);
+      await creditCheckSettingsInformation();
+    } catch (error) {
+      console.error('Error updating user information:', error);
+      // Handle the error as appropriate, such as displaying an error message to the user
+    }
   };
 
   const handleInputKeyDown = (event) => {
