@@ -45,6 +45,7 @@ export default function SidebarPostBooking(props) {
       sessionStorage.removeItem('servicedetail');
       sessionStorage.removeItem('merchandiseItem');
       sessionStorage.removeItem('invoicePeriodset');
+      sessionStorage.removeItem('desiredMoveoutDate');
       setLogoutModalOpen(({
         open: false,
         dimmer: undefined
