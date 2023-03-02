@@ -75,7 +75,6 @@ export default function RentingDetails() {
       .then(response => {
         const configData = response.data.result;
         const culture = response.data.result.culture;
-        console.log(configData.invoicePeriods);
         sessionStorage.setItem('moveinDate', movinDate)
         const invoiceperiodval = configData.invoicePeriods !== null && typeof configData.invoicePeriods !== "undefined" && configData.invoicePeriods.length > 0 ?
           configData.invoicePeriods.map((value) => {
@@ -444,6 +443,8 @@ export default function RentingDetails() {
       (i) => i.matadata.displayOn === "Unit specific details"
     );
 
+    console.log(filterUnitSpecificValue);
+
     for (const item of filterUnitSpecificValue) {
       const customValue = document.getElementById(
         `${item.matadata.type}_${item.fieldId}`
@@ -496,7 +497,6 @@ export default function RentingDetails() {
   };
 
   const handleInputKeyDown = (event) => {
-    console.log(event);
     const pattern = /^[0-9\b]+$/;
     const mathSymbols = /[-+*/^()]/;
     const inputChar = String.fromCharCode(event.keyCode);

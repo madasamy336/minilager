@@ -44,7 +44,6 @@ const Pricesummary = forwardRef((props, ref) => {
   promoAppliedsession = sessionStorage.getItem("applypromo");
   useImperativeHandle(ref, () => ({
     unitInfodetailscall() {
-      console.log(`unitInfoCall`)
       unitinfodetails();
     },
     // unitInforecurringPeriodIdCall(periodValue){
@@ -65,11 +64,9 @@ useEffect(() => {
 }, [invoicePeriodValue,invoiceRecurringValue,moveinDate])
 
 useEffect(()=> {
-
       unitinfodetails();
 
-    
-  
+
 },[removePromo]);
 
   useEffect(() => {
@@ -84,6 +81,7 @@ useEffect(()=> {
   const unitinfodetails = (initialCall) => {
     setLoader(false);
     sessionStorage.setItem("moveindate", props.movinDate);
+    let userTypes = sessionStorage.getItem("isBussinessUser");
     if (promoAppliedsession) {
       setPromoValidate(promoAppliedsession);
       // applyCoupon();
@@ -111,6 +109,7 @@ useEffect(()=> {
       additionalMonths: 0,
       recurringPeriodId: invoicePeriodValue,
       recurringTypeId: invoiceRecurringValue,
+      isBusinessUser: userTypes,
       promocode: promoAppliedsession ? promoAppliedsession : promoValidate
     }
 
