@@ -327,7 +327,7 @@ const CreditCardTab = (props) => {
             ) : (
                 <div>
                     {!showcard && <div className="ui form w-50 w-sm-100">
-                        <iframe src={props.paymentFom} width="100%" height="800px" />
+                        <iframe src={props.paymentFom} width="100%" height="380px" />
                         <div className="mt-2 text-left">
                             <button className="ui button text-dark fs-7 fw-400 px-5 mx-1 mb-sm-1 px-sm-2" onClick={() => showCardHandler()}>CANCEL</button>
                         </div>
@@ -335,7 +335,6 @@ const CreditCardTab = (props) => {
                     {showcard &&
                         <div className="row">
                             {typeof creditCardDetails !== 'undefined' && creditCardDetails !== null && creditCardDetails !== "" && creditCardDetails.length !== 0 ? creditCardDetails.map(card => {
-                                console.log(card);
                                 let configVal = JSON.parse(sessionStorage.getItem('configdata'));
                                 let activestatus = configVal.culture.isSavedCardsByDefault;
                                 return <div className="col-lg-4 col-md-6 col-sm-12 px-1 mb-2" key={card.id}>
