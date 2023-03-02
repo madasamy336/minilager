@@ -207,6 +207,15 @@ export default function AddOn() {
 
   }, []);
 
+  useEffect(()=>{
+    serviceSessionValue !== null && serviceSessionValue.forEach((e) => {
+      let checkbox = document.getElementById(`services_${e.servicedId}`)
+      if (checkbox !== null) {
+        checkbox.checked = true
+      }
+    })
+  })
+
   const navigateTenantDetails = (e) => {
     // if(vehicleaccordian.length === 0){
     //   if(vehicleType.length > 0 || year.length > 0 || brand.length > 0 ||model.length > 0 || color.length > 0 || vehicleState.length > 0 || registrationNo.length > 0 || licenseNo.length > 0){
@@ -271,6 +280,10 @@ export default function AddOn() {
             sessionServices.push({ unitId: unitid, servicedId: id })
           })
           sessionStorage.setItem('servicedetail', JSON.stringify(sessionServices))
+        }else{
+          let sessionServices = [];
+          sessionStorage.setItem('servicedetail', JSON.stringify(sessionServices))
+
         }
         if (merchandiseId.length !== 0) {
           merchandiseId.forEach((id) => {
@@ -283,6 +296,9 @@ export default function AddOn() {
           sessionStorage.setItem('merchandiseItem', JSON.stringify(merchandiseItem));
 
 
+        }else{
+          let merchandiseItem = [];
+          sessionStorage.setItem('merchandiseItem', JSON.stringify(merchandiseItem));
         }
         if (vehicleaccordian !== 0) {
           sessionStorage.setItem('vehicleDetail', JSON.stringify(vehicleaccordian));
@@ -301,12 +317,17 @@ export default function AddOn() {
         sessionStorage.setItem('insurancedetail', JSON.stringify(ownInsuranceArray))
         // navigate('/preBooking/TenantDetails')
       }
+      debugger
       if (servicesArray.length !== 0) {
         let sessionServices = [];
         servicesArray.forEach((id) => {
-          sessionServices.push({ unitId: unitid, servicedId: id })
+          sessionServices.push({ unitId: unitid, servicedId: id });
         })
-        sessionStorage.setItem('servicedetail', JSON.stringify(sessionServices))
+        sessionStorage.setItem('servicedetail', JSON.stringify(sessionServices));
+      }else{
+        let sessionServices = [];
+        sessionStorage.setItem('servicedetail', JSON.stringify(sessionServices));
+
       }
       if (merchandiseId.length !== 0) {
         merchandiseId.forEach((id) => {
