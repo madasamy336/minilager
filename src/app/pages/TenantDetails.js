@@ -44,6 +44,7 @@ export default function TenantDetails() {
   const companyName = useRef(null);
   const ssn = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
+  const[customFieldValueTenant,setCustomFieldValueTenant ] = useState([])
 
   const companyRegistrationNumber = useRef(null);
   const [TenantInfoDetails, setTenantInfoDetails] = useState(
@@ -613,6 +614,8 @@ export default function TenantDetails() {
           tenantInfoGetresult !== null & tenantInfoGetresult !== ""
         ) {
           sessionStorage.setItem("tenantInfo", JSON.stringify(tenantInfoGetresult));
+          setCustomFieldValueTenant(tenantInfoGetresult.customFormFields)
+          console.log(tenantInfoGetresult.customFormFields);
           let tenantMovinData = JSON.parse(sessionStorage.getItem("tenantInfo"));
           setTenantInfoDetails(tenantMovinData);
           setPreviewSrc(tenantInfoGetresult.photoPath);
@@ -865,8 +868,10 @@ export default function TenantDetails() {
   //     })
   //   return;
   // }
+  
 
   const bindCustomFieldValue = () => {
+    let customfieldBindValue;
     let filtervalue = unitDetailCustomField.filter((i => i.fieldpage === 'Movein Tenant Details'));
     filtervalue.forEach((item) => {
       let element = document.getElementById(`${item.typeof}_${item.fieldId}`);

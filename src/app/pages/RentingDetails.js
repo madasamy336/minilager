@@ -185,7 +185,6 @@ export default function RentingDetails() {
       let newvalue
       if (recurring !== null && typeof recurring !== 'undefined') {
         newvalue = recurring.filter(i => i.key === 3);
-        console.log(newvalue);
         setRecurring(newvalue);
         setRecurringValue(3);
         setInvoiceRecurringDisabled(true);
@@ -450,8 +449,6 @@ export default function RentingDetails() {
       (i) => i.matadata.displayOn === "Unit specific details"
     );
 
-    console.log(filterUnitSpecificValue);
-
     for (const item of filterUnitSpecificValue) {
       const customValue = document.getElementById(
         `${item.matadata.type}_${item.fieldId}`
@@ -612,7 +609,7 @@ export default function RentingDetails() {
                             <div className="col-12">
                               <div className="field w-100 datePicker my-2">
                                 <label className='fw-500 fs-7 mb-2'>{item.fieldName} {item.matadata.isMandatory ? <i className="text-danger ">*</i> : ""}</label>
-                                <SemanticDatepicker datePickerOnly format='DD.MM.YYYY' id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} className='w-100' data-name={item.fieldName} fieldId={item.fieldId} unitId={unitid} required={item.matadata.isMandatory} fieldpage={item.matadata.displayOn} type={item.matadata.type} onChange={(e, data) => customhandlechange(e, data, "date")} />
+                                <SemanticDatepicker datePickerOnly  id={`${item.matadata.type}_${item.fieldId}`} placeholder={item.fieldName} className='w-100' data-name={item.fieldName} fieldId={item.fieldId} unitId={unitid} required={item.matadata.isMandatory} fieldpage={item.matadata.displayOn} type={item.matadata.type}  onChange={(e, data) => customhandlechange(e, data, "date")} />
                                 <div className="text-danger mt-1" id={item.fieldId} style={{ display: 'none' }}>{t("Required Field")}</div>
                               </div>
                             </div>

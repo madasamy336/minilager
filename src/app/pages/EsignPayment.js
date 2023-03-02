@@ -28,7 +28,7 @@ export default function EsignPayment() {
   let taxpecentage
   let getMoveindate = sessionStorage.getItem('moveindate');
   let vehicleDetail = JSON.parse(sessionStorage.getItem('vehicleDetail'));
-  let getRecurringPeriodId = sessionStorage.getItem('invoiceData');
+  let getRecurringPeriodId = sessionStorage.getItem('invoicePeriodValue');
   let getRecurringTypeid = sessionStorage.getItem('recurringData');
   let insuranceDetail = JSON.parse(sessionStorage.getItem('insurancedetail'));
   let merchandiseItem = JSON.parse(sessionStorage.getItem('merchandiseItem'));
@@ -476,7 +476,12 @@ export default function EsignPayment() {
           sessionStorage.removeItem('vehicleDetail');
           sessionStorage.removeItem('merchandiseItem');
           sessionStorage.removeItem('invoicePeriodValue');
-          localStorage.removeItem("eSignatureCompleted")
+          localStorage.removeItem("eSignatureCompleted");
+          sessionStorage.removeItem('invoicePeriodset');
+          sessionStorage.removeItem('desiredMoveoutDate');
+          sessionStorage.removeItem('insurancedetail');
+          sessionStorage.removeItem('servicedetail');
+          sessionStorage.removeItem('merchandiseItem');
           navigate('/preBooking/thankyou')
         } else {
           if (response.data.returnCode === "REQUEST_CONTAINS_OCCUPIED_UNITS") {

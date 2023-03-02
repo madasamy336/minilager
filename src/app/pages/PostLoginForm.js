@@ -117,11 +117,11 @@ const PostLoginForm = (props) => {
         let isValid = true
 
         if (!username) {
-            validations.username = `${t('Username is required')}`
+            validations.username = `${t('Email is required')}`
             isValid = false
         }
         if (username && !/\S+@\S+\.\S+/.test(username)) {
-            validations.username = `${t('Username format must be as example@mail.com')}`
+            validations.username = `${t('Email format must be as example@mail.com')}`
             isValid = false
         }
 
@@ -602,11 +602,15 @@ const PostLoginForm = (props) => {
                                     </div>
                                     <div className="text-danger mt-1"> {passwordVal}</div>
                                 </div>
-                                <div className="remember-div d-flex justify-content-between">
+                                {/* <div className="remember-div d-flex justify-content-between">
                                     <p className="d-inline-flex">
                                         <input type="checkbox" name="rememberPassword" checked={rememberPassword} onChange={(event) => handleChechbox(event)} /><span>{t("Remember me")}</span></p>
                                     <p> <a href="/" onClick={e => ForgotPassword(e)}>{t("Forgot your password?")}</a> </p>
-                                </div>
+                                </div> */}
+
+                                {<div className="remember-div d-flex float-right justify-content-between">
+                                    <p> <a href="/" onClick={e => ForgotPassword(e)}>{t("Forgot your password?")}</a> </p>
+                                </div>}
                                 <button className="ui button w-100 fw-100" onClick={e => ValidateSignin(e)}>{t('Sign In')}</button>
                             </form>
                             <div className="signup-div text-center">

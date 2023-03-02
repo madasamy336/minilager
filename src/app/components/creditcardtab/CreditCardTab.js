@@ -6,6 +6,7 @@ import request from '../../services/request';
 import { useTranslation } from "react-i18next";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Spinner from "../Spinner/Spinner";
 
 const CreditCardTab = (props) => {
 
@@ -13,14 +14,19 @@ const CreditCardTab = (props) => {
     const { t, i18n } = useTranslation();
     const [showcard, setShowCard] = useState(true);
     const [isLoading, setLoading] = useState(false);
+    const[paymentFormLoading, setPaymentFormLoading] = useState(false);
     const [openAutopayDropdown, SetopenAutopayDropdown] = useState(false);
     const [cardMenuDetailsVal, setCardMenuDetailsVal] = useState();
     const userId = localStorage.getItem('userid');
 
     const showCardHandler = () => {
         setShowCard(true);
+        setPaymentFormLoading(false)
     }
     const CreditFormHandler = () => {
+        setTimeout(()=>{
+            setPaymentFormLoading(true);
+        },1000)
         props.addCreditCardForm();
         setShowCard(false);
     }
@@ -327,15 +333,20 @@ const CreditCardTab = (props) => {
             ) : (
                 <div>
                     {!showcard && <div className="ui form w-50 w-sm-100">
-                        <iframe src={props.paymentFom} width="100%" height="800px" />
-                        <div className="mt-2 text-left">
-                            <button className="ui button text-dark fs-7 fw-400 px-5 mx-1 mb-sm-1 px-sm-2" onClick={() => showCardHandler()}>CANCEL</button>
+
+                        {!paymentFormLoading ? <Spinner extra={`loaderExtra`}/>:
+                        <div>
+                            <iframe  className="transition" src={props.paymentFom} width="100%" height="420px" />
+                            <div className="mt-2 text-left">
+                            <button className="ui button text-dark fs-7 fw-400 px-5 mx-1 mb-sm-1 px-sm-2" onClick={() => showCardHandler()}>CANCEL</button> </div>
                         </div>
+
+                        }
+                        
                     </div>}
                     {showcard &&
                         <div className="row">
                             {typeof creditCardDetails !== 'undefined' && creditCardDetails !== null && creditCardDetails !== "" && creditCardDetails.length !== 0 ? creditCardDetails.map(card => {
-                                console.log(card);
                                 let configVal = JSON.parse(sessionStorage.getItem('configdata'));
                                 let activestatus = configVal.culture.isSavedCardsByDefault;
                                 return <div className="col-lg-4 col-md-6 col-sm-12 px-1 mb-2" key={card.id}>
