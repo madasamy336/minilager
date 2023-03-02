@@ -347,7 +347,6 @@ const CreditCardTab = (props) => {
                     {showcard &&
                         <div className="row">
                             {typeof creditCardDetails !== 'undefined' && creditCardDetails !== null && creditCardDetails !== "" && creditCardDetails.length !== 0 ? creditCardDetails.map(card => {
-                                console.log(card);
                                 let configVal = JSON.parse(sessionStorage.getItem('configdata'));
                                 let activestatus = configVal.culture.isSavedCardsByDefault;
                                 return <div className="col-lg-4 col-md-6 col-sm-12 px-1 mb-2" key={card.id}>
