@@ -89,18 +89,18 @@ export default function TenantDetails() {
     dimmer: undefined,
   })
 
-  const {
-    firstName: fname_Data,
-    lastName: lastNameError,
-    email: email_Data,
-    phoneNumber: phoneNo_Data,
-    addressLineOne: addressLine1Error,
-    city: cityError,
-    state: stateError,
-    zipCode: postalError,
-    ssn: ssnError
+  // const {
+  //   firstName: fname_Data,
+  //   lastName: lastNameError,
+  //   email: email_Data,
+  //   phoneNumber: phoneNo_Data,
+  //   addressLineOne: addressLine1Error,
+  //   city: cityError,
+  //   state: stateError,
+  //   zipCode: postalError,
+  //   ssn: ssnError
 
-  } = tenantInfoError;
+  // } = tenantInfoError;
 
   const {
     emergencyFname: fname_err,
@@ -183,7 +183,7 @@ export default function TenantDetails() {
   };
 
   const checkCustomfieldValue = () => {
-    console.log("hello");
+
     let customValue = JSON.parse(localStorage.getItem(`CustomFieldsSetting`));
     let errorcount = 0;
 
@@ -254,8 +254,8 @@ export default function TenantDetails() {
       errors.birthDate = "Date Of Birth is required";
     }
     if (!addressLineOne) {
-      errors.addressLineOne = "Address Line One is required";
-    }  
+      errors.addressLineOne = "Address Line 1 is required";
+    }
     if (!city) {
       errors.city = "City is required";
     }
@@ -293,7 +293,7 @@ export default function TenantDetails() {
 
     if (!emergencyEmail) {
       errors.emergencyEmail = "Email is required";
-    } else if (!/\S+@\S+.\S+/.test(emergencyEmail)) {
+    } else if (!/\S+@\S+\.\S+/.test(emergencyEmail)) {
       errors.emergencyEmail = "Email format must be example@mail.com";
     }
 
@@ -303,8 +303,13 @@ export default function TenantDetails() {
 
     setEmergencyContactErr(errors);
 
-    return Object.keys(errors).length === 0;
+    return {
+      errors,
+      isValid: Object.keys(errors).length === 0
+    };
   };
+
+
 
 
 
@@ -348,10 +353,12 @@ export default function TenantDetails() {
   // };
 
   const addEmergencyContact = () => {
-    const isValid = validateEmergencyContactInfo(emergencyContactDetails);
+    const { isValid, errors } = validateEmergencyContactInfo(emergencyContactDetails);
     if (!isValid) {
+      setEmergencyContactErr(errors);
       return false;
     }
+
     const newContactDetails = {
       name: emergencyContactDetails.emergencyFname,
       lname: emergencyContactDetails.emergencyLname,
@@ -370,6 +377,8 @@ export default function TenantDetails() {
 
     return true;
   };
+
+
 
   // const addEmergencyContactNext = () => {
   //   const isValid = validateEmergencyContactInfo(emergencyContactDetails);
@@ -527,7 +536,7 @@ export default function TenantDetails() {
       integrated_with: "signicat",
       initiated_by: "karthick"
     }
-    console.log(sessionStorage.getItem("accessToken"));
+
     const creditCheckConfig = {
       headers: {
         'Content-Type': 'application/json',
@@ -538,31 +547,29 @@ export default function TenantDetails() {
 
     try {
       const response = await axios.post(sixVerifierSettingsUrl, requestBody, creditCheckConfig);
-      // setCreditCheckSettingData(response.data)
-      console.log(response.data);
-      console.log("response.data.status", response.data.status === 200);
-      console.log("response.data.body.is_enabled_in_booking_porta", response.data.body.is_enabled_in_booking_portal);
       if (response.data.status === 200 && response.data.body.is_enabled_in_booking_portal) {
-        console.log("is_enabled_in_booking_portal");
-        if (response.data.body.enable_in_booking_portal_for == "BUSINESS" && BusinessUser) {
-          console.log("BUSINESS");
-          await proceedCreditCheck(e);
-        } else if (response.data.body.enable_in_booking_portal_for == "PERSONAL" && !BusinessUser) {
-          console.log("PERSONAL");
-          await proceedCreditCheck(e);
+        if (BusinessUser) {
+          if (response.data.body.enable_in_booking_portal_for === "BUSINESS" || response.data.body.enable_in_booking_portal_for === "BOTH") {
+            await proceedCreditCheck(e);
+          } else {
+            setIsLoading(true);
+            console.log("Continue with Normal Move-in");
+            navigate('/preBooking/esignPayment');
+          }
         } else {
-          console.log("BOTH");
-          await proceedCreditCheck(e);
+          if (response.data.body.enable_in_booking_portal_for === "PERSONAL" || response.data.body.enable_in_booking_portal_for === "BOTH") {
+            await proceedCreditCheck(e);
+          } else {
+            setIsLoading(true);
+            console.log("Continue with Normal Move-in");
+            navigate('/preBooking/esignPayment');
+          }
         }
-      } else {
-        setIsLoading(true);
-        console.log("Continue with Normal Move-in");
-        navigate('/preBooking/esignPayment');
+        setIsLoading(false);
       }
-      // setIsLoading(false);
     } catch (error) {
       console.error(error);
-      // setIsLoading(false)
+      setIsLoading(false)
     }
   };
 
@@ -620,10 +627,6 @@ export default function TenantDetails() {
       setIsLoading(false);
     }
   };
-
-
-
-
 
   const customhandlechange = (e, data, checkfield) => {
     // setInputValue({"id":e.target.id,"":e.target.})
@@ -705,8 +708,6 @@ export default function TenantDetails() {
     // e.preventDefault()
     // await updateTenantInfo();
     // setCreditCheckLoader(true);
-    console.log("proceedCreditCheck");
-
     const requestBody = {
       country_code: "NOR",
       event_type: "CREDIT_CHECK_ENQUIRY",
@@ -778,11 +779,8 @@ export default function TenantDetails() {
     } else {
       // update with new tenant data or ignore
     }
-    console.log("checkCreditCheckStatus");
     const isCreditCheckResponseStored = localStorage.getItem('creditCheckResponse');
     const parsedResponse = JSON.parse(isCreditCheckResponseStored);
-    console.log(parsedResponse);
-    console.log(parsedResponse.creditCheckResponse);
     if (parsedResponse.creditCheckResponse.data.status === 500) {
       if (parsedResponse.creditCheckResponse.data.message === "TRY_CREDITCHECK_AFTER_SOMETIME") {
         console.log("Continue with Normal Move-in");
@@ -908,10 +906,14 @@ export default function TenantDetails() {
     sessionStorage.setItem('customFieldstorage', JSON.stringify(customfield));
     setIsBtnLoading(true)
     // addEmergencyContactNext()
+    const isEmergencyContactValid = validateEmergencyContactInfo(emergencyContactDetails)
+    console.log("isEmergencyContactValid", isEmergencyContactValid);
+    if (isEmergencyContactValid) {
+      return
+    }
     try {
       let emergencyContactArray = [];
       if (contactAccordian.length > 0) {
-        console.log("emergencyDetail");
         sessionStorage.setItem('emergencyDetail', JSON.stringify(contactAccordian));
         contactAccordian.forEach((item) => {
           emergencyContactArray.push({
@@ -977,15 +979,10 @@ export default function TenantDetails() {
 
 
   const navigateToPayNowPage = async (e) => {
-    // step 1: Initialize errorcount to zero
+    // Step 1: Initialize errorcount to zero
     let errorcount = 0;
 
-    // step 2: Perform validations
-    // console.log(contactAccordian.length);
-    // if (!validateEmergencyContactInfo(emergencyContactDetails)) {
-    //   errorcount++
-    // }
-
+    // Step 2: Perform validations
     const customFieldsErrorCount = checkCustomfieldValue();
     if (customFieldsErrorCount > 0) {
       errorcount += customFieldsErrorCount;
@@ -995,16 +992,27 @@ export default function TenantDetails() {
 
     if (!validatePersonalInfo(TenantInfoDetails)) {
       errorcount++;
-      console.log(errorcount);
     }
 
-    // step 3: Return if there are errors
+    // Check if at least one emergency contact has been added
+    if (contactAccordian.length === 0) {
+      // Validate emergency contact details and increment error count if validation fails
+      const isEmergencyContactValid = validateEmergencyContactInfo(emergencyContactDetails);
+      if (!isEmergencyContactValid) {
+        errorcount++;
+      }
+    }
+
+    // Step 3: Return if there are errors
     if (errorcount > 0) {
       return;
     }
-    // step 2: Update and Proceed next step
-    await updateTenantInfo()
+
+    // Step 4: Update and Proceed to next step
+    setIsLoading(true)
+    await updateTenantInfo();
   }
+
 
   const updateTenantInfo = async () => {
     await saveTenantPhoto();
@@ -1027,13 +1035,18 @@ export default function TenantDetails() {
       phoneNumber: TenantInfoDetails.phoneNumber,
       ssn: TenantInfoDetails.ssn
     };
-    const response = await instance.post(request.update_user_info + `/${userid}`, requestBody, config);
-    const userUpdateResponse = response.data.data;
-    console.log(customFieldValue);
-    Array.prototype.push.apply(unitDetailCustomField, customFieldValue);
-    console.log(unitDetailCustomField);
-    await leaseProfileSave(unitDetailCustomField);
-    await creditCheckSettingsInformation();
+    try {
+      const response = await instance.post(request.update_user_info + `/${userid}`, requestBody, config);
+      const userUpdateResponse = response.data.data;
+      console.log(customFieldValue);
+      Array.prototype.push.apply(unitDetailCustomField, customFieldValue);
+      console.log(unitDetailCustomField);
+      await leaseProfileSave(unitDetailCustomField);
+      await creditCheckSettingsInformation();
+    } catch (error) {
+      console.error('Error updating user information:', error);
+      // Handle the error as appropriate, such as displaying an error message to the user
+    }
   };
 
   const handleInputKeyDown = (event) => {
@@ -1339,7 +1352,9 @@ export default function TenantDetails() {
                     <div className="field w-100  my-3">
                       <label className='fw-500 fs-7 mb-2'>{t("Address Line 1")}<i className="text-danger ">*</i></label>
                       <input type='text' placeholder={t("Address Line 1")} name="addressLineOne" value={TenantInfoDetails.addressLineOne} onChange={(e) => handlechange(e)} onBlur={() => validatePersonalInfo(TenantInfoDetails)} />
-                      <div className="text-danger mt-1">{addressLine1Error}</div>
+                      {/* <div className="text-danger mt-1">{addressLine1Error}</div> */}
+                      {tenantInfoError.addressLineOne && <p className="text-danger mt-1">{tenantInfoError.addressLineOne}</p>}
+
                     </div>
                   </div>
                   <div className="col-12 col-md-6 px-4 px-sm-2">
@@ -1352,21 +1367,21 @@ export default function TenantDetails() {
                     <div className="field w-100  my-3">
                       <label className='fw-500 fs-7 mb-2'>{t("City")}<i className="text-danger ">*</i></label>
                       <input type='text' placeholder={t("City")} name="city" value={TenantInfoDetails.city} onChange={(e) => handlechange(e)} onBlur={() => validatePersonalInfo(TenantInfoDetails)} />
-                      <div className="text-danger mt-1">{cityError}</div>
+                      {tenantInfoError.city && <p className="text-danger mt-1">{tenantInfoError.city}</p>}
                     </div>
                   </div>
                   <div className="col-12 col-md-6 px-4 px-sm-2">
                     <div className="field w-100  my-3">
                       <label className='fw-500 fs-7 mb-2'>{t("State/Provine")}<i className="text-danger ">*</i></label>
                       <input type='text' placeholder={t("State/Provine")} name="state" value={TenantInfoDetails.state} onChange={(e) => handlechange(e)} onBlur={() => validatePersonalInfo(TenantInfoDetails)} />
-                      <div className="text-danger mt-1">{stateError}</div>
+                      {tenantInfoError.state && <p className="text-danger mt-1">{tenantInfoError.state}</p>}
                     </div>
                   </div>
                   <div className="col-12 col-md-6 px-4 px-sm-2">
                     <div className="field w-100  my-3">
                       <label className='fw-500 fs-7 mb-2'>{t("Zip/Postal Code")}<i className="text-danger ">*</i></label>
                       <input className="noCounterNumber" type='number' name="zipCode" placeholder={t("Zip/Postal Code")} defaultValue={TenantInfoDetails.zipCode} onChange={(e) => handlechange(e)} onBlur={() => validatePersonalInfo(TenantInfoDetails)} />
-                      <div className="text-danger mt-1">{postalError}</div>
+                      {tenantInfoError.postalCode && <p className="text-danger mt-1">{tenantInfoError.postalCode}</p>}
                     </div>
                   </div>
                 </div>
@@ -1427,7 +1442,7 @@ export default function TenantDetails() {
                       <a onClick={(e) => addEmergencyContact(e)} className="text-success fs-7 px-4 px-sm-2 cursor-pointer">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="18" viewBox="0 0 27.505 27.5">
                           <path id="floating" d="M577.346,2164.47h1.719c.468.061.939.108,1.4.186a13.8,13.8,0,0,1,11.276,11.2c.089.5.142,1.006.211,1.51v1.719c-.04.327-.075.656-.122.981a13.749,13.749,0,1,1-23.4-11.494,13.464,13.464,0,0,1,7.4-3.886C576.337,2164.593,576.843,2164.539,577.346,2164.47Zm2,14.892h4.82a1.14,1.14,0,1,0,.027-2.278c-1.5-.009-3.007,0-4.51,0h-.336v-4.813a1.118,1.118,0,0,0-.693-1.111,1.131,1.131,0,0,0-1.588,1.07c-.01,1.5,0,3.007,0,4.51v.344h-4.806a1.141,1.141,0,1,0-.055,2.28c1.512.011,3.025,0,4.537,0h.323v.364c0,1.477,0,2.953,0,4.43a1.141,1.141,0,1,0,2.28.068c.012-1.5,0-3.007,0-4.51Z" transform="translate(-564.451 -2164.47)" fill="#328128" />
-                        </svg><span className="veritical-align-text-top ml-1">{t("Add more")}</span>
+                        </svg><span className="veritical-align-text-top ml-1">{t("Add")}</span>
                       </a>
                     </div>
                   </div>
