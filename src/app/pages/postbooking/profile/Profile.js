@@ -16,10 +16,6 @@ import { useTranslation } from "react-i18next";
 import Spinner from "../../../components/Spinner/Spinner";
 
 let helper = new Helper();
-let addressLineOneReq;
-let addressLineTwoReq;
-let postalCodeReq;
-let birthDateReq = new Date();
 let DefaultCountryCode;
 export default function Profile() {
   const clientDataconfig = JSON.parse(sessionStorage.getItem("configdata"));
@@ -30,7 +26,6 @@ export default function Profile() {
   const [isAddressEditable, setIsAddressEditable] = useState(false);
   const [isTenantDetailEditable, setIsTenantDetailEditable] = useState(false);
 
-  const [blobImage, setBlobImage] = useState(true);
   const [isLoading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const today = new Date();
@@ -38,20 +33,8 @@ export default function Profile() {
   const [previewSrc, setPreviewSrc] = useState(null);
   const [file, setFile] = useState(null);
   const { t } = useTranslation();
-
-  const [tenantDetails, setTenantDetails] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phoneNumber: '',
-    ssn: '',
-    addressLineOne: '',
-    addressLineTwo: '',
-    city: '',
-    state: '',
-    zipCode: ''
-  });
-
+  const [tenantDetails, setTenantDetails] = useState({});
+  const [originalTenantDetails, setOriginalTenantDetails] = useState({});
   // UseEffect Start
   useEffect(() => {
     fetchTenantDetails();
@@ -71,10 +54,12 @@ export default function Profile() {
   const EditTenantAddressHandler = () => {
     setIsAddressEditable(!isAddressEditable);
   };
-  const cancelEditInfo = () => {
+  const handleCancelClick = () => {
+    // Reset the form state to its initial values
+    setTenantDetails(originalTenantDetails);
     setIsTenantDetailEditable(false);
     setIsAddressEditable(false);
-  }
+  };
 
   const fetchTenantDetails = async () => {
     setLoading(true);
@@ -90,22 +75,25 @@ export default function Profile() {
       if (userInfoResponse?.isSuccess) {
         const { result: data } = userInfoResponse;
         localStorage.setItem("tenantInfo", JSON.stringify(data));
-        const { firstName, lastName, email, birthDate: dateOfBirth, ssn, addressLineOne, addressLineTwo, zipCode, birthDate, phoneNumber, photoPath } = data;
-        console.log("data", data);
-        const updatedPhoneNumber = phoneNumber.replace(DefaultCountryCode, "");
-        setTenantDetails(prevDetails => ({
-          ...prevDetails,
+        const { firstName, lastName, email, birthDate, ssn, addressLineOne, addressLineTwo, city, state, zipCode, phoneNumber, photoPath } = data;
+        const updatedPhoneNumber = phoneNumber.replace(DefaultCountryCode, "").replace("+", "");
+        const updatedTenantDetails = {
           firstName: firstName || "",
           lastName: lastName || "",
           email: email || "",
-          addressLine1: addressLineOne || "",
-          addressLine2: addressLineTwo || "",
-          postalCode: zipCode || "",
+          addressLineOne: addressLineOne || "",
+          addressLineTwo: addressLineTwo || "",
+          city: city || "",
+          state: state || "",
+          zipCode: zipCode || "",
           birthDate: birthDate || null,
           phoneNumber: updatedPhoneNumber || "",
           photoPath: photoPath || null,
           ssn: ssn || ""
-        }));
+        };
+        setTenantDetails(updatedTenantDetails);
+        setOriginalTenantDetails(updatedTenantDetails);
+
         setprofileImageSrc(photoPath);
         setLoading(false);
       } else {
@@ -120,9 +108,6 @@ export default function Profile() {
 
   const onChangePersonalInfo = (e) => {
     const { name, value } = e.target;
-    console.log(value);
-    console.log(name);
-
     // Update tenantDetails object with the correct field names
     if (name === 'addressLine1') {
       setTenantDetails({ ...tenantDetails, addressLineOne: value });
@@ -238,8 +223,6 @@ export default function Profile() {
           newErrors[fieldName] = field.message;
         }
       });
-      console.log("hello",newErrors);
-
       if (Object.keys(newErrors).length > 0) {
         setErrors(newErrors);
         return;
@@ -250,9 +233,8 @@ export default function Profile() {
         { name: 'firstName', message: `${t('First Name is a required field')}` },
         { name: 'lastName', message: `${t('Last Name is a required field')}` },
         { name: 'email', message: `${t('Email is a required field')}` },
-        { name: 'phone', message: `${t('Phone Number is a required field')}` },
-        { name: 'gender', message: `${t('Gender is a required field')}` },
-        { name: 'dateOfBirth', message: `${t('Date of Birth is a required field')}` },
+        { name: 'phoneNumber', message: `${t('Phone Number is a required field')}` },
+        { name: 'birthDate', message: `${t('Date of Birth is a required field')}` },
       ];
 
       const newErrors = {};
@@ -261,7 +243,6 @@ export default function Profile() {
           newErrors[field.name] = field.message;
         }
       });
-
       if (Object.keys(newErrors).length > 0) {
         setErrors(newErrors);
         return;
@@ -271,9 +252,17 @@ export default function Profile() {
     try {
       setLoading(true);
       await saveTenantPhoto();
+      // create a new object with modified keys
+      const updatedTenantDetails = {
+        ...tenantDetails,
+        addressLine1: tenantDetails.addressLineOne,
+        addressLine2: tenantDetails.addressLineTwo,
+        postalCode: tenantDetails.zipCode,
+        dateOfBirth: tenantDetails.birthDate
+      }
       const response = await instance.post(
         request.update_user_info + '/' + userid,
-        tenantDetails,
+        updatedTenantDetails,
         config
       );
       const userUpdateResponse = response.data;
@@ -283,7 +272,7 @@ export default function Profile() {
           position: "top-right",
           autoClose: 3000,
           duration: 100,
-          className:"bg-toast-success toast-success",
+          className: "bg-toast-success toast-success",
           hideProgressBar: true,
           closeOnClick: true,
           draggable: true,
@@ -323,8 +312,7 @@ export default function Profile() {
   return (
     <>
       {isLoading ? (
-        <Spinner/>
-        // <Loader size='large' active>{t("Loading")}</Loader>
+        <Spinner />
       ) : (
         <div className="mx-2 mx-sm-1">
           <ToastContainer />
@@ -394,7 +382,7 @@ export default function Profile() {
                         maxDate={new Date()}
                         onChange={dateOfBirthChange}
                       />
-                      {errors["dateOfBirth"] && <div className="error">{errors["dateOfBirth"]}</div>}
+                      {errors["birthDate"] && <div className="error">{errors["birthDate"]}</div>}
                     </div>
                     <div className="field my-3">
                       <label className="text-dark fs-7 fw-500">{t("Phone Number")}<span className="error">*</span></label>
@@ -429,7 +417,6 @@ export default function Profile() {
                   <Button className="ui button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-sm-1" loading={isLoading} disabled={isLoading} onClick={() => updateTenantInfo(tenantDetails)}>{t("SAVE")}</Button>
                 </div> */}
               </div>}
-
               {!isTenantDetailEditable && <div className="row reverse-sm">
                 <div className="col-lg-9 col-md-9 col-sm-12">
                   <div className="row">
@@ -489,7 +476,7 @@ export default function Profile() {
                       <path id="Path_14953" data-name="Path 14953" d="M2077.969-231.344c.167,0,.334-.009.5,0a.622.622,0,0,1,.5.956c-.569.751-.4.909-.334,1.7a4.1,4.1,0,0,0,.069.551,1.054,1.054,0,0,1-.083.643c-.112.277-.21.557-.311.839a.368.368,0,0,1-.371.279.363.363,0,0,1-.371-.276c-.13-.359-.264-.717-.391-1.077a.522.522,0,0,1-.023-.21c.037-.452.074-.905.129-1.356a1.125,1.125,0,0,0-.184-.783c-.055-.085-.115-.167-.168-.254a.647.647,0,0,1,.513-1.011C2077.621-231.355,2077.8-231.344,2077.969-231.344Z" transform="translate(-2071.693 240.273)" fill="#328128" />
                     </g>
                   </svg>
-                    <span className="text-success-dark ml-1 fw-500"> {tenantDetails.businessUser ? `${t("Business User")}`: `${t("Personal User")}`}</span></p>
+                    <span className="text-success-dark ml-1 fw-500"> {tenantDetails.businessUser ? `${t("Business User")}` : `${t("Personal User")}`}</span></p>
                 </div>
               </div>}
             </div>
@@ -561,7 +548,7 @@ export default function Profile() {
                   </div>
                 </div>
               </div>}
-
+              {console.log(tenantDetails.addressLineOne)}
               {!isAddressEditable && <div className="row reverse-sm">
                 <div className="col-lg-9 col-md-9 col-sm-12">
                   <div className="row">
@@ -606,7 +593,7 @@ export default function Profile() {
           </div>
 
           {(isAddressEditable || isTenantDetailEditable) && <div className="mt-2 mb-2 text-center">
-            <Button className="ui button text-dark fs-7 fw-400 px-5 mx-1 mb-sm-1" disabled={isLoading} onClick={cancelEditInfo}>{t("CANCEL")}</Button>
+            <Button className="ui button text-dark fs-7 fw-400 px-5 mx-1 mb-sm-1" disabled={isLoading} onClick={handleCancelClick}>{t("CANCEL")}</Button>
             <Button className="ui button bg-success-dark text-white fs-7 fw-400 px-5 mx-1 mb-sm-1 " loading={isLoading} disabled={isLoading} onClick={() => updateTenantInfo(tenantDetails)}>{t("SAVE")}</Button>
           </div>}
           <div className="bg-white card-boxShadow border-radius-15 py-2 mb-2 d-none">
