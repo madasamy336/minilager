@@ -6,7 +6,7 @@ import { useEffect, useState, useRef } from "react";
 import instance from '../../../services/instance';
 import request from '../../../services/request';
 import { useTranslation } from "react-i18next";
-
+import Spinner from "../../../components/Spinner/Spinner";
 export default function Payment() {
   const [paymentForm, setPaymentFormUrl] = useState();
   const [creditCardDetails, setCreditCardDetails] = useState([]);
@@ -14,7 +14,6 @@ export default function Payment() {
   const [isLoading, setLoader] = useState(true);
   const [showcard, setShowCard] = useState(false);
   const { t } = useTranslation();
-
 
   function renderAddCardForm(id) {
     let config = {
@@ -68,7 +67,8 @@ export default function Payment() {
     <div className="mx-2 mx-sm-1">
       <div className="bg-white card-boxShadow border-radius-15 pb-2 mb-2 overflow-hidden">
         <div className="payment-tabs">
-          <Tab panes={paymentMethods} onTabChange={(e) => handleTabChange(e)} />
+             <Tab panes={paymentMethods} onTabChange={(e) => handleTabChange(e)} />
+          
         </div>
       </div>
     </div>

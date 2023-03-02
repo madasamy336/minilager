@@ -1,8 +1,8 @@
 import React from 'react';
 
-const Spinner = () => {
+const Spinner = (props) => {
   return (
-    <div className="minilagerloader">
+    <div className={`minilagerloader ${props.extra? props.extra :""}`}>
       <svg width="121" height="103" viewBox="0 0 121 103" fill="transparent" xmlns="http://www.w3.org/2000/svg">
         <g id="Group 41">
         <g id="Frame 6">
