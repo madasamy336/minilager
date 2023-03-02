@@ -66,7 +66,7 @@ export default function EsignPayment() {
 
 
   const { t, i18n } = useTranslation();
-console.log(customSettings[0].settingValue === 'YES');
+  console.log(customSettings[0].settingValue === 'YES');
 
   useEffect(() => {
     //  Check ESign Settings
@@ -152,22 +152,24 @@ console.log(customSettings[0].settingValue === 'YES');
     try {
       const response = await axios.post(sixVerifierSettingsUrl, requestBody, creditCheckConfig);
       setEsignSettingData(response.data)
-      console.log(response.data);
       if (response.data.status === 200 && response.data.body.is_enabled_in_booking_portal) {
-        if (response.data.body.enable_in_booking_portal_for == "BUSINESS" && BusinessUser) {
-          console.log("BUSINESS");
-          setShowEsignContent(true)
-        } else if (response.data.body.enable_in_booking_portal_for == "PERSONAL" && !BusinessUser) {
-          console.log("PERSONAL");
-          setShowEsignContent(true)
+        if (BusinessUser) {
+          if (response.data.body.enable_in_booking_portal_for === "BUSINESS" || response.data.body.enable_in_booking_portal_for === "BOTH") {
+            setShowEsignContent(true);
+          } else {
+            setShowEsignContent(false);
+          }
         } else {
-          setShowEsignContent(true)
+          if (response.data.body.enable_in_booking_portal_for === "PERSONAL" || response.data.body.enable_in_booking_portal_for === "BOTH") {
+            setShowEsignContent(true);
+          } else {
+            setShowEsignContent(false);
+          }
         }
-      } else {
-        setShowEsignContent(false)
+        setIsLoading(false);
       }
-      setIsLoading(false);
-    } catch (error) {
+    }
+    catch (error) {
       console.error(error);
       setIsLoading(false)
     }
@@ -237,7 +239,7 @@ console.log(customSettings[0].settingValue === 'YES');
 
   //get Unit detail
   const unitInfoDetails = () => {
-    console.log(date.format(new Date(getMoveindate), 'DD.MM.YYYY')); 
+    console.log(date.format(new Date(getMoveindate), 'DD.MM.YYYY'));
     console.log(new Date(getMoveindate));
     setIsLoading(true)
     let config = {
@@ -401,7 +403,7 @@ console.log(customSettings[0].settingValue === 'YES');
       });
 
   }
-  
+
   const changeSavedCard = (e) => {
     if (e.target.checked) {
       setSavecard(true);
@@ -409,10 +411,10 @@ console.log(customSettings[0].settingValue === 'YES');
       setSavecard(false);
       setAutopayEnabled(false);
     }
-    
+
 
   }
-  
+
   const changeAutoPayEnabled = (e) => {
     if (e.target.checked) {
       setAutopayEnabled(true);
@@ -424,14 +426,14 @@ console.log(customSettings[0].settingValue === 'YES');
 
   const saveMoveinDetails = (cardResponse, leaseprofileid, paylater) => {
 
-    let savecardinput =  document.getElementById('savedcard');
+    let savecardinput = document.getElementById('savedcard');
     let autopayInput = document.getElementById('autopayenabled');
     let saveCardvalue;
     let autopayValue;
-    if(savecardinput !== null && typeof savecardinput !== "undefined" && autopayInput !== null && typeof autopayInput !== 'undefined'){
+    if (savecardinput !== null && typeof savecardinput !== "undefined" && autopayInput !== null && typeof autopayInput !== 'undefined') {
       saveCardvalue = savecardinput.checked;
       autopayValue = autopayInput.checked;
-    }else{
+    } else {
       saveCardvalue = true;
       autopayValue = true;
     }
@@ -508,20 +510,17 @@ console.log(customSettings[0].settingValue === 'YES');
     setPayNowActive(false)
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log(saveCard);
     console.log(autoPayEnabled);
 
-  },[saveCard,autoPayEnabled])
-  
+  }, [saveCard, autoPayEnabled])
 
-  const triggerEsign = (e) => {
+
+  const triggerEsign = async (e) => {
     e.preventDefault();
     console.log("Triggered");
-    setButtonLoader(true)
-    //const successUrl = window.location.hostname + '/preBooking/viewEsignDocuments' + "?eSigned=true"
-    const successUrl = `https://${window.location.hostname}/preBooking/viewEsignDocuments?eSigned=true`
-    console.log(successUrl);
+    setButtonLoader(true);
     const requestBody = {
       "event_type": "INITIATE_ESIGN_DOCUMENT_CREATION",
       "country_code": "NOR",
@@ -542,29 +541,27 @@ console.log(customSettings[0].settingValue === 'YES');
       },
       "data_to_sign": {
         "base64_content": "VGhpcyB0ZXh0IGNhbiBzYWZlbHkgYmUgc2lnbmVk",
-        "file_name": "E-Sign.txt"
+        "file_name": "E-Sign.pdf"
       }
-    }
+    };
     const config = {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
       },
-    }
-    const eSignUrl = process.env.REACT_APP_ESIGN_URL
-    axios.post(eSignUrl, requestBody, config).then(response => {
-      // console.log(response);
-      return response
-    }).then(result => {
-      console.log(result);
-      if (result.status == 200 && result.data.status == 201) {
-        console.log("result", result.data.body);
-        let redirectUrl = result.data.body.url;
+    };
+    const eSignUrl = process.env.REACT_APP_ESIGN_URL;
+    try {
+      const response = await axios.post(eSignUrl, requestBody, config);
+      console.log(response);
+      if (response.status == 200 && response.data.status == 201) {
+        console.log("result", response.data.body);
+        let redirectUrl = response.data.body.url;
         // console.log(redirectUrl);
         window.location.replace(redirectUrl);
-        sessionStorage.setItem("bankIdDocumentId", result.data.body.document_id);
-        sessionStorage.setItem("external_id", result.data.body.external_id);
-        setButtonLoader(false)
+        sessionStorage.setItem("bankIdDocumentId", response.data.body.document_id);
+        sessionStorage.setItem("external_id", response.data.body.external_id);
+        setButtonLoader(false);
       } else {
         toast.error(`${t("Something Went wrong")}`, {
           position: "top-right",
@@ -576,20 +573,18 @@ console.log(customSettings[0].settingValue === 'YES');
           progress: undefined,
           theme: "colored",
         });
-        setButtonLoader(false)
+        setButtonLoader(false);
       }
-    }).catch(err => {
-      console.log(err);
-    })
-  }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
   let ContractPaymentMode;
   if (paymodeArray.includes('PayLater') === true && paymodeArray.includes('DirectDebit') === true && paymodeArray.includes('CreditCard') === true) {
     ContractPaymentMode = <div><Button className={`ui button bg-white d-flex align-items-center border-radius-5 card-border fs-6 fw-400 text-dark px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1  `} onClick={(e) => payNow(e)} ><img src='/assets/images/executed-payment.svg' alt='Pay Now' id="paynow" /><span className='ml-1' onClick={(e) => payNow(e)}>{t("Pay Now")}</span></Button><Button className={`ui button bg-success-dark d-flex align-items-center border-radius-5 card-border fs-6 fw-400 text-white px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1 `} onClick={(e) => payLater(e)} ><img src='/assets/images/pay.svg' alt='Pay Later' id="paylater" /><span className='ml-1' onClick={(e) => payLater(e)}>{t("Pay Later")}</span></Button></div>
   }
-
-
-
-
 
   const payNow = (e) => {
     e.preventDefault()
@@ -602,8 +597,8 @@ console.log(customSettings[0].settingValue === 'YES');
     <>
       <ToastContainer />
       {isLoading ? (
-        <Spinner/>
-      //  <Loader size='large' active>{t("Loading")}</Loader>
+        <Spinner />
+        //  <Loader size='large' active>{t("Loading")}</Loader>
       ) : (<div>
         <PreBookingBreadcrumb activeStep='1234' />
         <div className="esign">
@@ -766,13 +761,13 @@ console.log(customSettings[0].settingValue === 'YES');
                       {(!showEsignContent || eSignatureCompleted) && <div className='pt-4 d-flex justify-content-center flex-wrap'>
                         {paymodeArray.includes('PayLater') === true && paymodeArray.includes('DirectDebit') === true && paymodeArray.includes('CreditCard') === true ?
                           <div className='row mt-2'>
-                         
-                            {customSettings[0].settingValue !== 'YES'?   <Button className={`d-flex align-items-center border-radius-5 card-border fs-6 fw-400 px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1 ${payNowActive ? "bg-success-dark text-white" : "bg-white text-dark"}`} onClick={(e) => payNow(e)} ><img src={payNowActive ? '/assets/images/executed-payment-white.svg' : '/assets/images/executed-payment.svg'} alt='Pay Now' id="paynow" /><span className='ml-1' onClick={(e) => payNow(e)}>{t("Pay Now")}</span></Button>:''}
+
+                            {customSettings[0].settingValue !== 'YES' ? <Button className={`d-flex align-items-center border-radius-5 card-border fs-6 fw-400 px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1 ${payNowActive ? "bg-success-dark text-white" : "bg-white text-dark"}`} onClick={(e) => payNow(e)} ><img src={payNowActive ? '/assets/images/executed-payment-white.svg' : '/assets/images/executed-payment.svg'} alt='Pay Now' id="paynow" /><span className='ml-1' onClick={(e) => payNow(e)}>{t("Pay Now")}</span></Button> : ''}
                             <Button className={`d-flex align-items-center border-radius-5 card-border fs-6 fw-400 px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1 ${payLaterActive ? "bg-success-dark text-white" : "bg-white text-dark"}`} onClick={(e) => payLater(e)} ><img src={payLaterActive ? '/assets/images/pay-white.svg' : '/assets/images/pay.svg'} alt='Pay Later' id="paylater" /><span className='ml-1' onClick={(e) => payLater(e)}>{t("Pay Later")}</span></Button>
                           </div>
                           : paymodeArray.includes('PayLater') === true && paymodeArray.includes('DirectDebit') === false && paymodeArray.includes('CreditCard') === true ?
                             <div className='row mt-2'>
-                               {customSettings[0].settingValue !== 'YES'?   <Button className={`d-flex align-items-center border-radius-5 card-border fs-6 fw-400 px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1 ${payNowActive ? "bg-success-dark text-white" : "bg-white text-dark"}`} onClick={(e) => payNow(e)} ><img src={payNowActive ? '/assets/images/executed-payment-white.svg' : '/assets/images/executed-payment.svg'} alt='Pay Now' id="paynow" /><span className='ml-1' onClick={(e) => payNow(e)}>{t("Pay Now")}</span></Button>:''}
+                              {customSettings[0].settingValue !== 'YES' ? <Button className={`d-flex align-items-center border-radius-5 card-border fs-6 fw-400 px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1 ${payNowActive ? "bg-success-dark text-white" : "bg-white text-dark"}`} onClick={(e) => payNow(e)} ><img src={payNowActive ? '/assets/images/executed-payment-white.svg' : '/assets/images/executed-payment.svg'} alt='Pay Now' id="paynow" /><span className='ml-1' onClick={(e) => payNow(e)}>{t("Pay Now")}</span></Button> : ''}
                               <Button className={`d-flex align-items-center border-radius-5 card-border fs-6 fw-400 px-5 ml-2 px-md-2 ml-sm-0 mb-sm-1 ${payLaterActive ? "bg-success-dark text-white" : "bg-white text-dark"}`} onClick={(e) => payLater(e)} ><img src={payLaterActive ? '/assets/images/pay-white.svg' : '/assets/images/pay.svg'} alt='Pay Later' id="paylater" /><span className='ml-1' onClick={(e) => payLater(e)}>{t("Pay Later")}</span></Button>
                             </div>
                             : paymodeArray.includes('PayLater') === true && paymodeArray.includes('DirectDebit') === false && paymodeArray.includes('CreditCard') === false ?
