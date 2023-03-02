@@ -182,7 +182,7 @@ export default function TenantDetails() {
   };
 
   const checkCustomfieldValue = () => {
-    console.log("hello");
+
     let customValue = JSON.parse(localStorage.getItem(`CustomFieldsSetting`));
     let errorcount = 0;
 
@@ -526,7 +526,7 @@ export default function TenantDetails() {
       integrated_with: "signicat",
       initiated_by: "karthick"
     }
-    console.log(sessionStorage.getItem("accessToken"));
+
     const creditCheckConfig = {
       headers: {
         'Content-Type': 'application/json',
@@ -538,24 +538,17 @@ export default function TenantDetails() {
     try {
       const response = await axios.post(sixVerifierSettingsUrl, requestBody, creditCheckConfig);
       // setCreditCheckSettingData(response.data)
-      console.log(response.data);
-      console.log("response.data.status", response.data.status === 200);
-      console.log("response.data.body.is_enabled_in_booking_porta", response.data.body.is_enabled_in_booking_portal);
       if (response.data.status === 200 && response.data.body.is_enabled_in_booking_portal) {
         console.log("is_enabled_in_booking_portal");
         if (response.data.body.enable_in_booking_portal_for == "BUSINESS" && BusinessUser) {
-          console.log("BUSINESS");
           await proceedCreditCheck(e);
         } else if (response.data.body.enable_in_booking_portal_for == "PERSONAL" && !BusinessUser) {
-          console.log("PERSONAL");
           await proceedCreditCheck(e);
         } else {
-          console.log("BOTH");
           await proceedCreditCheck(e);
         }
       } else {
         setIsLoading(true);
-        console.log("Continue with Normal Move-in");
         navigate('/preBooking/esignPayment');
       }
       // setIsLoading(false);
@@ -702,8 +695,6 @@ export default function TenantDetails() {
     // e.preventDefault()
     // await updateTenantInfo();
     // setCreditCheckLoader(true);
-    console.log("proceedCreditCheck");
-
     const requestBody = {
       country_code: "NOR",
       event_type: "CREDIT_CHECK_ENQUIRY",
@@ -775,11 +766,8 @@ export default function TenantDetails() {
     } else {
       // update with new tenant data or ignore
     }
-    console.log("checkCreditCheckStatus");
     const isCreditCheckResponseStored = localStorage.getItem('creditCheckResponse');
     const parsedResponse = JSON.parse(isCreditCheckResponseStored);
-    console.log(parsedResponse);
-    console.log(parsedResponse.creditCheckResponse);
     if (parsedResponse.creditCheckResponse.data.status === 500) {
       if (parsedResponse.creditCheckResponse.data.message === "TRY_CREDITCHECK_AFTER_SOMETIME") {
         console.log("Continue with Normal Move-in");
@@ -906,7 +894,6 @@ export default function TenantDetails() {
     try {
       let emergencyContactArray = [];
       if (contactAccordian.length > 0) {
-        console.log("emergencyDetail");
         sessionStorage.setItem('emergencyDetail', JSON.stringify(contactAccordian));
         contactAccordian.forEach((item) => {
           emergencyContactArray.push({
@@ -990,7 +977,6 @@ export default function TenantDetails() {
 
     if (!validatePersonalInfo(TenantInfoDetails)) {
       errorcount++;
-      console.log(errorcount);
     }
 
     // step 3: Return if there are errors

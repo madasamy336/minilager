@@ -445,7 +445,7 @@ const Units = () => {
                                             firstItem={{ content: <Icon name='angle double left' />, icon: true }}
                                             lastItem={{ content: <Icon name='angle double right' />, icon: true }}
                                             prevItem={{ content: <Icon name='angle left' />, icon: true }}
-                                            nextItem={{ content: <Icon name='angle right' />, icon: true }} defaultActivePage={1} totalPages={pages} onPageChange={PaginationHandleChange} />
+                                            nextItem={{ content: <Icon name='angle right' />, icon: true }}   defaultActivePage={pageNumber}  totalPages={pages} onPageChange={PaginationHandleChange} />
                                     </div>
                                 ) : ''}
                             </div>
